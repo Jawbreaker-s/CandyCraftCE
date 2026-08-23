@@ -1,30 +1,24 @@
-.gradle/
-build/
-build_poisoned_*/
-run/
-out/
-bin/
-output/
-exports/
-_generated/
-generated_textures/
-tools/desktop-shell/
-tmp/
-__pycache__/
-*.py[cod]
+# eclipse
+bin
+*.launch
+.settings
+.metadata
+.classpath
+.project
 
-*.class
-*.log
-hs_err_pid*.log
-replay_pid*.log
-
-.idea/
-.vscode/
+# idea
+out
+*.ipr
+*.iws
 *.iml
+.idea/*
+!.idea/scopes
 
-*.jar
-*.war
-*.ear
+# gradle
+build
+.gradle
 
-Thumbs.db
-desktop.ini
+# other
+eclipse
+run
+runs

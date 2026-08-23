@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "cn.jawbreakers.candycraftce.forge.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "${mod_id}.refmap.json",
+  "mixins": [],
+  "client": ["Keep"],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
