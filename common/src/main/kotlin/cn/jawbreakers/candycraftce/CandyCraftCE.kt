@@ -20,16 +20,17 @@ object CandyCraftCE {
 
 
     @Suppress("UnusedExpression")
-    fun init(platform: PlatformInstance) {
+    fun init(platform: PlatformInstance, postWorks: () -> Unit = {}) {
         mainLog.info("Initializing $MOD_NAME...")
+        this.platform = platform
         CLogUtils.markSignBegin()
         measureTime {
-            CItems
             CTabs
+            CItems
+            postWorks()
         }.also {
             CLogUtils.markLateForSign()
             mainLog.info("CandyCraftCE loaded in $it")
         }
-        this.platform = platform
     }
 }

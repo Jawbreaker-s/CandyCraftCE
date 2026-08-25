@@ -4,6 +4,7 @@ plugins {
 }
 
 val modId: String by project
+val jetOption = rootProject.ext["jetOption"] as Boolean
 
 dependencies {
     minecraft(libs.minecraft)
@@ -29,7 +30,14 @@ loom {
     mixin {
         defaultRefmapName.set("${modId}.refmap.json")
     }
+
     runs {
+        configureEach {
+            vmArg("-Dmixin.debug.export=true")
+            if (jetOption) {
+                vmArg("-XX:+AllowEnhancedClassRedefinition")
+            }
+        }
         named("client") {
             client()
             configName = "Fabric Client"

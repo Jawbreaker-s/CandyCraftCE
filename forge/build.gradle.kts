@@ -6,6 +6,7 @@ plugins {
 }
 
 val modId: String by project
+val jetOption = rootProject.ext["jetOption"] as Boolean
 
 sourceSets {
     main {
@@ -39,13 +40,24 @@ neoForge {
     runs {
         configureEach {
             systemProperty("forge.enabledGameTestNamespaces", modId)
+            systemProperty("mixin.debug.export", "true")
+            if (jetOption) {
+                jvmArgument("-XX:+AllowEnhancedClassRedefinition")
+            }
             ideName = "Forge ${name.capitalized()} (${project.path})" // Unify the run config names with fabric
         }
         register("client") {
             client()
         }
         register("data") {
+            programArguments.add("--mod=${modId}")
+            programArguments.add("--all")
             programArguments.add("--output=${project.project(":common").file("src/generated/resources").absolutePath}")
+            programArguments.add(
+                "--existing=${
+                    project.project(":common").file("src/main/resources").absolutePath
+                }"
+            )
             data()
         }
         register("server") {

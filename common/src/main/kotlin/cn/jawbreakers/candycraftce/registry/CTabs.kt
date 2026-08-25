@@ -2,11 +2,13 @@ package cn.jawbreakers.candycraftce.registry
 
 import cn.jawbreakers.candycraftce.CandyCraftCE.MOD_ID
 import cn.jawbreakers.candycraftce.utils.CLogUtils
-import cn.jawbreakers.candycraftce.utils.CPlatforms
+import cn.jawbreakers.candycraftce.utils.CPlatformUtils
 import cn.jawbreakers.candycraftce.utils.registry.Entry
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.block.Blocks
+import java.util.function.Supplier
 
 object CTabs {
     init {
@@ -17,38 +19,35 @@ object CTabs {
         return Component.translatable("itemGroup.$MOD_ID.$key")
     }
 
-    val blocks: Entry<CreativeModeTab> = CPlatforms.registerCreativeTab("blocks") {
+    val blocks: Entry<CreativeModeTab> = CPlatformUtils.registerCreativeTab("blocks") {
         it.title(title("blocks"))
-            .icon(TODO())
+            .icon { Blocks.DIAMOND_BLOCK.asItem().defaultInstance }
             .displayItems { _, output ->
-                entries[blocks]!!.forEach { stack -> output.accept(stack) }
+                entries[blocks]!!.forEach { stack -> output.accept(stack.get()) }
             }
     }
 
-    val toolsArmor: Entry<CreativeModeTab> = CPlatforms.registerCreativeTab("tools_armor") {
-        it.title(title("tools_armor"))
-            .icon(TODO())
+    val toolsArmors: Entry<CreativeModeTab> = CPlatformUtils.registerCreativeTab("tools_armor") {
+        it.title(title("tools_armors"))
+            .icon { Blocks.DIAMOND_BLOCK.asItem().defaultInstance }
             .displayItems { _, output ->
-                entries[toolsArmor]!!.forEach { stack -> output.accept(stack) }
+                entries[toolsArmors]!!.forEach { stack -> output.accept(stack.get()) }
             }
     }
 
-    val misc: Entry<CreativeModeTab> = CPlatforms.registerCreativeTab("misc") {
+    val misc: Entry<CreativeModeTab> = CPlatformUtils.registerCreativeTab("misc") {
         it.title(title("misc"))
-            .icon(TODO())
+            .icon { Blocks.DIAMOND_BLOCK.asItem().defaultInstance }
             .displayItems { _, output ->
-                entries[misc]!!.forEach { stack -> output.accept(stack) }
+                entries[misc]!!.forEach { stack -> output.accept(stack.get()) }
             }
     }
 
-    fun Entry<CreativeModeTab>.addItem(stack: ItemStack) {
+    fun Entry<CreativeModeTab>.addItem(stack: Supplier<ItemStack>) {
         entries[this]?.add(stack) ?: throw IllegalArgumentException("Creative Mode Tab $this does not exist")
     }
 
-    fun Entry<CreativeModeTab>.addItems(vararg stacks: ItemStack) {
-        stacks.forEach { addItem(it) }
-    }
 
-    val entries = arrayOf(blocks, toolsArmor, misc)
-        .associateWith { mutableListOf<ItemStack>() }
+    val entries = arrayOf(blocks, toolsArmors, misc)
+        .associateWith { mutableListOf<Supplier<ItemStack>>() }
 }
