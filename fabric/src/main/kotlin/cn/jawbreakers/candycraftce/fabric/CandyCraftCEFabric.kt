@@ -3,6 +3,7 @@ package cn.jawbreakers.candycraftce.fabric
 import cn.jawbreakers.candycraftce.CandyCraftCE
 import cn.jawbreakers.candycraftce.utils.CLogUtils.clog
 import cn.jawbreakers.candycraftce.utils.CLogUtils.logRegister
+import cn.jawbreakers.candycraftce.utils.CPlatformUtils.ifClient
 import cn.jawbreakers.candycraftce.utils.CUtils.modLoc
 import cn.jawbreakers.candycraftce.utils.CUtils.register
 import cn.jawbreakers.candycraftce.utils.PlatformInstance
@@ -11,12 +12,16 @@ import cn.jawbreakers.candycraftce.utils.registry.Entry
 import cn.jawbreakers.candycraftce.utils.registry.LateInitAccessor
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.ModInitializer
+import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup
 import net.fabricmc.loader.api.FabricLoader
+import net.minecraft.client.renderer.RenderType
 import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.Items
+import net.minecraft.world.level.block.Block
 import java.util.function.Consumer
 import java.util.function.Supplier
 
@@ -28,7 +33,10 @@ class CandyCraftCEFabric : ModInitializer, PlatformInstance {
         clog.info("on Fabric Initializing...")
         CandyCraftCE.init(this) {
             lateInits.forEach { it.run() }
+            clog.info("Running `whenInitialized`")
             lateUsage.forEach { it.run() }
+            lateInits.clear()
+            lateUsage.clear()
         }
     }
 
@@ -41,18 +49,39 @@ class CandyCraftCEFabric : ModInitializer, PlatformInstance {
         return accessor
     }
 
-    override fun <I : Item> registerItem(name: String, item: Supplier<I>): Entry<I> {
+    private inline fun <E> register(
+        registerTag: String,
+        name: String,
+        crossinline factory: () -> E,
+        crossinline register: (ResourceLocation, E) -> Unit,
+    ): Entry<E> {
         val id = name.modLoc()
-        val entry = FabricEntry<I>(id)
+        val entry = FabricEntry<E>(id)
         lateInits.add {
-            logRegister("Item", id)
-            item.get().also {
-                Items.registerItem(id, it)
+            logRegister(registerTag, id)
+            factory().also {
+                register(id, it)
                 entry.set(it)
             }
         }
         return entry
     }
+
+    override fun <E : Item> registerItem(name: String, factory: Supplier<E>): Entry<E> =
+        register("Item", name, factory::get) { id, it ->
+            Items.registerItem(id, it)
+        }
+
+    override fun setRenderLayer(block: Entry<out Block>, layer: RenderType) {
+        ifClient {
+            BlockRenderLayerMap.INSTANCE.putBlock(block.get(), layer)
+        }
+    }
+
+    override fun <E : Block> registerBlock(name: String, factory: Supplier<E>): Entry<E> =
+        register("Block", name, factory::get) { id, it ->
+            BuiltInRegistries.BLOCK.register(id, it)
+        }
 
     override fun registerCreativeTab(name: String, builder: Consumer<CreativeModeTab.Builder>): Entry<CreativeModeTab> {
         val id = name.modLoc()

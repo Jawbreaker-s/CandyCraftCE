@@ -3,6 +3,7 @@ package cn.jawbreakers.candycraftce.forge.data.providers
 import cn.jawbreakers.candycraftce.CandyCraftCE.MOD_ID
 import cn.jawbreakers.candycraftce.item.EmblemItem
 import cn.jawbreakers.candycraftce.item.JumpWandItem
+import cn.jawbreakers.candycraftce.registry.CBlocks
 import cn.jawbreakers.candycraftce.registry.CItems
 import cn.jawbreakers.candycraftce.registry.CTabs
 import cn.jawbreakers.candycraftce.utils.registry.Entry
@@ -13,6 +14,7 @@ import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.contents.TranslatableContents
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.Item
+import net.minecraft.world.level.block.Block
 import net.minecraftforge.common.data.LanguageProvider
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
@@ -220,13 +222,34 @@ class CI18nProvider(output: PackOutput) : DataProvider {
             addItem(jelly_crown, "Jelly Crown", "果冻王冠")
             addItem(jelly_boots, "Jelly Boots", "果冻靴子")
         }
+        CBlocks.apply {
+            addBlock(custard_pudding_block, " Custard Pudding", "奶皮布丁块")
+            addBlock(strawberry_filled_pudding, "Strawberry Filled Custard Pudding", "夹心草莓奶皮布丁块")
+            addBlock(pudding_block, "Strawberry Filled Pudding", "布丁块")
+            addBlock(pudding_farmland, "Pudding Farmland", "布丁耕地")
+            addBlock(sugar_sand, "Sugar Sand", "糖砂")
+            addBlock(sugar_block, "Sugar Block", "糖块")
+            addBlock(marshmallow_log, "Marshmallow Log", "棉花软糖原木")
+            addBlock(dark_marshmallow_log, "Dark Marshmallow Log", "深色棉花软糖原木")
+            addBlock(light_marshmallow_log, "Light Marshmallow Log", "浅色棉花软糖原木")
+            addBlock(stripped_marshmallow_log, "Stripped Marshmallow Log", "去皮棉花软糖原木")
+            addBlock(stripped_dark_marshmallow_log, "Stripped Dark Marshmallow Log", "去皮深色棉花软糖原木")
+            addBlock(stripped_light_marshmallow_log, "Stripped Light Marshmallow Log", "去皮浅色棉花软糖原木")
+            addBlock(marshmallow_planks, "Marshmallow Planks", "棉花软糖木板")
+            addBlock(dark_marshmallow_planks, "Dark Marshmallow Planks", "深色棉花软糖木板")
+            addBlock(light_marshmallow_planks, "Light Marshmallow Planks", "浅色棉花软糖木板")
+            addBlockFamily(marshmallow, "Marshmallow", "棉花软糖")
+            addBlockFamily(dark_marshmallow, "Dark Marshmallow", "深色棉花软糖")
+            addBlockFamily(light_marshmallow, "Light Marshmallow", "浅色棉花软糖")
+
+        }
         add(JumpWandItem.TOOLTIP_WAND_USED, "Uses: %s/%s", "剩余次数：%s/%s")
         add(JumpWandItem.TOOLTIP_WAND_RESTORE, "Sneak use %s to restore %d durability.", "潜行使用%s回复%d点耐久")
     }
 
     fun add(key: String, en: String, zh: String) {
-        enUS.add { it.add(key, en) }
-        zhCN.add { it.add(key, zh) }
+        zhCN.add { add(key, zh) }
+        enUS.add { add(key, en) }
     }
 
     fun add(key: Component, en: String, zh: String) {
@@ -237,6 +260,21 @@ class CI18nProvider(output: PackOutput) : DataProvider {
 
     fun addTab(key: Entry<CreativeModeTab>, en: String, zh: String) {
         add(key.get().displayName, en, zh)
+    }
+
+    fun addBlockFamily(family: CBlocks.BlockFamily, en: String, zh: String) {
+        addBlock(family.stairs, "$en Stairs", "${zh}楼梯")
+        addBlock(family.slab, "$en Slab", "${zh}台阶")
+        addBlock(family.fence, "$en Fence", "${zh}栅栏")
+        addBlock(family.fenceGate, "$en Fence Gate", "${zh}栅栏门")
+        addBlock(family.door, "$en Door", "${zh}门")
+        addBlock(family.trapdoor, "$en Trapdoor", "${zh}陷阱门")
+        addBlock(family.sign, "$en Sign", "${zh}牌子")
+    }
+
+    fun addBlock(key: Entry<out Block>, en: String, zh: String) {
+        enUS.add { addBlock(key, en) }
+        zhCN.add { addBlock(key, zh) }
     }
 
     fun addToolSet(key: CItems.ToolSet, en: String, zh: String) {
@@ -255,8 +293,8 @@ class CI18nProvider(output: PackOutput) : DataProvider {
     }
 
     fun addItem(key: Entry<out Item>, en: String, zh: String) {
-        enUS.add { it.addItem(key, en) }
-        zhCN.add { it.addItem(key, zh) }
+        enUS.add { addItem(key, en) }
+        zhCN.add { addItem(key, zh) }
     }
 
     class SubLanguageProvider(output: PackOutput, locate: String) : LanguageProvider(output, MOD_ID, locate) {
@@ -265,7 +303,7 @@ class CI18nProvider(output: PackOutput) : DataProvider {
             entries.forEach { it.accept(this) }
         }
 
-        fun add(consumer: Consumer<LanguageProvider>) = entries.add(consumer)
+        fun add(consumer: LanguageProvider.() -> Unit) = entries.add(consumer)
     }
 
     override fun run(output: CachedOutput): CompletableFuture<*> {

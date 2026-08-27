@@ -1,5 +1,6 @@
 package cn.jawbreakers.candycraftce
 
+import cn.jawbreakers.candycraftce.registry.CBlocks
 import cn.jawbreakers.candycraftce.registry.CItems
 import cn.jawbreakers.candycraftce.registry.CTabs
 import cn.jawbreakers.candycraftce.utils.CLogUtils
@@ -26,6 +27,7 @@ object CandyCraftCE {
         CLogUtils.markSignBegin()
         measureTime {
             CTabs
+            CBlocks
             CItems
             postWorks()
         }.also {

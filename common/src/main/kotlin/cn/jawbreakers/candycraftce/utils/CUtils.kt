@@ -6,6 +6,7 @@ import net.minecraft.client.resources.model.ModelResourceLocation
 import net.minecraft.core.Registry
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.Tag
 import net.minecraft.resources.ResourceKey
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.effect.MobEffect
@@ -15,9 +16,6 @@ import net.minecraft.world.level.GameRules
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import java.awt.Color
-import java.security.MessageDigest
-import java.util.zip.CRC32
-import kotlin.text.Charsets.UTF_8
 
 object CUtils {
     val Int.rgb get() = Color(this)
@@ -69,21 +67,13 @@ object CUtils {
         return MobEffectInstance(this, duration.toTick, amplifier, ambient, visible, showIcon)
     }
 
-    fun GameRules.Key<GameRules.BooleanValue>.get(level: Level): Boolean {
-        return level.gameRules.getBoolean(this)
-    }
-
-    fun GameRules.Key<GameRules.IntegerValue>.get(level: Level): Int {
-        return level.gameRules.getInt(this)
-    }
-
-    fun <T : GameRules.Value<T>> GameRules.Key<T>.get(level: Level): T {
-        return level.gameRules.getRule(this)
-    }
+    fun GameRules.Key<GameRules.BooleanValue>.get(level: Level): Boolean = level.gameRules.getBoolean(this)
+    fun GameRules.Key<GameRules.IntegerValue>.get(level: Level): Int = level.gameRules.getInt(this)
+    fun <T : GameRules.Value<T>> GameRules.Key<T>.get(level: Level): T = level.gameRules.getRule(this)
 
     //读取并自动写入复合nbt里面的数据
-    fun <R> CompoundTag.use(key: String, block: (CompoundTag) -> R): R {
-        if (key in this) {
+    fun <R> CompoundTag.useCompound(key: String, block: (CompoundTag) -> R): R {
+        if (this.contains(key, Tag.TAG_COMPOUND.toInt())) {
             return block(getCompound(key))
         } else {
             val tag = CompoundTag()
@@ -91,32 +81,5 @@ object CUtils {
             put(key, tag)
             return r
         }
-    }
-
-    fun CompoundTag.getOrCreateCompound(key: String): CompoundTag {
-        return if (key in this) getCompound(key) else CompoundTag().also { put(key, it) }
-    }
-
-
-    inline fun <R> trying(supplier: () -> R): R? {
-        return try {
-            supplier()
-        } catch (e: Throwable) {
-            null
-        }
-    }
-
-    fun String.crc32(): String {
-        val crc = CRC32()
-        crc.update(this.toByteArray(UTF_8))
-        // 将 Long 转换为 8 位十六进制（因为 CRC32 结果实际为 32 位）
-        return crc.value.toUInt().toString(16).padStart(8, '0')
-    }
-
-    @OptIn(ExperimentalStdlibApi::class)
-    fun String.md5(): String {
-        val md = MessageDigest.getInstance("MD5")
-        val digest = md.digest(this.toByteArray(UTF_8))
-        return digest.toHexString()
     }
 }

@@ -8,7 +8,7 @@ import cn.jawbreakers.candycraftce.registry.CTabs.toolsArmors
 import cn.jawbreakers.candycraftce.utils.CLogUtils
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils
 import cn.jawbreakers.candycraftce.utils.CUtils.instance
-import cn.jawbreakers.candycraftce.utils.IItemEntrySet
+import cn.jawbreakers.candycraftce.utils.IEntrySet
 import cn.jawbreakers.candycraftce.utils.MCTimeUnit.Companion.tick
 import cn.jawbreakers.candycraftce.utils.registry.Entry
 import net.minecraft.world.effect.MobEffectInstance
@@ -16,6 +16,8 @@ import net.minecraft.world.effect.MobEffects
 import net.minecraft.world.food.FoodProperties
 import net.minecraft.world.item.*
 import net.minecraft.world.item.Item.Properties
+import net.minecraft.world.level.ItemLike
+import net.minecraft.world.level.block.Block
 import java.util.function.Supplier
 
 object CItems {
@@ -23,7 +25,7 @@ object CItems {
         CLogUtils.sign()
     }
 
-    internal val items: MutableMap<String, Entry<out Item>> = mutableMapOf()
+    private val items: MutableMap<String, Entry<out Item>> = mutableMapOf()
 
     private var contextTab: Entry<CreativeModeTab>? = misc
 
@@ -190,7 +192,29 @@ object CItems {
 
     init {
         contextTab = blocks
+        CBlocks.withItem().forEach {
+            when (it) {
+                CBlocks.marshmallow.sign -> registerBlock(it) {
+                    SignItem(Properties(), CBlocks.marshmallow.sign.get(), CBlocks.marshmallow.wallSign.get())
+                }
+
+                CBlocks.light_marshmallow.sign -> registerBlock(it) {
+                    SignItem(
+                        Properties(),
+                        CBlocks.light_marshmallow.sign.get(),
+                        CBlocks.light_marshmallow.wallSign.get()
+                    )
+                }
+
+                CBlocks.dark_marshmallow.sign -> registerBlock(it) {
+                    SignItem(Properties(), CBlocks.dark_marshmallow.sign.get(), CBlocks.dark_marshmallow.wallSign.get())
+                }
+
+                else -> registerBlock(it)
+            }
+        }
     }
+
 
     val marshmallow_flower = register("marshmallow_flower")
 
@@ -246,6 +270,14 @@ object CItems {
         return register(name) { Item(properties) }
     }
 
+    private fun registerBlock(entry: Entry<out Block>, properties: Properties = Properties()): Entry<BlockItem> {
+        return registerBlock(entry) { b -> BlockItem(b.get(), properties) }
+    }
+
+    private fun <B : Block, I : BlockItem> registerBlock(entry: Entry<B>, factory: (Entry<B>) -> I): Entry<I> {
+        return register(entry.id.path) { factory(entry) }
+    }
+
     private fun registerFood(name: String, nutrition: Int, saturation: Float) =
         register(name, Properties().food(nutrition, saturation))
 
@@ -279,6 +311,7 @@ object CItems {
     }
 
     val Entry<out Item>.defaultInstance: ItemStack get() = value.defaultInstance
+    fun Entry<out ItemLike>.asItem(): Item = get().asItem()
 
     private fun registerToolSet(name: String, tier: Tier): ToolSet {
         return ToolSet(
@@ -305,8 +338,8 @@ object CItems {
         val pickaxe: Entry<out PickaxeItem>,
         val axe: Entry<out AxeItem>,
         val hoe: Entry<out HoeItem>,
-    ) : IItemEntrySet {
-        override fun getAllItems(): List<Entry<out Item>> = listOf(sword, shovel, pickaxe, axe, hoe)
+    ) : IEntrySet<Item> {
+        override fun entries(): List<Entry<out Item>> = listOf(sword, shovel, pickaxe, axe, hoe)
     }
 
     data class ArmorSet(
@@ -314,10 +347,11 @@ object CItems {
         val plate: Entry<out ArmorItem>,
         val leggings: Entry<out ArmorItem>,
         val boots: Entry<out ArmorItem>,
-    ) : IItemEntrySet {
-        override fun getAllItems(): List<Entry<out Item>> = listOf(helmet, plate, leggings, boots)
+    ) : IEntrySet<Item> {
+        override fun entries(): List<Entry<out Item>> = listOf(helmet, plate, leggings, boots)
     }
 
 }
+
 
 

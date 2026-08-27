@@ -3,7 +3,7 @@ package cn.jawbreakers.candycraftce.forge.data.providers
 import cn.jawbreakers.candycraftce.CandyCraftCE
 import cn.jawbreakers.candycraftce.registry.CItems
 import cn.jawbreakers.candycraftce.utils.CUtils.key
-import cn.jawbreakers.candycraftce.utils.IItemEntrySet
+import cn.jawbreakers.candycraftce.utils.IEntrySet
 import cn.jawbreakers.candycraftce.utils.registry.Entry
 import net.minecraft.data.PackOutput
 import net.minecraft.world.item.Item
@@ -139,7 +139,7 @@ class CItemModelProvider(output: PackOutput, efHelper: ExistingFileHelper) :
             ).forEach {
                 when (it) {
                     is Entry<*> -> basicItem(it.get() as Item)
-                    is IItemEntrySet -> it.getAllItems().forEach { entry -> basicItem(entry.get()) }
+                    is IEntrySet<*> -> it.entries().forEach { entry -> basicItem(entry.get() as Item) }
                     else -> throw IllegalStateException("Unsupported type: $it")
                 }
             }
@@ -158,7 +158,7 @@ class CItemModelProvider(output: PackOutput, efHelper: ExistingFileHelper) :
             ).forEach {
                 when (it) {
                     is Entry<*> -> handheld(it.get() as Item)
-                    is IItemEntrySet -> it.getAllItems().forEach { entry -> handheld(entry.get()) }
+                    is IEntrySet<*> -> it.entries().forEach { entry -> handheld(entry.get() as Item) }
                     else -> throw IllegalStateException("Unsupported type: $it")
                 }
             }

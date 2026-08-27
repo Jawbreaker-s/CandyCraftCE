@@ -1,6 +1,6 @@
 package cn.jawbreakers.candycraftce.forge.data
 
-import cn.jawbreakers.candycraftce.forge.data.providers.CBlockModelProvider
+import cn.jawbreakers.candycraftce.forge.data.providers.CBlockStateProvider
 import cn.jawbreakers.candycraftce.forge.data.providers.CI18nProvider
 import cn.jawbreakers.candycraftce.forge.data.providers.CItemModelProvider
 import net.minecraftforge.data.event.GatherDataEvent
@@ -17,7 +17,7 @@ object CandyCraftCEData {
         val output = generator.packOutput
 
         generator.addProvider(event.includeClient(), CI18nProvider(output))
-        generator.addProvider(event.includeClient(), CBlockModelProvider(output, efHelper))
+        generator.addProvider(event.includeClient(), CBlockStateProvider(output, efHelper))
         generator.addProvider(event.includeClient(), CItemModelProvider(output, efHelper))
     }
 }
