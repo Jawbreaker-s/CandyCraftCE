@@ -2,6 +2,7 @@ package cn.jawbreakers.candycraftce.utils
 
 import cn.jawbreakers.candycraftce.CandyCraftCE.MOD_ID
 import cn.jawbreakers.candycraftce.utils.MCTimeUnit.Companion.tick
+import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.resources.model.ModelResourceLocation
 import net.minecraft.core.Registry
 import net.minecraft.core.registries.BuiltInRegistries
@@ -15,16 +16,11 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.level.GameRules
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
-import java.awt.Color
 
 object CUtils {
-    val Int.rgb get() = Color(this)
-    val String.rgb
-        get() = run {
-            require(startsWith("#") || startsWith("0x")) { "Invalid color format" }
-            Color(Integer.decode(this))
-        }
 
+    fun never(vararg any: Any): Boolean = false
+    fun always(vararg any: Any): Boolean = true
     fun <R> ResourceLocation.toKey(registry: ResourceKey<Registry<R>>): ResourceKey<R> {
         return ResourceKey.create(registry, this)
     }
@@ -70,6 +66,12 @@ object CUtils {
     fun GameRules.Key<GameRules.BooleanValue>.get(level: Level): Boolean = level.gameRules.getBoolean(this)
     fun GameRules.Key<GameRules.IntegerValue>.get(level: Level): Int = level.gameRules.getInt(this)
     fun <T : GameRules.Value<T>> GameRules.Key<T>.get(level: Level): T = level.gameRules.getRule(this)
+
+    inline fun PoseStack.use(crossinline action: PoseStack.() -> Unit) {
+        pushPose()
+        action()
+        popPose()
+    }
 
     //读取并自动写入复合nbt里面的数据
     fun <R> CompoundTag.useCompound(key: String, block: (CompoundTag) -> R): R {

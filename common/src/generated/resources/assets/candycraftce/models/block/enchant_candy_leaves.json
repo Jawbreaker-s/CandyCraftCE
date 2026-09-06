@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/leaves",
+  "textures": {
+    "all": "candycraftce:block/enchant_candy_leaves"
+  }
+}

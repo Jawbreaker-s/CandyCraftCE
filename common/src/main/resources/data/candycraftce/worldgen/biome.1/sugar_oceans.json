@@ -1,0 +1,76 @@
+{
+  "has_precipitation": false,
+  "temperature": 0.5,
+  "downfall": 0.5,
+  "effects": {
+    "sky_color": 15986175,
+    "fog_color": 13473279,
+    "water_color": 13473279,
+    "water_fog_color": 13473279,
+    "grass_color": 11755263,
+    "foliage_color": 11755263
+  },
+  "spawners": {
+    "water_ambient": [
+      {
+        "type": "candycraftmod:candy_fish",
+        "weight": 15,
+        "minCount": 3,
+        "maxCount": 6
+      }
+    ],
+    "water_creature": [
+      {
+        "type": "candycraftmod:nessie",
+        "weight": 25,
+        "minCount": 1,
+        "maxCount": 3
+      }
+    ]
+  },
+  "spawn_costs": {},
+  "carvers": {},
+  "features": [
+    [],
+    [],
+    [],
+    [
+      "candycraftmod:honey_dungeon"
+    ],
+    [
+      "candycraftmod:water_temple"
+    ],
+    [],
+    [
+      "candycraftmod:ore_honey",
+      "candycraftmod:ore_licorice",
+      "candycraftmod:ore_jelly",
+      "candycraftmod:ore_nougat",
+      "candycraftmod:ore_pez",
+      "candycraftmod:ore_lapis",
+      "candycraftmod:ore_chocolate_copper_slot",
+      "candycraftmod:ore_sweetscape_milk_brownie",
+      "candycraftmod:ore_sweetscape_white_brownie",
+      "candycraftmod:ore_sweetscape_dark_brownie",
+      "candycraftmod:ore_sweetscape_milk_brownie_cake_roll_x",
+      "candycraftmod:ore_sweetscape_milk_brownie_cake_roll_y",
+      "candycraftmod:ore_sweetscape_milk_brownie_cake_roll_z",
+      "candycraftmod:ore_sweetscape_white_brownie_cake_roll_x",
+      "candycraftmod:ore_sweetscape_white_brownie_cake_roll_y",
+      "candycraftmod:ore_sweetscape_white_brownie_cake_roll_z",
+      "candycraftmod:ore_sweetscape_dark_brownie_cake_roll_x",
+      "candycraftmod:ore_sweetscape_dark_brownie_cake_roll_y",
+      "candycraftmod:ore_sweetscape_dark_brownie_cake_roll_z",
+      "candycraftmod:ore_sweetscape_sugar_cookie",
+      "candycraftmod:ore_sweetscape_teleporter",
+      "candycraftmod:ore_sweetscape_sugar_sand"
+    ],
+    [],
+    [],
+    [
+      "candycraftmod:candy_grass",
+      "candycraftmod:candy_seaweed"
+    ],
+    []
+  ]
+}

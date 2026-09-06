@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "bottom": "candycraftce:block/dark_brownie_block_end",
+    "side": "candycraftce:block/dark_chiffon_cake_block_side",
+    "top": "candycraftce:block/dark_chiffon_cake_block_top"
+  }
+}

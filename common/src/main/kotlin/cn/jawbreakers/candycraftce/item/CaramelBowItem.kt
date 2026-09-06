@@ -1,6 +1,6 @@
 package cn.jawbreakers.candycraftce.item
 
-import cn.jawbreakers.candycraftce.mixin_stub.BowItemAddition
+import cn.jawbreakers.candycraftce.mixin_stub.IBowItemAddition
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.projectile.AbstractArrow
 import net.minecraft.world.item.BowItem
@@ -9,7 +9,7 @@ import net.minecraft.world.level.Level
 import java.util.function.Predicate
 import kotlin.math.max
 
-class CaramelBowItem(properties: Properties) : BowItem(properties), BowItemAddition {
+class CaramelBowItem(properties: Properties) : BowItem(properties), IBowItemAddition {
 
     override fun getAllSupportedProjectiles() = HONEY_ARROWS
     override fun getSupportedHeldProjectiles() = HONEY_ARROWS

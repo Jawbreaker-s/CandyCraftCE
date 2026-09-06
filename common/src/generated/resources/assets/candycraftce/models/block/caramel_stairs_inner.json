@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/inner_stairs",
+  "textures": {
+    "bottom": "candycraftce:block/caramel_block",
+    "side": "candycraftce:block/caramel_block",
+    "top": "candycraftce:block/caramel_block"
+  }
+}

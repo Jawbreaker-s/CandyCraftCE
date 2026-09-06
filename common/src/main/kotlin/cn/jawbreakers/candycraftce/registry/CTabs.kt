@@ -1,13 +1,14 @@
 package cn.jawbreakers.candycraftce.registry
 
 import cn.jawbreakers.candycraftce.CandyCraftCE.MOD_ID
+import cn.jawbreakers.candycraftce.registry.CItems.asItem
+import cn.jawbreakers.candycraftce.registry.CItems.defaultInstance
 import cn.jawbreakers.candycraftce.utils.CLogUtils
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils
 import cn.jawbreakers.candycraftce.utils.registry.Entry
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.level.block.Blocks
 import java.util.function.Supplier
 
 object CTabs {
@@ -21,7 +22,7 @@ object CTabs {
 
     val blocks: Entry<CreativeModeTab> = CPlatformUtils.registerCreativeTab("blocks") {
         it.title(title("blocks"))
-            .icon { Blocks.DIAMOND_BLOCK.asItem().defaultInstance }
+            .icon { CBlocks.custard_pudding_block.asItem().defaultInstance }
             .displayItems { _, output ->
                 entries[blocks]!!.forEach { stack -> output.accept(stack.get()) }
             }
@@ -29,7 +30,7 @@ object CTabs {
 
     val toolsArmors: Entry<CreativeModeTab> = CPlatformUtils.registerCreativeTab("tools_armor") {
         it.title(title("tools_armors"))
-            .icon { Blocks.DIAMOND_BLOCK.asItem().defaultInstance }
+            .icon { CItems.jelly_wand.defaultInstance }
             .displayItems { _, output ->
                 entries[toolsArmors]!!.forEach { stack -> output.accept(stack.get()) }
             }
@@ -37,7 +38,7 @@ object CTabs {
 
     val misc: Entry<CreativeModeTab> = CPlatformUtils.registerCreativeTab("misc") {
         it.title(title("misc"))
-            .icon { Blocks.DIAMOND_BLOCK.asItem().defaultInstance }
+            .icon { CItems.gummy_ball.defaultInstance }
             .displayItems { _, output ->
                 entries[misc]!!.forEach { stack -> output.accept(stack.get()) }
             }
@@ -48,6 +49,6 @@ object CTabs {
     }
 
 
-    val entries = arrayOf(blocks, toolsArmors, misc)
+    val entries = listOf(blocks, toolsArmors, misc)
         .associateWith { mutableListOf<Supplier<ItemStack>>() }
 }

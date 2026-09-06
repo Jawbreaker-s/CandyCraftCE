@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "candycraftce:block/cookie_slab"
+    },
+    "type=double": {
+      "model": "candycraftce:block/cookie_block"
+    },
+    "type=top": {
+      "model": "candycraftce:block/cookie_slab_top"
+    }
+  }
+}

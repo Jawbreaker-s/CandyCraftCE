@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "candycraftce:block/dark_chocolate_bar_block",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "candycraftce:block/dark_chocolate_bar_block"
+    },
+    "facing=south": {
+      "model": "candycraftce:block/dark_chocolate_bar_block",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "candycraftce:block/dark_chocolate_bar_block",
+      "y": 270
+    }
+  }
+}

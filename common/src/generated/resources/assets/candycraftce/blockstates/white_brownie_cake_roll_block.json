@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "candycraftce:block/white_brownie_cake_roll_block",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y": {
+      "model": "candycraftce:block/white_brownie_cake_roll_block"
+    },
+    "axis=z": {
+      "model": "candycraftce:block/white_brownie_cake_roll_block",
+      "x": 90
+    }
+  }
+}

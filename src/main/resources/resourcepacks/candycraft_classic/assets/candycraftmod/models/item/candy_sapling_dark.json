@@ -1,6 +1,0 @@
-{
-    "textures":  {
-                     "layer0":  "candycraftmod:block/candy_sapling.1"
-                 },
-    "parent":  "minecraft:item/generated"
-}

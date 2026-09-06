@@ -1,8 +1,0 @@
-{
-    "parent": "block/stairs",
-    "textures": {
-        "bottom": "candycraftmod:block/cotton_candy_leaves",
-        "top": "candycraftmod:block/cotton_candy_leaves",
-        "side": "candycraftmod:block/cotton_candy_leaves"
-    }
-}

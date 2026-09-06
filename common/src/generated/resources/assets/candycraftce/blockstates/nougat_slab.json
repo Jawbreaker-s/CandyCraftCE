@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "candycraftce:block/nougat_slab"
+    },
+    "type=double": {
+      "model": "candycraftce:block/nougat_block"
+    },
+    "type=top": {
+      "model": "candycraftce:block/nougat_slab_top"
+    }
+  }
+}

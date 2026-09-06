@@ -13,4 +13,5 @@ class ForgeEntry<T>(
     }
 
     override val value: T get() = holder.get()
+    
 }

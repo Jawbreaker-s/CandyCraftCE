@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "candycraftce:block/sugar_slab"
+    },
+    "type=double": {
+      "model": "candycraftce:block/sugar_block"
+    },
+    "type=top": {
+      "model": "candycraftce:block/sugar_slab_top"
+    }
+  }
+}

@@ -5,6 +5,6 @@
     "overlay": "candycraftce:block/custard_pudding_block_side_overlay",
     "particle": "candycraftce:block/pudding_block",
     "side": "candycraftce:block/custard_pudding_block_side",
-    "top": "candycraftce:block/custard_pudding_block_top"
+    "top": "candycraftce:block/custard_pudding_block_top_overlay"
   }
 }

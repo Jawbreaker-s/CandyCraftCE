@@ -11,3 +11,10 @@ ext {
     println("JVM Vendor: ${vendor}(AllowEnhancedClassRedefinition=${jetOption})")
     set("jetOption", jetOption)
 }
+
+allprojects {
+    tasks.withType<JavaCompile> {
+        sourceCompatibility = "17"
+        targetCompatibility = "17"
+    }
+}

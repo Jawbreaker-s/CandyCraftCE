@@ -1,0 +1,7 @@
+{
+  "parent": "candycraftce:block/chocolate_bar_block",
+  "textures": {
+    "back": "candycraftce:block/milk_chocolate_bar_block_back",
+    "front": "candycraftce:block/milk_chocolate_bar_block_front"
+  }
+}

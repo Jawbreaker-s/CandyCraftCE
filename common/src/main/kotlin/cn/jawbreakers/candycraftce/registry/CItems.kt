@@ -182,41 +182,47 @@ object CItems {
     val rock_sugar = registerFood("rock_sugar", 4, 0.2F)
     val sugar_crystal = register("sugar_crystal", Properties().rarity(Rarity.RARE))
 
+    val white_chocolate_leaf = register("white_chocolate_leaf")
+    val magical_leaf = register("magical_leaf")
+    val chocolate_leaf = register("chocolate_leaf")
+    val caramel_leaf = register("caramel_leaf")
+    val candied_cherry_leaf = register("candied_cherry_leaf")
+
     //todo BLOCK
     val lollipop_seeds = register("lollipop_seeds")//, () -> CCBlocks.LOLLIPOP_PLANT.get());
     val dragibus =
         register("dragibus")//, { DragibusSeedFoodItem(CCBlocks.DRAGIBUS_CROPS.get(), Properties().food(1,0.3f)) });
+
     //=====================
     //=====================
     //=====================
+    init {
+        contextTab = null
+    }
+
+    val marshmallow_flower = register("marshmallow_flower")
 
     init {
         contextTab = blocks
+        val signs = CBlocks.families.stream()
+            .filter { it.sign != null }
+            .toList()
+            .associate { it.sign!! to it.wallSign!! }
+
+        val skips = buildSet {
+            addAll(signs.values)
+        }
         CBlocks.withItem().forEach {
             when (it) {
-                CBlocks.marshmallow.sign -> registerBlock(it) {
-                    SignItem(Properties(), CBlocks.marshmallow.sign.get(), CBlocks.marshmallow.wallSign.get())
-                }
-
-                CBlocks.light_marshmallow.sign -> registerBlock(it) {
-                    SignItem(
-                        Properties(),
-                        CBlocks.light_marshmallow.sign.get(),
-                        CBlocks.light_marshmallow.wallSign.get()
-                    )
-                }
-
-                CBlocks.dark_marshmallow.sign -> registerBlock(it) {
-                    SignItem(Properties(), CBlocks.dark_marshmallow.sign.get(), CBlocks.dark_marshmallow.wallSign.get())
-                }
-
+                in signs -> registerBlock(it) { _ -> SignItem(Properties(), it.get(), signs[it]!!.get()) }
+                in skips -> {}
                 else -> registerBlock(it)
+            }
+            if (it == CBlocks.marshmallow_slice_flower) {
+                blocks.addItem { marshmallow_flower.defaultInstance }
             }
         }
     }
-
-
-    val marshmallow_flower = register("marshmallow_flower")
 
 
     init {
@@ -326,7 +332,7 @@ object CItems {
     private fun registerArmorSet(name: String, material: ArmorMaterial): ArmorSet {
         return ArmorSet(
             register(name + "_helmet") { ArmorItem(material, ArmorItem.Type.HELMET, Properties()) },
-            register(name + "_plate") { ArmorItem(material, ArmorItem.Type.CHESTPLATE, Properties()) },
+            register(name + "_chestplate") { ArmorItem(material, ArmorItem.Type.CHESTPLATE, Properties()) },
             register(name + "_leggings") { ArmorItem(material, ArmorItem.Type.LEGGINGS, Properties()) },
             register(name + "_boots") { ArmorItem(material, ArmorItem.Type.BOOTS, Properties()) },
         )

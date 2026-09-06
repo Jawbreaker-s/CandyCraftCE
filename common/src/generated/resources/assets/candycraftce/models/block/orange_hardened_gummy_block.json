@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/leaves",
+  "textures": {
+    "all": "candycraftce:block/gummy_block_solid"
+  }
+}

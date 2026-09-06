@@ -1,10 +1,11 @@
 package cn.jawbreakers.candycraftce
 
-import cn.jawbreakers.candycraftce.registry.CBlocks
-import cn.jawbreakers.candycraftce.registry.CItems
-import cn.jawbreakers.candycraftce.registry.CTabs
+import cn.jawbreakers.candycraftce.misc.PuddingColor
+import cn.jawbreakers.candycraftce.registry.*
 import cn.jawbreakers.candycraftce.utils.CLogUtils
+import cn.jawbreakers.candycraftce.utils.CLogUtils.clog
 import cn.jawbreakers.candycraftce.utils.CLogUtils.mainLog
+import cn.jawbreakers.candycraftce.utils.CPlatformUtils.ifClient
 import cn.jawbreakers.candycraftce.utils.PlatformInstance
 import kotlin.time.measureTime
 
@@ -22,13 +23,20 @@ object CandyCraftCE {
 
     @Suppress("UnusedExpression")
     fun init(platform: PlatformInstance, postWorks: () -> Unit = {}) {
-        mainLog.info("Initializing $MOD_NAME...")
         this.platform = platform
+        mainLog.info("Initializing $MOD_NAME...")
         CLogUtils.markSignBegin()
         measureTime {
             CTabs
             CBlocks
+            CBlockEntities
             CItems
+            CLevels
+            ifClient {
+                clog.info("Init client part")
+                PuddingColor.initColor()
+                CLevels.initClient()
+            }
             postWorks()
         }.also {
             CLogUtils.markLateForSign()

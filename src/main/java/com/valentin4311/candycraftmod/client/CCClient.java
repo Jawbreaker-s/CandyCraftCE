@@ -374,12 +374,12 @@ public final class CCClient {
     @SubscribeEvent
     public static void registerBlockColors(RegisterColorHandlersEvent.Block event) {
         BlockColors colors = event.getBlockColors();
-        event.register((state, level, pos, tintIndex) -> {
-            if (tintIndex < 0) {
-                return -1;
-            }
-            return level != null && pos != null ? puddingColor(level, pos) : PuddingBlock.DEFAULT_COLOR;
-        }, CCBlocks.PUDDING.get());
+//        event.register((state, level, pos, tintIndex) -> {
+//            if (tintIndex < 0) {
+//                return -1;
+//            }
+//            return level != null && pos != null ? puddingColor(level, pos) : PuddingBlock.DEFAULT_COLOR;
+//        }, CCBlocks.PUDDING.get());
         event.register((state, level, pos, tintIndex) -> {
             if (tintIndex < 0) {
                 return -1;
@@ -479,34 +479,34 @@ public final class CCClient {
         return ((red / samples) & 255) << 16 | ((green / samples) & 255) << 8 | (blue / samples) & 255;
     }
 
-    private static int legacyCandySkyColor(Level level, net.minecraft.core.BlockPos pos, float partialTick) {
-        if (!level.hasChunkAt(pos)) {
-            return CANDY_WORLD_SKY_FALLBACK;
-        }
-        return level.getBiome(pos).value().getSkyColor();
-    }
+//    private static int legacyCandySkyColor(Level level, net.minecraft.core.BlockPos pos, float partialTick) {
+//        if (!level.hasChunkAt(pos)) {
+//            return CANDY_WORLD_SKY_FALLBACK;
+//        }
+//        return level.getBiome(pos).value().getSkyColor();
+//    }
+//
+//    private static int toRgb(Vec3 color) {
+//        int red = Mth.clamp((int)Math.round(color.x * 255.0D), 0, 255);
+//        int green = Mth.clamp((int)Math.round(color.y * 255.0D), 0, 255);
+//        int blue = Mth.clamp((int)Math.round(color.z * 255.0D), 0, 255);
+//        return (red << 16) | (green << 8) | blue;
+//    }
+//
+//    private static Vec3 rgbVec(int color) {
+//        return new Vec3(((color >> 16) & 255) / 255.0D, ((color >> 8) & 255) / 255.0D, (color & 255) / 255.0D);
+//    }
 
-    private static int toRgb(Vec3 color) {
-        int red = Mth.clamp((int)Math.round(color.x * 255.0D), 0, 255);
-        int green = Mth.clamp((int)Math.round(color.y * 255.0D), 0, 255);
-        int blue = Mth.clamp((int)Math.round(color.z * 255.0D), 0, 255);
-        return (red << 16) | (green << 8) | blue;
-    }
-
-    private static Vec3 rgbVec(int color) {
-        return new Vec3(((color >> 16) & 255) / 255.0D, ((color >> 8) & 255) / 255.0D, (color & 255) / 255.0D);
-    }
-
-    private static String biomePath(net.minecraft.core.Holder<Biome> biome) {
-        if (biome == null) {
-            return null;
-        }
-        return biome.unwrapKey()
-            .map(key -> key.location())
-            .filter(id -> CandyCraft.MODID.equals(id.getNamespace()))
-            .map(ResourceLocation::getPath)
-            .orElse(null);
-    }
+//    private static String biomePath(net.minecraft.core.Holder<Biome> biome) {
+//        if (biome == null) {
+//            return null;
+//        }
+//        return biome.unwrapKey()
+//            .map(key -> key.location())
+//            .filter(id -> CandyCraft.MODID.equals(id.getNamespace()))
+//            .map(ResourceLocation::getPath)
+//            .orElse(null);
+//    }
 
     private static int legacyCandyGrassColor(String biomePath, double x, double z) {
         return switch (biomePath) {
@@ -525,142 +525,142 @@ public final class CCClient {
         };
     }
 
-    private static int enchantedColor(double x, double z) {
-        // Using custom noise as a replacement for deprecated Biome.BIOME_INFO_NOISE
-        double noise = smoothNoise2D(x * 0.0225D, z * 0.0225D, 0x53494E4B5F435259L);
-        if (noise < -0.5D) {
-            double blend = smoothstep(-0.85D, -0.5D, noise);
-            return lerpColor(0xB0ECFF, 0xB0D8FF, blend);
-        }
-        if (noise < -0.1D) {
-            double blend = smoothstep(-0.5D, -0.1D, noise);
-            return lerpColor(0xB0D8FF, 0xB0B0FF, blend);
-        }
-        double blend = smoothstep(-0.1D, 0.45D, noise);
-        return lerpColor(0xB0B0FF, 0xA376DA, blend);
-    }
+//    private static int enchantedColor(double x, double z) {
+//        // Using custom noise as a replacement for deprecated Biome.BIOME_INFO_NOISE
+//        double noise = smoothNoise2D(x * 0.0225D, z * 0.0225D, 0x53494E4B5F435259L);
+//        if (noise < -0.5D) {
+//            double blend = smoothstep(-0.85D, -0.5D, noise);
+//            return lerpColor(0xB0ECFF, 0xB0D8FF, blend);
+//        }
+//        if (noise < -0.1D) {
+//            double blend = smoothstep(-0.5D, -0.1D, noise);
+//            return lerpColor(0xB0D8FF, 0xB0B0FF, blend);
+//        }
+//        double blend = smoothstep(-0.1D, 0.45D, noise);
+//        return lerpColor(0xB0B0FF, 0xA376DA, blend);
+//    }
+//
+//    private static double smoothNoise2D(double x, double z, long salt) {
+//        int x0 = (int)Math.floor(x);
+//        int z0 = (int)Math.floor(z);
+//        double tx = fade(x - x0);
+//        double tz = fade(z - z0);
+//        double a = randomUnit2D(x0, 0, z0, salt);
+//        double b = randomUnit2D(x0 + 1, 0, z0, salt);
+//        double c = randomUnit2D(x0, 0, z0 + 1, salt);
+//        double d = randomUnit2D(x0 + 1, 0, z0 + 1, salt);
+//        return Mth.lerp(tz, Mth.lerp(tx, a, b), Mth.lerp(tx, c, d));
+//    }
+//
+//    private static double fade(double value) {
+//        return value * value * value * (value * (value * 6.0D - 15.0D) + 10.0D);
+//    }
+//
+//    private static double randomUnit2D(int x, int y, int z, long salt) {
+//        long bits = hash2D(x, y, z, salt);
+//        return ((bits >>> 11) * 0x1.0p-53D) * 2.0D - 1.0D;
+//    }
 
-    private static double smoothNoise2D(double x, double z, long salt) {
-        int x0 = (int)Math.floor(x);
-        int z0 = (int)Math.floor(z);
-        double tx = fade(x - x0);
-        double tz = fade(z - z0);
-        double a = randomUnit2D(x0, 0, z0, salt);
-        double b = randomUnit2D(x0 + 1, 0, z0, salt);
-        double c = randomUnit2D(x0, 0, z0 + 1, salt);
-        double d = randomUnit2D(x0 + 1, 0, z0 + 1, salt);
-        return Mth.lerp(tz, Mth.lerp(tx, a, b), Mth.lerp(tx, c, d));
-    }
+//    private static long hash2D(int x, int y, int z, long salt) {
+//        long h = salt;
+//        h ^= x * 0x9E3779B97F4A7C15L;
+//        h = Long.rotateLeft(h, 27) * 0x94D049BB133111EBL;
+//        h ^= y * 0xC2B2AE3D27D4EB4FL;
+//        h ^= h >>> 33;
+//        h *= 0xff51afd7ed558ccdL;
+//        h ^= h >>> 33;
+//        h *= 0xc4ceb9fe1a85ec53L;
+//        h ^= h >>> 33;
+//        return h;
+//    }
 
-    private static double fade(double value) {
-        return value * value * value * (value * (value * 6.0D - 15.0D) + 10.0D);
-    }
+//    private static double smoothstep(double edge0, double edge1, double value) {
+//        double t = (value - edge0) / (edge1 - edge0);
+//        t = Math.max(0.0D, Math.min(1.0D, t));
+//        return t * t * (3.0D - 2.0D * t);
+//    }
 
-    private static double randomUnit2D(int x, int y, int z, long salt) {
-        long bits = hash2D(x, y, z, salt);
-        return ((bits >>> 11) * 0x1.0p-53D) * 2.0D - 1.0D;
-    }
-
-    private static long hash2D(int x, int y, int z, long salt) {
-        long h = salt;
-        h ^= x * 0x9E3779B97F4A7C15L;
-        h = Long.rotateLeft(h, 27) * 0x94D049BB133111EBL;
-        h ^= y * 0xC2B2AE3D27D4EB4FL;
-        h ^= h >>> 33;
-        h *= 0xff51afd7ed558ccdL;
-        h ^= h >>> 33;
-        h *= 0xc4ceb9fe1a85ec53L;
-        h ^= h >>> 33;
-        return h;
-    }
-
-    private static double smoothstep(double edge0, double edge1, double value) {
-        double t = (value - edge0) / (edge1 - edge0);
-        t = Math.max(0.0D, Math.min(1.0D, t));
-        return t * t * (3.0D - 2.0D * t);
-    }
-
-    private static int lerpColor(int from, int to, double amount) {
-        int fromRed = (from >> 16) & 255;
-        int fromGreen = (from >> 8) & 255;
-        int fromBlue = from & 255;
-        int toRed = (to >> 16) & 255;
-        int toGreen = (to >> 8) & 255;
-        int toBlue = to & 255;
-        int red = (int)Math.round(fromRed + (toRed - fromRed) * amount);
-        int green = (int)Math.round(fromGreen + (toGreen - fromGreen) * amount);
-        int blue = (int)Math.round(fromBlue + (toBlue - fromBlue) * amount);
-        return (red & 255) << 16 | (green & 255) << 8 | (blue & 255);
-    }
+//    private static int lerpColor(int from, int to, double amount) {
+//        int fromRed = (from >> 16) & 255;
+//        int fromGreen = (from >> 8) & 255;
+//        int fromBlue = from & 255;
+//        int toRed = (to >> 16) & 255;
+//        int toGreen = (to >> 8) & 255;
+//        int toBlue = to & 255;
+//        int red = (int)Math.round(fromRed + (toRed - fromRed) * amount);
+//        int green = (int)Math.round(fromGreen + (toGreen - fromGreen) * amount);
+//        int blue = (int)Math.round(fromBlue + (toBlue - fromBlue) * amount);
+//        return (red & 255) << 16 | (green & 255) << 8 | (blue & 255);
+//    }
 
     @SubscribeEvent
     public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
         ItemColors colors = event.getItemColors();
-        colors.register((stack, tintIndex) -> tintIndex >= 0 ? PuddingBlock.DEFAULT_COLOR : -1, CCBlocks.PUDDING.get());
+//        colors.register((stack, tintIndex) -> tintIndex >= 0 ? PuddingBlock.DEFAULT_COLOR : -1, CCBlocks.PUDDING.get());
         colors.register(SugarPillItem::getLayerColor, CCItems.SUGAR_PILL.get());
-        colors.register((stack, tintIndex) -> 0xff4530,
-            CCBlocks.RED_GUMMY_BLOCK.get(),
-            CCBlocks.RED_HARDENED_GUMMY_BLOCK.get(),
-            CCBlocks.RED_GUMMY_WORKBENCH.get(),
-            CCBlocks.RED_GUMMY_WORM_BLOCK.get()
-        );
-        colors.register((stack, tintIndex) -> 0xff9b4f,
-            CCBlocks.ORANGE_GUMMY_BLOCK.get(),
-            CCBlocks.ORANGE_HARDENED_GUMMY_BLOCK.get(),
-            CCBlocks.ORANGE_GUMMY_WORKBENCH.get(),
-            CCBlocks.ORANGE_GUMMY_WORM_BLOCK.get()
-        );
-        colors.register((stack, tintIndex) -> 0xffe563,
-            CCBlocks.YELLOW_GUMMY_BLOCK.get(),
-            CCBlocks.YELLOW_HARDENED_GUMMY_BLOCK.get(),
-            CCBlocks.YELLOW_GUMMY_WORKBENCH.get(),
-            CCBlocks.YELLOW_GUMMY_WORM_BLOCK.get()
-        );
-        colors.register((stack, tintIndex) -> 0xfffeb0,
-            CCBlocks.WHITE_GUMMY_BLOCK.get(),
-            CCBlocks.WHITE_HARDENED_GUMMY_BLOCK.get(),
-            CCBlocks.WHITE_GUMMY_WORKBENCH.get(),
-            CCBlocks.WHITE_GUMMY_WORM_BLOCK.get()
-        );
-        colors.register((stack, tintIndex) -> 0x80e22b,
-            CCBlocks.GREEN_GUMMY_BLOCK.get(),
-            CCBlocks.GREEN_HARDENED_GUMMY_BLOCK.get(),
-            CCBlocks.GREEN_GUMMY_WORKBENCH.get(),
-            CCBlocks.GREEN_GUMMY_WORM_BLOCK.get()
-        );
+//        colors.register((stack, tintIndex) -> 0xff4530,
+//            CCBlocks.RED_GUMMY_BLOCK.get(),
+//            CCBlocks.RED_HARDENED_GUMMY_BLOCK.get(),
+//            CCBlocks.RED_GUMMY_WORKBENCH.get(),
+//            CCBlocks.RED_GUMMY_WORM_BLOCK.get()
+//        );
+//        colors.register((stack, tintIndex) -> 0xff9b4f,
+//            CCBlocks.ORANGE_GUMMY_BLOCK.get(),
+//            CCBlocks.ORANGE_HARDENED_GUMMY_BLOCK.get(),
+//            CCBlocks.ORANGE_GUMMY_WORKBENCH.get(),
+//            CCBlocks.ORANGE_GUMMY_WORM_BLOCK.get()
+//        );
+//        colors.register((stack, tintIndex) -> 0xffe563,
+//            CCBlocks.YELLOW_GUMMY_BLOCK.get(),
+//            CCBlocks.YELLOW_HARDENED_GUMMY_BLOCK.get(),
+//            CCBlocks.YELLOW_GUMMY_WORKBENCH.get(),
+//            CCBlocks.YELLOW_GUMMY_WORM_BLOCK.get()
+//        );
+//        colors.register((stack, tintIndex) -> 0xfffeb0,
+//            CCBlocks.WHITE_GUMMY_BLOCK.get(),
+//            CCBlocks.WHITE_HARDENED_GUMMY_BLOCK.get(),
+//            CCBlocks.WHITE_GUMMY_WORKBENCH.get(),
+//            CCBlocks.WHITE_GUMMY_WORM_BLOCK.get()
+//        );
+//        colors.register((stack, tintIndex) -> 0x80e22b,
+//            CCBlocks.GREEN_GUMMY_BLOCK.get(),
+//            CCBlocks.GREEN_HARDENED_GUMMY_BLOCK.get(),
+//            CCBlocks.GREEN_GUMMY_WORKBENCH.get(),
+//            CCBlocks.GREEN_GUMMY_WORM_BLOCK.get()
+//        );
     }
-
-    private static void registerGummyBlockColors(BlockColors colors) {
-        colors.register((state, level, pos, tintIndex) -> 0xff4530,
-            CCBlocks.RED_GUMMY_BLOCK.get(),
-            CCBlocks.RED_HARDENED_GUMMY_BLOCK.get(),
-            CCBlocks.RED_GUMMY_WORKBENCH.get(),
-            CCBlocks.RED_GUMMY_WORM_BLOCK.get()
-        );
-        colors.register((state, level, pos, tintIndex) -> 0xff9b4f,
-            CCBlocks.ORANGE_GUMMY_BLOCK.get(),
-            CCBlocks.ORANGE_HARDENED_GUMMY_BLOCK.get(),
-            CCBlocks.ORANGE_GUMMY_WORKBENCH.get(),
-            CCBlocks.ORANGE_GUMMY_WORM_BLOCK.get()
-        );
-        colors.register((state, level, pos, tintIndex) -> 0xffe563,
-            CCBlocks.YELLOW_GUMMY_BLOCK.get(),
-            CCBlocks.YELLOW_HARDENED_GUMMY_BLOCK.get(),
-            CCBlocks.YELLOW_GUMMY_WORKBENCH.get(),
-            CCBlocks.YELLOW_GUMMY_WORM_BLOCK.get()
-        );
-        colors.register((state, level, pos, tintIndex) -> 0xfffeb0,
-            CCBlocks.WHITE_GUMMY_BLOCK.get(),
-            CCBlocks.WHITE_HARDENED_GUMMY_BLOCK.get(),
-            CCBlocks.WHITE_GUMMY_WORKBENCH.get(),
-            CCBlocks.WHITE_GUMMY_WORM_BLOCK.get()
-        );
-        colors.register((state, level, pos, tintIndex) -> 0x80e22b,
-            CCBlocks.GREEN_GUMMY_BLOCK.get(),
-            CCBlocks.GREEN_HARDENED_GUMMY_BLOCK.get(),
-            CCBlocks.GREEN_GUMMY_WORKBENCH.get(),
-            CCBlocks.GREEN_GUMMY_WORM_BLOCK.get()
-        );
+//
+//    private static void registerGummyBlockColors(BlockColors colors) {
+//        colors.register((state, level, pos, tintIndex) -> 0xff4530,
+//            CCBlocks.RED_GUMMY_BLOCK.get(),
+//            CCBlocks.RED_HARDENED_GUMMY_BLOCK.get(),
+//            CCBlocks.RED_GUMMY_WORKBENCH.get(),
+//            CCBlocks.RED_GUMMY_WORM_BLOCK.get()
+//        );
+//        colors.register((state, level, pos, tintIndex) -> 0xff9b4f,
+//            CCBlocks.ORANGE_GUMMY_BLOCK.get(),
+//            CCBlocks.ORANGE_HARDENED_GUMMY_BLOCK.get(),
+//            CCBlocks.ORANGE_GUMMY_WORKBENCH.get(),
+//            CCBlocks.ORANGE_GUMMY_WORM_BLOCK.get()
+//        );
+//        colors.register((state, level, pos, tintIndex) -> 0xffe563,
+//            CCBlocks.YELLOW_GUMMY_BLOCK.get(),
+//            CCBlocks.YELLOW_HARDENED_GUMMY_BLOCK.get(),
+//            CCBlocks.YELLOW_GUMMY_WORKBENCH.get(),
+//            CCBlocks.YELLOW_GUMMY_WORM_BLOCK.get()
+//        );
+//        colors.register((state, level, pos, tintIndex) -> 0xfffeb0,
+//            CCBlocks.WHITE_GUMMY_BLOCK.get(),
+//            CCBlocks.WHITE_HARDENED_GUMMY_BLOCK.get(),
+//            CCBlocks.WHITE_GUMMY_WORKBENCH.get(),
+//            CCBlocks.WHITE_GUMMY_WORM_BLOCK.get()
+//        );
+//        colors.register((state, level, pos, tintIndex) -> 0x80e22b,
+//            CCBlocks.GREEN_GUMMY_BLOCK.get(),
+//            CCBlocks.GREEN_HARDENED_GUMMY_BLOCK.get(),
+//            CCBlocks.GREEN_GUMMY_WORKBENCH.get(),
+//            CCBlocks.GREEN_GUMMY_WORM_BLOCK.get()
+//        );
     }
 
     @SubscribeEvent

@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/lily_pad",
+  "textures": {
+    "particle": "candycraftce:block/marshmallow_slice_flower",
+    "texture": "candycraftce:block/marshmallow_slice_flower"
+  }
+}

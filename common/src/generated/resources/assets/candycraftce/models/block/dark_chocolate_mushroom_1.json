@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cross",
+  "textures": {
+    "cross": "candycraftce:block/dark_chocolate_mushroom_1"
+  }
+}

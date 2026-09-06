@@ -1,0 +1,48 @@
+﻿{
+  "parent": "block/block",
+  "textures": {
+    "particle": "candycraftce:block/gummy_worm_block_side",
+    "side": "candycraftce:block/gummy_worm_block_side",
+    "top": "candycraftce:block/gummy_block_solid"
+  },
+  "elements": [
+    {
+      "from": [0, 0, 0],
+      "to": [16, 16, 16],
+      "faces": {
+        "down": {
+          "texture": "#top",
+          "tintindex": 0,
+          "cullface": "down"
+        },
+        "up": {
+          "texture": "#top",
+          "tintindex": 0,
+          "cullface": "up"
+        },
+        "north": {
+          "texture": "#side",
+          "tintindex": 0,
+          "cullface": "north"
+        },
+        "south": {
+          "texture": "#side",
+          "tintindex": 0,
+          "cullface": "south"
+        },
+        "west": {
+          "texture": "#side",
+          "tintindex": 0,
+          "cullface": "west"
+        },
+        "east": {
+          "texture": "#side",
+          "tintindex": 0,
+          "cullface": "east"
+        }
+      }
+    }
+  ]
+}
+
+

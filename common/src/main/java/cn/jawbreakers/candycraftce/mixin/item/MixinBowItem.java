@@ -1,6 +1,6 @@
 package cn.jawbreakers.candycraftce.mixin.item;
 
-import cn.jawbreakers.candycraftce.mixin_stub.BowItemAddition;
+import cn.jawbreakers.candycraftce.mixin_stub.IBowItemAddition;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.BowItem;
 import org.jetbrains.annotations.NotNull;
@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 @Mixin(BowItem.class)
-public abstract class MixinBowItem implements BowItemAddition {
+public abstract class MixinBowItem implements IBowItemAddition {
 
 
 	@SuppressWarnings("ModifyVariableMayUseName")

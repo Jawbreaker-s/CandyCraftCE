@@ -6,6 +6,7 @@ import cn.jawbreakers.candycraftce.utils.CUtils.key
 import cn.jawbreakers.candycraftce.utils.IEntrySet
 import cn.jawbreakers.candycraftce.utils.registry.Entry
 import net.minecraft.data.PackOutput
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.Item
 import net.minecraftforge.client.model.generators.ItemModelProvider
 import net.minecraftforge.common.data.ExistingFileHelper
@@ -13,6 +14,7 @@ import net.minecraftforge.common.data.ExistingFileHelper
 class CItemModelProvider(output: PackOutput, efHelper: ExistingFileHelper) :
     ItemModelProvider(output, CandyCraftCE.MOD_ID, efHelper) {
 
+    @Suppress("UNCHECKED_CAST")
     override fun registerModels() {
         CItems.apply {
             listOf(
@@ -135,7 +137,12 @@ class CItemModelProvider(output: PackOutput, efHelper: ExistingFileHelper) :
                 pez_armors,
                 water_mask,
                 jelly_crown,
-                jelly_boots
+                jelly_boots,
+                white_chocolate_leaf,
+                magical_leaf,
+                chocolate_leaf,
+                caramel_leaf,
+                candied_cherry_leaf,
             ).forEach {
                 when (it) {
                     is Entry<*> -> basicItem(it.get() as Item)
@@ -155,19 +162,31 @@ class CItemModelProvider(output: PackOutput, efHelper: ExistingFileHelper) :
                 cotton_candy_tools,
                 jump_wand,
                 jelly_wand,
+                fork
             ).forEach {
                 when (it) {
-                    is Entry<*> -> handheld(it.get() as Item)
-                    is IEntrySet<*> -> it.entries().forEach { entry -> handheld(entry.get() as Item) }
+                    is Entry<*> -> handheld(it as Entry<Item>)
+                    is IEntrySet<*> -> it.entries().forEach { entry -> handheld(entry as Entry<Item>) }
                     else -> throw IllegalStateException("Unsupported type: $it")
                 }
             }
         }
     }
 
-    fun handheld(item: Item) {
-        val key = item.key
-        withExistingParent(key.toString(), "item/handheld")
-            .texture("layer0", key.withPrefix("item/"))
+    companion object {
+        private fun Entry<out Item>.getTextureLocation(suffix: String = ""): ResourceLocation {
+            return if (suffix.isEmpty()) get().key.withPrefix("item/")
+            else get().key.withPrefix("item/$suffix/")
+        }
+
+        fun ItemModelProvider.generated(item: Entry<out Item>, texture: ResourceLocation = item.getTextureLocation()) {
+            withExistingParent(item.id.toString(), "item/generated")
+                .texture("layer0", texture)
+        }
+
+        fun ItemModelProvider.handheld(item: Entry<out Item>, texture: ResourceLocation = item.getTextureLocation()) {
+            withExistingParent(item.id.toString(), "item/handheld")
+                .texture("layer0", texture)
+        }
     }
 }

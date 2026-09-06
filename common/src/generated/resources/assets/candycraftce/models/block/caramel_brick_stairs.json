@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/stairs",
+  "textures": {
+    "bottom": "candycraftce:block/caramel_brick",
+    "side": "candycraftce:block/caramel_brick",
+    "top": "candycraftce:block/caramel_brick"
+  }
+}

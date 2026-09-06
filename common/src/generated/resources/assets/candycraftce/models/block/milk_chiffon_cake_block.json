@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "bottom": "candycraftce:block/milk_brownie_block",
+    "side": "candycraftce:block/milk_chiffon_cake_block_side",
+    "top": "candycraftce:block/milk_chiffon_cake_block_top"
+  }
+}

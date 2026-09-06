@@ -1,8 +1,0 @@
-{
-  "variants": {
-    "metadata=0": { "model": "candycraftmod:block/mint" },
-    "metadata=1": { "model": "candycraftmod:block/mint" },
-    "metadata=2": { "model": "candycraftmod:block/mint" },
-    "metadata=3": { "model": "candycraftmod:block/mint" }
-  }
-}

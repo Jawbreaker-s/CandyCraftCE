@@ -1,0 +1,12 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "candycraftce:block/white_chocolate_mushroom_0"
+      },
+      {
+        "model": "candycraftce:block/white_chocolate_mushroom_1"
+      }
+    ]
+  }
+}

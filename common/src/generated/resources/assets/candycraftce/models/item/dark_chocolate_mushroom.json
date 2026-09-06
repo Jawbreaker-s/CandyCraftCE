@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "candycraftce:block/dark_chocolate_mushroom_0"
+  }
+}
