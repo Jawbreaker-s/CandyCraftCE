@@ -1,10 +1,15 @@
 package cn.jawbreakers.candycraftce.forge
 
 import cn.jawbreakers.candycraftce.CandyCraftCE
+import cn.jawbreakers.candycraftce.fluid.CFluidProperties
 import cn.jawbreakers.candycraftce.forge.ForgeEntry.Companion.asEntry
+import cn.jawbreakers.candycraftce.forge.fluid.ForgeLiquidBlock
+import cn.jawbreakers.candycraftce.forge.fluid.asForge
+import cn.jawbreakers.candycraftce.forge.fluid.candyFluidTypes
 import cn.jawbreakers.candycraftce.utils.CLogUtils.clog
 import cn.jawbreakers.candycraftce.utils.CLogUtils.logRegister
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils.ifClient
+import cn.jawbreakers.candycraftce.utils.PlatformFluid
 import cn.jawbreakers.candycraftce.utils.PlatformInstance
 import cn.jawbreakers.candycraftce.utils.registry.Accessor
 import cn.jawbreakers.candycraftce.utils.registry.Entry
@@ -18,14 +23,20 @@ import net.minecraft.client.renderer.ItemBlockRenderTypes
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.item.BucketItem
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.Item
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityType
+import net.minecraft.world.level.block.state.BlockBehaviour
+import net.minecraft.world.level.material.FlowingFluid
+import net.minecraft.world.level.material.Fluid
 import net.minecraftforge.client.event.RegisterColorHandlersEvent
 import net.minecraftforge.client.event.RegisterDimensionSpecialEffectsEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
+import net.minecraftforge.fluids.FluidType
+import net.minecraftforge.fluids.ForgeFlowingFluid
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
 import net.minecraftforge.fml.loading.FMLLoader
@@ -37,14 +48,18 @@ import java.util.function.Consumer
 import java.util.function.Supplier
 
 @Mod(CandyCraftCE.MOD_ID)
-class CandyCraftCEForge : PlatformInstance {
+class CandyCraftCEForge : PlatformInstance, PlatformFluid {
     override val isDev by lazy { !FMLLoader.isProduction(); }
+
     override val isClient by lazy { FMLLoader.getDist().isClient }
+    override val fluids: PlatformFluid get() = this
 
     val items: DeferredRegister<Item> = create(ForgeRegistries.ITEMS, CandyCraftCE.MOD_ID)
     val blocks: DeferredRegister<Block> = create(ForgeRegistries.BLOCKS, CandyCraftCE.MOD_ID)
     val be: DeferredRegister<BlockEntityType<*>> = create(ForgeRegistries.BLOCK_ENTITY_TYPES, CandyCraftCE.MOD_ID)
     val tabs: DeferredRegister<CreativeModeTab> = create(Registries.CREATIVE_MODE_TAB, CandyCraftCE.MOD_ID)
+    val fluid: DeferredRegister<Fluid> = create(ForgeRegistries.FLUIDS, CandyCraftCE.MOD_ID)
+    val fluidType: DeferredRegister<FluidType> = create(ForgeRegistries.Keys.FLUID_TYPES, CandyCraftCE.MOD_ID)
 
 
     //=================================
@@ -54,6 +69,11 @@ class CandyCraftCEForge : PlatformInstance {
         lateUsage!!.forEach { it.run() }
         lateUsage = null
     }
+
+    override fun createBucketItem(
+        entry: Entry<out FlowingFluid>,
+        properties: Item.Properties,
+    ): BucketItem = BucketItem(entry, properties)
 
     override fun <T> whenInitialized(action: () -> T): Accessor<T> {
         val accessor = LateInitAccessor<T>()
@@ -79,6 +99,17 @@ class CandyCraftCEForge : PlatformInstance {
         builder: Supplier<BlockEntityType.Builder<E>>,
         dsl: Type<*>?,
     ): Entry<BlockEntityType<E>> = register(be, key, { builder.get().build(dsl) })
+
+    override fun <E : Fluid> registerFluids(
+        name: String,
+        properties: CFluidProperties,
+        factory: Supplier<E>,
+    ): Entry<E> {
+        candyFluidTypes.computeIfAbsent(properties.type) {
+            register(fluidType, name, it::asForge)
+        }
+        return register(fluid, name, factory)
+    }
 
     override fun registerCreativeTab(
         name: String,
@@ -135,13 +166,25 @@ class CandyCraftCEForge : PlatformInstance {
         itemColors[color] = items.toList()
     }
 
+    //===========================PLATFORM FLUID=========================
+
+    override fun createSource(properties: CFluidProperties) = ForgeFlowingFluid.Source(properties.asForge())
+
+    override fun createFlowing(properties: CFluidProperties) = ForgeFlowingFluid.Flowing(properties.asForge())
+
+    override fun createLiquidBlock(
+        fluid: Entry<out FlowingFluid>,
+        properties: BlockBehaviour.Properties,
+        overrides: PlatformFluid.LiquidOverrides?,
+    ) = ForgeLiquidBlock(fluid, properties, overrides)
+
     //=================================
     init {
         clog.info("on Forge Initializing...")
+
+        //Registers
         listOf(
-            items,
-            tabs,
-            blocks
+            items, tabs, blocks, fluid, fluidType
         ).forEach { it.register(MOD_BUS) }
 
         MOD_BUS.apply {

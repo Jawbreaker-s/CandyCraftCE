@@ -2,6 +2,7 @@ package cn.jawbreakers.candycraftce.utils
 
 import cn.jawbreakers.candycraftce.utils.LinearGradient.Companion.rgb
 import net.minecraft.world.phys.Vec3
+import org.joml.Vector3f
 import java.awt.Color
 import java.util.*
 
@@ -28,6 +29,12 @@ class LinearGradient(vararg colors: LinearGradientColor) {
                 Color(Integer.decode(this))
             }
         val Color.normal get() = Vec3(red / 255.0, green / 255.0, blue / 255.0)
+        val Int.vecColor: Vector3f
+            get() = Vector3f(
+                ((this shr 16) and 0xFF) / 255.0f,
+                ((this shr 8) and 0xFF) / 255.0f,
+                (this and 0xFF) / 255.0f
+            )
         val Vec3.rgb get() = Color((x * 255).toInt(), (y * 255).toInt(), (z * 255).toInt())
     }
 

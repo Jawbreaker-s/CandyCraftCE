@@ -430,6 +430,11 @@ class CI18nProvider(output: PackOutput) : DataProvider {
             addBlock(rope_licorice, "Rope Licorice", "绳状盐甘草糖")
             addBlock(mint, "Mint", "水生薄荷")
             addBlock(banana_seaweed, "Banana Seaweed", "香蕉海草")
+            //Fluid
+            addBlock(caramel, "Caramel", "焦糖")
+            addBlock(grenadine, "Grenadine", "番石榴糖浆")
+            addBlock(liquid_chocolate, "Liquid Chocolate", "液体巧克力")
+            addBlock(liquid_candy, "Liquid Candy", "液体糖浆")
         }
 
         add(JumpWandItem.TOOLTIP_WAND_USED, "Uses: %s/%s", "剩余次数：%s/%s")

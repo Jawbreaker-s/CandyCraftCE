@@ -28,6 +28,7 @@ object CandyCraftCE {
         CLogUtils.markSignBegin()
         measureTime {
             CTabs
+            CFluids
             CBlocks
             CBlockEntities
             CItems
