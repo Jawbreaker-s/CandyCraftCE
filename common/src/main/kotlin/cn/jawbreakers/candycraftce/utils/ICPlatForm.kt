@@ -1,7 +1,8 @@
 package cn.jawbreakers.candycraftce.utils
 
 import cn.jawbreakers.candycraftce.CandyCraftCE
-import cn.jawbreakers.candycraftce.fluid.CFluidProperties
+import cn.jawbreakers.candycraftce.fluid.CFluidPresets
+import cn.jawbreakers.candycraftce.fluid.CFluidReferences
 import cn.jawbreakers.candycraftce.registry.CBlocks.asItemEntry
 import cn.jawbreakers.candycraftce.utils.registry.Accessor
 import cn.jawbreakers.candycraftce.utils.registry.Entry
@@ -10,25 +11,17 @@ import net.minecraft.client.color.block.BlockColor
 import net.minecraft.client.color.item.ItemColor
 import net.minecraft.client.renderer.DimensionSpecialEffects
 import net.minecraft.client.renderer.RenderType
-import net.minecraft.core.BlockPos
 import net.minecraft.resources.ResourceLocation
-import net.minecraft.world.entity.Entity
 import net.minecraft.world.item.BucketItem
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.Item
-import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
-import net.minecraft.world.level.block.LiquidBlock
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityType
-import net.minecraft.world.level.block.state.BlockBehaviour
-import net.minecraft.world.level.block.state.BlockState
-import net.minecraft.world.level.material.FlowingFluid
-import net.minecraft.world.level.material.Fluid
 import java.util.function.Consumer
 import java.util.function.Supplier
 
-object CPlatformUtils : PlatformInstance by CandyCraftCE.platform {
+object CPlatformUtils : ICPlatForm by CandyCraftCE.platform {
     inline fun <R> ifClient(action: () -> R): R? = if (isClient) action() else null
 
     inline fun <R> ifDev(action: () -> R): R? = if (isDev) action() else null
@@ -45,11 +38,11 @@ object CPlatformUtils : PlatformInstance by CandyCraftCE.platform {
     }
 }
 
-interface PlatformInstance {
+interface ICPlatForm {
 
     val isDev: Boolean
     val isClient: Boolean
-    val fluids: PlatformFluid
+    val fluids: ICPlatformFluids
 
     //当所有对象注册完毕后
     fun <T> whenInitialized(action: () -> T): Accessor<T>
@@ -60,8 +53,6 @@ interface PlatformInstance {
         builder: Supplier<BlockEntityType.Builder<E>>,
         dsl: Type<*>?,
     ): Entry<BlockEntityType<E>>
-
-    fun <E : Fluid> registerFluids(name: String, properties: CFluidProperties, factory: Supplier<E>): Entry<E>
 
     //    fun <E> Registry<in E>.register(name: String, factory: Supplier<E>): Entry<E>
     fun registerDimensionSpecialEffects(id: ResourceLocation, effects: DimensionSpecialEffects)
@@ -75,41 +66,12 @@ interface PlatformInstance {
 
 }
 
-interface PlatformFluid {
-    fun createSource(properties: CFluidProperties): FlowingFluid
-    fun createFlowing(properties: CFluidProperties): FlowingFluid
-    fun createLiquidBlock(
-        fluid: Entry<out FlowingFluid>,
-        properties: BlockBehaviour.Properties,
-        overrides: LiquidOverrides? = null,
-    ): LiquidBlock
+interface ICPlatformFluids {
+    fun createBucketItem(ref: CFluidReferences, properties: Item.Properties): BucketItem
+    fun registerGrenadine(presets: CFluidPresets): CFluidReferences
+    fun registerCaramel(presets: CFluidPresets): CFluidReferences
+    fun registerLiquidChocolate(presets: CFluidPresets): CFluidReferences
+    fun registerLiquidCandy(presets: CFluidPresets): CFluidReferences
 
-    fun createBucketItem(entry: Entry<out FlowingFluid>, properties: Item.Properties): BucketItem
-
-    interface LiquidOverrides {
-
-        /**
-         * @return 返回true阻断super调用
-         * */
-        fun onPlace(state: BlockState, level: Level, pos: BlockPos, oldState: BlockState, moving: Boolean): Boolean =
-            false
-
-        /**
-         * @return 返回true阻断super调用
-         * */
-        fun neighborChanged(
-            state: BlockState,
-            level: Level,
-            pos: BlockPos,
-            block: Block,
-            fromPos: BlockPos,
-            moving: Boolean,
-        ): Boolean = false
-
-        /**
-         * @return 返回true阻断super调用
-         * */
-        fun entityInside(state: BlockState, level: Level, pos: BlockPos, entity: Entity): Boolean = false
-    }
 }
 

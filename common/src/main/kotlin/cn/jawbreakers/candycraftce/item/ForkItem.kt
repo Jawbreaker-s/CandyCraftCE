@@ -299,7 +299,7 @@ class ForkItem(
 //        private const val THROW_CHARGE_TICKS = 10
 //        private const val HELD_BLOCK_DURABILITY_COST = 3
 //        const val EAT_ANIMATION_TICKS: Int = 12
-//        val FORK_EDIBLE: net.minecraft.tags.TagKey<net.minecraft.world.level.block.Block?> =
+//        val FORK_EDIBLE: net.minecraft.tags.TagKey<net.minecraft.world.level.block.CBlockTags?> =
 //            net.minecraft.tags.BlockTags.create(
 //                net.minecraft.resources.ResourceLocation(
 //                    CandyCraft.MODID,
@@ -328,7 +328,7 @@ class ForkItem(
 //                return net.minecraft.world.level.block.Blocks.AIR.defaultBlockState()
 //            }
 //            return net.minecraft.core.registries.BuiltInRegistries.BLOCK.getOptional(id)
-//                .map<net.minecraft.world.level.block.state.BlockState>(java.util.function.Function { obj: net.minecraft.world.level.block.Block? -> obj!!.defaultBlockState() })
+//                .map<net.minecraft.world.level.block.state.BlockState>(java.util.function.Function { obj: net.minecraft.world.level.block.CBlockTags? -> obj!!.defaultBlockState() })
 //                .orElse(net.minecraft.world.level.block.Blocks.AIR.defaultBlockState())
 //        }
 //
@@ -669,7 +669,7 @@ class ForkItem(
 //            if (state.isAir) {
 //                return
 //            }
-//            level.levelEvent(2001, pos, net.minecraft.world.level.block.Block.getId(state))
+//            level.levelEvent(2001, pos, net.minecraft.world.level.block.CBlockTags.getId(state))
 //            level.gameEvent(player, net.minecraft.world.level.gameevent.GameEvent.BLOCK_DESTROY, pos)
 //        }
 //

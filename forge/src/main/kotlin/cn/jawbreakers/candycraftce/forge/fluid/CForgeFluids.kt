@@ -1,136 +1,116 @@
 package cn.jawbreakers.candycraftce.forge.fluid
 
-import cn.jawbreakers.candycraftce.fluid.CFluidProperties
-import cn.jawbreakers.candycraftce.fluid.CFluidType
-import cn.jawbreakers.candycraftce.utils.CPlatformUtils.ifClient
+import cn.jawbreakers.candycraftce.fluid.CFluidPresets
+import cn.jawbreakers.candycraftce.fluid.CFluidReferences
+import cn.jawbreakers.candycraftce.forge.CandyCraftCEForge
+import cn.jawbreakers.candycraftce.forge.ForgeEntry.Companion.asEntry
+import cn.jawbreakers.candycraftce.forge.fluid.FluidTypeWithClient.Companion.lavaLike
+import cn.jawbreakers.candycraftce.forge.fluid.FluidTypeWithClient.Companion.waterLike
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils.whenInitialized
+import cn.jawbreakers.candycraftce.utils.ICPlatformFluids
 import cn.jawbreakers.candycraftce.utils.registry.Entry
-import com.mojang.blaze3d.shaders.FogShape
-import net.minecraft.client.Camera
-import net.minecraft.client.Minecraft
-import net.minecraft.client.multiplayer.ClientLevel
-import net.minecraft.client.renderer.FogRenderer
+import cn.jawbreakers.candycraftce.utils.registry.LateInitAccessor
 import net.minecraft.client.renderer.ItemBlockRenderTypes
 import net.minecraft.client.renderer.RenderType
-import net.minecraft.resources.ResourceLocation
-import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions
+import net.minecraft.world.item.BucketItem
+import net.minecraft.world.item.Item
+import net.minecraft.world.level.block.LiquidBlock
+import net.minecraft.world.level.block.SoundType
+import net.minecraft.world.level.block.state.BlockBehaviour
+import net.minecraft.world.level.material.FlowingFluid
+import net.minecraft.world.level.material.MapColor
+import net.minecraft.world.level.material.PushReaction
 import net.minecraftforge.fluids.FluidType
 import net.minecraftforge.fluids.ForgeFlowingFluid
-import org.joml.Vector3f
-import java.util.function.Consumer
+import net.minecraftforge.registries.RegistryObject
 
-val candyFluidTypes = mutableMapOf<CFluidType, Entry<out FluidType>>()
-val propertiesCache = mutableMapOf<CFluidProperties, ForgeFlowingFluid.Properties>()
+object CForgeFluids : ICPlatformFluids {
+    private val fluid = CandyCraftCEForge.instance.fluid
+    private val fluidType = CandyCraftCEForge.instance.fluidType
+    private val blocks = CandyCraftCEForge.instance.blocks
 
-fun CFluidProperties.asForge(): ForgeFlowingFluid.Properties {
-    return propertiesCache.computeIfAbsent(this) {
-        ifClient {
-            whenInitialized {
-                if (type.isTransparent) {
-                    ItemBlockRenderTypes.setRenderLayer(source().get(), RenderType.translucent())
-                    ItemBlockRenderTypes.setRenderLayer(flowing().get(), RenderType.translucent())
-                }
-            }
-        }
-        ForgeFlowingFluid.Properties(
-            type::asForge,
-            { source().get() },
-            { flowing().get() })
-            .apply {
-                if (bucket != null) bucket(bucket!!())
-                block(block())
-                slopeFindDistance(slopeFindDistance)
-                levelDecreasePerBlock(levelDecreasePerBlock)
-                explosionResistance(explosionResistance)
-                tickRate(tickRate)
-            }
+    private fun registerFluid(
+        type: RegistryObject<out FluidType>,
+        presets: CFluidPresets,
+        properties: BlockBehaviour.Properties = liquid(presets.mapColor),
+    ): CFluidReferences {
+        var source by LateInitAccessor<Entry<out FlowingFluid>>()
+        var flowing by LateInitAccessor<Entry<out FlowingFluid>>()
+        var block by LateInitAccessor<Entry<out LiquidBlock>>()
+        val fluidProperties = ForgeFlowingFluid.Properties(
+            type, { source.get() }, { flowing.get() }
+        ).block { block.get() }
+            .tickRate(presets.tickRate)
+            .bucket { presets.references.getBucket() }
+        source = fluid.register("${presets.name}_source") {
+            OverridedForgeFluid.Source(presets, fluidProperties)
+        }.asEntry()
+        flowing = fluid.register("${presets.name}_flowing") {
+            OverridedForgeFluid.Flowing(presets, fluidProperties)
+        }.asEntry()
+        block = blocks.register(presets.name) {
+            CForgeLiquidBlock(source, presets, properties)
+        }.asEntry()
+        return CFluidReferences(presets, source, flowing, block).also(::extraSettings)
     }
-}
 
-val fluidTypeCache = mutableMapOf<CFluidType, FluidType>()
-fun CFluidType.asForge(): FluidType {
-    return fluidTypeCache.computeIfAbsent(this) {
-        object : FluidType(
-            Properties.create()
-                .apply {
-                    canSwim(canSwim)
-                    lightLevel(lightLevel)
-                    density(density)
-                    temperature(temperature)
-                    viscosity(viscosity)
-                    rarity(rarity)
-                    motionScale(motionScale)
-                    canSwim(canSwim)
-                    canPushEntity(canPushEntity)
-                    canDrown(canDrown)
-                }
-        ) {
-            override fun initializeClient(consumer: Consumer<IClientFluidTypeExtensions>) {
-                consumer.accept(object : IClientFluidTypeExtensions {
-                    override fun getTintColor(): Int = this@asForge.tintColor
-                    override fun getFlowingTexture(): ResourceLocation? = this@asForge.flowingTexture
-                    override fun getStillTexture(): ResourceLocation? = this@asForge.stillTexture
-
-                    val renderOverlay by lazy { this@asForge.renderOverlayTexture?.withPath { "textures/$it.png" } }
-                    override fun getRenderOverlayTexture(mc: Minecraft): ResourceLocation? = renderOverlay
-                    override fun getOverlayTexture(): ResourceLocation? = this@asForge.overlayTexture
-
-                    override fun modifyFogColor(
-                        camera: Camera,
-                        partialTick: Float,
-                        level: ClientLevel,
-                        renderDistance: Int,
-                        darkenWorldAmount: Float,
-                        fluidFogColor: Vector3f,
-                    ): Vector3f {
-                        return this@asForge.modifyFogColor(
-                            camera,
-                            partialTick,
-                            level,
-                            renderDistance,
-                            darkenWorldAmount,
-                            fluidFogColor
-                        )
-                            ?: super.modifyFogColor(
-                                camera,
-                                partialTick,
-                                level,
-                                renderDistance,
-                                darkenWorldAmount,
-                                fluidFogColor
-                            )
-                    }
-
-                    override fun modifyFogRender(
-                        camera: Camera,
-                        mode: FogRenderer.FogMode,
-                        renderDistance: Float,
-                        partialTick: Float,
-                        nearDistance: Float,
-                        farDistance: Float,
-                        shape: FogShape,
-                    ) {
-                        fogRenderType?.modifyFogRender(
-                            camera,
-                            mode,
-                            renderDistance,
-                            partialTick,
-                            nearDistance,
-                            farDistance,
-                            shape
-                        )
-                            ?: super.modifyFogRender(
-                                camera,
-                                mode,
-                                renderDistance,
-                                partialTick,
-                                nearDistance,
-                                farDistance,
-                                shape
-                            )
-                    }
-                })
+    private fun extraSettings(ref: CFluidReferences) {
+        whenInitialized {
+            if (ref.presets.isTransparent) {
+                ItemBlockRenderTypes.setRenderLayer(ref.source.get(), RenderType.translucent())
+                ItemBlockRenderTypes.setRenderLayer(ref.flowing.get(), RenderType.translucent())
             }
         }
     }
+
+    fun liquid(mapColor: MapColor, light: Int = 0, randomTicks: Boolean = false): BlockBehaviour.Properties =
+        BlockBehaviour.Properties.of()
+            .replaceable()
+            .noCollission()
+            .strength(100.0F)
+            .pushReaction(PushReaction.DESTROY)
+            .noLootTable()
+            .liquid()
+            .sound(SoundType.EMPTY)
+            .lightLevel { light }
+            .mapColor(mapColor)
+            .apply { if (randomTicks) randomTicks() }
+
+
+    override fun createBucketItem(
+        ref: CFluidReferences,
+        properties: Item.Properties,
+    ): BucketItem {
+        return BucketItem(ref.source, properties)
+    }
+
+    override fun registerGrenadine(presets: CFluidPresets): CFluidReferences {
+        val type = fluidType.register(presets.name) {
+            waterLike(presets)
+        }
+        return registerFluid(type, presets)
+    }
+
+    override fun registerCaramel(presets: CFluidPresets): CFluidReferences {
+        val type = fluidType.register(presets.name) {
+            waterLike(presets)
+        }
+        return registerFluid(type, presets)
+    }
+
+    override fun registerLiquidChocolate(presets: CFluidPresets): CFluidReferences {
+        val type = fluidType.register(presets.name) {
+            lavaLike(presets)
+        }
+        return registerFluid(type, presets)
+    }
+
+    override fun registerLiquidCandy(presets: CFluidPresets): CFluidReferences {
+        val type = fluidType.register(presets.name) {
+            lavaLike(presets)
+        }
+        return registerFluid(type, presets)
+    }
 }
+
+

@@ -1,6 +1,7 @@
 package cn.jawbreakers.candycraftce.fabric.mixin.fluid;
 
-import cn.jawbreakers.candycraftce.fabric.fluid.CFlowingFluid;
+import cn.jawbreakers.candycraftce.fabric.fluid.CFabricFluids;
+import cn.jawbreakers.candycraftce.fluid.CFluidReferences;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Minecraft;
@@ -10,6 +11,7 @@ import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.ScreenEffectRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.FluidState;
 import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
@@ -28,13 +30,16 @@ public abstract class MixinScreenEffectRenderer {
 		if (!player.isSpectator()) {
 			double d = player.getEyeY() - 0.11111111;
 			BlockPos blockPos = BlockPos.containing(player.getX(), d, player.getZ());
-			if (player.level().getFluidState(player.blockPosition()).getType() instanceof CFlowingFluid cff) {
-				FluidState fluidState = player.level().getFluidState(blockPos);
-				double e = (float) blockPos.getY() + fluidState.getHeight(player.level(), blockPos);
-				if (e > d) {
-					ResourceLocation tex = cff.getProperties().getType().getRenderOverlayTexture();
-					if (tex != null) {
-						candycraftce$renderFluid(minecraft, poseStack, tex);
+			if (player.level().getFluidState(blockPos).getType() instanceof FlowingFluid ff) {
+				CFluidReferences references = CFabricFluids.INSTANCE.getFluids().get(ff);
+				if (references != null) {
+					ResourceLocation overlay = references.getPresets().getUnderwaterTexture();
+					if (overlay != null) {
+						FluidState fluidState = player.level().getFluidState(blockPos);
+						double e = (float) blockPos.getY() + fluidState.getHeight(player.level(), blockPos);
+						if (e > d) {
+							candycraftce$renderFluid(minecraft, poseStack, overlay);
+						}
 					}
 				}
 			}

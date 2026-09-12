@@ -6,7 +6,7 @@ import cn.jawbreakers.candycraftce.utils.CLogUtils
 import cn.jawbreakers.candycraftce.utils.CLogUtils.clog
 import cn.jawbreakers.candycraftce.utils.CLogUtils.mainLog
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils.ifClient
-import cn.jawbreakers.candycraftce.utils.PlatformInstance
+import cn.jawbreakers.candycraftce.utils.ICPlatForm
 import kotlin.time.measureTime
 
 object CandyCraftCE {
@@ -17,12 +17,12 @@ object CandyCraftCE {
         CLogUtils.sign()
     }
 
-    lateinit var platform: PlatformInstance
+    lateinit var platform: ICPlatForm
         private set
 
 
     @Suppress("UnusedExpression")
-    fun init(platform: PlatformInstance, postWorks: () -> Unit = {}) {
+    fun init(platform: ICPlatForm, postWorks: () -> Unit = {}) {
         this.platform = platform
         mainLog.info("Initializing $MOD_NAME...")
         CLogUtils.markSignBegin()

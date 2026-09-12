@@ -6,6 +6,10 @@ plugins {
 val modId: String by project
 val jetOption = rootProject.ext["jetOption"] as Boolean
 
+repositories {
+    maven { url = uri("https://maven.shedaniel.me/") }
+    maven { url = uri("https://maven.terraformersmc.com/releases/") }
+}
 dependencies {
     minecraft(libs.minecraft)
     mappings(loom.layered {
@@ -16,7 +20,14 @@ dependencies {
     modImplementation(libs.fabricApi)
 
     modImplementation(libs.flk)
+
+    modImplementation("libs:ReservoirAPI:1.0-beta3")
+
+    modImplementation(libs.fabricClothConfig) {
+        exclude(group = "net.fabricmc.fabric-api", module = "fabric-api")
+    }
 }
+
 sourceSets {
     main {
         resources.srcDir(project(":common").file("src/generated/resources"))

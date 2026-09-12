@@ -1,4 +1,4 @@
-// 1.20.1	2026-09-03T23:26:03.088473	Block States: candycraftce
+// 1.20.1	2026-09-12T23:24:15.2324373	Block States: candycraftce
 d6339345092ee98af98acc0b082601cbb56b9cb9 assets/candycraftce/blockstates/acid_mint_flower.json
 8eacd04c80ba5cbdfad3fdce6780329c12a5c6d7 assets/candycraftce/blockstates/banana_block.json
 7b19341f2c7e1516c5982f5b26c6bd7edc4d46a2 assets/candycraftce/blockstates/banana_ice_cream.json
@@ -90,6 +90,7 @@ fe74d9f858be1a77e8e4c3192954408156c4fa20 assets/candycraftce/blockstates/dark_ma
 ef8aa0dcba99106eb5e49b6627c8e2dfa6960065 assets/candycraftce/blockstates/dark_marshmallow_trapdoor.json
 224ec93e6f36f3e986cd0faa476339050f44505d assets/candycraftce/blockstates/dark_marshmallow_wall_sign.json
 b8bd4c498c589b39109dfb4f556410de95736dab assets/candycraftce/blockstates/enchant_candy_leaves.json
+bce5a891ad719008c11c35e70035cdfe782f9ac3 assets/candycraftce/blockstates/fragile_grenadine_ice.json
 3c7f4b9270e2812c78205f0353463ecf604a6add assets/candycraftce/blockstates/fraise_tagada_flower.json
 c48ba036996081ba619e01d2ea1d96ac9fc9d237 assets/candycraftce/blockstates/green_gummy_block.json
 c9db86aee46b86327df022db2a9c879c7a81e7d4 assets/candycraftce/blockstates/green_hardened_gummy_block.json

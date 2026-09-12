@@ -20,7 +20,11 @@ abstract class Entry<T>(val id: ResourceLocation) : Supplier<T> {
 
 }
 
-class EntryWrapper<T>(id: ResourceLocation, override val value: T) : Entry<T>(id)
+class EntryWrapper<T>(id: ResourceLocation, override val value: T) : Entry<T>(id) {
+    companion object {
+        fun <T> T.wrapAsEntry(id: ResourceLocation) = EntryWrapper(id, this)
+    }
+}
 
 class LazyEntry<T>(id: ResourceLocation, factory: () -> T) : Entry<T>(id) {
     override val value: T by lazy(factory)

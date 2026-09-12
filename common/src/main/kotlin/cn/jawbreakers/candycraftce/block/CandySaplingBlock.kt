@@ -1,6 +1,6 @@
 package cn.jawbreakers.candycraftce.block
 
-import cn.jawbreakers.candycraftce.registry.CTagKeys
+import cn.jawbreakers.candycraftce.registry.CBlockTags
 import net.minecraft.core.BlockPos
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.util.RandomSource
@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.state.BlockState
 class CandySaplingBlock(treeGrower: AbstractTreeGrower?, properties: Properties) : SaplingBlock(treeGrower, properties),
     ISugarTarget {
     override fun mayPlaceOn(state: BlockState, level: BlockGetter, pos: BlockPos): Boolean {
-        return state.`is`(CTagKeys.Block.candy_soil)
+        return state.`is`(CBlockTags.candy_soil)
     }
 
     override fun isValidSugarTarget(level: LevelReader, pos: BlockPos, state: BlockState, isClient: Boolean) = true

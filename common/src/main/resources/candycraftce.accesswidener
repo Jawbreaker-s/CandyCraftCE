@@ -1,2 +1,5 @@
 accessWidener v2 named
 accessible class net/minecraft/client/renderer/FogRenderer$FogData
+accessible field net/minecraft/world/level/block/LiquidBlock fluid Lnet/minecraft/world/level/material/FlowingFluid;
+accessible method net/minecraft/world/level/block/LiquidBlock shouldSpreadLiquid (Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)Z
+extendable method net/minecraft/world/level/block/LiquidBlock shouldSpreadLiquid (Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)Z

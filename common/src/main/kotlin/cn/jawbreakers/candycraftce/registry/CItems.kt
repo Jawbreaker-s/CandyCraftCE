@@ -1,5 +1,6 @@
 package cn.jawbreakers.candycraftce.registry
 
+import cn.jawbreakers.candycraftce.fluid.CFluidReferences
 import cn.jawbreakers.candycraftce.item.*
 import cn.jawbreakers.candycraftce.registry.CTabs.addItem
 import cn.jawbreakers.candycraftce.registry.CTabs.blocks
@@ -18,7 +19,6 @@ import net.minecraft.world.item.*
 import net.minecraft.world.item.Item.Properties
 import net.minecraft.world.level.ItemLike
 import net.minecraft.world.level.block.Block
-import net.minecraft.world.level.material.FlowingFluid
 import java.util.function.Supplier
 
 object CItems {
@@ -63,15 +63,10 @@ object CItems {
     val white_green_candy_cane = registerFood("white_green_candy_cane", 4, 0.6F)
     val red_green_candy_cane = registerFood("red_green_candy_cane", 4, 0.6F)
 
-    //TODO FLUID
-    //public static final RegistryObject<Item> CARAMEL_BUCKET = registerPortItem("caramel_bucket", () -> new BucketItem(CCFluids.SOURCE_CARAMEL, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1)));
-    //	public static final RegistryObject<Item> GRENADINE_BUCKET = registerPortItem("grenadine_bucket", () -> new BucketItem(CCFluids.SOURCE_GRENADINE, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1)));
-    //public static final RegistryObject<Item> LIQUID_CHOCOLATE_BUCKET = registerSweetscapeSimple("liquid_chocolate_bucket", () -> new BucketItem(CCFluids.SOURCE_LIQUID_CHOCOLATE, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1)));
-    //	public static final RegistryObject<Item> LIQUID_CANDY_BUCKET = registerSweetscapeSimple("liquid_candy_bucket", () -> new BucketItem(CCFluids.SOURCE_LIQUID_CANDY, new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1)));
-    val caramel_bucket = registerBucketItem("caramel_bucket", CFluids.source_caramel)
-    val grenadine_bucket = registerBucketItem("grenadine_bucket", CFluids.source_grenadine)
-    val liquid_chocolate_bucket = registerBucketItem("liquid_chocolate_bucket", CFluids.source_liquid_chocolate)
-    val liquid_candy_bucket = registerBucketItem("liquid_candy_bucket", CFluids.source_liquid_candy)
+    val caramel_bucket = registerBucketItem("caramel_bucket", CFluids.caramel)
+    val grenadine_bucket = registerBucketItem("grenadine_bucket", CFluids.grenadine)
+    val liquid_chocolate_bucket = registerBucketItem("liquid_chocolate_bucket", CFluids.liquid_chocolate)
+    val liquid_candy_bucket = registerBucketItem("liquid_candy_bucket", CFluids.liquid_candy)
 
     val white_hard_candy = registerFood("white_hard_candy", 2, 0.6F)
     val red_hard_candy = registerFood("red_hard_candy", 2, 0.6F)
@@ -149,11 +144,11 @@ object CItems {
         register("mint_jelly")//, () ->new PlaceableJellyFoodItem(CCBlocks.MINT_JELLY_FOOD.get(), foodProperties(7, 0.4F)));
 
     val caramel_jelly =
-        register("caramel_jelly")//, () ->new StrawberryJellyItem(CCBlocks.CARAMEL_JELLY_BLOCK.get(), new Item.Properties()));
+        register("caramel_jelly")//, () ->new StrawberryJellyItem(CCBlocks.CARAMEL_JELLY_BLOCK.get(), new CItemTags.Properties()));
     val strawberry_jelly =
-        register("strawberry_jelly")//, () ->new StrawberryJellyItem(CCBlocks.STRAWBERRY_JELLY_BLOCK.get(), new Item.Properties()));
+        register("strawberry_jelly")//, () ->new StrawberryJellyItem(CCBlocks.STRAWBERRY_JELLY_BLOCK.get(), new CItemTags.Properties()));
     val royal_rations =
-        register("royal_rations")//, () ->new StrawberryJellyItem(CCBlocks.ROYAL_RATIONS_BLOCK.get(), new Item.Properties()));
+        register("royal_rations")//, () ->new StrawberryJellyItem(CCBlocks.ROYAL_RATIONS_BLOCK.get(), new CItemTags.Properties()));
 
     val caramel_jelly_slice = registerFood("caramel_jelly_slice", 12, 0.6F)
     val strawberry_jelly_slice = registerFood("strawberry_jelly_slice", 12, 0.6F)
@@ -287,10 +282,10 @@ object CItems {
 
     private fun registerBucketItem(
         name: String,
-        entry: Entry<out FlowingFluid>,
+        fluid: CFluidReferences,
         properties: Properties = Properties().craftRemainder(Items.BUCKET).stacksTo(1),
     ): Entry<BucketItem> = register(name) {
-        CPlatformUtils.fluids.createBucketItem(entry, properties)
+        CPlatformUtils.fluids.createBucketItem(fluid, properties)
     }
 
     private fun registerFood(name: String, nutrition: Int, saturation: Float) =

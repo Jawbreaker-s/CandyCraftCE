@@ -128,6 +128,7 @@ class CBlockStateProvider(output: PackOutput, val efHelper: ExistingFileHelper) 
                 axisBlock(it.get(), model, model)
                 simpleExistedItem(it.get())
             }
+            simpleBlock(fragile_grenadine_ice.get(), existModelFile(grenadine_ice.get()))
             //chiffon_cake
             listOf(
                 dark_chiffon_cake_block to dark_brownie_block,

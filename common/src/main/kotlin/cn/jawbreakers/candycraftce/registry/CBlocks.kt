@@ -1,11 +1,14 @@
 package cn.jawbreakers.candycraftce.registry
 
 import cn.jawbreakers.candycraftce.block.*
-import cn.jawbreakers.candycraftce.utils.*
+import cn.jawbreakers.candycraftce.utils.CLogUtils
+import cn.jawbreakers.candycraftce.utils.CMixins
+import cn.jawbreakers.candycraftce.utils.CPlatformUtils
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils.ifClient
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils.setRenderLayer
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils.whenInitialized
 import cn.jawbreakers.candycraftce.utils.CUtils.never
+import cn.jawbreakers.candycraftce.utils.IEntrySet
 import cn.jawbreakers.candycraftce.utils.registry.Entry
 import cn.jawbreakers.candycraftce.utils.registry.LazyEntry
 import net.minecraft.client.renderer.RenderType
@@ -16,7 +19,6 @@ import net.minecraft.world.level.block.state.BlockBehaviour.Properties
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.BlockSetType
 import net.minecraft.world.level.block.state.properties.WoodType
-import net.minecraft.world.level.material.FlowingFluid
 import net.minecraft.world.level.material.MapColor
 import net.minecraft.world.level.material.PushReaction
 import java.util.function.Supplier
@@ -537,6 +539,9 @@ object CBlocks {
     }.transparent()
     val grenadine_ice = register("grenadine_ice") { IceBlock(properties(Blocks.ICE).mapColor(MapColor.COLOR_RED)) }
         .transparent()
+    val fragile_grenadine_ice = register("fragile_grenadine_ice") {
+        FragileGrenadineIce(properties(Blocks.ICE).mapColor(MapColor.COLOR_RED))
+    }.transparent().noSimpleItem()
     val banana_block = register("banana_block", hay(MapColor.COLOR_YELLOW))
     val chewing_gum_block = register("chewing_gum_block", jelly(MapColor.COLOR_PINK))
     val mint_block = register("mint_block", hay(MapColor.COLOR_LIGHT_GREEN))
@@ -673,19 +678,10 @@ object CBlocks {
     val rope_licorice = register("rope_licorice") { SeaweedBlock(true, plant(MapColor.TERRACOTTA_RED)) }
     val mint = register("mint") { SeaweedBlock(false, plant(MapColor.COLOR_GREEN)) }
     val banana_seaweed = register("banana_seaweed") { SeaweedBlock(false, plant(MapColor.COLOR_YELLOW)) }
-
-    val grenadine = registerLiquid(CFluids.source_grenadine, liquid(MapColor.COLOR_RED))
-        .noSimpleItem()
-        .transparent()
-    val caramel = registerLiquid(CFluids.source_caramel, liquid(MapColor.COLOR_ORANGE))
-        .noSimpleItem()
-        .transparent()
-    val liquid_chocolate = registerLiquid(CFluids.source_liquid_chocolate, liquid(MapColor.COLOR_BROWN))
-        .noSimpleItem()
-        .transparent()
-    val liquid_candy = registerLiquid(CFluids.source_liquid_candy, liquid(MapColor.COLOR_PINK))
-        .noSimpleItem()
-        .transparent()
+    val caramel = CFluids.caramel.block
+    val grenadine = CFluids.grenadine.block
+    val liquid_chocolate = CFluids.liquid_chocolate.block
+    val liquid_candy = CFluids.liquid_candy.block
     //======================
 
     init {
@@ -730,13 +726,6 @@ object CBlocks {
         blocks[name] = block
         return block
     }
-
-    private fun registerLiquid(
-//        name: String,
-        fluid: Entry<out FlowingFluid>,
-        properties: Properties,
-        overrides: PlatformFluid.LiquidOverrides? = null,
-    ) = register(fluid.id.path) { CPlatformUtils.fluids.createLiquidBlock(fluid, properties, overrides) }
 
     /**
      * Register a block family.
@@ -828,7 +817,7 @@ object CBlocks {
 
     //=================================
     fun Entry<out ItemLike>.asItemEntry() =
-        LazyEntry(id) { get().asItem() ?: throw RuntimeException("Item not found for $id") }
+        LazyEntry(id) { get().asItem() ?: throw RuntimeException("CItemTags not found for $id") }
 
     fun Entry<out Block>.defaultBlockState(): BlockState = get().defaultBlockState()
 

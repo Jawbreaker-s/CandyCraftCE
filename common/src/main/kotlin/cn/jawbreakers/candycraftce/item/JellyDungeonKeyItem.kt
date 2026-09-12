@@ -77,7 +77,7 @@ class JellyDungeonKeyItem(
 //        if (!level.setBlock(
 //                pos,
 //                DungeonTeleporterBlock.state(kind, PortalRole.ENTRY),
-//                net.minecraft.world.level.block.Block.UPDATE_ALL
+//                net.minecraft.world.level.block.CBlockTags.UPDATE_ALL
 //            )
 //        ) {
 //            return net.minecraft.world.InteractionResult.FAIL
