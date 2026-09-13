@@ -4,6 +4,7 @@ import cn.jawbreakers.candycraftce.CandyCraftCE.MOD_NAME
 import net.minecraft.resources.ResourceLocation
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * Created by NiceCat on 2026/5/1.
@@ -15,7 +16,7 @@ object CLogUtils {
 
     val walker: StackWalker = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE)
 
-    private val logCache = mutableMapOf<String, Logger>()
+    private val logCache = ConcurrentHashMap<String, Logger>()
     val mainLog = modLogger("Core")
     private val registerLog = modLogger("Registry")
     val debugLog = modLogger("Debug")

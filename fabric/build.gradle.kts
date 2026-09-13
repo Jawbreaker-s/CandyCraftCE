@@ -22,6 +22,7 @@ dependencies {
     modImplementation(libs.flk)
 
     modImplementation("libs:ReservoirAPI:1.0-beta3")
+    modRuntimeOnly("libs:BetterTags-1.20.1-Fabric:1.3")
 
     modImplementation(libs.fabricClothConfig) {
         exclude(group = "net.fabricmc.fabric-api", module = "fabric-api")

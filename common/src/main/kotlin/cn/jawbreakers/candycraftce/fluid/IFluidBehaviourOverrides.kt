@@ -14,6 +14,7 @@ import net.minecraft.world.level.material.FluidState
 interface IFluidBehaviourOverrides {
     companion object {
         fun fizz(level: LevelAccessor, pos: BlockPos) = level.levelEvent(LevelEvent.LAVA_FIZZ, pos, 0)
+        val ALL_DIRECTIONS = Direction.entries
     }
 
     /**

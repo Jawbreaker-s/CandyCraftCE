@@ -2,7 +2,12 @@
   "type": "candycraftce:candyland_type",
   "generator": {
     "type": "candycraftce:candyland",
+    "settings": "candycraftce:candyland_noise_settings",
     "source": {
+      "delegate": {
+        "type": "minecraft:multi_noise",
+        "preset": "minecraft:overworld"
+      },
       "biomes": [
         "candycraftce:caramel_forest",
         "candycraftce:chocolate_forest",

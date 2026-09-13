@@ -21,14 +21,14 @@ class CFluidTagsProvider(
 ) {
     override fun addTags(provider: HolderLookup.Provider) {
         CFluidTags.apply {
-            tag(grenadine).add(CFluids.grenadine)
-            tag(caramel).add(CFluids.caramel)
-            tag(liquid_chocolate).add(CFluids.liquid_chocolate)
-            tag(liquid_candy).add(CFluids.liquid_candy)
+            tag(grenadine).addSet(CFluids.grenadine)
+            tag(caramel).addSet(CFluids.caramel)
+            tag(liquid_chocolate).addSet(CFluids.liquid_chocolate)
+            tag(liquid_candy).addSet(CFluids.liquid_candy)
         }
     }
 }
 
-fun <T : Any> IntrinsicHolderTagsProvider.IntrinsicTagAppender<T>.add(set: IEntrySet<out T>) {
+fun <T : Any> IntrinsicHolderTagsProvider.IntrinsicTagAppender<T>.addSet(set: IEntrySet<out T>) {
     set.forEach { add(it.get()) }
 }

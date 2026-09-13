@@ -231,7 +231,7 @@ class CI18nProvider(output: PackOutput) : DataProvider {
         CBlocks.apply {
             addBlock(custard_pudding_block, "Custard Pudding", "奶皮布丁块")
             addBlock(strawberry_filled_pudding, "Strawberry Filled Custard Pudding", "夹心草莓奶皮布丁块")
-            addBlock(pudding_block, "Strawberry Filled Pudding", "布丁块")
+            addBlock(pudding_block, "Pudding Block", "布丁块")
             addBlock(pudding_farmland, "Pudding Farmland", "布丁耕地")
             addBlock(sugar_sand, "Sugar Sand", "糖砂")
             addBlock(sugar_block, "Sugar CBlockTags", "糖块")

@@ -2,12 +2,17 @@ package cn.jawbreakers.candycraftce.forge
 
 import cn.jawbreakers.candycraftce.CandyCraftCE
 import cn.jawbreakers.candycraftce.forge.ForgeEntry.Companion.asEntry
+import cn.jawbreakers.candycraftce.forge.data.CandyCraftCEData
 import cn.jawbreakers.candycraftce.forge.fluid.CForgeFluids
+import cn.jawbreakers.candycraftce.forge.levels.CForgeLevels
+import cn.jawbreakers.candycraftce.forge.levels.CForgeLevels.onRegisterDimensionSpecialEffects
 import cn.jawbreakers.candycraftce.utils.CLogUtils.clog
 import cn.jawbreakers.candycraftce.utils.CLogUtils.logRegister
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils.ifClient
 import cn.jawbreakers.candycraftce.utils.ICPlatForm
+import cn.jawbreakers.candycraftce.utils.ICPlatformDatagen
 import cn.jawbreakers.candycraftce.utils.ICPlatformFluids
+import cn.jawbreakers.candycraftce.utils.ICPlatformLevels
 import cn.jawbreakers.candycraftce.utils.registry.Accessor
 import cn.jawbreakers.candycraftce.utils.registry.Entry
 import cn.jawbreakers.candycraftce.utils.registry.LateInitAccessor
@@ -15,11 +20,9 @@ import com.mojang.datafixers.types.Type
 import kotlinx.coroutines.Runnable
 import net.minecraft.client.color.block.BlockColor
 import net.minecraft.client.color.item.ItemColor
-import net.minecraft.client.renderer.DimensionSpecialEffects
 import net.minecraft.client.renderer.ItemBlockRenderTypes
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.core.registries.Registries
-import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.Item
 import net.minecraft.world.level.block.Block
@@ -27,8 +30,7 @@ import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.material.Fluid
 import net.minecraftforge.client.event.RegisterColorHandlersEvent
-import net.minecraftforge.client.event.RegisterDimensionSpecialEffectsEvent
-import net.minecraftforge.eventbus.api.SubscribeEvent
+import net.minecraftforge.data.loading.DatagenModLoader
 import net.minecraftforge.fluids.FluidType
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
@@ -55,6 +57,8 @@ class CandyCraftCEForge : ICPlatForm {
 
     override val isClient by lazy { FMLLoader.getDist().isClient }
     override val fluids: ICPlatformFluids get() = CForgeFluids
+    override val levels: ICPlatformLevels get() = CForgeLevels
+    override val datagen: ICPlatformDatagen? get() = if (DatagenModLoader.isRunningDataGen()) CandyCraftCEData else null
 
     val items: DeferredRegister<Item> = create(ForgeRegistries.ITEMS, CandyCraftCE.MOD_ID)
     val blocks: DeferredRegister<Block> = create(ForgeRegistries.BLOCKS, CandyCraftCE.MOD_ID)
@@ -79,7 +83,7 @@ class CandyCraftCEForge : ICPlatForm {
     }
     //=================================
 
-    private fun <E> register(register: DeferredRegister<in E>, name: String, factory: Supplier<E>): Entry<E> {
+    inline fun <E> register(register: DeferredRegister<in E>, name: String, factory: Supplier<E>): Entry<E> {
         return register.register(name, factory)
             .also { logRegister(register.registryName.path, it.id) }
             .asEntry()
@@ -115,17 +119,6 @@ class CandyCraftCEForge : ICPlatForm {
         }
     }
 
-    //=================================
-    val specialEffects: MutableMap<ResourceLocation, DimensionSpecialEffects> = mutableMapOf()
-
-    @SubscribeEvent
-    fun onRegisterDimensionSpecialEffects(event: RegisterDimensionSpecialEffectsEvent) {
-        specialEffects.forEach(event::register)
-    }
-
-    override fun registerDimensionSpecialEffects(id: ResourceLocation, effects: DimensionSpecialEffects) {
-        specialEffects[id] = effects
-    }
 
     //=================================
     private val blockColors: MutableMap<BlockColor, List<Entry<out Block>>> = mutableMapOf()

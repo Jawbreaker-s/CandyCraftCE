@@ -21,16 +21,10 @@ import rc55.mc.rfapi.fluid.FluidRegistry
 import rc55.mc.rfapi.fluid.FluidSettings
 import rc55.mc.rfapi.fluid.FluidSettings.ColorSettings.FogType.LAVA
 
-private inline fun registerSimple(
+private fun registerSimple(
     presets: CFluidPresets,
     settings: FluidSettings.Builder,
-    noinline blockFactory: FlowingFluid.(BlockBehaviour.Properties) -> LiquidBlock = {
-        CFabricLiquidBlock(
-            this,
-            presets,
-            it
-        )
-    },
+    blockFactory: FlowingFluid.(BlockBehaviour.Properties) -> LiquidBlock = { CFabricLiquidBlock(this, presets, it) },
 ): FluidReference<OverridedExtendedFluid> {
     val id = presets.name.modLoc()
     return FluidRegistry.register(

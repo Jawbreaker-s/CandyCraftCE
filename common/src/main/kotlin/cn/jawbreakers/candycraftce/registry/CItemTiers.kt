@@ -12,22 +12,14 @@ enum class CItemTiers(
     repairIngredientFactory: () -> Ingredient,
 ) : Tier {
     MARSHMALLOW(1, 131, 4.0f, 1.0f, 8, {
-        Ingredient.of()//() -> Ingredient.of(CCBlocks.MARSHMALLOW_PLANKS.get()));
+        Ingredient.of(CBlockTags.marshmallow_planks.item)
     }),
     COTTON_CANDY(1, 5, 15.0f, 5.0f, 65, {
         Ingredient.of(CItems.raspberry_cotton_candy.value)
     }),
-    CHOCOLATE(
-        2, 750, 7.0f, 2.5f, 25, {
-            Ingredient.of()
-            //todo
-//            Ingredient.of(
-//                BuiltInRegistries.ITEM.get(ResourceLocation(CandyCraft.MODID, "milk_chocolate_bar")),
-//                BuiltInRegistries.ITEM.get(ResourceLocation(CandyCraft.MODID, "white_chocolate_bar")),
-//                BuiltInRegistries.ITEM.get(ResourceLocation(CandyCraft.MODID, "dark_chocolate_bar")),
-//                BuiltInRegistries.ITEM.get(ResourceLocation(CandyCraft.MODID, "ruby_chocolate_bar"))
-//            )
-        }),
+    CHOCOLATE(2, 750, 7.0f, 2.5f, 25, {
+        Ingredient.of(CItemTags.chocolate_bar)
+    }),
     LICORICE(2, 250, 6.0f, 2.0f, 12, {
         Ingredient.of(CItems.licorice.value)
     }),

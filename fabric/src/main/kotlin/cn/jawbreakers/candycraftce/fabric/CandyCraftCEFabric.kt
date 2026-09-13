@@ -2,13 +2,16 @@ package cn.jawbreakers.candycraftce.fabric
 
 import cn.jawbreakers.candycraftce.CandyCraftCE
 import cn.jawbreakers.candycraftce.fabric.fluid.CFabricFluids
+import cn.jawbreakers.candycraftce.fabric.level.CFabricLevels
 import cn.jawbreakers.candycraftce.utils.CLogUtils.clog
 import cn.jawbreakers.candycraftce.utils.CLogUtils.logRegister
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils.ifClient
 import cn.jawbreakers.candycraftce.utils.CUtils.modLoc
 import cn.jawbreakers.candycraftce.utils.CUtils.register
 import cn.jawbreakers.candycraftce.utils.ICPlatForm
+import cn.jawbreakers.candycraftce.utils.ICPlatformDatagen
 import cn.jawbreakers.candycraftce.utils.ICPlatformFluids
+import cn.jawbreakers.candycraftce.utils.ICPlatformLevels
 import cn.jawbreakers.candycraftce.utils.registry.Accessor
 import cn.jawbreakers.candycraftce.utils.registry.Entry
 import cn.jawbreakers.candycraftce.utils.registry.LateInitAccessor
@@ -18,11 +21,9 @@ import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup
-import net.fabricmc.fabric.impl.client.rendering.DimensionRenderingRegistryImpl
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.client.color.block.BlockColor
 import net.minecraft.client.color.item.ItemColor
-import net.minecraft.client.renderer.DimensionSpecialEffects
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.resources.ResourceLocation
@@ -47,10 +48,12 @@ class CandyCraftCEFabric : ModInitializer, ICPlatForm {
 
     private var lateInits: MutableList<Runnable>? = mutableListOf()
     private var lateUsage: MutableList<Runnable>? = mutableListOf()
-
     override val isDev by lazy { FabricLoader.getInstance().isDevelopmentEnvironment }
+
     override val isClient by lazy { FabricLoader.getInstance().environmentType == EnvType.CLIENT }
     override val fluids: ICPlatformFluids get() = CFabricFluids
+    override val levels: ICPlatformLevels get() = CFabricLevels
+    override val datagen: ICPlatformDatagen? = null
 
     override fun <T> whenInitialized(action: () -> T): Accessor<T> {
         val accessor = LateInitAccessor<T>()
@@ -86,7 +89,7 @@ class CandyCraftCEFabric : ModInitializer, ICPlatForm {
     }
 
     //=================================
-    private inline fun <E> register(
+    internal inline fun <E> register(
         registerTag: String,
         name: String,
         crossinline factory: () -> E,
@@ -105,13 +108,13 @@ class CandyCraftCEFabric : ModInitializer, ICPlatForm {
     }
 
     override fun <E : Item> registerItem(name: String, factory: Supplier<E>): Entry<E> =
-        register("CItemTags", name, factory::get) { id, it ->
+        register("CItem", name, factory::get) { id, it ->
             Items.registerItem(id, it)
         }
 
 
     override fun <E : Block> registerBlock(name: String, factory: Supplier<E>): Entry<E> =
-        register("CBlockTags", name, factory::get) { id, it ->
+        register("CBlock", name, factory::get) { id, it ->
             BuiltInRegistries.BLOCK.register(id, it)
         }
 
@@ -124,11 +127,6 @@ class CandyCraftCEFabric : ModInitializer, ICPlatForm {
         register("BlockEntity", key, { builder.get().build(dsl) }) { id, it ->
             BuiltInRegistries.BLOCK_ENTITY_TYPE.register(id, it)
         }
-
-
-    @Suppress("UnstableApiUsage")
-    override fun registerDimensionSpecialEffects(id: ResourceLocation, effects: DimensionSpecialEffects) =
-        DimensionRenderingRegistryImpl.registerDimensionEffects(id, effects)
 
     override fun registerCreativeTab(name: String, builder: Consumer<CreativeModeTab.Builder>): Entry<CreativeModeTab> =
         register("CreativeModeTab", name, {

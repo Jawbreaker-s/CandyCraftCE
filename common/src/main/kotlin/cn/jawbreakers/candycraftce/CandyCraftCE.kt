@@ -3,7 +3,6 @@ package cn.jawbreakers.candycraftce
 import cn.jawbreakers.candycraftce.misc.PuddingColor
 import cn.jawbreakers.candycraftce.registry.*
 import cn.jawbreakers.candycraftce.utils.CLogUtils
-import cn.jawbreakers.candycraftce.utils.CLogUtils.clog
 import cn.jawbreakers.candycraftce.utils.CLogUtils.mainLog
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils.ifClient
 import cn.jawbreakers.candycraftce.utils.ICPlatForm
@@ -34,9 +33,7 @@ object CandyCraftCE {
             CItems
             CLevels
             ifClient {
-                clog.info("Init client part")
                 PuddingColor.initColor()
-                CLevels.initClient()
             }
             postWorks()
         }.also {

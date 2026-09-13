@@ -40,8 +40,6 @@ object CUtils {
 
     fun String.mcLoc() = ResourceLocation(this)
     fun <V> ResourceLocation.get(register: Registry<V>): V? = register.get(this)
-
-    fun <V : Any> Registry<V>.createKey(id: ResourceLocation) = ResourceKey.create(this.key(), id)!!
     fun <V : Any> Registry<in V>.register(id: ResourceLocation, value: V): V = Registry.register(this, id, value)
     fun <R : Any, V : R> Registry<R>.register(id: ResourceKey<R>, value: V): V = Registry.register(this, id, value)
 

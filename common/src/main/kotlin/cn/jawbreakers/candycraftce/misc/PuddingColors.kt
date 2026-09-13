@@ -1,5 +1,20 @@
 package cn.jawbreakers.candycraftce.misc
 
+import cn.jawbreakers.candycraftce.registry.CBiomes.caramel_forest
+import cn.jawbreakers.candycraftce.registry.CBiomes.chocolate_forest
+import cn.jawbreakers.candycraftce.registry.CBiomes.cotton_candy_plains
+import cn.jawbreakers.candycraftce.registry.CBiomes.gummy_swamp
+import cn.jawbreakers.candycraftce.registry.CBiomes.hard_candy_plains
+import cn.jawbreakers.candycraftce.registry.CBiomes.ice_cream_plains
+import cn.jawbreakers.candycraftce.registry.CBiomes.ice_cream_sky_mountains
+import cn.jawbreakers.candycraftce.registry.CBiomes.sugar_cold_forest
+import cn.jawbreakers.candycraftce.registry.CBiomes.sugar_enchanted_forest
+import cn.jawbreakers.candycraftce.registry.CBiomes.sugar_forest
+import cn.jawbreakers.candycraftce.registry.CBiomes.sugar_hell_mountains
+import cn.jawbreakers.candycraftce.registry.CBiomes.sugar_mountains
+import cn.jawbreakers.candycraftce.registry.CBiomes.sugar_oceans
+import cn.jawbreakers.candycraftce.registry.CBiomes.sugar_plains
+import cn.jawbreakers.candycraftce.registry.CBiomes.sugar_river
 import cn.jawbreakers.candycraftce.registry.CBlocks
 import cn.jawbreakers.candycraftce.registry.CBlocks.asItemEntry
 import cn.jawbreakers.candycraftce.utils.CLogUtils.clog
@@ -51,34 +66,18 @@ object PuddingColor {
     }
 
     private fun getPuddingColor(biome: Holder<Biome>, pos: Vec3): Int {
-        //return switch (biomePath) {
-        //            case "sugar_enchanted_forest" -> enchantedColor(x, z);
-        //            case "sugar_plains", "hard_candy_plains", "sugar_forest" -> 0xEEAABB;
-        //            case "sugar_mountains" -> 0xEEBBCC;
-        //            case "sugar_cold_forest" -> 0xFFDDEE;
-        //            case "ice_cream_plains", "ice_cream_sky_mountains", "sugar_hell_mountains" -> 0xFFFFFF;
-        //            case "sugar_oceans" -> 0xB35EFF;
-        //            case "caramel_forest" -> 0xB05C28;
-        //            case "cotton_candy_plains" -> 0xFFC6E4;
-        //            case "gummy_swamp" -> 0xFFFEB0;
-        //            case "chocolate_forest" -> 0xF3DFA8;
-        //            case "sugar_river", "candycraft_dungeon" -> 0xFFBBCC;
-        //            default -> 0xFFBBCC;
-        //        };
         return when (biome.unwrapKey().getOrNull()) {
-//            caramel_forest -> 11557928
-//            chocolate_forest -> 15641275
-//            enchanted_forest -> getEnchantColor(pos)
-//            ice_cream_forest -> 16768494
-//            ice_cream_plains -> 16768494
-//            pudding_plains -> 15641275
-//            sugar_beach -> 16030419
-//            deep_sugar_ocean -> 12623044
-//            sugar_ocean -> 16030419
-//            lukewarm_sugar_ocean -> 16360666
-//            warm_sugar_ocean -> 16360666
-//            sugar_river -> 16030419
-//            dungeons -> 0x808080//灰色
+            sugar_enchanted_forest -> getEnchantColor(pos)
+            sugar_plains, hard_candy_plains, sugar_forest -> 0xEEAABB
+            sugar_mountains -> 0xEEBBCC
+            sugar_cold_forest -> 0xFFDDEE
+            ice_cream_plains, ice_cream_sky_mountains, sugar_hell_mountains -> 0xFFFFFF
+            sugar_oceans -> 0xB35EFF
+            caramel_forest -> 0xB05C28
+            cotton_candy_plains -> 0xFFC6E4
+            gummy_swamp -> 0xFFFEB0
+            chocolate_forest -> 0xF3DFA8
+            sugar_river -> 0xFFBBCC
             else -> DEFAULT_PUDDING_COLOR
         }
     }
@@ -90,7 +89,7 @@ object PuddingColor {
             if (level != null && pos != null) {
                 val biome = level.getBiome(pos)
                 if (biome != null) {
-                    getPuddingColor(biome, Vec3.atCenterOf(pos))
+                    return@registerBlockColor getPuddingColor(biome, Vec3.atCenterOf(pos))
                 }
             }
             DEFAULT_PUDDING_COLOR

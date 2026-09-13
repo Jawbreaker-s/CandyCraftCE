@@ -7,10 +7,12 @@ import cn.jawbreakers.candycraftce.registry.CBlocks.asItemEntry
 import cn.jawbreakers.candycraftce.utils.registry.Accessor
 import cn.jawbreakers.candycraftce.utils.registry.Entry
 import com.mojang.datafixers.types.Type
+import com.mojang.serialization.Codec
 import net.minecraft.client.color.block.BlockColor
 import net.minecraft.client.color.item.ItemColor
 import net.minecraft.client.renderer.DimensionSpecialEffects
 import net.minecraft.client.renderer.RenderType
+import net.minecraft.core.RegistrySetBuilder
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.BucketItem
 import net.minecraft.world.item.CreativeModeTab
@@ -18,6 +20,8 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityType
+import net.minecraft.world.level.chunk.ChunkGenerator
+import net.minecraft.world.level.levelgen.structure.StructureType
 import java.util.function.Consumer
 import java.util.function.Supplier
 
@@ -43,6 +47,8 @@ interface ICPlatForm {
     val isDev: Boolean
     val isClient: Boolean
     val fluids: ICPlatformFluids
+    val levels: ICPlatformLevels
+    val datagen: ICPlatformDatagen?
 
     //当所有对象注册完毕后
     fun <T> whenInitialized(action: () -> T): Accessor<T>
@@ -55,7 +61,6 @@ interface ICPlatForm {
     ): Entry<BlockEntityType<E>>
 
     //    fun <E> Registry<in E>.register(name: String, factory: Supplier<E>): Entry<E>
-    fun registerDimensionSpecialEffects(id: ResourceLocation, effects: DimensionSpecialEffects)
 
     fun registerCreativeTab(name: String, builder: Consumer<CreativeModeTab.Builder>): Entry<CreativeModeTab>
 
@@ -75,3 +80,12 @@ interface ICPlatformFluids {
 
 }
 
+interface ICPlatformLevels {
+    fun registerDimensionSpecialEffects(id: ResourceLocation, effects: DimensionSpecialEffects)
+    fun <T : Codec<out ChunkGenerator>> registerChunkGenerator(id: ResourceLocation, codec: Supplier<T>): Entry<T>
+    fun <T : StructureType<*>> registerStructureType(id: ResourceLocation, type: T): Entry<T>
+}
+
+interface ICPlatformDatagen {
+    fun onBootstrap(action: RegistrySetBuilder.() -> Unit)
+}

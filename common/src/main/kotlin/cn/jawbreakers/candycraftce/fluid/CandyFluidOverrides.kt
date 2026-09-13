@@ -1,5 +1,6 @@
 package cn.jawbreakers.candycraftce.fluid
 
+import cn.jawbreakers.candycraftce.fluid.IFluidBehaviourOverrides.Companion.ALL_DIRECTIONS
 import cn.jawbreakers.candycraftce.registry.CBlocks
 import cn.jawbreakers.candycraftce.registry.CBlocks.defaultBlockState
 import cn.jawbreakers.candycraftce.registry.CFluidTags
@@ -70,19 +71,19 @@ object CandyFluidOverrides : IFluidBehaviourOverrides {
         val fluidState = state.fluidState
         val isSource = fluidState.isSource
         return when (ref) {
-            CFluids.caramel -> !checkNeighbour(level, pos, ::isHotLiquid) { _, _ ->
+            CFluids.caramel -> !checkNeighbour(level, pos, ::isHotLiquid, ALL_DIRECTIONS) { _, _ ->
                 if (isSource) level.setBlock(pos, CBlocks.caramel_block.defaultBlockState(), 3)
             }
 
-            CFluids.grenadine -> !checkNeighbour(level, pos, ::isHotLiquid) { _, _ ->
+            CFluids.grenadine -> !checkNeighbour(level, pos, ::isHotLiquid, ALL_DIRECTIONS) { _, _ ->
                 if (isSource) level.setBlock(pos, CBlocks.grenadine_ice.defaultBlockState(), 3)
             }
 
-            CFluids.liquid_chocolate -> !checkNeighbour(level, pos, ::isColdLiquid) { _, _ ->
+            CFluids.liquid_chocolate -> !checkNeighbour(level, pos, ::isColdLiquid, ALL_DIRECTIONS) { _, _ ->
                 if (isSource) level.setBlock(pos, CBlocks.milk_chocolate_block.defaultBlockState(), 3)
             }
 
-            CFluids.liquid_candy -> !checkNeighbour(level, pos, ::isColdLiquid) { _, _ ->
+            CFluids.liquid_candy -> !checkNeighbour(level, pos, ::isColdLiquid, ALL_DIRECTIONS) { _, _ ->
                 if (isSource) level.setBlock(pos, CBlocks.pink_crystallized_sugar.defaultBlockState(), 3)
             }
 
