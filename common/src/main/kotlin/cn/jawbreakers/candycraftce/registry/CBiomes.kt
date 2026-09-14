@@ -8,12 +8,14 @@ import net.minecraft.world.level.biome.Biome
 object CBiomes {
     val dungeon = bind("dungeon")
 
+    @Deprecated("wont generate in candyland")
+    val hard_candy_plains = bind("hard_candy_plains")
+
     //
     val caramel_forest = bind("caramel_forest")
     val chocolate_forest = bind("chocolate_forest")
     val cotton_candy_plains = bind("cotton_candy_plains")
     val gummy_swamp = bind("gummy_swamp")
-    val hard_candy_plains = bind("hard_candy_plains")
     val ice_cream_plains = bind("ice_cream_plains")
     val ice_cream_sky_mountains = bind("ice_cream_sky_mountains")
     val sugar_cold_forest = bind("sugar_cold_forest")

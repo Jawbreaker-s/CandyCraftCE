@@ -1,5 +1,6 @@
 package cn.jawbreakers.candycraftce.fluid
 
+import cn.jawbreakers.candycraftce.block.FragileGrenadineIce
 import cn.jawbreakers.candycraftce.fluid.IFluidBehaviourOverrides.Companion.ALL_DIRECTIONS
 import cn.jawbreakers.candycraftce.registry.CBlocks
 import cn.jawbreakers.candycraftce.registry.CBlocks.defaultBlockState
@@ -28,7 +29,7 @@ object CandyFluidOverrides : IFluidBehaviourOverrides {
         entity: Entity,
     ) {
         if (!level.isClientSide) {
-            if (ref == CFluids.liquid_candy || ref == CFluids.liquid_chocolate) {
+            if (ref == CFluids.liquid_candy) {
                 if (entity is LivingEntity && entity.tickCount % 10 == 0) {
                     entity.hurt(level.damageSources().hotFloor(), 2f)
                     entity.setSecondsOnFire(15)
@@ -47,15 +48,20 @@ object CandyFluidOverrides : IFluidBehaviourOverrides {
         fluidState: FluidState,
         doSpread: (LevelAccessor, BlockPos, BlockState, Direction, FluidState) -> Unit,
     ) {
-        //这两个是冷液体，会让岩浆凝固
-        if (ref == CFluids.caramel || ref == CFluids.grenadine) {
+        //冷液体，会让岩浆凝固
+        if (ref == CFluids.caramel || ref == CFluids.grenadine || ref == CFluids.liquid_chocolate) {
             checkNeighbour(level, pos, ::isVanillaLava) { np, n ->
                 level.setBlock(np, (if (n.isSource) OBSIDIAN else COBBLESTONE).defaultBlockState(), 3)
             }
         }
         if (ref == CFluids.grenadine) {
             checkNeighbour(level, pos, ::isVanillaWater) { np, n ->
-                level.setBlock(np, CBlocks.fragile_grenadine_ice.defaultBlockState(), 3)
+                level.setBlock(
+                    np,
+                    CBlocks.fragile_grenadine_ice.defaultBlockState()
+                        .setValue(FragileGrenadineIce.LEVEL, n.amount),
+                    3
+                )
             }
         }
 
@@ -79,7 +85,7 @@ object CandyFluidOverrides : IFluidBehaviourOverrides {
                 if (isSource) level.setBlock(pos, CBlocks.grenadine_ice.defaultBlockState(), 3)
             }
 
-            CFluids.liquid_chocolate -> !checkNeighbour(level, pos, ::isColdLiquid, ALL_DIRECTIONS) { _, _ ->
+            CFluids.liquid_chocolate -> !checkNeighbour(level, pos, ::isHotLiquid, ALL_DIRECTIONS) { _, _ ->
                 if (isSource) level.setBlock(pos, CBlocks.milk_chocolate_block.defaultBlockState(), 3)
             }
 

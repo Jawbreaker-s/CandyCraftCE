@@ -10,6 +10,7 @@ import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.Tag
 import net.minecraft.resources.ResourceKey
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.util.profiling.ProfilerFiller
 import net.minecraft.world.effect.MobEffect
 import net.minecraft.world.effect.MobEffectInstance
 import net.minecraft.world.item.Item
@@ -80,6 +81,15 @@ object CUtils {
             val r = block(tag)
             put(key, tag)
             return r
+        }
+    }
+
+    inline fun <T> ProfilerFiller.use(name: String, action: () -> T): T {
+        push(name)
+        return try {
+            action()
+        } finally {
+            pop()
         }
     }
 }

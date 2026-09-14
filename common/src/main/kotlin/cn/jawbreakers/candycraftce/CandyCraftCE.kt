@@ -1,6 +1,6 @@
 package cn.jawbreakers.candycraftce
 
-import cn.jawbreakers.candycraftce.misc.PuddingColor
+import cn.jawbreakers.candycraftce.client.PuddingColor
 import cn.jawbreakers.candycraftce.registry.*
 import cn.jawbreakers.candycraftce.utils.CLogUtils
 import cn.jawbreakers.candycraftce.utils.CLogUtils.mainLog

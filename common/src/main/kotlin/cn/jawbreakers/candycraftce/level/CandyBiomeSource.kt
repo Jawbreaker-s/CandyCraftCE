@@ -2,6 +2,7 @@ package cn.jawbreakers.candycraftce.level
 
 import cn.jawbreakers.candycraftce.registry.CBiomes
 import cn.jawbreakers.candycraftce.utils.CLogUtils.clog
+import cn.jawbreakers.candycraftce.utils.CPlatformUtils.ifDev
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.core.Holder
@@ -69,20 +70,24 @@ class CandyBiomeSource(
             CBiomes.sugar_cold_forest
         )
 
-        // 平原 / 沼泽 / 河流 / 海滩 / 蘑菇 / 热带草原
+        // 平原  / 海滩
         transfer(
             listOf(
                 Biomes.PLAINS,
                 Biomes.SUNFLOWER_PLAINS,
-                Biomes.SWAMP,
-                Biomes.MANGROVE_SWAMP,
-                Biomes.MUSHROOM_FIELDS,
+                Biomes.SAVANNA,
                 Biomes.BEACH,
-                Biomes.RIVER,
-                Biomes.FROZEN_RIVER,
-                Biomes.SAVANNA
             ),
             CBiomes.sugar_plains
+        )
+        // 热带草原
+        transfer(
+            listOf(
+                Biomes.SWAMP,//沼泽
+                Biomes.MANGROVE_SWAMP,
+                Biomes.MUSHROOM_FIELDS,//蘑菇
+            ),
+            CBiomes.gummy_swamp
         )
 
         // 森林
@@ -90,19 +95,24 @@ class CandyBiomeSource(
             listOf(
                 Biomes.FOREST,
                 Biomes.FLOWER_FOREST,
-                Biomes.BIRCH_FOREST,
-                Biomes.DARK_FOREST,
-                Biomes.OLD_GROWTH_BIRCH_FOREST,
-                Biomes.SPARSE_JUNGLE
             ),
             CBiomes.sugar_forest
+        )
+        transfer(
+            listOf(
+                Biomes.BIRCH_FOREST,
+                Biomes.DARK_FOREST,
+                Biomes.OLD_GROWTH_BIRCH_FOREST
+            ),
+            CBiomes.chocolate_forest
         )
 
         // 丛林
         transfer(
             listOf(
                 Biomes.JUNGLE,
-                Biomes.BAMBOO_JUNGLE
+                Biomes.BAMBOO_JUNGLE,
+                Biomes.SPARSE_JUNGLE
             ),
             CBiomes.sugar_enchanted_forest
         )
@@ -151,7 +161,14 @@ class CandyBiomeSource(
             CBiomes.ice_cream_sky_mountains
         )
 
-        // 洞穴
+        transfer(
+            listOf(
+                Biomes.RIVER,
+                Biomes.FROZEN_RIVER,
+            ),
+            CBiomes.sugar_river
+        )
+        // 其他
         transfer(
             listOf(
                 Biomes.DRIPSTONE_CAVES,
@@ -164,17 +181,26 @@ class CandyBiomeSource(
 
     val byPath = biomes.associateBy { it.unwrapKey().getOrNull() }
 
-    /** delegate 的 holder 在解码阶段只绑定了 key，检查延迟到首次使用时进行。 */
-    private val source: BiomeSource by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
-        delegate.also { source ->
-            val unknown = source.possibleBiomes()
+    init {
+        ifDev {
+            val all = delegate.possibleBiomes()
                 .mapNotNull { it.unwrapKey().getOrNull() }
+                .toList()
+            val unknown = all.stream()
                 .filter { it !in mappings }
                 .map { it.location() }
+                .toList()
+                .joinToString("\n")
+            val overuse = mappings.keys.stream()
+                .filter { !all.contains(it) }
+                .map { it.location() }
+                .toList()
                 .joinToString("\n")
             if (unknown.isNotEmpty()) clog.error("Unknown overworld biomes: \n$unknown")
+            if (unknown.isNotEmpty()) clog.warn("Overused overworld biomes: \n$overuse")
         }
     }
+
 
     override fun codec() = codec
     override fun collectPossibleBiomes(): Stream<Holder<Biome>> = biomes.stream()
@@ -188,7 +214,7 @@ class CandyBiomeSource(
 //        if (quartX % 16 == 0 || quartZ % 16 == 0) {
 //            clog.info("climate($quartX,$quartY,$quartZ) T=${p.temperature()} H=${p.humidity()} D=${p.depth()} W=${p.weirdness()} C=${p.continentalness()} E=${p.erosion()}")
 //        }
-        return source.getNoiseBiome(quartX, quartY, quartZ, sampler)
+        return delegate.getNoiseBiome(quartX, quartY, quartZ, sampler)
     }
 
     fun mapOverworldBiomes(biome: Holder<Biome>): Holder<Biome> {

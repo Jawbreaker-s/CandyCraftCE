@@ -65,13 +65,23 @@ interface ICPlatForm {
     fun registerCreativeTab(name: String, builder: Consumer<CreativeModeTab.Builder>): Entry<CreativeModeTab>
 
     //client part
+    @ClientOnly
     fun setRenderLayer(block: Entry<out Block>, layer: RenderType)
+
+    @ClientOnly
     fun registerBlockColor(vararg blocks: Entry<out Block>, color: BlockColor)
+
+    @ClientOnly
     fun registerItemColor(vararg items: Entry<out Item>, color: ItemColor)
 
 }
 
 interface ICPlatformFluids {
+    companion object {
+        const val SOURCE_SUFFIX = "_source"
+        const val FLOWING_SUFFIX = "_flowing"
+    }
+
     fun createBucketItem(ref: CFluidReferences, properties: Item.Properties): BucketItem
     fun registerGrenadine(presets: CFluidPresets): CFluidReferences
     fun registerCaramel(presets: CFluidPresets): CFluidReferences

@@ -1,9 +1,9 @@
 package cn.jawbreakers.candycraftce.utils
 
 import cn.jawbreakers.candycraftce.utils.LinearGradient.Companion.rgb
+import net.minecraft.util.FastColor
 import net.minecraft.world.phys.Vec3
 import org.joml.Vector3f
-import org.joml.Vector3fc
 import java.awt.Color
 import java.util.*
 
@@ -23,16 +23,12 @@ import java.util.*
 
 class LinearGradient(vararg colors: LinearGradientColor) {
     companion object {
-        val Int.rgb get() = Color(this)
         val String.rgb
             get() = run {
                 require(startsWith("#") || startsWith("0x")) { "Invalid color format" }
                 Color(Integer.decode(this))
             }
         val Color.normal get() = Vec3(red / 255.0, green / 255.0, blue / 255.0)
-        val Vector3fc.rgb: Int
-            get() =
-                (x() * 255).toInt() shl 16 or (y() * 255).toInt() shl 8 or (z() * 255).toInt()
         val Int.vecColor: Vector3f
             get() = Vector3f(
                 ((this shr 16) and 0xFF) / 255.0f,
@@ -40,6 +36,12 @@ class LinearGradient(vararg colors: LinearGradientColor) {
                 (this and 0xFF) / 255.0f
             )
         val Vec3.rgb get() = Color((x * 255).toInt(), (y * 255).toInt(), (z * 255).toInt())
+
+        val Int.alpha get() = FastColor.ARGB32.alpha(this)
+        val Int.red get() = FastColor.ARGB32.red(this)
+        val Int.green get() = FastColor.ARGB32.green(this)
+        val Int.blue get() = FastColor.ARGB32.blue(this)
+        fun rgb(red: Int, green: Int, blue: Int) = FastColor.ARGB32.color(0xff, red, green, blue)
     }
 
     constructor(action: GradientScope.() -> Unit) : this(*GradientScope().apply(action).get())

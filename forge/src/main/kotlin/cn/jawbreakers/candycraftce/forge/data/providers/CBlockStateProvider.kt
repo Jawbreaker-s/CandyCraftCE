@@ -351,6 +351,12 @@ class CBlockStateProvider(output: PackOutput, val efHelper: ExistingFileHelper) 
                 simpleBlockItem(it.get(), model)
             }
 
+            //fluids
+            particle(grenadine, grenadine.getBlockTexture("_static"))
+            particle(caramel, caramel.getBlockTexture("_static"))
+            particle(liquid_chocolate, liquid_chocolate.getBlockTexture("_still"))
+            particle(liquid_candy, liquid_candy.getBlockTexture("_still"))
+
         }
     }
 
@@ -433,6 +439,12 @@ class CBlockStateProvider(output: PackOutput, val efHelper: ExistingFileHelper) 
     private fun Entry<out Block>.getBlockTexture(suffix: String = ""): ResourceLocation {
         return this.id.withPrefix("block/")
             .let { if (suffix.isEmpty()) it else it.withSuffix(suffix) }
+    }
+
+    fun particle(block: Entry<out Block>, texture: ResourceLocation = block.getBlockTexture()) {
+        val model = models().getBuilder(block.id.toString())
+            .texture("particle", texture)
+        simpleBlock(block.get(), model)
     }
 
     fun existModelFile(block: Block): ExistingModelFile {

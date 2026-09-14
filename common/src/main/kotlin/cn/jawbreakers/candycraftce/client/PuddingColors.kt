@@ -1,4 +1,4 @@
-package cn.jawbreakers.candycraftce.misc
+package cn.jawbreakers.candycraftce.client
 
 import cn.jawbreakers.candycraftce.registry.CBiomes.caramel_forest
 import cn.jawbreakers.candycraftce.registry.CBiomes.chocolate_forest
@@ -21,7 +21,12 @@ import cn.jawbreakers.candycraftce.utils.CLogUtils.clog
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils.registerBlockAndItemColor
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils.registerBlockColor
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils.registerItemColor
+import cn.jawbreakers.candycraftce.utils.ClientOnly
 import cn.jawbreakers.candycraftce.utils.LinearGradient
+import cn.jawbreakers.candycraftce.utils.LinearGradient.Companion.blue
+import cn.jawbreakers.candycraftce.utils.LinearGradient.Companion.green
+import cn.jawbreakers.candycraftce.utils.LinearGradient.Companion.red
+import cn.jawbreakers.candycraftce.utils.LinearGradient.Companion.rgb
 import net.minecraft.client.Minecraft
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Holder
@@ -41,6 +46,7 @@ import kotlin.jvm.optionals.getOrNull
  * @author <a href="https://github.com/BreadNiceCat">Bread_NiceCat</a>
  *
  */
+@ClientOnly
 object PuddingColor {
     private val noise: NormalNoise = NormalNoise.create(RandomSource.create(8526L), -7, 1.0)
     private val enchant_color = LinearGradient {
@@ -52,8 +58,8 @@ object PuddingColor {
     /**
      * @return #dd99aa 粉色
      */
-    const val DEFAULT_PUDDING_COLOR = 0xdd99aa
-    const val DEFAULT_ENCHANT_COLOR = 0xb0ecff
+    const val DEFAULT_PUDDING_COLOR = 0xdda7aa//0xdd99aa
+    const val DEFAULT_ENCHANT_COLOR = 0x8f8ac8//0xb0ecff
 
     /**
      * @return #b0ecff 淡蓝色 #b0b0ff 淡紫色 #a376da 深紫色
@@ -65,9 +71,9 @@ object PuddingColor {
         return enchant_color.getColor(r.toFloat()).rgb
     }
 
-    private fun getPuddingColor(biome: Holder<Biome>, pos: Vec3): Int {
+    fun getPuddingColor(biome: Holder<Biome>, pos: BlockPos): Int {
         return when (biome.unwrapKey().getOrNull()) {
-            sugar_enchanted_forest -> getEnchantColor(pos)
+            sugar_enchanted_forest -> getEnchantColor(Vec3.atCenterOf(pos))
             sugar_plains, hard_candy_plains, sugar_forest -> 0xEEAABB
             sugar_mountains -> 0xEEBBCC
             sugar_cold_forest -> 0xFFDDEE
@@ -82,14 +88,38 @@ object PuddingColor {
         }
     }
 
+    fun getBlendedPuddingColor(reader: BlockAndTintGetter, pos: BlockPos, radius: Int): Int {
+        val mu = pos.mutable()
+        var r = 0
+        var g = 0
+        var b = 0
+        var count = 0
+        for (x in -radius..radius) {
+            mu.x = pos.x + x
+            for (z in -radius..radius) {
+                mu.z = pos.z + z
+                val biome = reader.getBiome(mu)
+                if (biome != null) {
+                    val color = getPuddingColor(biome, mu)
+                    r += color.red
+                    g += color.green
+                    b += color.blue
+                    count++
+                }
+            }
+        }
+        return if (count == 0) DEFAULT_PUDDING_COLOR else rgb(r / count, g / count, b / count)
+    }
 
+    //    val radius: Int get() = Minecraft.getInstance().options.biomeBlendRadius().get()
+    var radius = 10
     fun initColor() {
         clog.info("Initializing Dynamic Colors...")
         registerBlockColor(CBlocks.custard_pudding_block, CBlocks.strawberry_filled_pudding) { _, level, pos, _ ->
             if (level != null && pos != null) {
                 val biome = level.getBiome(pos)
                 if (biome != null) {
-                    return@registerBlockColor getPuddingColor(biome, Vec3.atCenterOf(pos))
+                    return@registerBlockColor getBlendedPuddingColor(level, pos, radius)
                 }
             }
             DEFAULT_PUDDING_COLOR
@@ -114,9 +144,8 @@ object PuddingColor {
 
 }
 
+@ClientOnly
 private fun BlockAndTintGetter.getBiome(pos: BlockPos): Holder<Biome>? {
     if (this is LevelReader) return getBiome(pos)
-
-    val minecraft = Minecraft.getInstance()
-    return if (minecraft.level != null) minecraft.level!!.getBiome(pos) else null
+    return Minecraft.getInstance().level?.getBiome(pos)
 }

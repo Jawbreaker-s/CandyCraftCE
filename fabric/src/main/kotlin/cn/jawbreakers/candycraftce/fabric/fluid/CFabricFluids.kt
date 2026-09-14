@@ -5,6 +5,8 @@ import cn.jawbreakers.candycraftce.fluid.CFluidReferences
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils
 import cn.jawbreakers.candycraftce.utils.CUtils.modLoc
 import cn.jawbreakers.candycraftce.utils.ICPlatformFluids
+import cn.jawbreakers.candycraftce.utils.ICPlatformFluids.Companion.FLOWING_SUFFIX
+import cn.jawbreakers.candycraftce.utils.ICPlatformFluids.Companion.SOURCE_SUFFIX
 import cn.jawbreakers.candycraftce.utils.registry.EntryWrapper.Companion.wrapAsEntry
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap
 import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry
@@ -28,6 +30,8 @@ private fun registerSimple(
 ): FluidReference<OverridedExtendedFluid> {
     val id = presets.name.modLoc()
     return FluidRegistry.register(
+        id.withSuffix("_$SOURCE_SUFFIX"),
+        id.withSuffix("_$FLOWING_SUFFIX"),
         id,
         OverridedExtendedFluid.ofStill(presets),
         OverridedExtendedFluid.ofFlowing(presets),

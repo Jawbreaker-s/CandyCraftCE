@@ -351,7 +351,8 @@ class CandyChunkGenerator(
     ): SurfaceMaterials {
         return when (biomeId) {
             cotton_candy_plains ->
-                SurfaceMaterials(/*TODO CBlocks.candy_grass_block.defaultBlockState()*/
+                SurfaceMaterials(
+                    /*TODO CBlocks.candy_grass_block.defaultBlockState()*/
                     Blocks.GRASS_BLOCK.defaultBlockState(),
                     CBlocks.milk_brownie_block.defaultBlockState()
                 )

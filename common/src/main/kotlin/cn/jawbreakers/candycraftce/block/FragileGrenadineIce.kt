@@ -9,6 +9,7 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
+import net.minecraft.world.level.block.LiquidBlock
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
@@ -16,11 +17,20 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty
 
 class FragileGrenadineIce(properties: Properties) : Block(properties) {
     companion object {
+        val LEVEL: IntegerProperty = LiquidBlock.LEVEL
         val AGE: IntegerProperty = BlockStateProperties.AGE_3
     }
 
     init {
-        registerDefaultState(stateDefinition.any().setValue(AGE, 0))
+        registerDefaultState(stateDefinition.any().setValue(AGE, 0).setValue(LEVEL, 0))
+    }
+
+    fun backToWater(state: BlockState, level: Level, pos: BlockPos) {
+        level.setBlock(
+            pos, Blocks.WATER.defaultBlockState()
+                .setValue(LEVEL, state.getValue(LEVEL)),
+            UPDATE_ALL
+        )
     }
 
     @Suppress("DEPRECATION")
@@ -43,7 +53,7 @@ class FragileGrenadineIce(properties: Properties) : Block(properties) {
         val age = state.getValue(AGE)
         if (age >= 3) {
             level.destroyBlockProgress(crackId(pos), pos, -1)
-            level.setBlock(pos, Blocks.WATER.defaultBlockState(), UPDATE_ALL)
+            backToWater(state, level, pos)
         } else {
             level.setBlock(pos, state.setValue(AGE, age + 1), UPDATE_CLIENTS)
             level.destroyBlockProgress(crackId(pos), pos, (age + 1) * 3)
@@ -63,12 +73,12 @@ class FragileGrenadineIce(properties: Properties) : Block(properties) {
     override fun playerWillDestroy(level: Level, pos: BlockPos, state: BlockState, player: Player) {
         super.playerWillDestroy(level, pos, state, player)
         if (!level.isClientSide) {
-            level.setBlock(pos, Blocks.WATER.defaultBlockState(), UPDATE_ALL)
+            backToWater(state, level, pos)
         }
     }
 
     override fun createBlockStateDefinition(builder: StateDefinition.Builder<Block?, BlockState?>) {
-        builder.add(AGE)
+        builder.add(AGE, LEVEL)
     }
 
     private fun hasGrenadineNearby(level: Level, pos: BlockPos): Boolean {

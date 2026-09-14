@@ -8,6 +8,8 @@ import cn.jawbreakers.candycraftce.forge.fluid.FluidTypeWithClient.Companion.lav
 import cn.jawbreakers.candycraftce.forge.fluid.FluidTypeWithClient.Companion.waterLike
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils.whenInitialized
 import cn.jawbreakers.candycraftce.utils.ICPlatformFluids
+import cn.jawbreakers.candycraftce.utils.ICPlatformFluids.Companion.FLOWING_SUFFIX
+import cn.jawbreakers.candycraftce.utils.ICPlatformFluids.Companion.SOURCE_SUFFIX
 import cn.jawbreakers.candycraftce.utils.registry.Entry
 import cn.jawbreakers.candycraftce.utils.registry.LateInitAccessor
 import net.minecraft.client.renderer.ItemBlockRenderTypes
@@ -42,10 +44,10 @@ object CForgeFluids : ICPlatformFluids {
         ).block { block.get() }
             .tickRate(presets.tickRate)
             .bucket { presets.references.getBucket() }
-        source = fluid.register("${presets.name}_source") {
+        source = fluid.register("${presets.name}_${SOURCE_SUFFIX}") {
             OverridedForgeFluid.Source(presets, fluidProperties)
         }.asEntry()
-        flowing = fluid.register("${presets.name}_flowing") {
+        flowing = fluid.register("${presets.name}_${FLOWING_SUFFIX}") {
             OverridedForgeFluid.Flowing(presets, fluidProperties)
         }.asEntry()
         block = blocks.register(presets.name) {
