@@ -1,10 +1,14 @@
 package cn.jawbreakers.candycraftce.level
 
 import cn.jawbreakers.candycraftce.registry.CBiomes
+import cn.jawbreakers.candycraftce.registry.CBiomes.chocolate_forest
+import cn.jawbreakers.candycraftce.registry.CBiomes.sugar_river
 import cn.jawbreakers.candycraftce.utils.CLogUtils.clog
-import cn.jawbreakers.candycraftce.utils.CPlatformUtils.ifDev
+import com.google.common.cache.Cache
+import com.google.common.cache.CacheBuilder
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
+import net.minecraft.core.BlockPos
 import net.minecraft.core.Holder
 import net.minecraft.resources.ResourceKey
 import net.minecraft.world.level.biome.Biome
@@ -104,7 +108,7 @@ class CandyBiomeSource(
                 Biomes.DARK_FOREST,
                 Biomes.OLD_GROWTH_BIRCH_FOREST
             ),
-            CBiomes.chocolate_forest
+            chocolate_forest
         )
 
         // 丛林
@@ -166,7 +170,7 @@ class CandyBiomeSource(
                 Biomes.RIVER,
                 Biomes.FROZEN_RIVER,
             ),
-            CBiomes.sugar_river
+            sugar_river
         )
         // 其他
         transfer(
@@ -182,23 +186,21 @@ class CandyBiomeSource(
     val byPath = biomes.associateBy { it.unwrapKey().getOrNull() }
 
     init {
-        ifDev {
-            val all = delegate.possibleBiomes()
-                .mapNotNull { it.unwrapKey().getOrNull() }
-                .toList()
-            val unknown = all.stream()
-                .filter { it !in mappings }
-                .map { it.location() }
-                .toList()
-                .joinToString("\n")
-            val overuse = mappings.keys.stream()
-                .filter { !all.contains(it) }
-                .map { it.location() }
-                .toList()
-                .joinToString("\n")
-            if (unknown.isNotEmpty()) clog.error("Unknown overworld biomes: \n$unknown")
-            if (unknown.isNotEmpty()) clog.warn("Overused overworld biomes: \n$overuse")
-        }
+        val all = delegate.possibleBiomes()
+            .mapNotNull { it.unwrapKey().getOrNull() }
+            .toList()
+        val unknown = all.stream()
+            .filter { it !in mappings }
+            .map { it.location() }
+            .toList()
+            .joinToString("\n")
+        val overuse = mappings.keys.stream()
+            .filter { !all.contains(it) }
+            .map { it.location() }
+            .toList()
+            .joinToString("\n")
+        if (unknown.isNotEmpty()) clog.error("Unknown overworld biomes: \n$unknown")
+        if (unknown.isNotEmpty()) clog.warn("Overused overworld biomes: \n$overuse")
     }
 
 
@@ -206,15 +208,52 @@ class CandyBiomeSource(
     override fun collectPossibleBiomes(): Stream<Holder<Biome>> = biomes.stream()
 
     override fun getNoiseBiome(quartX: Int, quartY: Int, quartZ: Int, sampler: Climate.Sampler): Holder<Biome> {
-        return mapOverworldBiomes(getRawNoiseBiome(quartX, quartY, quartZ, sampler))
+        val biome = mapOverworldBiomes(getRawNoiseBiome(quartX, quartY, quartZ, sampler))
+//        val key = biome.unwrapKey().getOrNull()
+//        if (key == sugar_river || key == chocolate_forest || key == cotton_candy_plains) {
+//            return biome
+//        }
+//        var chocoCnt = 0
+//        var cottonCnt = 0
+//        for (x in -1..1) {
+//            val qx = quartX + x
+//            for (z in -1..1) {
+//                val qz = quartZ + z
+//                if (x == z || x == -z) {
+//                    continue
+//                }
+//                val neiBiome = mapOverworldBiomes(getRawNoiseBiome(qx, quartY, qz, sampler)).unwrapKey().getOrNull()
+//                //四邻
+//                when (neiBiome) {
+//                    chocolate_forest -> chocoCnt++
+//                    cotton_candy_plains -> cottonCnt++
+//                }
+//            }
+//        }
+//        if (chocoCnt > 0 || cottonCnt > 0) {
+//            return byPath[sugar_river]!!
+//        }
+        return biome
     }
 
-    fun getRawNoiseBiome(quartX: Int, quartY: Int, quartZ: Int, sampler: Climate.Sampler): Holder<Biome> {
-//        val p = sampler.sample(quartX, quartY, quartZ)
-//        if (quartX % 16 == 0 || quartZ % 16 == 0) {
-//            clog.info("climate($quartX,$quartY,$quartZ) T=${p.temperature()} H=${p.humidity()} D=${p.depth()} W=${p.weirdness()} C=${p.continentalness()} E=${p.erosion()}")
-//        }
-        return delegate.getNoiseBiome(quartX, quartY, quartZ, sampler)
+    val biomeCache: Cache<Long, Holder<Biome>> = CacheBuilder.newBuilder()
+        .maximumSize(10240)
+        .weakValues()
+        .build()
+
+    fun getRawNoiseBiome(
+        quartX: Int,
+        quartY: Int,
+        quartZ: Int,
+        sampler: Climate.Sampler,
+        cached: Boolean = true,
+    ): Holder<Biome> {
+        return if (cached) {
+            val key = BlockPos.asLong(quartX, quartY, quartZ)
+            biomeCache.get(key) {
+                delegate.getNoiseBiome(quartX, quartY, quartZ, sampler)
+            }
+        } else delegate.getNoiseBiome(quartX, quartY, quartZ, sampler)
     }
 
     fun mapOverworldBiomes(biome: Holder<Biome>): Holder<Biome> {

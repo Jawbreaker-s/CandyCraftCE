@@ -224,9 +224,9 @@ class CBlockStateProvider(output: PackOutput, val efHelper: ExistingFileHelper) 
                 val tex = it.getBlockTexture()
                 val model = models().withExistingParent(it.id.path, "block/ladder")
                     .texture("texture", tex)
-                    .texture("particle", tex);
+                    .texture("particle", tex)
                 horizontalBlock(it.get(), model)
-                itemModels().generated(it.asItemEntry(), tex);
+                itemModels().generated(it.asItemEntry(), tex)
             }
             //glass
             glassFamily(

@@ -24,6 +24,8 @@ import cn.jawbreakers.candycraftce.registry.CBlocks
 import cn.jawbreakers.candycraftce.registry.CBlocks.defaultBlockState
 import cn.jawbreakers.candycraftce.registry.CFluidTags
 import cn.jawbreakers.candycraftce.utils.CUtils.modLoc
+import com.google.common.cache.Cache
+import com.google.common.cache.CacheBuilder
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.core.BlockPos
@@ -127,7 +129,7 @@ class CandyChunkGenerator(
 ) : ChunkGenerator(source) {
     companion object {
         val candyland_noise_settings: ResourceKey<NoiseGeneratorSettings> =
-            ResourceKey.create(Registries.NOISE_SETTINGS, "candyland_noise_settings".modLoc());
+            ResourceKey.create(Registries.NOISE_SETTINGS, "candyland_noise_settings".modLoc())
 
         val codec: Codec<CandyChunkGenerator> = RecordCodecBuilder.create { instance ->
             instance.group(
@@ -408,13 +410,20 @@ class CandyChunkGenerator(
 
 
     /** 生物群系形状缓存（记录每个列的基础高度和起伏）。  */
-    private val biomeShapeCache = ConcurrentHashMap<Long, BiomeShape>()
+    private val biomeShapeCache: Cache<Long, BiomeShape> = CacheBuilder.newBuilder()
+        .maximumSize(65536)
+        .build()
+
 
     /** 巧克力池塘扫描结果缓存（记录哪些水列应变为巧克力）。  */
-    private val pondChocolateCache = ConcurrentHashMap<Long, Boolean>()
+    private val pondChocolateCache: Cache<Long, Boolean> = CacheBuilder.newBuilder()
+        .maximumSize(65536)
+        .build()
 
     /** 开放水域列缓存。  */
-    private val openWaterColumnCache = ConcurrentHashMap<Long, Boolean>()
+    private val openWaterColumnCache: Cache<Long, Boolean> = CacheBuilder.newBuilder()
+        .maximumSize(65536)
+        .build()
 
     override fun getBiomeSource() = super.biomeSource as CandyBiomeSource
 
@@ -425,7 +434,7 @@ class CandyChunkGenerator(
         return CompletableFuture.supplyAsync({
             fillTerrain(chunk, randomState)
             Heightmap.primeHeightmaps(
-                chunk, setOf<Heightmap.Types?>(
+                chunk, setOf(
                     Heightmap.Types.WORLD_SURFACE_WG,
                     Heightmap.Types.OCEAN_FLOOR_WG,
                     Heightmap.Types.MOTION_BLOCKING,
@@ -522,8 +531,8 @@ class CandyChunkGenerator(
             }
         }
         // 生成底部平整层和洞穴
-        applyBedrock(chunk)
         carveCaves(chunk, randomState)
+        applyBedrock(chunk)
     }
 
     /**
@@ -1082,8 +1091,7 @@ class CandyChunkGenerator(
             var tunnelCount = 1
 
             if (random.nextInt(4) == 0) {
-//                carveCaveRoom(chunk, random, x, y, z)
-                carveTunnel(chunk, random, x, y, z, 1.0f + random.nextFloat() * 6.0f, 0.0f, 0.0f, -1, -1, 0.5)
+                carveTunnel(chunk, random.fork(), x, y, z, 1.0f + random.nextFloat() * 6.0f, 0.0f, 0.0f, -1, -1, 0.5)
                 tunnelCount += random.nextInt(4)
             }
 
@@ -1095,7 +1103,7 @@ class CandyChunkGenerator(
                     width *= random.nextFloat() * random.nextFloat() * 3.0f + 1.0f
                 }
 
-                carveTunnel(chunk, random, x, y, z, width, yaw, pitch, 0, 0, 1.0)
+                carveTunnel(chunk, random.fork(), x, y, z, width, yaw, pitch, 0, 0, 1.0)
             }
         }
     }
@@ -1150,11 +1158,11 @@ class CandyChunkGenerator(
 
             if (!room && branch == splitBranch && width > 1.0f) {
                 carveTunnel(
-                    chunk, random, x, y, z, random.nextFloat() * 0.5f + 0.5f,
+                    chunk, random.fork(), x, y, z, random.nextFloat() * 0.5f + 0.5f,
                     yaw - Mth.HALF_PI, pitch / 3.0f, branch, branchCount, 1.0
                 )
                 carveTunnel(
-                    chunk, random, x, y, z, random.nextFloat() * 0.5f + 0.5f,
+                    chunk, random.fork(), x, y, z, random.nextFloat() * 0.5f + 0.5f,
                     yaw + Mth.HALF_PI, pitch / 3.0f, branch, branchCount, 1.0
                 )
                 return
@@ -1173,7 +1181,7 @@ class CandyChunkGenerator(
                 return
             }
 
-            carveRegion(chunk, x, y, z, horizontalScale, verticalScale)
+            carveEllipsoid(chunk, x, y, z, horizontalScale, verticalScale, null)
             if (room) break
             ++branch
         }
@@ -1190,7 +1198,7 @@ class CandyChunkGenerator(
         val yaw = random.nextFloat() * Mth.PI * 2.0f
         val pitch = (random.nextFloat() - 0.5f) * 0.25f
         val width = (random.nextFloat() * 2.0f + random.nextFloat()) * 2.0f
-        carveRavine(chunk, random, x, y, z, width, yaw, pitch, 0, 0)
+        carveRavine(chunk, random.fork(), x, y, z, width, yaw, pitch, 0, 0)
     }
 
     private fun carveRavine(
@@ -1251,28 +1259,11 @@ class CandyChunkGenerator(
                 return
             }
 
-            carveRavineRegion(chunk, x, y, z, horizontalScale, verticalScale, verticalFactors)
+            carveEllipsoid(chunk, x, y, z, horizontalScale, verticalScale, verticalFactors)
             ++branch
         }
     }
 
-    private fun carveRegion(
-        chunk: ChunkAccess,
-        x: Double,
-        y: Double,
-        z: Double,
-        horizontalScale: Double,
-        verticalScale: Double,
-    ) {
-        carveEllipsoid(chunk, x, y, z, horizontalScale, verticalScale, null)
-    }
-
-    private fun carveRavineRegion(
-        chunk: ChunkAccess, x: Double, y: Double, z: Double, horizontalScale: Double,
-        verticalScale: Double, verticalFactors: FloatArray?,
-    ) {
-        carveEllipsoid(chunk, x, y, z, horizontalScale, verticalScale, verticalFactors)
-    }
 
     private fun carveEllipsoid(
         chunk: ChunkAccess, x: Double, y: Double, z: Double, horizontalScale: Double,
@@ -1391,10 +1382,10 @@ class CandyChunkGenerator(
     private fun fluidForColumn(worldX: Int, worldZ: Int, randomState: RandomState): BlockState {
         if (biomeId(worldX, worldZ, randomState) == chocolate_forest) {
             val key: Long = packColumnPos(worldX, worldZ)
-            var chocolate = pondChocolateCache[key]
+            var chocolate = pondChocolateCache.getIfPresent(key)
             if (chocolate == null) {
                 scanChocolatePond(worldX, worldZ, randomState)
-                chocolate = pondChocolateCache[key] ?: false
+                chocolate = pondChocolateCache.getIfPresent(key) ?: false
             }
             if (chocolate) return liquid_chocolate
         }
@@ -1436,47 +1427,37 @@ class CandyChunkGenerator(
             }
         }
 
-        if (pondChocolateCache.size + visited.size > 131072) {
-            pondChocolateCache.clear()
-        }
         for (packed in visited) {
-            pondChocolateCache[packed] = enclosed
+            pondChocolateCache.put(packed, enclosed)
         }
     }
 
     /** Open water means no solid terrain at the two topmost sea-level layers of this column.  */
     private fun isOpenWaterColumn(x: Int, z: Int, randomState: RandomState): Boolean {
         val key: Long = packColumnPos(x, z)
-        val cached = openWaterColumnCache[key]
-        if (cached != null) {
-            return cached
+        return openWaterColumnCache.get(key) {
+            val noise: TerrainNoiseSet = terrainNoiseSet(randomState)
+            val noiseX = x / CELL_WIDTH.toDouble()
+            val noiseZ = z / CELL_WIDTH.toDouble()
+            val heightConfig = heightConfigAt(Mth.floor(noiseX).toDouble(), Mth.floor(noiseZ).toDouble(), randomState)
+            val depthNoise: Double = sampleDepthNoise(noise, noiseX, noiseZ)
+            sampleDensity(
+                noise,
+                noiseX,
+                (SEA_LEVEL - 1) / CELL_HEIGHT.toDouble(),
+                noiseZ,
+                heightConfig,
+                depthNoise
+            ) <= 0.0
+                    && sampleDensity(
+                noise,
+                noiseX,
+                SEA_LEVEL / CELL_HEIGHT.toDouble(),
+                noiseZ,
+                heightConfig,
+                depthNoise
+            ) <= 0.0
         }
-        val noise: TerrainNoiseSet = terrainNoiseSet(randomState)
-        val noiseX = x / CELL_WIDTH.toDouble()
-        val noiseZ = z / CELL_WIDTH.toDouble()
-        val heightConfig = heightConfigAt(Mth.floor(noiseX).toDouble(), Mth.floor(noiseZ).toDouble(), randomState)
-        val depthNoise: Double = sampleDepthNoise(noise, noiseX, noiseZ)
-        val water = sampleDensity(
-            noise,
-            noiseX,
-            (SEA_LEVEL - 1) / CELL_HEIGHT.toDouble(),
-            noiseZ,
-            heightConfig,
-            depthNoise
-        ) <= 0.0
-                && sampleDensity(
-            noise,
-            noiseX,
-            SEA_LEVEL / CELL_HEIGHT.toDouble(),
-            noiseZ,
-            heightConfig,
-            depthNoise
-        ) <= 0.0
-        if (openWaterColumnCache.size >= 131072) {
-            openWaterColumnCache.clear()
-        }
-        openWaterColumnCache.putIfAbsent(key, water)
-        return water
     }
 
     private val biomeShapes: Map<ResourceKey<Biome>, BiomeShape> = mapOf(
@@ -1499,17 +1480,11 @@ class CandyChunkGenerator(
 
     private fun biomeShape(x: Int, z: Int, randomState: RandomState): BiomeShape {
         val key = x.toLong() shl 32 xor (z.toLong() and 0xFFFFFFFFL)
-        val cached = biomeShapeCache[key]
-        if (cached != null) {
-            return cached
+        return biomeShapeCache.get(key) {
+            val location = biomeId(x, z, randomState)
+            biomeShapes[location] ?: biomeShapes[sugar_plains]!!
         }
-        val location = biomeId(x, z, randomState)
-        val result = biomeShapes[location] ?: biomeShapes[sugar_plains]!!
-        if (biomeShapeCache.size >= 131072) {
-            biomeShapeCache.clear()
-        }
-        val previous = biomeShapeCache.putIfAbsent(key, result)
-        return previous ?: result
+
     }
 
     private fun biomeId(x: Int, z: Int, random: RandomState): ResourceKey<Biome> {
