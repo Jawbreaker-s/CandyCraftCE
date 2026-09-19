@@ -7,6 +7,7 @@ import cn.jawbreakers.candycraftce.registry.ItemBlockTagkey
 import net.minecraft.core.HolderLookup
 import net.minecraft.data.PackOutput
 import net.minecraft.tags.BlockTags
+import net.minecraft.world.level.block.Block
 import net.minecraftforge.common.data.BlockTagsProvider
 import net.minecraftforge.common.data.ExistingFileHelper
 import java.util.concurrent.CompletableFuture
@@ -18,6 +19,7 @@ class CBlockTagsProvider(
 ) : BlockTagsProvider(output, lookup, MOD_ID, efHelper) {
     override fun addTags(provider: HolderLookup.Provider) {
         fun tag(biTag: ItemBlockTagkey) = tag(biTag.block)
+        fun <T : IntrinsicTagAppender<Block>> T.addTag(tag: ItemBlockTagkey) = addTag(tag.block)
         CBlockTags.apply {
             CBlocks.apply {
                 tag(CBlockTags.marshmallow_planks)
@@ -35,6 +37,20 @@ class CBlockTagsProvider(
                     .add(dark_brownie_block.get())
                     .add(white_brownie_block.get())
 
+                tag(seaweed_soil)
+                    .add(sugar_sand.get())
+
+                tag(CBlockTags.ice_cream)
+                    .add(ice_cream.get())
+                    .add(banana_ice_cream.get())
+                    .add(blueberry_ice_cream.get())
+                    .add(chocolate_ice_cream.get())
+                    .add(mint_ice_cream.get())
+                    .add(strawberry_ice_cream.get())
+
+                tag(ice_soil)
+                    .addTag(CBlockTags.ice_cream)
+
                 tag(worm_blocks)
                     .add(orange_gummy_family.block.get())
                     .add(yellow_gummy_family.block.get())
@@ -46,6 +62,9 @@ class CBlockTagsProvider(
                     .add(marshmallow_log.get())
                     .add(light_marshmallow_log.get())
                     .add(dark_marshmallow_log.get())
+
+                tag(BlockTags.LOGS)
+                    .addTag(CBlockTags.marshmallow_logs)
 
                 tag(BlockTags.LEAVES)
                     .add(chocolate_leaves.get())

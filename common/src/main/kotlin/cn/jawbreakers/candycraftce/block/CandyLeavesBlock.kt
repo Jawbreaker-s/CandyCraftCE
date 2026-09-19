@@ -21,7 +21,7 @@ import kotlin.math.min
  */
 class CandyLeavesBlock(properties: Properties) : LeavesBlock(properties) {
     companion object {
-        const val EXTRA_MAX = 3
+        const val EXTRA_MAX = 6
         val extra_distance: IntegerProperty = IntegerProperty.create("distance_extra", 0, EXTRA_MAX)
     }
 

@@ -234,13 +234,12 @@ class CandyBiomeSource(
         sampler: Climate.Sampler,
         cached: Boolean = true,
     ): Holder<Biome> {
-
+        //与原版地形不要形成简单映射关系
+        fun get() = delegate.getNoiseBiome(2 - quartZ, quartY, 2 + quartX, sampler)
         return if (cached) {
             val key = BlockPos.asLong(quartX, quartY, quartZ)
-            biomeCache.get(key) {
-                delegate.getNoiseBiome(quartX, quartY, quartZ, sampler)
-            }
-        } else delegate.getNoiseBiome(quartX, quartY, quartZ, sampler)
+            biomeCache.get(key, ::get)
+        } else get()
     }
 
     fun mapOverworldBiomes(biome: Holder<Biome>): Holder<Biome> {

@@ -665,7 +665,7 @@ object CBlocks {
         .cutout()
     val acid_mint_flower = register("acid_mint_flower") { CandyPlantBlock(plant(MapColor.GRASS)) }
         .cutout()
-    val sugar_essence_flower = register("sugar_essence_flower") { CandyPlantBlock(plant(MapColor.GOLD)) }
+    val sugar_essence_flower = register("sugar_essence_flower") { IceCandyPlantBlock(plant(MapColor.GOLD)) }
         .cutout()
 
     val marshmallow_slice = register("marshmallow_slice") {
@@ -712,13 +712,11 @@ object CBlocks {
     private fun plant(color: MapColor) = properties(Blocks.GRASS).mapColor(color)
     private fun stone(color: MapColor) = properties(Blocks.STONE).mapColor(color)
     private fun iron(color: MapColor) = properties(Blocks.IRON_BLOCK).mapColor(color)
-    private fun iceCream(color: MapColor) = properties(Blocks.SNOW).mapColor(color)
+    private fun iceCream(color: MapColor) = properties(Blocks.SNOW_BLOCK).mapColor(color)
     private fun cookie(color: MapColor = MapColor.TERRACOTTA_ORANGE) = properties(Blocks.OAK_PLANKS).mapColor(color)
         .sound(SoundType.CALCITE)
 
-    private fun liquid(color: MapColor) = properties(Blocks.WATER).mapColor(color)
     private fun leaves(color: MapColor) = properties(Blocks.OAK_LEAVES).mapColor(color)
-
     private fun cake(color: MapColor) = properties().sound(SoundType.WOOL).strength(0.5f).mapColor(color)
     private fun jelly(color: MapColor) = properties(Blocks.SLIME_BLOCK).mapColor(color)
         .strength(3.0F, 2000.0F)/*todo sound .sound(CCSoundTypes.JELLY)*/.noOcclusion()

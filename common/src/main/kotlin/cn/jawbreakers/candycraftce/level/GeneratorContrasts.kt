@@ -64,12 +64,6 @@ val PARABOLIC_FIELD = FloatArray(25).also {
     }
 }
 val PARABOLIC_FIELD_TOTAL = PARABOLIC_FIELD.sum().toDouble()
-
-fun packColumnPos(x: Int, z: Int): Long {
-    return x.toLong() shl 32 xor (z.toLong() and 0xFFFFFFFFL)
-}
-
-
 fun octaveNoise2D(x: Double, z: Double, octaves: Int, salt: Long): Double {
     var value = 0.0
     var amplitude = 1.0

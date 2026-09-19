@@ -11,7 +11,6 @@ import cn.jawbreakers.candycraftce.registry.CBlocks.sweet_grass_pink
 import cn.jawbreakers.candycraftce.registry.CBlocks.sweet_grass_red
 import cn.jawbreakers.candycraftce.registry.CBlocks.sweet_grass_yellow
 import net.minecraft.core.BlockPos
-import net.minecraft.tags.BlockTags
 import net.minecraft.util.RandomSource
 import net.minecraft.world.level.WorldGenLevel
 import net.minecraft.world.level.block.state.BlockState
@@ -27,22 +26,7 @@ class CandyGrassFeature : Feature<NoneFeatureConfiguration>(NoneFeatureConfigura
         val origin = context.origin()
 
         val surfaceY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, origin.x, origin.z)
-        val startY: Int = random.nextInt(surfaceY * 2)
-        var base = BlockPos(origin.x, startY, origin.z)
-
-        var foundBase = false
-        base = base.mutable()
-        while (base.y in 56..<128) {
-            val state = level.getBlockState(base)
-            if (!state.isAir && !state.`is`(BlockTags.LEAVES)) {
-                foundBase = true
-                break
-            }
-            base.y--
-        }
-        if (!foundBase) return false
-
-        base = base.immutable()
+        val base = BlockPos(origin.x, surfaceY, origin.z)
 
         var placed = false
         repeat(128) {
@@ -51,9 +35,9 @@ class CandyGrassFeature : Feature<NoneFeatureConfiguration>(NoneFeatureConfigura
             val z = base.z + random.nextInt(8) - random.nextInt(8)
             val target = BlockPos(x, y, z)
 
-            if (y > 58 && level.isEmptyBlock(target) && canPlaceOnCandyDirt(level, target.below())) {
-                val plant = getPlant(level, target, random)
-                if (plant != null) {
+            if (y > 58 && level.isEmptyBlock(target)) {
+                val plant = getPlant(level, target, level.getBlockState(target.below()), random)
+                if (plant != null && plant.canSurvive(level, target)) {
                     level.setBlock(target, plant, 2)
                     placed = true
                 }
@@ -63,19 +47,30 @@ class CandyGrassFeature : Feature<NoneFeatureConfiguration>(NoneFeatureConfigura
         return placed
     }
 
-    private fun canPlaceOnCandyDirt(level: WorldGenLevel, pos: BlockPos): Boolean {
-        return level.getBlockState(pos).`is`(CBlockTags.candy_soil)
-    }
+    private fun getPlant(level: WorldGenLevel, pos: BlockPos, below: BlockState, random: RandomSource): BlockState? {
+        val isCandySoil = below.`is`(CBlockTags.candy_soil)
+        val isIceSoil = below.`is`(CBlockTags.ice_soil)
 
-    private fun getPlant(level: WorldGenLevel, pos: BlockPos, random: RandomSource): BlockState? {
         val biome = level.getBiome(pos)
+        val isColdBiome = biome.`is`(CBiomeTags.is_cold)
 
         if (biome.`is`(CBiomeTags.has_essence_flower)) {
-            if (random.nextInt(600) == 6) {
-                return sugar_essence_flower.defaultBlockState()
+            if (isCandySoil || isIceSoil) {
+                var chance = 400
+                if (isColdBiome) chance /= 2
+                if (isIceSoil) chance /= 2
+                if (pos.y >= 100) chance /= 2
+                if (pos.y >= 125) chance /= 2
+                if (pos.y >= 150) chance /= 2
+                if (random.nextInt(chance) == 0) {
+                    return sugar_essence_flower.defaultBlockState()
+                }
             }
         }
-        if (biome.`is`(CBiomeTags.is_cold)) return null
+        //cold只能生成金花
+        if (isColdBiome) return null
+        //以下都是基于#candy_soil生成
+        if (!isCandySoil) return null
 
         if (random.nextInt(32) == 31 && random.nextBoolean()) {
             return if (biome.`is`(CBiomeTags.has_mint_flower)) {

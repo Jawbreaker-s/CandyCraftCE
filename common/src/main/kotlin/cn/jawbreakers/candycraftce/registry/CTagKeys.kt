@@ -19,8 +19,11 @@ object CItemTags {
 }
 
 object CBlockTags {
+    val ice_soil = bind("ice_soil")
     val candy_soil = bind("candy_soil")
+    val seaweed_soil = bind("seaweed_soil")
     val marshmallow_planks = withItem("marshmallow_planks")
+    val ice_cream = bind("ice_cream")
     val worm_blocks = bind("worm_blocks")
     val marshmallow_logs = bind("marshmallow_logs")
     private fun bind(name: String): TagKey<Block> {

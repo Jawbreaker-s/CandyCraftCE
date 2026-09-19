@@ -1,5 +1,6 @@
 package cn.jawbreakers.candycraftce.block
 
+import cn.jawbreakers.candycraftce.registry.CBlockTags
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.tags.FluidTags
@@ -17,11 +18,11 @@ class SeaweedBlock(
     properties: Properties,
 ) : CandyPlantBlock(properties), SimpleWaterloggedBlock {
     override fun mayPlaceOn(state: BlockState, level: BlockGetter, pos: BlockPos): Boolean {
-        return super.mayPlaceOn(state, level, pos) || (canStack && state.`is`(this))
+        return state.`is`(CBlockTags.seaweed_soil) || (canStack && state.`is`(this))
     }
 
     override fun canSurvive(state: BlockState, level: LevelReader, pos: BlockPos): Boolean {
-        if (mayPlaceOn(level.getBlockState(pos), level, pos.below())) {
+        if (mayPlaceOn(level.getBlockState(pos.below()), level, pos.below())) {
             if (state.fluidState.`is`(FluidTags.WATER)) {
                 val above = level.getBlockState(pos.above())
                 if (above.fluidState.`is`(FluidTags.WATER) || canStack && above.`is`(this)) {
