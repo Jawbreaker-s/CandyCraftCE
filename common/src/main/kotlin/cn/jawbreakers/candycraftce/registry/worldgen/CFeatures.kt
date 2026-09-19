@@ -1,8 +1,10 @@
-package cn.jawbreakers.candycraftce.registry
+package cn.jawbreakers.candycraftce.registry.worldgen
 
 import cn.jawbreakers.candycraftce.level.feature.*
 import cn.jawbreakers.candycraftce.level.feature.CandyLiquidLakeFeature.FluidMode.CHOCOLATE
 import cn.jawbreakers.candycraftce.level.feature.CandyLiquidLakeFeature.FluidMode.WATER_OR_GRENADINE
+import cn.jawbreakers.candycraftce.registry.CBlockTags
+import cn.jawbreakers.candycraftce.utils.CLogUtils
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils
 import cn.jawbreakers.candycraftce.utils.CUtils.modLoc
 import cn.jawbreakers.candycraftce.utils.registry.Entry
@@ -26,7 +28,9 @@ import java.util.function.Supplier
 
 
 object CFeatures {
-
+    init {
+        CLogUtils.sign()
+    }
     //todo as structure
 //    val honey_dungeon = register("honey_dungeon", ::HoneyDungeonFeature)
 
@@ -38,7 +42,7 @@ object CFeatures {
     val candy_seaweed = register("candy_seaweed", ::CandySeaweedFeature)
     val groundwater = register("candy_liquid_lake") { CandyLiquidLakeFeature(WATER_OR_GRENADINE) }
     val chocolate_groundwater = register("candy_chocolate_lake") { CandyLiquidLakeFeature(CHOCOLATE) }
-    val marshmallow_waterlily = register("marshmallow_waterlily", ::MarshmallowWaterlilyPatchFeature)
+    val marshmallow_waterlily = register("marshmallow_waterlily", ::MarshmallowSliceFeature)
     val gummy_worm = register("gummy_worm", ::GummyWormFeature)
 
 

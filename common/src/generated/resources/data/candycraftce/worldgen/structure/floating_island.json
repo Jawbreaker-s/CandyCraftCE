@@ -1,0 +1,6 @@
+{
+  "type": "candycraftce:floating_island",
+  "biomes": "#candycraftce:has_floating_island",
+  "spawn_overrides": {},
+  "step": "surface_structures"
+}

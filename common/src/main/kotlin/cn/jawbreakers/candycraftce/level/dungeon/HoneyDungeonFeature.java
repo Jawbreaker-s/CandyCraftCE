@@ -1,4 +1,4 @@
-package cn.jawbreakers.candycraftce.level.feature;
+package cn.jawbreakers.candycraftce.level.dungeon;
 
 import com.valentin4311.candycraftmod.CandyCraft;
 import com.valentin4311.candycraftmod.block.entity.MarshmallowChestBlockEntity;

@@ -181,9 +181,12 @@ class CBlockStateProvider(output: PackOutput, val efHelper: ExistingFileHelper) 
                 itemModels().generated(it.asItemEntry(), texture)
             }
             listOf(marshmallow_slice, marshmallow_slice_flower).forEach {
-                models().withExistingParent(it.id.toString(), "block/lily_pad")
-                    .texture("texture", it.getBlockTexture())
-                    .texture("particle", it.getBlockTexture())
+                val tex = it.getBlockTexture()
+                val model = models().withExistingParent(it.id.toString(), "block/lily_pad")
+                    .texture("texture", tex)
+                    .texture("particle", tex)
+                simpleBlock(it.get(), model)
+                itemModels().generated(it.asItemEntry(), tex)
             }
             //rotation variants
             jawbreaker_light.also {

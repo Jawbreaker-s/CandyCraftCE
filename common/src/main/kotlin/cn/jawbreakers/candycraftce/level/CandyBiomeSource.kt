@@ -1,9 +1,9 @@
 package cn.jawbreakers.candycraftce.level
 
 import cn.jawbreakers.candycraftce.registry.CBiomeTags
-import cn.jawbreakers.candycraftce.registry.CBiomes
-import cn.jawbreakers.candycraftce.registry.CBiomes.chocolate_forest
-import cn.jawbreakers.candycraftce.registry.CBiomes.sugar_river
+import cn.jawbreakers.candycraftce.registry.worldgen.CBiomes
+import cn.jawbreakers.candycraftce.registry.worldgen.CBiomes.chocolate_forest
+import cn.jawbreakers.candycraftce.registry.worldgen.CBiomes.sugar_river
 import cn.jawbreakers.candycraftce.utils.CLogUtils.clog
 import com.google.common.cache.Cache
 import com.google.common.cache.CacheBuilder

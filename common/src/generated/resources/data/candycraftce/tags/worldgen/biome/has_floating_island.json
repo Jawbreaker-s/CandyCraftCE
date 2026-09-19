@@ -1,0 +1,9 @@
+{
+  "remove": [
+    "candycraftce:sugar_oceans",
+    "candycraftce:sugar_river"
+  ],
+  "values": [
+    "#candycraftce:candy_biomes"
+  ]
+}

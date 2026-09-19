@@ -22,7 +22,6 @@ import net.minecraft.world.Container;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
@@ -39,7 +38,6 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -427,112 +425,112 @@ public class LegacyStructureFeature extends Feature<NoneFeatureConfiguration> {
 		}
 	}
 
-	private static boolean floatingIsland(WorldGenLevel level, RandomSource random, BlockPos origin) {
-		BlockPos base = origin.offset(-16, 0, -16);
-		int nX = random.nextInt(8) - 4;
-		int nZ = random.nextInt(8) - 4;
-		int[][] lastLayer = new int[32][32];
-		lastLayer[16][16] = 2;
-		lastLayer[16 + nX][16 + nZ] = 2;
-		int maxHeight = random.nextInt(3) + 7;
+//	private static boolean floatingIsland(WorldGenLevel level, RandomSource random, BlockPos origin) {
+//		BlockPos base = origin.offset(-16, 0, -16);
+//		int nX = random.nextInt(8) - 4;
+//		int nZ = random.nextInt(8) - 4;
+//		int[][] lastLayer = new int[32][32];
+//		lastLayer[16][16] = 2;
+//		lastLayer[16 + nX][16 + nZ] = 2;
+//		int maxHeight = random.nextInt(3) + 7;
+//
+//		for (int y = 0; y < maxHeight; y++) {
+//			int[][] newLayer = new int[32][32];
+//			for (int x = 1; x < 31; x++) {
+//				for (int z = 1; z < 31; z++) {
+//					if (lastLayer[x][z] != 2) {
+//						continue;
+//					}
+//					placeFloatingIslandColumn(level, random, base, newLayer, x, y, z, maxHeight);
+//					if (random.nextInt(4) < 3 || y == maxHeight - 1) {
+//						placeFloatingIslandColumn(level, random, base, newLayer, x + 1, y, z, maxHeight);
+//					}
+//					if (random.nextInt(4) < 3 || y == maxHeight - 1) {
+//						placeFloatingIslandColumn(level, random, base, newLayer, x - 1, y, z, maxHeight);
+//					}
+//					if (random.nextInt(4) < 3 || y == maxHeight - 1) {
+//						placeFloatingIslandColumn(level, random, base, newLayer, x, y, z - 1, maxHeight);
+//					}
+//					if (random.nextInt(4) < 3 || y == maxHeight - 1) {
+//						placeFloatingIslandColumn(level, random, base, newLayer, x, y, z + 1, maxHeight);
+//					}
+//					if (random.nextInt(4) < 1) {
+//						placeFloatingIslandColumn(level, random, base, newLayer, x - 1, y, z - 1, maxHeight);
+//					}
+//					if (random.nextInt(4) < 1) {
+//						placeFloatingIslandColumn(level, random, base, newLayer, x + 1, y, z + 1, maxHeight);
+//					}
+//					if (random.nextInt(4) < 1) {
+//						placeFloatingIslandColumn(level, random, base, newLayer, x + 1, y, z - 1, maxHeight);
+//					}
+//					if (random.nextInt(4) < 1) {
+//						placeFloatingIslandColumn(level, random, base, newLayer, x - 1, y, z + 1, maxHeight);
+//					}
+//				}
+//			}
+//			lastLayer = newLayer;
+//		}
+//
+//		List<BlockPos> top = new ArrayList<>();
+//		for (int x = 0; x < 32; x++) {
+//			for (int z = 0; z < 32; z++) {
+//				if (lastLayer[x][z] == 2) {
+//					top.add(base.offset(x, maxHeight - 1, z));
+//				}
+//			}
+//		}
+//
+//		int type = random.nextInt(3);
+//		if (type == 0 || type == 1) {
+//			decoratePigFeedIsland(level, random, top);
+//		}
+//		if (type == 1) {
+//			BlockPos house = base.offset(14 + random.nextInt(4) - 2, maxHeight - 1, 14 + random.nextInt(4) - 2);
+//			buildVillageHouse(level, random, house, random.nextInt(4), true);
+//		}
+//		if (type == 2) {
+//			decorateChewingGumIsland(level, random, top);
+//			spawnBossBeetle(level, base.offset(16, maxHeight + 2, 16));
+//		}
+//		return true;
+//	}
+//
+//	private static void placeFloatingIslandColumn(WorldGenLevel level, RandomSource random, BlockPos base, int[][] layer,
+//	                                              int x, int y, int z, int maxHeight) {
+//		if (x < 0 || x >= 32 || z < 0 || z >= 32) {
+//			return;
+//		}
+//		layer[x][z] = 2;
+//		set(level, base.offset(x, y, z), floatingIslandBlockForHeight(y, maxHeight, random));
+//	}
+//
+//	private static BlockState floatingIslandBlockForHeight(int height, int maxHeight, RandomSource random) {
+//		int distance = maxHeight - height;
+//		if (distance == 1) {
+//			return CCBlocks.PUDDING.get().defaultBlockState();
+//		}
+//		if (distance == 2) {
+//			return CCBlocks.FLOUR.get().defaultBlockState();
+//		}
+//		if (distance > 2 && distance <= 6) {
+//			return random.nextInt(5) < distance
+//					? CCBlocks.CHOCOLATE_STONE.get().defaultBlockState()
+//					: CCBlocks.FLOUR.get().defaultBlockState();
+//		}
+//		return CCBlocks.CHOCOLATE_STONE.get().defaultBlockState();
+//	}
 
-		for (int y = 0; y < maxHeight; y++) {
-			int[][] newLayer = new int[32][32];
-			for (int x = 1; x < 31; x++) {
-				for (int z = 1; z < 31; z++) {
-					if (lastLayer[x][z] != 2) {
-						continue;
-					}
-					placeFloatingIslandColumn(level, random, base, newLayer, x, y, z, maxHeight);
-					if (random.nextInt(4) < 3 || y == maxHeight - 1) {
-						placeFloatingIslandColumn(level, random, base, newLayer, x + 1, y, z, maxHeight);
-					}
-					if (random.nextInt(4) < 3 || y == maxHeight - 1) {
-						placeFloatingIslandColumn(level, random, base, newLayer, x - 1, y, z, maxHeight);
-					}
-					if (random.nextInt(4) < 3 || y == maxHeight - 1) {
-						placeFloatingIslandColumn(level, random, base, newLayer, x, y, z - 1, maxHeight);
-					}
-					if (random.nextInt(4) < 3 || y == maxHeight - 1) {
-						placeFloatingIslandColumn(level, random, base, newLayer, x, y, z + 1, maxHeight);
-					}
-					if (random.nextInt(4) < 1) {
-						placeFloatingIslandColumn(level, random, base, newLayer, x - 1, y, z - 1, maxHeight);
-					}
-					if (random.nextInt(4) < 1) {
-						placeFloatingIslandColumn(level, random, base, newLayer, x + 1, y, z + 1, maxHeight);
-					}
-					if (random.nextInt(4) < 1) {
-						placeFloatingIslandColumn(level, random, base, newLayer, x + 1, y, z - 1, maxHeight);
-					}
-					if (random.nextInt(4) < 1) {
-						placeFloatingIslandColumn(level, random, base, newLayer, x - 1, y, z + 1, maxHeight);
-					}
-				}
-			}
-			lastLayer = newLayer;
-		}
-
-		List<BlockPos> top = new ArrayList<>();
-		for (int x = 0; x < 32; x++) {
-			for (int z = 0; z < 32; z++) {
-				if (lastLayer[x][z] == 2) {
-					top.add(base.offset(x, maxHeight - 1, z));
-				}
-			}
-		}
-
-		int type = random.nextInt(3);
-		if (type == 0 || type == 1) {
-			decoratePigFeedIsland(level, random, top);
-		}
-		if (type == 1) {
-			BlockPos house = base.offset(14 + random.nextInt(4) - 2, maxHeight - 1, 14 + random.nextInt(4) - 2);
-			buildVillageHouse(level, random, house, random.nextInt(4), true);
-		}
-		if (type == 2) {
-			decorateChewingGumIsland(level, random, top);
-			spawnBossBeetle(level, base.offset(16, maxHeight + 2, 16));
-		}
-		return true;
-	}
-
-	private static void placeFloatingIslandColumn(WorldGenLevel level, RandomSource random, BlockPos base, int[][] layer,
-	                                              int x, int y, int z, int maxHeight) {
-		if (x < 0 || x >= 32 || z < 0 || z >= 32) {
-			return;
-		}
-		layer[x][z] = 2;
-		set(level, base.offset(x, y, z), floatingIslandBlockForHeight(y, maxHeight, random));
-	}
-
-	private static BlockState floatingIslandBlockForHeight(int height, int maxHeight, RandomSource random) {
-		int distance = maxHeight - height;
-		if (distance == 1) {
-			return CCBlocks.PUDDING.get().defaultBlockState();
-		}
-		if (distance == 2) {
-			return CCBlocks.FLOUR.get().defaultBlockState();
-		}
-		if (distance > 2 && distance <= 6) {
-			return random.nextInt(5) < distance
-					? CCBlocks.CHOCOLATE_STONE.get().defaultBlockState()
-					: CCBlocks.FLOUR.get().defaultBlockState();
-		}
-		return CCBlocks.CHOCOLATE_STONE.get().defaultBlockState();
-	}
-
-	private static void decoratePigFeedIsland(WorldGenLevel level, RandomSource random, List<BlockPos> top) {
-		for (BlockPos pos : top) {
-			BlockPos above = pos.above();
-			if (random.nextInt(3) == 0) {
-				set(level, pos, CCBlocks.CANDY_FARMLAND.get().defaultBlockState());
-				set(level, above, CCBlocks.DRAGIBUS_CROPS.get().defaultBlockState().setValue(CropBlock.AGE, 7));
-			} else if (level.isEmptyBlock(above) && random.nextBoolean()) {
-				set(level, above, randomSweetGrass(random));
-			}
-		}
-	}
+//	private static void decoratePigFeedIsland(WorldGenLevel level, RandomSource random, List<BlockPos> top) {
+//		for (BlockPos pos : top) {
+//			BlockPos above = pos.above();
+//			if (random.nextInt(3) == 0) {
+//				set(level, pos, CCBlocks.CANDY_FARMLAND.get().defaultBlockState());
+//				set(level, above, CCBlocks.DRAGIBUS_CROPS.get().defaultBlockState().setValue(CropBlock.AGE, 7));
+//			} else if (level.isEmptyBlock(above) && random.nextBoolean()) {
+//				set(level, above, randomSweetGrass(random));
+//			}
+//		}
+//	}
 
 	private static void decorateChewingGumIsland(WorldGenLevel level, RandomSource random, List<BlockPos> top) {
 		for (BlockPos pos : top) {

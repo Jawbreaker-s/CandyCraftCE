@@ -1,5 +1,6 @@
-package cn.jawbreakers.candycraftce.registry
+package cn.jawbreakers.candycraftce.registry.worldgen
 
+import cn.jawbreakers.candycraftce.utils.CLogUtils
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils
 import cn.jawbreakers.candycraftce.utils.CUtils.modLoc
 import net.minecraft.core.HolderGetter
@@ -15,6 +16,10 @@ import net.minecraft.world.level.levelgen.GenerationStep.Decoration.VEGETAL_DECO
 import net.minecraft.world.level.levelgen.placement.PlacedFeature
 
 object CBiomes {
+    init {
+        CLogUtils.sign()
+    }
+
     val dungeon = bind("dungeon")
 
     //
@@ -224,6 +229,7 @@ object CBiomes {
                     step(lookup, VEGETAL_DECORATION) {
                         +placed_candy_grass
                         +placed_tree_candy_forest
+                        +placed_marshmallow_waterlily_dense
                     }
                 }
             )
@@ -243,6 +249,7 @@ object CBiomes {
                     step(lookup, VEGETAL_DECORATION) {
                         +placed_candy_grass
                         +placed_candy_seaweed
+                        +placed_marshmallow_waterlily
                     }
                 }
             )
@@ -262,6 +269,7 @@ object CBiomes {
                     step(lookup, VEGETAL_DECORATION) {
                         +placed_candy_grass
                         +placed_candy_seaweed
+                        +placed_marshmallow_waterlily
                     }
                 }
             )

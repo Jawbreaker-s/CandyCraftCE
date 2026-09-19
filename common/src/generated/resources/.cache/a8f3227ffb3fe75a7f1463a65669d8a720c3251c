@@ -1,4 +1,4 @@
-// 1.20.1	2026-09-14T22:03:19.9806283	Block States: candycraftce
+// 1.20.1	2026-09-20T01:01:41.9675405	Block States: candycraftce
 d6339345092ee98af98acc0b082601cbb56b9cb9 assets/candycraftce/blockstates/acid_mint_flower.json
 8eacd04c80ba5cbdfad3fdce6780329c12a5c6d7 assets/candycraftce/blockstates/banana_block.json
 7b19341f2c7e1516c5982f5b26c6bd7edc4d46a2 assets/candycraftce/blockstates/banana_ice_cream.json
@@ -150,6 +150,8 @@ d9838268e2ba638408ed1697ae74f2e6b97f4910 assets/candycraftce/blockstates/marshma
 a707153cb8f2ab36371b16d07abe28abf0e150f0 assets/candycraftce/blockstates/marshmallow_planks.json
 790c15d7e0a12ada1aac13f0c6e1a70a2dd0d104 assets/candycraftce/blockstates/marshmallow_sign.json
 3a818f64dd9ac5f11e08ae8e0c44e2088631903b assets/candycraftce/blockstates/marshmallow_slab.json
+4cac839ffbb4d1e0c524e83ccc3c1d4fa327c7ce assets/candycraftce/blockstates/marshmallow_slice.json
+e40f63e34a928b53d622097f012435a381c9d8d2 assets/candycraftce/blockstates/marshmallow_slice_flower.json
 1bb51dd4f9d15336d381bf1ca6f052204c5b9021 assets/candycraftce/blockstates/marshmallow_stairs.json
 438de3d1cb9df6014c2f794fab39e2ba072d2bda assets/candycraftce/blockstates/marshmallow_trapdoor.json
 790c15d7e0a12ada1aac13f0c6e1a70a2dd0d104 assets/candycraftce/blockstates/marshmallow_wall_sign.json
@@ -911,6 +913,8 @@ a00acb248fafa106b2255d37d45a69d5d2642c43 assets/candycraftce/models/item/marshma
 e4584c2b02a6cba1f17727bf01ff30bc426283b5 assets/candycraftce/models/item/marshmallow_planks.json
 01ac1729e144fc7d138e511f266d90273c5c0e21 assets/candycraftce/models/item/marshmallow_sign.json
 908b6eb91d2cb42c89de1f8f21b92c0f5a290f8d assets/candycraftce/models/item/marshmallow_slab.json
+7524dc626da8d7b62559741e59b55e136d49c976 assets/candycraftce/models/item/marshmallow_slice.json
+2ad0d9854ddc5b9fc99ea14a2f37e58541ab7d97 assets/candycraftce/models/item/marshmallow_slice_flower.json
 1e407a3b341a9207a2fcb031bcf6396788245589 assets/candycraftce/models/item/marshmallow_stairs.json
 d5f3137094afcf15edabb263fcfa88b1e4ed2d6f assets/candycraftce/models/item/marshmallow_trapdoor.json
 60e02abdbd58944a7b0b5872eb10bf3e5e9c289a assets/candycraftce/models/item/milk_brownie_block.json

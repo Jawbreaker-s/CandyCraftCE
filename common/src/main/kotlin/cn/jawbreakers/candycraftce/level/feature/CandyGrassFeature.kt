@@ -60,8 +60,8 @@ class CandyGrassFeature : Feature<NoneFeatureConfiguration>(NoneFeatureConfigura
                 if (isColdBiome) chance /= 2
                 if (isIceSoil) chance /= 2
                 if (pos.y >= 100) chance /= 2
-                if (pos.y >= 125) chance /= 2
-                if (pos.y >= 150) chance /= 2
+                if (pos.y >= 135) chance /= 2
+                if (pos.y >= 175) chance /= 2
                 if (random.nextInt(chance) == 0) {
                     return sugar_essence_flower.defaultBlockState()
                 }

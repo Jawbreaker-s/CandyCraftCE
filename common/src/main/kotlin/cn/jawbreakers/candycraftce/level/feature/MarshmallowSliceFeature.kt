@@ -1,12 +1,11 @@
 package cn.jawbreakers.candycraftce.level.feature
 
-import cn.jawbreakers.candycraftce.registry.CBiomes.cotton_candy_plains
-import cn.jawbreakers.candycraftce.registry.CBiomes.sugar_forest
-import cn.jawbreakers.candycraftce.registry.CBiomes.sugar_river
 import cn.jawbreakers.candycraftce.registry.CBlocks
 import cn.jawbreakers.candycraftce.registry.CBlocks.defaultBlockState
 import cn.jawbreakers.candycraftce.registry.CBlocks.marshmallow_slice
 import cn.jawbreakers.candycraftce.registry.CBlocks.marshmallow_slice_flower
+import cn.jawbreakers.candycraftce.registry.worldgen.CBiomes.sugar_forest
+import cn.jawbreakers.candycraftce.registry.worldgen.CBiomes.sugar_river
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.tags.FluidTags
@@ -20,12 +19,12 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
 import kotlin.math.abs
 
 
-class MarshmallowWaterlilyPatchFeature : Feature<NoneFeatureConfiguration>(NoneFeatureConfiguration.CODEC) {
+class MarshmallowSliceFeature : Feature<NoneFeatureConfiguration>(NoneFeatureConfiguration.CODEC) {
     override fun place(context: FeaturePlaceContext<NoneFeatureConfiguration>): Boolean {
         val level = context.level()
         val random = context.random()
         val origin = context.origin()
-        if (!isAllowedWaterlilyBiome(level, origin)) {
+        if (!isAllowedSliceBiome(level, origin)) {
             return false
         }
 
@@ -37,7 +36,7 @@ class MarshmallowWaterlilyPatchFeature : Feature<NoneFeatureConfiguration>(NoneF
                 random.nextInt(8) - random.nextInt(8)
             )
             val surface: BlockPos? = findWaterSurface(level, target)
-            if (surface != null && isAllowedWaterlilyBiome(level, surface) && canPlaceLily(level, surface)) {
+            if (surface != null && isAllowedSliceBiome(level, surface) && canPlaceLily(level, surface)) {
                 placed = placed or placeLily(level, surface, random)
             }
         }
@@ -71,14 +70,14 @@ class MarshmallowWaterlilyPatchFeature : Feature<NoneFeatureConfiguration>(NoneF
     }
 
 
-    private fun isAllowedWaterlilyBiome(level: WorldGenLevel, pos: BlockPos): Boolean {
-        return isMarshmallowWaterlilyBiome(level, pos)
+    private fun isAllowedSliceBiome(level: WorldGenLevel, pos: BlockPos): Boolean {
+        return isMarshmallowSliceBiome(level, pos)
                 || isRiverNearMarshmallowBiome(level, pos)
-                || hasNearbyMarshmallowGrass(level, pos)
+                || hasNearbyCustardPudding(level, pos)
     }
 
-    private fun isMarshmallowWaterlilyBiome(level: WorldGenLevel, pos: BlockPos): Boolean {
-        return level.getBiome(pos).`is`(sugar_forest) || level.getBiome(pos).`is`(cotton_candy_plains)
+    private fun isMarshmallowSliceBiome(level: WorldGenLevel, pos: BlockPos): Boolean {
+        return level.getBiome(pos).`is`(sugar_forest)
     }
 
     private fun isRiverNearMarshmallowBiome(level: WorldGenLevel, pos: BlockPos): Boolean {
@@ -92,7 +91,7 @@ class MarshmallowWaterlilyPatchFeature : Feature<NoneFeatureConfiguration>(NoneF
             var dx = -24
             while (dx <= 24) {
                 cursor.set(pos.x + dx, pos.y, pos.z + dz)
-                if (isMarshmallowWaterlilyBiome(level, cursor)) {
+                if (isMarshmallowSliceBiome(level, cursor)) {
                     return true
                 }
                 dx += 8
@@ -102,7 +101,7 @@ class MarshmallowWaterlilyPatchFeature : Feature<NoneFeatureConfiguration>(NoneF
         return false
     }
 
-    private fun hasNearbyMarshmallowGrass(level: WorldGenLevel, pos: BlockPos): Boolean {
+    private fun hasNearbyCustardPudding(level: WorldGenLevel, pos: BlockPos): Boolean {
         val cursor = BlockPos.MutableBlockPos()
         for (dz in -5..5) {
             for (dx in -5..5) {

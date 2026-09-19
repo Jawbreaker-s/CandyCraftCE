@@ -1,6 +1,6 @@
 package cn.jawbreakers.candycraftce.level.foliage_placer
 
-import cn.jawbreakers.candycraftce.registry.CFoliagePlacers
+import cn.jawbreakers.candycraftce.registry.worldgen.CFoliagePlacers
 import com.mojang.serialization.Codec
 import net.minecraft.core.Direction
 import net.minecraft.util.RandomSource

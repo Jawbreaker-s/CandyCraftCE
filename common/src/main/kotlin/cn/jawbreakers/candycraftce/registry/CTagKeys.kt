@@ -50,6 +50,9 @@ object CBiomeTags {
     val is_cold = bind("is_cold")
     val has_essence_flower = bind("has_essence_flower")
     val has_mint_flower = bind("has_mint_flower")
+
+    //
+    val has_floating_island = bind("has_floating_island")
     private fun bind(name: String): TagKey<Biome> {
         return TagKey.create(Registries.BIOME, name.modLoc())
     }

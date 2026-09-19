@@ -1,0 +1,14 @@
+{
+  "placement": {
+    "type": "minecraft:random_spread",
+    "salt": 14357619,
+    "separation": 0,
+    "spacing": 8
+  },
+  "structures": [
+    {
+      "structure": "candycraftce:floating_island",
+      "weight": 1
+    }
+  ]
+}

@@ -20,7 +20,7 @@
         "Name": "candycraftce:chocolate_leaves",
         "Properties": {
           "distance": "7",
-          "distance_extra": "3",
+          "distance_extra": "6",
           "persistent": "false",
           "waterlogged": "false"
         }

@@ -14,6 +14,7 @@ import net.minecraft.world.level.levelgen.feature.Feature
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacer
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacerType
 import net.minecraft.world.level.levelgen.structure.StructureType
+import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType
 import java.util.function.Supplier
 
 object CFabricLevels : ICPlatformLevels {
@@ -26,16 +27,15 @@ object CFabricLevels : ICPlatformLevels {
             BuiltInRegistries.CHUNK_GENERATOR.register(id, it)
         }
 
-    override fun <T : StructureType<*>> registerStructureType(name: String, codec: T): Entry<T> =
-        CandyCraftCEFabric.instance.register("StructureType", name, { codec }) { id, it ->
+    override fun <T : StructureType<*>> registerStructureType(name: String, type: T): Entry<T> =
+        CandyCraftCEFabric.instance.register("StructureType", name, { type }) { id, it ->
             BuiltInRegistries.STRUCTURE_TYPE.register(id, it)
         }
 
-    override fun <F : Feature<*>> registerFeature(name: String, factory: Supplier<F>): Entry<F> {
-        return CandyCraftCEFabric.instance.register("Feature", name, factory::get) { id, it ->
+    override fun <F : Feature<*>> registerFeature(name: String, factory: Supplier<F>): Entry<F> =
+        CandyCraftCEFabric.instance.register("Feature", name, factory::get) { id, it ->
             BuiltInRegistries.FEATURE.register(id, it)
         }
-    }
 
     override fun <P : FoliagePlacer> registerFoliagePlacer(name: String, codec: Supplier<Codec<P>>) =
         CandyCraftCEFabric.instance.register(
@@ -43,5 +43,10 @@ object CFabricLevels : ICPlatformLevels {
             name,
             { FoliagePlacerType(codec.get()) }) { id, it ->
             BuiltInRegistries.FOLIAGE_PLACER_TYPE.register(id, it)
+        }
+
+    override fun <T : StructurePieceType> registerStructurePieceType(key: String, type: T): Entry<T> =
+        CandyCraftCEFabric.instance.register("StructurePieceType", key, { type }) { id, it ->
+            BuiltInRegistries.STRUCTURE_PIECE.register(id, it)
         }
 }

@@ -670,10 +670,10 @@ object CBlocks {
 
     val marshmallow_slice = register("marshmallow_slice") {
         CandyWaterlilyBlock(false, properties(Blocks.LILY_PAD).mapColor(MapColor.COLOR_PINK).randomTicks())
-    }
+    }.cutout()
     val marshmallow_slice_flower = register("marshmallow_slice_flower") {
         CandyWaterlilyBlock(true, properties(marshmallow_slice.get()))
-    }
+    }.cutout()
     val milk_chocolate_mushroom =
         register("milk_chocolate_mushroom") { CandyPlantBlock(plant(MapColor.COLOR_BROWN)) }.cutout()
     val white_chocolate_mushroom =

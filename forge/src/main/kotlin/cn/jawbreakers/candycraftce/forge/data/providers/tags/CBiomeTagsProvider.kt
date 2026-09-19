@@ -2,7 +2,7 @@ package cn.jawbreakers.candycraftce.forge.data.providers.tags
 
 import cn.jawbreakers.candycraftce.CandyCraftCE.MOD_ID
 import cn.jawbreakers.candycraftce.registry.CBiomeTags
-import cn.jawbreakers.candycraftce.registry.CBiomes
+import cn.jawbreakers.candycraftce.registry.worldgen.CBiomes
 import net.minecraft.core.HolderLookup
 import net.minecraft.data.PackOutput
 import net.minecraft.data.tags.BiomeTagsProvider
@@ -44,6 +44,11 @@ class CBiomeTagsProvider(
                     .add(sugar_oceans)
                     .add(pudding_plains)
                     .add(sugar_river)
+
+                tag(has_floating_island)
+                    .addTag(candy_biomes)
+                    .remove(sugar_oceans)
+                    .remove(sugar_river)
             }
         }
     }
