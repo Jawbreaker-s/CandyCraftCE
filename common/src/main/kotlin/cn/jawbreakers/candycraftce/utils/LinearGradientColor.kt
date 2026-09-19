@@ -106,10 +106,9 @@ class GradientScope internal constructor() {
     fun get(): Array<LinearGradientColor> = colors.toTypedArray()
 }
 
-@ConsistentCopyVisibility
-data class LinearGradientColor
-private constructor(
-    val rgb: Int, val red: Int, val green: Int, val blue: Int,
+class LinearGradientColor private constructor(
+    val rgb: Int,
+    val red: Int, val green: Int, val blue: Int,
     val ratio: Float,
 ) {
     constructor(rgb: Int, ratio: Float) : this(
@@ -127,6 +126,14 @@ private constructor(
         blue,
         ratio
     )
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is LinearGradientColor) return false
+        return rgb == other.rgb && ratio == other.ratio
+    }
+
+    override fun hashCode(): Int = ratio.hashCode()
 
     val normRed by lazy { red / 255.0f }
     val normGreen by lazy { green / 255.0f }

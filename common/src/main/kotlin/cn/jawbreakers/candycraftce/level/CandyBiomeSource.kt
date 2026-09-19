@@ -1,5 +1,6 @@
 package cn.jawbreakers.candycraftce.level
 
+import cn.jawbreakers.candycraftce.registry.CBiomeTags
 import cn.jawbreakers.candycraftce.registry.CBiomes
 import cn.jawbreakers.candycraftce.registry.CBiomes.chocolate_forest
 import cn.jawbreakers.candycraftce.registry.CBiomes.sugar_river
@@ -10,6 +11,9 @@ import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Holder
+import net.minecraft.core.HolderSet
+import net.minecraft.core.registries.Registries
+import net.minecraft.resources.RegistryOps
 import net.minecraft.resources.ResourceKey
 import net.minecraft.world.level.biome.Biome
 import net.minecraft.world.level.biome.BiomeSource
@@ -20,15 +24,22 @@ import kotlin.jvm.optionals.getOrNull
 
 class CandyBiomeSource(
     private val delegate: BiomeSource,
-    val biomes: List<Holder<Biome>>,
+    private val biomes: HolderSet<Biome>,
+    private val err: Holder<Biome>,
 ) : BiomeSource() {
     companion object {
         val codec: Codec<CandyBiomeSource> = RecordCodecBuilder.create { instance ->
             instance.group(
                 CODEC.fieldOf("delegate").forGetter { it.delegate },
-                Biome.CODEC.listOf().fieldOf("biomes").forGetter { it.biomes }
+                RegistryOps.retrieveGetter(Registries.BIOME),
             )
-                .apply(instance, ::CandyBiomeSource)
+                .apply(instance) { delegate, biomes ->
+                    CandyBiomeSource(
+                        delegate,
+                        biomes.getOrThrow(CBiomeTags.candy_biomes),
+                        biomes.getOrThrow(CBiomes.dungeon)
+                    )
+                }
         }
     }
 
@@ -71,20 +82,27 @@ class CandyBiomeSource(
                 Biomes.OLD_GROWTH_PINE_TAIGA,
                 Biomes.GROVE
             ),
-            CBiomes.sugar_cold_forest
+            CBiomes.white_chocolate_forest
         )
 
         // 平原  / 海滩
         transfer(
             listOf(
                 Biomes.PLAINS,
-                Biomes.SUNFLOWER_PLAINS,
                 Biomes.SAVANNA,
                 Biomes.BEACH,
+                Biomes.SUNFLOWER_PLAINS,
             ),
-            CBiomes.sugar_plains
+            CBiomes.pudding_plains
         )
-        // 热带草原
+
+        transfer(
+            listOf(
+                Biomes.FLOWER_FOREST,
+                Biomes.BIRCH_FOREST,
+            ),
+            CBiomes.cotton_candy_plains
+        )
         transfer(
             listOf(
                 Biomes.SWAMP,//沼泽
@@ -98,13 +116,11 @@ class CandyBiomeSource(
         transfer(
             listOf(
                 Biomes.FOREST,
-                Biomes.FLOWER_FOREST,
             ),
             CBiomes.sugar_forest
         )
         transfer(
             listOf(
-                Biomes.BIRCH_FOREST,
                 Biomes.DARK_FOREST,
                 Biomes.OLD_GROWTH_BIRCH_FOREST
             ),
@@ -118,7 +134,7 @@ class CandyBiomeSource(
                 Biomes.BAMBOO_JUNGLE,
                 Biomes.SPARSE_JUNGLE
             ),
-            CBiomes.sugar_enchanted_forest
+            CBiomes.enchanted_forest
         )
 
         // 沙漠
@@ -129,19 +145,12 @@ class CandyBiomeSource(
             CBiomes.caramel_forest
         )
 
-        // 恶地
+        // 山地 / 高原 / 风袭 / 石岸
         transfer(
             listOf(
                 Biomes.BADLANDS,
                 Biomes.WOODED_BADLANDS,
-                Biomes.ERODED_BADLANDS
-            ),
-            CBiomes.sugar_hell_mountains
-        )
-
-        // 山地 / 高原 / 风袭 / 石岸
-        transfer(
-            listOf(
+                Biomes.ERODED_BADLANDS,
                 Biomes.MEADOW,
                 Biomes.SAVANNA_PLATEAU,
                 Biomes.CHERRY_GROVE,
@@ -151,7 +160,7 @@ class CandyBiomeSource(
                 Biomes.WINDSWEPT_SAVANNA,
                 Biomes.STONY_SHORE
             ),
-            CBiomes.sugar_mountains
+            CBiomes.pudding_hill
         )
 
         // 极山峰峦：地形起伏最强的一档
@@ -179,11 +188,15 @@ class CandyBiomeSource(
                 Biomes.LUSH_CAVES,
                 Biomes.DEEP_DARK
             ),
-            CBiomes.sugar_plains
+            CBiomes.pudding_plains
         )
     }
 
-    val byPath = biomes.associateBy { it.unwrapKey().getOrNull() }
+    val byPath by lazy {
+        biomes.associateBy { it.unwrapKey().getOrNull() }.also {
+            check(it.isNotEmpty()) { "Empty biomes" }
+        }
+    }
 
     init {
         val all = delegate.possibleBiomes()
@@ -193,14 +206,12 @@ class CandyBiomeSource(
             .filter { it !in mappings }
             .map { it.location() }
             .toList()
-            .joinToString("\n")
         val overuse = mappings.keys.stream()
             .filter { !all.contains(it) }
             .map { it.location() }
             .toList()
-            .joinToString("\n")
-        if (unknown.isNotEmpty()) clog.error("Unknown overworld biomes: \n$unknown")
-        if (unknown.isNotEmpty()) clog.warn("Overused overworld biomes: \n$overuse")
+        if (unknown.isNotEmpty()) clog.error("Unknown overworld biomes: \n${unknown.joinToString("\n")}")
+        if (overuse.isNotEmpty()) clog.warn("Overused overworld biomes: \n${overuse.joinToString("\n")}")
     }
 
 
@@ -208,35 +219,10 @@ class CandyBiomeSource(
     override fun collectPossibleBiomes(): Stream<Holder<Biome>> = biomes.stream()
 
     override fun getNoiseBiome(quartX: Int, quartY: Int, quartZ: Int, sampler: Climate.Sampler): Holder<Biome> {
-        val biome = mapOverworldBiomes(getRawNoiseBiome(quartX, quartY, quartZ, sampler))
-//        val key = biome.unwrapKey().getOrNull()
-//        if (key == sugar_river || key == chocolate_forest || key == cotton_candy_plains) {
-//            return biome
-//        }
-//        var chocoCnt = 0
-//        var cottonCnt = 0
-//        for (x in -1..1) {
-//            val qx = quartX + x
-//            for (z in -1..1) {
-//                val qz = quartZ + z
-//                if (x == z || x == -z) {
-//                    continue
-//                }
-//                val neiBiome = mapOverworldBiomes(getRawNoiseBiome(qx, quartY, qz, sampler)).unwrapKey().getOrNull()
-//                //四邻
-//                when (neiBiome) {
-//                    chocolate_forest -> chocoCnt++
-//                    cotton_candy_plains -> cottonCnt++
-//                }
-//            }
-//        }
-//        if (chocoCnt > 0 || cottonCnt > 0) {
-//            return byPath[sugar_river]!!
-//        }
-        return biome
+        return mapOverworldBiomes(getRawNoiseBiome(quartX, quartY, quartZ, sampler))
     }
 
-    val biomeCache: Cache<Long, Holder<Biome>> = CacheBuilder.newBuilder()
+    private val biomeCache: Cache<Long, Holder<Biome>> = CacheBuilder.newBuilder()
         .maximumSize(10240)
         .weakValues()
         .build()
@@ -248,6 +234,7 @@ class CandyBiomeSource(
         sampler: Climate.Sampler,
         cached: Boolean = true,
     ): Holder<Biome> {
+
         return if (cached) {
             val key = BlockPos.asLong(quartX, quartY, quartZ)
             biomeCache.get(key) {
@@ -258,7 +245,7 @@ class CandyBiomeSource(
 
     fun mapOverworldBiomes(biome: Holder<Biome>): Holder<Biome> {
         val target = biome.unwrapKey().getOrNull()?.let { mappings[it] }
-        return byPath[target] ?: biome
+        return byPath[target] ?: err
     }
 
 

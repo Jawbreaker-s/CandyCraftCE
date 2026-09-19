@@ -1,0 +1,38 @@
+{
+  "carvers": {},
+  "creature_spawn_probability": 0.1764706,
+  "downfall": 0.8,
+  "effects": {
+    "fog_color": 16767130,
+    "sky_color": 16776684,
+    "water_color": 14608288,
+    "water_fog_color": 8409728
+  },
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "candycraftce:gummy_worm"
+    ]
+  ],
+  "has_precipitation": false,
+  "spawn_costs": {},
+  "spawners": {
+    "ambient": [],
+    "axolotls": [],
+    "creature": [],
+    "misc": [],
+    "monster": [],
+    "underground_water_creature": [],
+    "water_ambient": [],
+    "water_creature": []
+  },
+  "temperature": 0.9
+}

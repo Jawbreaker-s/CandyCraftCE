@@ -3,18 +3,16 @@ package cn.jawbreakers.candycraftce.client
 import cn.jawbreakers.candycraftce.registry.CBiomes.caramel_forest
 import cn.jawbreakers.candycraftce.registry.CBiomes.chocolate_forest
 import cn.jawbreakers.candycraftce.registry.CBiomes.cotton_candy_plains
+import cn.jawbreakers.candycraftce.registry.CBiomes.enchanted_forest
 import cn.jawbreakers.candycraftce.registry.CBiomes.gummy_swamp
-import cn.jawbreakers.candycraftce.registry.CBiomes.hard_candy_plains
 import cn.jawbreakers.candycraftce.registry.CBiomes.ice_cream_plains
 import cn.jawbreakers.candycraftce.registry.CBiomes.ice_cream_sky_mountains
-import cn.jawbreakers.candycraftce.registry.CBiomes.sugar_cold_forest
-import cn.jawbreakers.candycraftce.registry.CBiomes.sugar_enchanted_forest
+import cn.jawbreakers.candycraftce.registry.CBiomes.pudding_hill
+import cn.jawbreakers.candycraftce.registry.CBiomes.pudding_plains
 import cn.jawbreakers.candycraftce.registry.CBiomes.sugar_forest
-import cn.jawbreakers.candycraftce.registry.CBiomes.sugar_hell_mountains
-import cn.jawbreakers.candycraftce.registry.CBiomes.sugar_mountains
 import cn.jawbreakers.candycraftce.registry.CBiomes.sugar_oceans
-import cn.jawbreakers.candycraftce.registry.CBiomes.sugar_plains
 import cn.jawbreakers.candycraftce.registry.CBiomes.sugar_river
+import cn.jawbreakers.candycraftce.registry.CBiomes.white_chocolate_forest
 import cn.jawbreakers.candycraftce.registry.CBlocks
 import cn.jawbreakers.candycraftce.registry.CBlocks.asItemEntry
 import cn.jawbreakers.candycraftce.utils.CLogUtils.clog
@@ -73,11 +71,11 @@ object PuddingColor {
 
     fun getPuddingColor(biome: Holder<Biome>, pos: BlockPos): Int {
         return when (biome.unwrapKey().getOrNull()) {
-            sugar_enchanted_forest -> getEnchantColor(Vec3.atCenterOf(pos))
-            sugar_plains, hard_candy_plains, sugar_forest -> 0xEEAABB
-            sugar_mountains -> 0xEEBBCC
-            sugar_cold_forest -> 0xFFDDEE
-            ice_cream_plains, ice_cream_sky_mountains, sugar_hell_mountains -> 0xFFFFFF
+            enchanted_forest -> getEnchantColor(Vec3.atCenterOf(pos))
+            pudding_plains, sugar_forest -> 0xEEAABB
+            pudding_hill -> 0xEEBBCC
+            white_chocolate_forest -> 0xFFDDEE
+            ice_cream_plains, ice_cream_sky_mountains -> 0xFFFFFF
             sugar_oceans -> 0xB35EFF
             caramel_forest -> 0xB05C28
             cotton_candy_plains -> 0xFFC6E4

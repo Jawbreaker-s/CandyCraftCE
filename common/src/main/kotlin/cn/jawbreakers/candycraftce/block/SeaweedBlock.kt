@@ -21,7 +21,7 @@ class SeaweedBlock(
     }
 
     override fun canSurvive(state: BlockState, level: LevelReader, pos: BlockPos): Boolean {
-        if (mayPlaceOn(state, level, pos)) {
+        if (mayPlaceOn(level.getBlockState(pos), level, pos.below())) {
             if (state.fluidState.`is`(FluidTags.WATER)) {
                 val above = level.getBlockState(pos.above())
                 if (above.fluidState.`is`(FluidTags.WATER) || canStack && above.`is`(this)) {

@@ -1,0 +1,1083 @@
+package cn.jawbreakers.candycraftce.level.feature;
+
+import com.valentin4311.candycraftmod.CandyCraft;
+import com.valentin4311.candycraftmod.block.LegacyLeavesBlock;
+import com.valentin4311.candycraftmod.block.LegacyLogBlock;
+import com.valentin4311.candycraftmod.block.LegacyMetadataBlock;
+import com.valentin4311.candycraftmod.block.LegacyTypeBlock;
+import com.valentin4311.candycraftmod.entity.BasicCandySpiderEntity;
+import com.valentin4311.candycraftmod.entity.BasicCandyZombieEntity;
+import com.valentin4311.candycraftmod.entity.GingerbreadManEntity;
+import com.valentin4311.candycraftmod.registry.CCBlocks;
+import com.valentin4311.candycraftmod.registry.CCEntityTypes;
+import com.valentin4311.candycraftmod.registry.CCItems;
+import com.valentin4311.candycraftmod.util.EmblemHelper;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.WorldGenRegion;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.RotatedPillarBlock;
+import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.SlabType;
+import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
+import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.phys.Vec3;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
+
+public class LegacyStructureFeature extends Feature<NoneFeatureConfiguration> {
+	private static final ResourceLocation CANDY_HOUSE_LOOT = new ResourceLocation(CandyCraft.MODID, "chests/candy_house");
+	private static final ResourceLocation ICE_TOWER_LOOT = new ResourceLocation(CandyCraft.MODID, "chests/ice_tower");
+	private static final ResourceLocation WATER_TEMPLE_LOOT = new ResourceLocation(CandyCraft.MODID, "chests/water_temple");
+	private static final boolean ENABLE_STRUCTURE_GINGERBREAD = true;
+	private static final long VILLAGE_COOLDOWN_TICKS = 1200L;
+	private static final ConcurrentHashMap<ServerLevel, AtomicLong> LAST_VILLAGE_TICK = new ConcurrentHashMap<>();
+	private final Kind kind;
+
+	public LegacyStructureFeature(Kind kind) {
+		super(NoneFeatureConfiguration.CODEC);
+		this.kind = kind;
+	}
+
+	@Override
+	public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> context) {
+		WorldGenLevel level = context.level();
+		RandomSource random = context.random();
+		BlockPos origin = context.origin();
+		if (kind == Kind.ICE_TOWER) {
+			return iceTower(level, random, surface(level, origin));
+		}
+		if (kind == Kind.ICE_CREAM_DOME) {
+			return iceCreamDome(level, random, surface(level, origin));
+		}
+		if (kind == Kind.WATER_TEMPLE) {
+			return waterTemple(level, random, origin);
+		}
+		if (kind == Kind.GEYSER) {
+			return geyser(level, random, origin);
+		}
+		if (kind == Kind.CHEWING_GUM_TOTEM) {
+			return chewingGumTotem(level, random, surface(level, origin));
+		}
+		if (kind == Kind.FLOATING_ISLAND) {
+			return floatingIsland(level, random, origin);
+		}
+		if (level instanceof WorldGenRegion region) {
+			if (!claimVillageGeneration(region.getLevel())) {
+				return false;
+			}
+			BlockPos villageOrigin = origin.immutable();
+			long villageSeed = random.nextLong();
+			region.getLevel().getServer().execute(() ->
+					undergroundVillage(region.getLevel(), RandomSource.create(villageSeed), villageOrigin));
+			return true;
+		}
+		return undergroundVillage(level, random, origin);
+	}
+
+	private static boolean claimVillageGeneration(ServerLevel level) {
+		AtomicLong lastGeneration = LAST_VILLAGE_TICK.computeIfAbsent(level, ignored -> new AtomicLong(Long.MIN_VALUE));
+		long now = level.getGameTime();
+		while (true) {
+			long last = lastGeneration.get();
+			if (last != Long.MIN_VALUE && now - last < VILLAGE_COOLDOWN_TICKS) {
+				return false;
+			}
+			if (lastGeneration.compareAndSet(last, now)) {
+				return true;
+			}
+		}
+	}
+
+	private static BlockPos surface(WorldGenLevel level, BlockPos origin) {
+		int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, origin.getX(), origin.getZ());
+		return new BlockPos(origin.getX(), y, origin.getZ());
+	}
+
+	private static boolean iceTower(WorldGenLevel level, RandomSource random, BlockPos pos) {
+		BlockPos ground = null;
+		for (int y = Math.min(100, level.getMaxBuildHeight() - 1); y > 50; y--) {
+			BlockPos candidate = new BlockPos(pos.getX(), y, pos.getZ());
+			if (level.getBlockState(candidate).is(CCBlocks.PUDDING.get())) {
+				ground = candidate;
+				break;
+			}
+		}
+		if (ground == null) {
+			return false;
+		}
+		if (!hasFlatSupport(level, ground.above(), 0, 6, 0, 6, true)) {
+			return false;
+		}
+		pos = ground.above();
+
+		BlockState vanilla = iceCream(3);
+		for (int y = 0; y < 2; y++) {
+			set(level, pos.offset(2, y, 0), vanilla);
+			set(level, pos.offset(4, y, 0), vanilla);
+			set(level, pos.offset(1, y, 1), vanilla);
+			set(level, pos.offset(5, y, 1), vanilla);
+			set(level, pos.offset(0, y, 2), vanilla);
+			set(level, pos.offset(6, y, 2), vanilla);
+			set(level, pos.offset(0, y, 4), vanilla);
+			set(level, pos.offset(6, y, 4), vanilla);
+			set(level, pos.offset(1, y, 5), vanilla);
+			set(level, pos.offset(5, y, 5), vanilla);
+			set(level, pos.offset(2, y, 6), vanilla);
+			set(level, pos.offset(4, y, 6), vanilla);
+		}
+
+		set(level, pos.offset(1, 0, 0), vanilla);
+		set(level, pos.offset(0, 0, 1), vanilla);
+		set(level, pos.offset(5, 0, 0), vanilla);
+		set(level, pos.offset(6, 0, 1), vanilla);
+		set(level, pos.offset(0, 0, 5), vanilla);
+		set(level, pos.offset(1, 0, 6), vanilla);
+		set(level, pos.offset(5, 0, 6), vanilla);
+		set(level, pos.offset(6, 0, 5), vanilla);
+		set(level, pos.offset(3, 2, 0), vanilla);
+		set(level, pos.offset(3, 2, 6), vanilla);
+		set(level, pos.offset(0, 2, 3), vanilla);
+		set(level, pos.offset(6, 2, 3), vanilla);
+
+		for (int y = 0; y < 4; y++) {
+			int metadata = y == 0 || y == 2 ? 1 : y == 3 ? 0 : 2;
+			BlockState layer = iceCream(metadata);
+			set(level, pos.offset(2, 2 + y, 1), layer);
+			set(level, pos.offset(1, 2 + y, 2), layer);
+			set(level, pos.offset(4, 2 + y, 1), layer);
+			set(level, pos.offset(5, 2 + y, 2), layer);
+			set(level, pos.offset(2, 2 + y, 5), layer);
+			set(level, pos.offset(1, 2 + y, 4), layer);
+			set(level, pos.offset(5, 2 + y, 4), layer);
+			set(level, pos.offset(4, 2 + y, 5), layer);
+
+			if (y != 0 && y != 3) {
+				BlockState innerLayer = iceCream(y - 1);
+				set(level, pos.offset(3, 2 + y, 1), innerLayer);
+				set(level, pos.offset(3, 2 + y, 5), innerLayer);
+				set(level, pos.offset(1, 2 + y, 3), innerLayer);
+				set(level, pos.offset(5, 2 + y, 3), innerLayer);
+			}
+		}
+
+		for (int dx = 0; dx < 3; dx++) {
+			for (int dz = 0; dz < 3; dz++) {
+				set(level, pos.offset(2 + dx, 3, 2 + dz), vanilla);
+			}
+		}
+
+		BlockPos chest = pos.offset(3, 3, 3);
+		set(level, chest, biomeChestState(level, chest));
+		loot(level, random, chest, ICE_TOWER_LOOT);
+		return true;
+	}
+
+	private static boolean iceCreamDome(WorldGenLevel level, RandomSource random, BlockPos pos) {
+		if (!hasFlatSupport(level, pos, -3, 3, -3, 3, false)) {
+			return false;
+		}
+		BlockState ice = CCBlocks.ICE_CREAM.get().defaultBlockState();
+		for (int y = 0; y <= 8; y++) {
+			int radius = y < 2 ? 3 : y < 6 ? 2 : 1;
+			for (int dx = -radius; dx <= radius; dx++) {
+				for (int dz = -radius; dz <= radius; dz++) {
+					if (Math.abs(dx) == radius || Math.abs(dz) == radius || y == 0 || y == 7) {
+						set(level, pos.offset(dx, y, dz), ice);
+					} else {
+						set(level, pos.offset(dx, y, dz), Blocks.AIR.defaultBlockState());
+					}
+				}
+			}
+		}
+		if (random.nextInt(12) == 0) {
+			BlockPos chest = pos.above(5);
+			set(level, chest, biomeChestState(level, chest));
+			loot(level, random, chest, ICE_TOWER_LOOT);
+			set(level, pos.above(4), CCBlocks.HONEY_LAMP.get().defaultBlockState());
+		}
+		return true;
+	}
+
+	private static boolean hasFlatSupport(WorldGenLevel level, BlockPos pos, int minX, int maxX, int minZ, int maxZ, boolean puddingOnly) {
+		for (int dx = minX; dx <= maxX; dx++) {
+			for (int dz = minZ; dz <= maxZ; dz++) {
+				BlockPos floor = pos.offset(dx, -1, dz);
+				BlockState floorState = level.getBlockState(floor);
+				if (puddingOnly ? !floorState.is(CCBlocks.PUDDING.get()) : !isIceCreamFeatureGround(floorState)) {
+					return false;
+				}
+				if (!level.getBlockState(pos.offset(dx, 0, dz)).canBeReplaced()) {
+					return false;
+				}
+				if (!level.getBlockState(pos.offset(dx, 1, dz)).canBeReplaced()) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	private static boolean isIceCreamFeatureGround(BlockState state) {
+		return state.is(CCBlocks.PUDDING.get()) || state.is(CCBlocks.FLOUR.get()) || state.is(CCBlocks.ICE_CREAM.get());
+	}
+
+	private static BlockState iceCream(int metadata) {
+		return CCBlocks.ICE_CREAM.get().defaultBlockState().setValue(LegacyTypeBlock.TYPE, metadata & 3);
+	}
+
+	private static boolean waterTemple(WorldGenLevel level, RandomSource random, BlockPos origin) {
+		BlockPos floor = oceanTempleFloor(level, origin);
+		if (floor == null || !level.getFluidState(floor.above(13)).isSource()) {
+			return false;
+		}
+		BlockPos center = floor.above();
+		BlockState stone = CCBlocks.CHOCOLATE_STONE.get().defaultBlockState();
+		BlockState cobble = CCBlocks.CHOCOLATE_COBBLESTONE.get().defaultBlockState();
+		BlockState glass = CCBlocks.DARK_CARAMEL_GLASS_ROUND.get().defaultBlockState();
+		BlockState topGlass = CCBlocks.DARK_CARAMEL_GLASS_DIAMOND.get().defaultBlockState();
+		BlockState lamp = CCBlocks.HONEY_LAMP.get().defaultBlockState();
+
+		int[][] footprint = {
+				{0, 0}, {-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1},
+				{-2, 0}, {2, 0}, {0, 2}, {0, -2}, {-2, 1}, {-2, -1}, {2, -1}, {2, 1},
+				{-1, 2}, {-1, -2}, {1, 2}, {1, -2}, {0, -3}, {0, 3}, {3, 0}, {-3, 0},
+				{-3, 1}, {-3, -1}, {3, 1}, {3, -1}, {-1, -3}, {1, -3}, {-1, 3}, {1, 3},
+				{2, -2}, {2, 2}, {-2, -2}, {-2, 2}
+		};
+		for (int y = 0; y <= 3; y++) {
+			for (int[] p : footprint) {
+				setTemple(level, center.offset(p[0], y, p[1]), Blocks.AIR.defaultBlockState(), 3);
+			}
+		}
+
+		setTemple(level, center, biomeChestState(level, center), 2);
+		placeTemple(level, center, stone, 2, 0, -1, 0, -1, -1, -1, -1, -1, 1, 1, -1, -1, 1, -1, 1);
+		placeTemple(level, center, cobble, 2, -1, -1, 0, 1, -1, 0, 0, -1, -1, 0, -1, 1,
+				-2, -1, 1, -2, -1, -1, 2, -1, -1, 2, -1, 1, -1, -1, 2, -1, -1, -2,
+				1, -1, 2, 1, -1, -2, 0, -1, -3, 0, -1, 3, 3, -1, 0, -3, -1, 0);
+		placeTemple(level, center, stone, 2, -3, -1, 1, -3, -1, -1, 3, -1, 1, 3, -1, -1,
+				-1, -1, -3, 1, -1, -3, -1, -1, 3, 1, -1, 3,
+				2, -1, -2, 2, -1, 2, -2, -1, -2, -2, -1, 2);
+		placeTemple(level, center, lamp, 3, -2, -1, 0, 2, -1, 0, 0, -1, 2, 0, -1, -2);
+		placeTemple(level, center, CCBlocks.FLOUR.get().defaultBlockState(), 3,
+				0, -1, 4, 1, -1, 4, -1, -1, 4, 0, -1, -4, 1, -1, -4, -1, -1, -4,
+				4, -1, 0, 4, -1, 1, 4, -1, -1, -4, -1, 0, -4, -1, 1, -4, -1, -1);
+		placeTemple(level, center, CCBlocks.FLOUR.get().defaultBlockState(), 2,
+				2, -1, 3, -2, -1, 3, 2, -1, -3, -2, -1, -3,
+				3, -1, -2, 3, -1, 2, -3, -1, -2, -3, -1, 2);
+
+		for (int y = 0; y <= 1; y++) {
+			int yy = y * 2;
+			placeTemple(level, center, cobble, 3,
+					0, yy, 4, 1, yy, 4, -1, yy, 4, 0, yy, -4, 1, yy, -4, -1, yy, -4,
+					4, yy, 0, 4, yy, 1, 4, yy, -1, -4, yy, 0, -4, yy, 1, -4, yy, -1);
+		}
+		placeTemple(level, center, lamp, 3, 0, 1, 4, 0, 1, -4, 4, 1, 0, -4, 1, 0);
+		placeTemple(level, center, glass, 2,
+				1, 1, 4, -1, 1, 4, 1, 1, -4, -1, 1, -4,
+				4, 1, 1, 4, 1, -1, -4, 1, 1, -4, 1, -1);
+
+		placeTemple(level, center, cobble, 2,
+				2, 0, 3, -2, 0, 3, 2, 0, -3, -2, 0, -3, 3, 0, -2, 3, 0, 2, -3, 0, -2, -3, 0, 2,
+				2, 3, 3, -2, 3, 3, 2, 3, -3, -2, 3, -3, 3, 3, -2, 3, 3, 2, -3, 3, -2, -3, 3, 2,
+				2, 3, -2, 2, 3, 2, -2, 3, -2, -2, 3, 2);
+		for (int y = 1; y <= 2; y++) {
+			placeTemple(level, center, glass, 2,
+					2, y, 3, -2, y, 3, 2, y, -3, -2, y, -3,
+					3, y, -2, 3, y, 2, -3, y, -2, -3, y, 2);
+		}
+
+		placeTemple(level, center, lamp, 3, 3, 3, 0, -3, 3, 0, 0, 3, 3, 0, 3, -3);
+		placeTemple(level, center, stone, 3,
+				3, 3, 1, 3, 3, -1, -3, 3, 1, -3, 3, -1,
+				-1, 3, 3, 1, 3, 3, -1, 3, -3, 1, 3, -3);
+
+		placeTemple(level, center, topGlass, 3, 0, 4, 0, 0, 4, 1, 0, 4, -1, -1, 4, 0, 1, 4, 0);
+		placeTemple(level, center, stone, 3,
+				0, 4, 2, 0, 4, -2, -2, 4, 0, 2, 4, 0,
+				1, 4, 2, -1, 4, 2, 1, 4, -2, -1, 4, -2,
+				2, 4, -1, 2, 4, 1, -2, 4, -1, -2, 4, 1,
+				1, 4, 1, -1, 4, 1, 1, 4, -1, -1, 4, -1);
+
+		loot(level, random, center, CANDY_HOUSE_LOOT);
+		return true;
+	}
+
+	private static void placeTemple(WorldGenLevel level, BlockPos center, BlockState state, int flags, int... coordinates) {
+		for (int i = 0; i + 2 < coordinates.length; i += 3) {
+			setTemple(level, center.offset(coordinates[i], coordinates[i + 1], coordinates[i + 2]), state, flags);
+		}
+	}
+
+	private static void setTemple(WorldGenLevel level, BlockPos pos, BlockState state, int flags) {
+		if (!level.isOutsideBuildHeight(pos)) {
+			level.setBlock(pos, state, flags);
+		}
+	}
+
+	private static void place(WorldGenLevel level, BlockPos center, BlockState state, int... coordinates) {
+		for (int i = 0; i + 2 < coordinates.length; i += 3) {
+			set(level, center.offset(coordinates[i], coordinates[i + 1], coordinates[i + 2]), state);
+		}
+	}
+
+	private static BlockPos oceanTempleFloor(WorldGenLevel level, BlockPos origin) {
+		int x = origin.getX();
+		int z = origin.getZ();
+		for (int y = origin.getY() + 9; y >= 20; y--) {
+			BlockPos pos = new BlockPos(x, y, z);
+			BlockState state = level.getBlockState(pos);
+			if (state.is(CCBlocks.FLOUR.get()) || state.is(CCBlocks.SUGAR_SAND.get())) {
+				return pos;
+			}
+		}
+		return null;
+	}
+
+	private static boolean geyser(WorldGenLevel level, RandomSource random, BlockPos origin) {
+		BlockPos base = new BlockPos(origin.getX(), 62, origin.getZ());
+		if (level.getFluidState(base).isEmpty()) {
+			return false;
+		}
+		int height = 4 + random.nextInt(7);
+		for (int y = 0; y <= height; y++) {
+			set(level, base.above(y), Blocks.WATER.defaultBlockState());
+			if (y == height / 2 && random.nextBoolean()) {
+				set(level, base.offset(1, y, 0), Blocks.WATER.defaultBlockState());
+				set(level, base.offset(-1, y, 0), Blocks.WATER.defaultBlockState());
+				set(level, base.offset(0, y, 1), Blocks.WATER.defaultBlockState());
+				set(level, base.offset(0, y, -1), Blocks.WATER.defaultBlockState());
+			}
+		}
+		return true;
+	}
+
+	private static boolean chewingGumTotem(WorldGenLevel level, RandomSource random, BlockPos pos) {
+		boolean candyCraftBiome = level.getBiome(pos).unwrapKey()
+				.map(key -> key.location().getNamespace().equals(CandyCraft.MODID))
+				.orElse(false);
+		if (!candyCraftBiome) {
+			return false;
+		}
+		int[][] pillars = {
+				{4, 0}, {-4, 0}, {0, 4}, {0, -4},
+				{3, 3}, {-3, -3}, {3, -3}, {-3, 3}
+		};
+		if (!hasFlatTotemGround(level, pos, pillars)) {
+			return false;
+		}
+
+		BlockState gum = CCBlocks.CHEWING_GUM_BLOCK.get().defaultBlockState();
+		BlockPos center = pos.above(3);
+		int[][] crown = {
+				{3, 0}, {-3, 0}, {0, 3}, {0, -3},
+				{2, 2}, {-2, -2}, {2, -2}, {-2, 2}
+		};
+		for (int[] offset : crown) {
+			set(level, center.offset(offset[0], 0, offset[1]), gum);
+		}
+		for (int[] offset : pillars) {
+			gumPillar(level, center.offset(offset[0], -1, offset[1]), gum);
+		}
+		BlockPos spawnerPos = center.below(3);
+		set(level, spawnerPos, Blocks.SPAWNER.defaultBlockState());
+		if (level.getBlockEntity(spawnerPos) instanceof SpawnerBlockEntity spawner) {
+			spawner.setEntityId(CCEntityTypes.BEETLE.get(), random);
+		}
+		return true;
+	}
+
+	private static boolean hasFlatTotemGround(WorldGenLevel level, BlockPos origin, int[][] pillars) {
+		if (!isCandyGround(level.getBlockState(origin.below()))) {
+			return false;
+		}
+		for (int[] offset : pillars) {
+			BlockPos pillarSurface = surface(level, origin.offset(offset[0], 0, offset[1]));
+			if (pillarSurface.getY() != origin.getY()
+					|| !isCandyGround(level.getBlockState(pillarSurface.below()))) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private static void gumPillar(WorldGenLevel level, BlockPos pos, BlockState gum) {
+		for (int i = 0; i < 20 && (level.isEmptyBlock(pos.below(i)) || !level.getFluidState(pos.below(i)).isEmpty()); i++) {
+			set(level, pos.below(i), gum);
+		}
+	}
+
+	private static boolean floatingIsland(WorldGenLevel level, RandomSource random, BlockPos origin) {
+		BlockPos base = origin.offset(-16, 0, -16);
+		int nX = random.nextInt(8) - 4;
+		int nZ = random.nextInt(8) - 4;
+		int[][] lastLayer = new int[32][32];
+		lastLayer[16][16] = 2;
+		lastLayer[16 + nX][16 + nZ] = 2;
+		int maxHeight = random.nextInt(3) + 7;
+
+		for (int y = 0; y < maxHeight; y++) {
+			int[][] newLayer = new int[32][32];
+			for (int x = 1; x < 31; x++) {
+				for (int z = 1; z < 31; z++) {
+					if (lastLayer[x][z] != 2) {
+						continue;
+					}
+					placeFloatingIslandColumn(level, random, base, newLayer, x, y, z, maxHeight);
+					if (random.nextInt(4) < 3 || y == maxHeight - 1) {
+						placeFloatingIslandColumn(level, random, base, newLayer, x + 1, y, z, maxHeight);
+					}
+					if (random.nextInt(4) < 3 || y == maxHeight - 1) {
+						placeFloatingIslandColumn(level, random, base, newLayer, x - 1, y, z, maxHeight);
+					}
+					if (random.nextInt(4) < 3 || y == maxHeight - 1) {
+						placeFloatingIslandColumn(level, random, base, newLayer, x, y, z - 1, maxHeight);
+					}
+					if (random.nextInt(4) < 3 || y == maxHeight - 1) {
+						placeFloatingIslandColumn(level, random, base, newLayer, x, y, z + 1, maxHeight);
+					}
+					if (random.nextInt(4) < 1) {
+						placeFloatingIslandColumn(level, random, base, newLayer, x - 1, y, z - 1, maxHeight);
+					}
+					if (random.nextInt(4) < 1) {
+						placeFloatingIslandColumn(level, random, base, newLayer, x + 1, y, z + 1, maxHeight);
+					}
+					if (random.nextInt(4) < 1) {
+						placeFloatingIslandColumn(level, random, base, newLayer, x + 1, y, z - 1, maxHeight);
+					}
+					if (random.nextInt(4) < 1) {
+						placeFloatingIslandColumn(level, random, base, newLayer, x - 1, y, z + 1, maxHeight);
+					}
+				}
+			}
+			lastLayer = newLayer;
+		}
+
+		List<BlockPos> top = new ArrayList<>();
+		for (int x = 0; x < 32; x++) {
+			for (int z = 0; z < 32; z++) {
+				if (lastLayer[x][z] == 2) {
+					top.add(base.offset(x, maxHeight - 1, z));
+				}
+			}
+		}
+
+		int type = random.nextInt(3);
+		if (type == 0 || type == 1) {
+			decoratePigFeedIsland(level, random, top);
+		}
+		if (type == 1) {
+			BlockPos house = base.offset(14 + random.nextInt(4) - 2, maxHeight - 1, 14 + random.nextInt(4) - 2);
+			buildVillageHouse(level, random, house, random.nextInt(4), true);
+		}
+		if (type == 2) {
+			decorateChewingGumIsland(level, random, top);
+			spawnBossBeetle(level, base.offset(16, maxHeight + 2, 16));
+		}
+		return true;
+	}
+
+	private static void placeFloatingIslandColumn(WorldGenLevel level, RandomSource random, BlockPos base, int[][] layer,
+	                                              int x, int y, int z, int maxHeight) {
+		if (x < 0 || x >= 32 || z < 0 || z >= 32) {
+			return;
+		}
+		layer[x][z] = 2;
+		set(level, base.offset(x, y, z), floatingIslandBlockForHeight(y, maxHeight, random));
+	}
+
+	private static BlockState floatingIslandBlockForHeight(int height, int maxHeight, RandomSource random) {
+		int distance = maxHeight - height;
+		if (distance == 1) {
+			return CCBlocks.PUDDING.get().defaultBlockState();
+		}
+		if (distance == 2) {
+			return CCBlocks.FLOUR.get().defaultBlockState();
+		}
+		if (distance > 2 && distance <= 6) {
+			return random.nextInt(5) < distance
+					? CCBlocks.CHOCOLATE_STONE.get().defaultBlockState()
+					: CCBlocks.FLOUR.get().defaultBlockState();
+		}
+		return CCBlocks.CHOCOLATE_STONE.get().defaultBlockState();
+	}
+
+	private static void decoratePigFeedIsland(WorldGenLevel level, RandomSource random, List<BlockPos> top) {
+		for (BlockPos pos : top) {
+			BlockPos above = pos.above();
+			if (random.nextInt(3) == 0) {
+				set(level, pos, CCBlocks.CANDY_FARMLAND.get().defaultBlockState());
+				set(level, above, CCBlocks.DRAGIBUS_CROPS.get().defaultBlockState().setValue(CropBlock.AGE, 7));
+			} else if (level.isEmptyBlock(above) && random.nextBoolean()) {
+				set(level, above, randomSweetGrass(random));
+			}
+		}
+	}
+
+	private static void decorateChewingGumIsland(WorldGenLevel level, RandomSource random, List<BlockPos> top) {
+		for (BlockPos pos : top) {
+			BlockPos above = pos.above();
+			if (!level.isEmptyBlock(above)) {
+				continue;
+			}
+			if (random.nextBoolean()) {
+				set(level, above, CCBlocks.CHEWING_GUM_PUDDLE.get().defaultBlockState());
+			} else if (random.nextInt(3) == 0) {
+				set(level, above, randomSweetGrass(random));
+			}
+		}
+	}
+
+	private static void decorateOrdinaryIsland(WorldGenLevel level, RandomSource random, List<BlockPos> top) {
+		for (BlockPos pos : top) {
+			BlockPos above = pos.above();
+			if (level.isEmptyBlock(above) && random.nextInt(3) != 0) {
+				set(level, above, randomSweetGrass(random));
+			}
+		}
+	}
+
+	private static BlockState randomSweetGrass(RandomSource random) {
+		BlockState state = switch (random.nextInt(3)) {
+			case 0 -> CCBlocks.SWEET_GRASS_PINK.get().defaultBlockState();
+			case 1 -> CCBlocks.SWEET_GRASS_PALE.get().defaultBlockState();
+			default -> CCBlocks.SWEET_GRASS_YELLOW.get().defaultBlockState();
+		};
+		return state.setValue(LegacyMetadataBlock.Plant.METADATA, random.nextInt(4));
+	}
+
+	private static void spawnBossBeetle(WorldGenLevel level, BlockPos pos) {
+		if (!(level instanceof WorldGenRegion region)) {
+			return;
+		}
+		BasicCandySpiderEntity entity = CCEntityTypes.BOSS_BEETLE.get().create(region.getLevel());
+		if (entity == null) {
+			return;
+		}
+		entity.moveTo(pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D, 0.0F, 0.0F);
+		entity.finalizeSpawn(region, region.getCurrentDifficultyAt(pos), MobSpawnType.STRUCTURE, null, null);
+		region.addFreshEntity(entity);
+	}
+
+	private static boolean undergroundVillage(WorldGenLevel level, RandomSource random, BlockPos origin) {
+		if (origin.getY() < 10 || origin.getY() > 48) {
+			return false;
+		}
+		BlockPos base = origin.offset(-32, 0, -32);
+		boolean lamp = false;
+		for (int x = 0; x < 64; x++) {
+			lamp = !lamp;
+			for (int y = 0; y < 7; y++) {
+				for (int z = 0; z < 64; z++) {
+					BlockPos pos = base.offset(x, y, z);
+					if (y < 2) {
+						set(level, pos, Blocks.STONE.defaultBlockState());
+					} else if (x == 0 || z == 0 || x == 63 || z == 63) {
+						set(level, pos, CCBlocks.CHOCOLATE_COBBLESTONE.get().defaultBlockState());
+					} else if ((y == 2 || y == 5) && (x == 1 || z == 1 || x == 62 || z == 62)) {
+						set(level, pos, CCBlocks.CANDY_CANE_BLOCK.get().defaultBlockState());
+					} else {
+						set(level, pos, y < 6
+								? Blocks.AIR.defaultBlockState()
+								: lamp ? CCBlocks.HONEY_LAMP.get().defaultBlockState() : CCBlocks.CHOCOLATE_COBBLESTONE.get().defaultBlockState());
+						lamp = !lamp;
+					}
+				}
+			}
+		}
+
+		for (int x = 0; x < 64; x++) {
+			for (int z = 0; z < 64; z++) {
+				BlockState floor = x <= 5 || x >= 58 || z <= 5 || z >= 58
+						? CCBlocks.MARSHMALLOW_PLANKS.get().defaultBlockState()
+						: x == 6 || x == 57 || z == 6 || z == 57
+						? CCBlocks.MARSHMALLOW_LOG.get().defaultBlockState()
+						: CCBlocks.PUDDING.get().defaultBlockState();
+				set(level, base.offset(x, 1, z), floor);
+			}
+		}
+
+		for (int x = 6; x < 58; x++) {
+			for (int z = 6; z < 58; z++) {
+				if (isVillageGate(x, z)) {
+					set(level, base.offset(x, 1, z), CCBlocks.MARSHMALLOW_WORKBENCH.get().defaultBlockState());
+				} else if (isVillageRoad(x, z)) {
+					set(level, base.offset(x, 1, z), random.nextBoolean()
+							? CCBlocks.CHOCOLATE_STONE.get().defaultBlockState()
+							: CCBlocks.CHOCOLATE_COBBLESTONE.get().defaultBlockState());
+				} else if (isVillageRoadEdge(x, z)) {
+					set(level, base.offset(x, 1, z), CCBlocks.MARSHMALLOW_LOG.get().defaultBlockState());
+				}
+			}
+		}
+
+		buildVillageHouse(level, random, base.offset(8, 1, 8), random.nextInt(2), false);
+		buildVillageHouse(level, random, base.offset(14, 1, 8), 1, true);
+		buildVillageHouse(level, random, base.offset(8, 1, 14), 0, true);
+		buildVillageHouse(level, random, base.offset(26, 1, 8), 3, random.nextBoolean());
+		buildVillageHouse(level, random, base.offset(33, 1, 8), 3, random.nextBoolean());
+		buildVillageHouse(level, random, base.offset(51, 1, 8), random.nextInt(2) + 1, false);
+		buildVillageHouse(level, random, base.offset(45, 1, 8), 1, true);
+		buildVillageHouse(level, random, base.offset(51, 1, 14), 2, true);
+		buildVillageHouse(level, random, base.offset(26, 1, 51), 1, random.nextBoolean());
+		buildVillageHouse(level, random, base.offset(33, 1, 51), 1, random.nextBoolean());
+		buildVillageHouse(level, random, base.offset(51, 1, 51), random.nextInt(2) + 2, false);
+		buildVillageHouse(level, random, base.offset(51, 1, 45), 2, true);
+		buildVillageHouse(level, random, base.offset(45, 1, 51), 3, true);
+		buildVillageHouse(level, random, base.offset(8, 1, 26), 2, random.nextBoolean());
+		buildVillageHouse(level, random, base.offset(8, 1, 33), 2, random.nextBoolean());
+		buildVillageHouse(level, random, base.offset(8, 1, 51), random.nextInt(2) == 0 ? 3 : 0, false);
+		buildVillageHouse(level, random, base.offset(8, 1, 45), 0, true);
+		buildVillageHouse(level, random, base.offset(14, 1, 51), 3, true);
+		buildVillageHouse(level, random, base.offset(51, 1, 26), 0, random.nextBoolean());
+		buildVillageHouse(level, random, base.offset(51, 1, 33), 0, random.nextBoolean());
+
+		for (int i = 0; i < 6; i++) {
+			set(level, base.offset(26, 2, 50 - i), CCBlocks.CANDY_CANE_FENCE.get().defaultBlockState());
+			set(level, base.offset(37, 2, 50 - i), CCBlocks.CANDY_CANE_FENCE.get().defaultBlockState());
+			set(level, base.offset(26, 2, 13 + i), CCBlocks.CANDY_CANE_FENCE.get().defaultBlockState());
+			set(level, base.offset(37, 2, 13 + i), CCBlocks.CANDY_CANE_FENCE.get().defaultBlockState());
+			set(level, base.offset(50 - i, 2, 26), CCBlocks.CANDY_CANE_FENCE.get().defaultBlockState());
+			set(level, base.offset(50 - i, 2, 37), CCBlocks.CANDY_CANE_FENCE.get().defaultBlockState());
+			set(level, base.offset(13 + i, 2, 26), CCBlocks.CANDY_CANE_FENCE.get().defaultBlockState());
+			set(level, base.offset(13 + i, 2, 37), CCBlocks.CANDY_CANE_FENCE.get().defaultBlockState());
+		}
+		int[][] fencePosts = {{18, 27}, {18, 36}, {45, 27}, {45, 36}, {27, 18}, {36, 18}, {27, 45}, {36, 45}};
+		for (int[] post : fencePosts) {
+			set(level, base.offset(post[0], 2, post[1]), CCBlocks.CANDY_CANE_FENCE.get().defaultBlockState());
+		}
+		connectVillageCandyCaneFences(level, base);
+		connectVillageCaramelPanes(level, base);
+
+		buildVillageCenter(level, base);
+		decorateVillageLeaves(level, random, base);
+		scatterVillageSweetGrass(level, random, base);
+		spawnBossSuguard(level, base.offset(32, 3, 32));
+		callHoneyEmblemPlayers(level, origin.above(2));
+		return true;
+	}
+
+	private static void spawnUndergroundVillageGingerbread(WorldGenLevel level, RandomSource random, BlockPos base) {
+		int count = 3 + random.nextInt(4);
+		for (int i = 0; i < count; i++) {
+			BlockPos pos = base.offset(8 + random.nextInt(48), 2, 8 + random.nextInt(48));
+			if (!level.getBlockState(pos).isAir()) {
+				pos = pos.above();
+			}
+			spawnGingerbread(level, pos, random.nextInt(3));
+		}
+	}
+
+	private static void spawnBossSuguard(WorldGenLevel level, BlockPos pos) {
+		ServerLevel serverLevel = serverLevel(level);
+		if (serverLevel == null) {
+			return;
+		}
+		BasicCandyZombieEntity entity = CCEntityTypes.BOSS_SUGUARD.get().create(serverLevel);
+		if (entity == null) {
+			return;
+		}
+		set(level, pos, Blocks.AIR.defaultBlockState());
+		set(level, pos.above(), Blocks.AIR.defaultBlockState());
+		entity.moveTo(pos.getX(), pos.getY(), pos.getZ(), 0.0F, 0.0F);
+		entity.finalizeSpawn(level, level.getCurrentDifficultyAt(pos), MobSpawnType.STRUCTURE, null, null);
+		entity.setPersistenceRequired();
+		level.addFreshEntity(entity);
+	}
+
+	private static boolean isVillageGate(int x, int z) {
+		return (x == 6 || x == 57) && ((z > 20 && z < 24) || (z > 39 && z < 43))
+				|| (z == 6 || z == 57) && ((x > 20 && x < 24) || (x > 39 && x < 43));
+	}
+
+	private static boolean isVillageRoad(int x, int z) {
+		return (x >= 21 && x <= 23) || (x >= 40 && x <= 42) || (z >= 21 && z <= 23) || (z >= 40 && z <= 42);
+	}
+
+	private static boolean isVillageRoadEdge(int x, int z) {
+		return x == 20 || x == 24 || x == 39 || x == 43 || z == 20 || z == 24 || z == 39 || z == 43;
+	}
+
+	private static void buildVillageCenter(WorldGenLevel level, BlockPos base) {
+		int[][] pudding = {
+				{31, 31}, {32, 31}, {31, 32}, {32, 32}, {30, 31}, {30, 32}, {33, 31}, {33, 32},
+				{31, 30}, {32, 30}, {31, 33}, {32, 33}
+		};
+		for (int[] p : pudding) {
+			set(level, base.offset(p[0], 2, p[1]), CCBlocks.PUDDING.get().defaultBlockState());
+		}
+		int[][] slabs = {
+				{30, 30}, {33, 30}, {30, 33}, {33, 33}, {34, 33}, {33, 34}, {30, 29}, {29, 30},
+				{33, 29}, {34, 30}, {29, 33}, {30, 34}, {31, 29}, {32, 29}, {31, 34}, {32, 34},
+				{29, 31}, {29, 32}, {34, 31}, {34, 32}
+		};
+		for (int[] p : slabs) {
+			set(level, base.offset(p[0], 2, p[1]), CCBlocks.MARSHMALLOW_SLAB.get().defaultBlockState());
+		}
+	}
+
+	private static void decorateVillageLeaves(WorldGenLevel level, RandomSource random, BlockPos base) {
+		int meta = random.nextInt(3);
+		int meta2 = random.nextInt(3);
+		int meta3 = random.nextInt(3);
+		int meta4 = random.nextInt(3);
+		placeLeafL(level, base, 14, 14, 1, 1, meta);
+		placeLeafL(level, base, 49, 14, -1, 1, meta);
+		placeLeafL(level, base, 49, 49, -1, -1, meta);
+		placeLeafL(level, base, 14, 49, 1, -1, meta);
+		placeLeafL(level, base, 16, 16, 1, 1, meta2);
+		placeLeafL(level, base, 16, 47, 1, -1, meta2);
+		placeLeafL(level, base, 47, 47, -1, -1, meta2);
+		placeLeafL(level, base, 47, 16, -1, 1, meta2);
+
+		set(level, base.offset(18, 2, 18), leafState(meta3));
+		set(level, base.offset(18, 2, 45), leafState(meta3));
+		set(level, base.offset(45, 2, 18), leafState(meta3));
+		set(level, base.offset(45, 2, 45), leafState(meta3));
+		placeLeafCorner(level, base, 26, 26, 1, 1, meta4);
+		placeLeafCorner(level, base, 37, 26, -1, 1, meta4);
+		placeLeafCorner(level, base, 37, 37, -1, -1, meta4);
+		placeLeafCorner(level, base, 26, 37, 1, -1, meta4);
+	}
+
+	private static void placeLeafL(WorldGenLevel level, BlockPos base, int x, int z, int dx, int dz, int metadata) {
+		for (int i = 0; i < 5; i++) {
+			set(level, base.offset(x + dx * i, 2, z), leafState(metadata));
+			set(level, base.offset(x, 2, z + dz * i), leafState(metadata));
+		}
+	}
+
+	private static void placeLeafCorner(WorldGenLevel level, BlockPos base, int x, int z, int dx, int dz, int metadata) {
+		set(level, base.offset(x, 2, z), leafState(metadata));
+		set(level, base.offset(x + dx, 2, z), leafState(metadata));
+		set(level, base.offset(x + 2 * dx, 2, z), leafState(metadata));
+		set(level, base.offset(x, 2, z + dz), leafState(metadata));
+		set(level, base.offset(x, 2, z + 2 * dz), leafState(metadata));
+	}
+
+	private static BlockState leafState(int metadata) {
+		BlockState state = switch (metadata % 3) {
+			case 1 -> CCBlocks.CANDY_LEAVES_DARK.get().defaultBlockState();
+			case 2 -> CCBlocks.CANDY_LEAVES_LIGHT.get().defaultBlockState();
+			default -> CCBlocks.CANDY_LEAVES.get().defaultBlockState();
+		};
+		return state
+				.setValue(LegacyLeavesBlock.CHECK_DECAY, false)
+				.setValue(LegacyLeavesBlock.DECAYABLE, false);
+	}
+
+	private static void scatterVillageSweetGrass(WorldGenLevel level, RandomSource random, BlockPos base) {
+		for (int x = 0; x < 64; x++) {
+			for (int z = 0; z < 64; z++) {
+				BlockPos pos = base.offset(x, 2, z);
+				if (level.isEmptyBlock(pos)
+						&& level.getBlockState(pos.below()).is(CCBlocks.PUDDING.get())
+						&& random.nextInt(3) == 0) {
+					set(level, pos, randomSweetGrass(random));
+				}
+			}
+		}
+	}
+
+	private static void connectVillageCandyCaneFences(WorldGenLevel level, BlockPos base) {
+		for (int x = 0; x < 64; x++) {
+			for (int z = 0; z < 64; z++) {
+				BlockPos pos = base.offset(x, 2, z);
+				BlockState state = level.getBlockState(pos);
+				if (!state.is(CCBlocks.CANDY_CANE_FENCE.get())) {
+					continue;
+				}
+				for (Direction direction : Direction.Plane.HORIZONTAL) {
+					BlockPos neighborPos = pos.relative(direction);
+					state = state.updateShape(
+							direction,
+							level.getBlockState(neighborPos),
+							level,
+							pos,
+							neighborPos
+					);
+				}
+				set(level, pos, state);
+			}
+		}
+	}
+
+	private static void connectVillageCaramelPanes(WorldGenLevel level, BlockPos base) {
+		for (int x = 0; x < 64; x++) {
+			for (int y = 0; y < 7; y++) {
+				for (int z = 0; z < 64; z++) {
+					connectCaramelPane(level, base.offset(x, y, z));
+				}
+			}
+		}
+	}
+
+	private static void connectCaramelPane(WorldGenLevel level, BlockPos pos) {
+		BlockState state = level.getBlockState(pos);
+		if (!state.is(CCBlocks.CARAMEL_PANE.get())
+				&& !state.is(CCBlocks.CARAMEL_PANE_ROUND.get())
+				&& !state.is(CCBlocks.CARAMEL_PANE_DIAMOND.get())) {
+			return;
+		}
+		for (Direction direction : Direction.Plane.HORIZONTAL) {
+			BlockPos neighborPos = pos.relative(direction);
+			state = state.updateShape(direction, level.getBlockState(neighborPos), level, pos, neighborPos);
+		}
+		set(level, pos, state);
+	}
+
+	private static void buildVillageHouse(WorldGenLevel level, RandomSource random, BlockPos base, int side, boolean window) {
+		int metadata = random.nextInt(3);
+		BlockState planks = marshmallowPlanks(metadata);
+		BlockState roofPlanks = CCBlocks.MARSHMALLOW_PLANKS.get().defaultBlockState();
+		BlockState logs = marshmallowLog(metadata, Direction.Axis.Y);
+		BlockState logX = marshmallowLog(metadata, Direction.Axis.X);
+		BlockState logZ = marshmallowLog(metadata, Direction.Axis.Z);
+		BlockState slab = marshmallowSlab(metadata).setValue(SlabBlock.TYPE, SlabType.TOP);
+		for (int dx = 0; dx < 5; dx++) {
+			for (int dz = 0; dz < 5; dz++) {
+				set(level, base.offset(dx, 0, dz), CCBlocks.CHOCOLATE_STONE.get().defaultBlockState());
+				set(level, base.offset(dx, 3, dz), roofPlanks);
+			}
+		}
+		for (int y = 1; y <= 2; y++) {
+			for (int dx = 0; dx < 5; dx++) {
+				for (int dz = 0; dz < 5; dz++) {
+					boolean corner = (dx == 0 || dx == 4) && (dz == 0 || dz == 4);
+					boolean edge = dx == 0 || dx == 4 || dz == 0 || dz == 4;
+					set(level, base.offset(dx, y, dz), corner ? logs : edge ? planks : Blocks.AIR.defaultBlockState());
+				}
+			}
+		}
+		for (int dx = 1; dx <= 3; dx++) {
+			set(level, base.offset(dx, 3, 0), logX);
+			set(level, base.offset(dx, 3, 4), logX);
+		}
+		for (int dz = 1; dz <= 3; dz++) {
+			set(level, base.offset(0, 3, dz), logZ);
+			set(level, base.offset(4, 3, dz), logZ);
+		}
+
+		if (window) {
+			BlockPos glass = houseWindowPos(base, side, random.nextInt(3));
+			set(level, glass, random.nextInt(3) == 0
+					? CCBlocks.CARAMEL_PANE.get().defaultBlockState()
+					: random.nextBoolean() ? CCBlocks.CARAMEL_PANE_ROUND.get().defaultBlockState() : CCBlocks.CARAMEL_PANE_DIAMOND.get().defaultBlockState());
+			connectCaramelPane(level, glass);
+		}
+		BlockPos door = houseWallPos(base, side, random.nextInt(3));
+		set(level, door, Blocks.AIR.defaultBlockState());
+		set(level, door.above(), slab);
+		set(level, base.offset(0, 3, 0), Blocks.AIR.defaultBlockState());
+		set(level, base.offset(4, 3, 0), Blocks.AIR.defaultBlockState());
+		set(level, base.offset(4, 3, 4), Blocks.AIR.defaultBlockState());
+		set(level, base.offset(0, 3, 4), Blocks.AIR.defaultBlockState());
+		spawnGingerbread(level, base.offset(2, 2, 2), base.getY() > 100 ? GingerbreadManEntity.ELDER : -1);
+	}
+
+	private static BlockPos houseWallPos(BlockPos base, int side, int offset) {
+		int direction = side & 3;
+		if (direction == 0) {
+			return base.offset(0, 1, 1 + offset);
+		}
+		if (direction == 1) {
+			return base.offset(1 + offset, 1, 0);
+		}
+		if (direction == 2) {
+			return base.offset(4, 1, 1 + offset);
+		}
+		return base.offset(1 + offset, 1, 4);
+	}
+
+	private static BlockPos houseWindowPos(BlockPos base, int side, int offset) {
+		int direction = side & 3;
+		if (direction == 0) {
+			return base.offset(4, 2, 1 + offset);
+		}
+		if (direction == 1) {
+			return base.offset(1 + offset, 2, 4);
+		}
+		if (direction == 2) {
+			return base.offset(0, 2, 1 + offset);
+		}
+		return base.offset(1 + offset, 2, 0);
+	}
+
+	private static BlockState marshmallowPlanks(int metadata) {
+		return CCBlocks.MARSHMALLOW_PLANKS.get().defaultBlockState()
+				.setValue(LegacyMetadataBlock.METADATA, metadata & 3);
+	}
+
+	private static BlockState marshmallowLog(int metadata, Direction.Axis axis) {
+		return CCBlocks.MARSHMALLOW_LOG.get().defaultBlockState()
+				.setValue(LegacyLogBlock.METADATA, metadata % 3)
+				.setValue(RotatedPillarBlock.AXIS, axis);
+	}
+
+	private static BlockState marshmallowSlab(int metadata) {
+		return switch (metadata % 3) {
+			case 1 -> CCBlocks.DARK_MARSHMALLOW_SLAB.get().defaultBlockState();
+			case 2 -> CCBlocks.LIGHT_MARSHMALLOW_SLAB.get().defaultBlockState();
+			default -> CCBlocks.MARSHMALLOW_SLAB.get().defaultBlockState();
+		};
+	}
+
+	private static void buildSmallHouse(WorldGenLevel level, BlockPos base, RandomSource random, boolean chest) {
+		BlockState planks = CCBlocks.MARSHMALLOW_PLANKS.get().defaultBlockState();
+		BlockState logs = CCBlocks.MARSHMALLOW_LOG.get().defaultBlockState();
+		BlockState wall = CCBlocks.CANDY_CANE_BLOCK.get().defaultBlockState();
+		for (int dx = 0; dx < 5; dx++) {
+			for (int dz = 0; dz < 5; dz++) {
+				set(level, base.offset(dx, 0, dz), CCBlocks.CHOCOLATE_STONE.get().defaultBlockState());
+				set(level, base.offset(dx, 3, dz), planks);
+			}
+		}
+		for (int y = 1; y <= 2; y++) {
+			for (int dx = 0; dx < 5; dx++) {
+				for (int dz = 0; dz < 5; dz++) {
+					boolean corner = (dx == 0 || dx == 4) && (dz == 0 || dz == 4);
+					boolean edge = dx == 0 || dx == 4 || dz == 0 || dz == 4;
+					if (corner) {
+						set(level, base.offset(dx, y, dz), logs);
+					} else if (edge) {
+						set(level, base.offset(dx, y, dz), wall);
+					} else {
+						set(level, base.offset(dx, y, dz), Blocks.AIR.defaultBlockState());
+					}
+				}
+			}
+		}
+		set(level, base.offset(2, 1, 0), Blocks.AIR.defaultBlockState());
+		set(level, base.offset(2, 2, 0), Blocks.AIR.defaultBlockState());
+		if (chest) {
+			BlockPos chestPos = base.offset(2, 1, 2);
+			set(level, chestPos, biomeChestState(level, chestPos));
+			loot(level, random, chestPos, CANDY_HOUSE_LOOT);
+		}
+	}
+
+	private static void spawnGingerbread(WorldGenLevel level, BlockPos pos) {
+		spawnGingerbread(level, pos, -1);
+	}
+
+	private static void spawnGingerbread(WorldGenLevel level, BlockPos pos, int profession) {
+		if (!ENABLE_STRUCTURE_GINGERBREAD) {
+			return;
+		}
+		ServerLevel serverLevel = serverLevel(level);
+		if (serverLevel == null) {
+			return;
+		}
+		GingerbreadManEntity entity = CCEntityTypes.GINGERBREAD_MAN.get().create(serverLevel);
+		if (entity == null) {
+			return;
+		}
+		entity.moveTo(pos.getX() + 0.5D, pos.getY(), pos.getZ() + 0.5D, 0.0F, 0.0F);
+		entity.finalizeSpawn(level, level.getCurrentDifficultyAt(pos), MobSpawnType.STRUCTURE, null, null);
+		if (profession >= 0) {
+			entity.setGingerProfession(profession);
+		}
+		level.addFreshEntity(entity);
+	}
+
+	private static void callHoneyEmblemPlayers(WorldGenLevel level, BlockPos pos) {
+		ServerLevel serverLevel = serverLevel(level);
+		if (serverLevel == null) {
+			return;
+		}
+		serverLevel.players().forEach(player -> {
+			if (EmblemHelper.has(player, CCItems.HONEY_EMBLEM.get())) {
+				player.displayClientMessage(net.minecraft.network.chat.Component.translatable(
+						"message.candycraftmod.honey_emblem_found",
+						pos.getX(), pos.getY(), pos.getZ()
+				), false);
+			}
+		});
+	}
+
+	private static ServerLevel serverLevel(WorldGenLevel level) {
+		if (level instanceof ServerLevel serverLevel) {
+			return serverLevel;
+		}
+		if (level instanceof WorldGenRegion region) {
+			return region.getLevel();
+		}
+		return null;
+	}
+
+	private static void loot(WorldGenLevel level, RandomSource random, BlockPos pos, ResourceLocation table) {
+		if (level.getBlockEntity(pos) instanceof ChestBlockEntity chest) {
+			chest.setLootTable(table, random.nextLong());
+			return;
+		}
+		if (level.getBlockEntity(pos) instanceof Container container && level instanceof WorldGenRegion region) {
+			LootTable lootTable = region.getLevel().getServer().getLootData().getLootTable(table);
+			LootParams params = new LootParams.Builder(region.getLevel())
+					.withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(pos))
+					.create(LootContextParamSets.CHEST);
+			lootTable.fill(container, params, random.nextLong());
+		}
+	}
+
+	private static BlockState biomeChestState(WorldGenLevel level, BlockPos pos) {
+		String biome = level.getBiome(pos).unwrapKey()
+				.map(key -> key.location().getPath())
+				.orElse("");
+		if (biome.equals("chocolate_forest") || biome.equals("caramel_forest")
+				|| biome.equals("sugar_hell_mountains")) {
+			return CCBlocks.MARSHMALLOW_CHEST_DARK.get().defaultBlockState();
+		}
+		if (biome.equals("ice_cream_plains") || biome.equals("ice_cream_sky_mountains")
+				|| biome.equals("sugar_cold_forest") || biome.equals("cotton_candy_plains")) {
+			return CCBlocks.MARSHMALLOW_CHEST_LIGHT.get().defaultBlockState();
+		}
+		return CCBlocks.MARSHMALLOW_CHEST.get().defaultBlockState();
+	}
+
+	private static void clear(WorldGenLevel level, BlockPos min, BlockPos max) {
+		for (BlockPos pos : BlockPos.betweenClosed(min, max)) {
+			set(level, pos, Blocks.AIR.defaultBlockState());
+		}
+	}
+
+	private static boolean isCandyGround(BlockState state) {
+		return state.is(CCBlocks.PUDDING.get()) || state.is(CCBlocks.FLOUR.get()) || state.is(CCBlocks.CANDY_FARMLAND.get());
+	}
+
+	private static void set(WorldGenLevel level, BlockPos pos, BlockState state) {
+		if (!level.isOutsideBuildHeight(pos)) {
+			level.setBlock(pos, state, 2 | 16);
+		}
+	}
+
+	public enum Kind {
+		ICE_TOWER,
+		ICE_CREAM_DOME,
+		WATER_TEMPLE,
+		GEYSER,
+		CHEWING_GUM_TOTEM,
+		FLOATING_ISLAND,
+		UNDERGROUND_VILLAGE
+	}
+}
+

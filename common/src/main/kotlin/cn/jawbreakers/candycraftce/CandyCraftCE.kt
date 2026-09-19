@@ -31,7 +31,11 @@ object CandyCraftCE {
             CBlocks
             CBlockEntities
             CItems
+            //world
             CLevels
+            CBiomes
+            CFoliagePlacers
+            CFeatures
             ifClient {
                 PuddingColor.initColor()
             }

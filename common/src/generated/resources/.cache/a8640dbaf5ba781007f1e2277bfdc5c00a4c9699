@@ -1,0 +1,5 @@
+// 1.20.1	2026-09-19T14:34:56.8955948	Tags for minecraft:worldgen/biome mod id candycraftce
+3c0ecceea714aed56e984f686bff77ac5b9f4f82 data/candycraftce/tags/worldgen/biome/candy_biomes.json
+8aae02aa3948f9e6a45d9be55cf0d6aa0fe0ee28 data/candycraftce/tags/worldgen/biome/has_essence_flower.json
+8ac2aa53c798b19fabb7f23974d370b572ede744 data/candycraftce/tags/worldgen/biome/has_mint_flower.json
+4b74513cd0245aedf25d2e7766c966e73c3c87a3 data/candycraftce/tags/worldgen/biome/is_cold.json

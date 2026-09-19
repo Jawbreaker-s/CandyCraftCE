@@ -7,6 +7,7 @@ import net.minecraft.core.Vec3i
 import net.minecraft.core.particles.ParticleOptions
 import net.minecraft.world.entity.item.ItemEntity
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.ChunkPos
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.Vec3
 import java.util.stream.Stream
@@ -18,6 +19,10 @@ import kotlin.math.min
  * @date 2022/12/24 18:41
  */
 object CLevelUtils {
+    operator fun ChunkPos.contains(pos: BlockPos): Boolean {
+        return pos.x in minBlockX..maxBlockX && pos.z in minBlockZ..maxBlockZ
+    }
+
     fun spawnItemEntity(level: Level, pos: Vec3i, stack: ItemStack): ItemEntity? {
         return spawnItemEntity(level, Vec3.atCenterOf(pos), stack)
     }

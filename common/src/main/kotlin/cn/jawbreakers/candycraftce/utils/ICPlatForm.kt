@@ -21,6 +21,9 @@ import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.chunk.ChunkGenerator
+import net.minecraft.world.level.levelgen.feature.Feature
+import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacer
+import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacerType
 import net.minecraft.world.level.levelgen.structure.StructureType
 import java.util.function.Consumer
 import java.util.function.Supplier
@@ -92,8 +95,10 @@ interface ICPlatformFluids {
 
 interface ICPlatformLevels {
     fun registerDimensionSpecialEffects(id: ResourceLocation, effects: DimensionSpecialEffects)
-    fun <T : Codec<out ChunkGenerator>> registerChunkGenerator(id: ResourceLocation, codec: Supplier<T>): Entry<T>
-    fun <T : StructureType<*>> registerStructureType(id: ResourceLocation, type: T): Entry<T>
+    fun <T : Codec<out ChunkGenerator>> registerChunkGenerator(name: String, codec: Supplier<T>): Entry<T>
+    fun <T : StructureType<*>> registerStructureType(name: String, codec: T): Entry<T>
+    fun <F : Feature<*>> registerFeature(name: String, factory: Supplier<F>): Entry<F>
+    fun <P : FoliagePlacer> registerFoliagePlacer(name: String, codec: Supplier<Codec<P>>): Entry<FoliagePlacerType<P>>
 }
 
 interface ICPlatformDatagen {

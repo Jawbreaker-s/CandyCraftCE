@@ -108,13 +108,13 @@ class CandyCraftCEFabric : ModInitializer, ICPlatForm {
     }
 
     override fun <E : Item> registerItem(name: String, factory: Supplier<E>): Entry<E> =
-        register("CItem", name, factory::get) { id, it ->
+        register("Item", name, factory::get) { id, it ->
             Items.registerItem(id, it)
         }
 
 
     override fun <E : Block> registerBlock(name: String, factory: Supplier<E>): Entry<E> =
-        register("CBlock", name, factory::get) { id, it ->
+        register("Block", name, factory::get) { id, it ->
             BuiltInRegistries.BLOCK.register(id, it)
         }
 

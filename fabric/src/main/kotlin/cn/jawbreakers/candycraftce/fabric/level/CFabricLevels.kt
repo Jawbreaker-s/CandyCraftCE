@@ -10,6 +10,9 @@ import net.minecraft.client.renderer.DimensionSpecialEffects
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.level.chunk.ChunkGenerator
+import net.minecraft.world.level.levelgen.feature.Feature
+import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacer
+import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacerType
 import net.minecraft.world.level.levelgen.structure.StructureType
 import java.util.function.Supplier
 
@@ -18,15 +21,27 @@ object CFabricLevels : ICPlatformLevels {
     override fun registerDimensionSpecialEffects(id: ResourceLocation, effects: DimensionSpecialEffects) =
         DimensionRenderingRegistryImpl.registerDimensionEffects(id, effects)
 
-    override fun <T : Codec<out ChunkGenerator>> registerChunkGenerator(
-        id: ResourceLocation,
-        codec: Supplier<T>,
-    ): Entry<T> = CandyCraftCEFabric.instance.register("ChunkGenerator", id.path, codec::get) { id, it ->
-        BuiltInRegistries.CHUNK_GENERATOR.register(id, it)
+    override fun <T : Codec<out ChunkGenerator>> registerChunkGenerator(name: String, codec: Supplier<T>): Entry<T> =
+        CandyCraftCEFabric.instance.register("ChunkGenerator", name, codec::get) { id, it ->
+            BuiltInRegistries.CHUNK_GENERATOR.register(id, it)
+        }
+
+    override fun <T : StructureType<*>> registerStructureType(name: String, codec: T): Entry<T> =
+        CandyCraftCEFabric.instance.register("StructureType", name, { codec }) { id, it ->
+            BuiltInRegistries.STRUCTURE_TYPE.register(id, it)
+        }
+
+    override fun <F : Feature<*>> registerFeature(name: String, factory: Supplier<F>): Entry<F> {
+        return CandyCraftCEFabric.instance.register("Feature", name, factory::get) { id, it ->
+            BuiltInRegistries.FEATURE.register(id, it)
+        }
     }
 
-    override fun <T : StructureType<*>> registerStructureType(id: ResourceLocation, type: T): Entry<T> =
-        CandyCraftCEFabric.instance.register("StructureType", id.path, { type }) { id, it ->
-            BuiltInRegistries.STRUCTURE_TYPE.register(id, it)
+    override fun <P : FoliagePlacer> registerFoliagePlacer(name: String, codec: Supplier<Codec<P>>) =
+        CandyCraftCEFabric.instance.register(
+            "FoliagePlacerType",
+            name,
+            { FoliagePlacerType(codec.get()) }) { id, it ->
+            BuiltInRegistries.FOLIAGE_PLACER_TYPE.register(id, it)
         }
 }

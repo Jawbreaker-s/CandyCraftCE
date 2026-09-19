@@ -1,5 +1,6 @@
 package cn.jawbreakers.candycraftce.registry
 
+import cn.breadnicecat.candycraftce.core.block.blocks.CandyLeavesBlock
 import cn.jawbreakers.candycraftce.block.*
 import cn.jawbreakers.candycraftce.utils.CLogUtils
 import cn.jawbreakers.candycraftce.utils.CMixins
@@ -616,26 +617,31 @@ object CBlocks {
     //plants
 
     val sweet_grass_pink = register("sweet_grass_pink") { CandyPlantBlock(plant(MapColor.COLOR_PINK)) }
+        .cutout()
     val sweet_grass_pale = register("sweet_grass_pale") { CandyPlantBlock(plant(MapColor.COLOR_LIGHT_GRAY)) }
+        .cutout()
     val sweet_grass_yellow = register("sweet_grass_yellow") { CandyPlantBlock(plant(MapColor.COLOR_YELLOW)) }
+        .cutout()
     val sweet_grass_red = register("sweet_grass_red") { CandyPlantBlock(plant(MapColor.COLOR_RED)) }
+        .cutout()
 
-    val chocolate_leaves = register("chocolate_leaves") { LeavesBlock(leaves(MapColor.COLOR_BROWN)) }
+    val chocolate_leaves = register("chocolate_leaves") { CandyLeavesBlock(leaves(MapColor.COLOR_BROWN)) }
         .cutout()
-    val ice_cream_leaves = register("ice_cream_leaves") { LeavesBlock(leaves(MapColor.TERRACOTTA_WHITE)) }
+    val ice_cream_leaves = register("ice_cream_leaves") { CandyLeavesBlock(leaves(MapColor.TERRACOTTA_WHITE)) }
         .cutout()
-    val candied_cherry_leaves = register("candied_cherry_leaves") { LeavesBlock(leaves(MapColor.COLOR_RED)) }
+    val candied_cherry_leaves = register("candied_cherry_leaves") { CandyLeavesBlock(leaves(MapColor.COLOR_RED)) }
         .cutout()
-    val caramel_leaves = register("caramel_leaves") { LeavesBlock(leaves(MapColor.COLOR_ORANGE)) }
+    val caramel_leaves = register("caramel_leaves") { CandyLeavesBlock(leaves(MapColor.COLOR_ORANGE)) }
         .cutout()
-    val enchant_candy_leaves = register("enchant_candy_leaves") { LeavesBlock(leaves(MapColor.COLOR_PURPLE)) }
+    val enchant_candy_leaves = register("enchant_candy_leaves") { CandyLeavesBlock(leaves(MapColor.COLOR_PURPLE)) }
         .cutout()
-    val milk_chocolate_leaves = register("milk_chocolate_leaves") { LeavesBlock(leaves(MapColor.COLOR_BROWN)) }
+    val milk_chocolate_leaves = register("milk_chocolate_leaves") { CandyLeavesBlock(leaves(MapColor.COLOR_BROWN)) }
         .cutout()
-    val white_chocolate_leaves = register("white_chocolate_leaves") { LeavesBlock(leaves(MapColor.SAND)) }
+    val white_chocolate_leaves = register("white_chocolate_leaves") { CandyLeavesBlock(leaves(MapColor.SAND)) }
         .cutout()
-    val dark_chocolate_leaves = register("dark_chocolate_leaves") { LeavesBlock(leaves(MapColor.TERRACOTTA_BROWN)) }
-        .cutout()
+    val dark_chocolate_leaves = register("dark_chocolate_leaves") {
+        CandyLeavesBlock(leaves(MapColor.TERRACOTTA_BROWN))
+    }.cutout()
 
     val chocolate_sapling = register("chocolate_sapling") {
         CandySaplingBlock(null, plant(MapColor.COLOR_BROWN))
@@ -676,8 +682,11 @@ object CBlocks {
         register("dark_chocolate_mushroom") { CandyPlantBlock(plant(MapColor.TERRACOTTA_BROWN)) }.cutout()
 
     val rope_licorice = register("rope_licorice") { SeaweedBlock(true, plant(MapColor.TERRACOTTA_RED)) }
+        .cutout()
     val mint = register("mint") { SeaweedBlock(false, plant(MapColor.COLOR_GREEN)) }
+        .cutout()
     val banana_seaweed = register("banana_seaweed") { SeaweedBlock(false, plant(MapColor.COLOR_YELLOW)) }
+        .cutout()
     val caramel = CFluids.caramel.block
     val grenadine = CFluids.grenadine.block
     val liquid_chocolate = CFluids.liquid_chocolate.block
@@ -714,7 +723,9 @@ object CBlocks {
     private fun jelly(color: MapColor) = properties(Blocks.SLIME_BLOCK).mapColor(color)
         .strength(3.0F, 2000.0F)/*todo sound .sound(CCSoundTypes.JELLY)*/.noOcclusion()
 
-    private fun gummy(color: MapColor) = properties(Blocks.SLIME_BLOCK).mapColor(color).strength(0.4f).friction(0.6f)
+    private fun gummy(color: MapColor) =
+        properties().sound(SoundType.SLIME_BLOCK).mapColor(color).strength(0.4f).friction(0.6f)
+
     private fun hardCandy(color: MapColor) = properties(Blocks.STONE).mapColor(color).strength(1.2F)
 
     //=================================
@@ -817,7 +828,7 @@ object CBlocks {
 
     //=================================
     fun Entry<out ItemLike>.asItemEntry() =
-        LazyEntry(id) { get().asItem() ?: throw RuntimeException("CItemTags not found for $id") }
+        LazyEntry(id) { get().asItem() ?: throw RuntimeException("CItem not found for $id") }
 
     fun Entry<out Block>.defaultBlockState(): BlockState = get().defaultBlockState()
 

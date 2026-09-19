@@ -1,0 +1,50 @@
+{
+  "type": "minecraft:tree",
+  "config": {
+    "decorators": [],
+    "dirt_provider": {
+      "type": "minecraft:simple_state_provider",
+      "state": {
+        "Name": "candycraftce:pudding_block"
+      }
+    },
+    "foliage_placer": {
+      "type": "candycraftce:enchant"
+    },
+    "foliage_provider": {
+      "type": "minecraft:simple_state_provider",
+      "state": {
+        "Name": "candycraftce:enchant_candy_leaves",
+        "Properties": {
+          "distance": "7",
+          "distance_extra": "3",
+          "persistent": "false",
+          "waterlogged": "false"
+        }
+      }
+    },
+    "force_dirt": false,
+    "ignore_vines": true,
+    "minimum_size": {
+      "type": "minecraft:two_layers_feature_size",
+      "limit": 5,
+      "lower_size": 2,
+      "upper_size": 7
+    },
+    "trunk_placer": {
+      "type": "minecraft:dark_oak_trunk_placer",
+      "base_height": 10,
+      "height_rand_a": 2,
+      "height_rand_b": 1
+    },
+    "trunk_provider": {
+      "type": "minecraft:simple_state_provider",
+      "state": {
+        "Name": "candycraftce:marshmallow_log",
+        "Properties": {
+          "axis": "y"
+        }
+      }
+    }
+  }
+}

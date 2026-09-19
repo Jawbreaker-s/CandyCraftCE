@@ -8,18 +8,16 @@ import cn.jawbreakers.candycraftce.mixin.level.NoiseRouterDataAccessor
 import cn.jawbreakers.candycraftce.registry.CBiomes.caramel_forest
 import cn.jawbreakers.candycraftce.registry.CBiomes.chocolate_forest
 import cn.jawbreakers.candycraftce.registry.CBiomes.cotton_candy_plains
+import cn.jawbreakers.candycraftce.registry.CBiomes.enchanted_forest
 import cn.jawbreakers.candycraftce.registry.CBiomes.gummy_swamp
-import cn.jawbreakers.candycraftce.registry.CBiomes.hard_candy_plains
 import cn.jawbreakers.candycraftce.registry.CBiomes.ice_cream_plains
 import cn.jawbreakers.candycraftce.registry.CBiomes.ice_cream_sky_mountains
-import cn.jawbreakers.candycraftce.registry.CBiomes.sugar_cold_forest
-import cn.jawbreakers.candycraftce.registry.CBiomes.sugar_enchanted_forest
+import cn.jawbreakers.candycraftce.registry.CBiomes.pudding_hill
+import cn.jawbreakers.candycraftce.registry.CBiomes.pudding_plains
 import cn.jawbreakers.candycraftce.registry.CBiomes.sugar_forest
-import cn.jawbreakers.candycraftce.registry.CBiomes.sugar_hell_mountains
-import cn.jawbreakers.candycraftce.registry.CBiomes.sugar_mountains
 import cn.jawbreakers.candycraftce.registry.CBiomes.sugar_oceans
-import cn.jawbreakers.candycraftce.registry.CBiomes.sugar_plains
 import cn.jawbreakers.candycraftce.registry.CBiomes.sugar_river
+import cn.jawbreakers.candycraftce.registry.CBiomes.white_chocolate_forest
 import cn.jawbreakers.candycraftce.registry.CBlocks
 import cn.jawbreakers.candycraftce.registry.CBlocks.defaultBlockState
 import cn.jawbreakers.candycraftce.registry.CFluidTags
@@ -28,6 +26,7 @@ import com.google.common.cache.Cache
 import com.google.common.cache.CacheBuilder
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.core.Holder
@@ -39,7 +38,10 @@ import net.minecraft.server.level.WorldGenRegion
 import net.minecraft.tags.FluidTags
 import net.minecraft.util.Mth
 import net.minecraft.util.RandomSource
-import net.minecraft.world.level.*
+import net.minecraft.world.level.LevelHeightAccessor
+import net.minecraft.world.level.NaturalSpawner
+import net.minecraft.world.level.NoiseColumn
+import net.minecraft.world.level.StructureManager
 import net.minecraft.world.level.biome.Biome
 import net.minecraft.world.level.biome.BiomeManager
 import net.minecraft.world.level.biome.OverworldBiomeBuilder
@@ -49,7 +51,6 @@ import net.minecraft.world.level.chunk.ChunkAccess
 import net.minecraft.world.level.chunk.ChunkGenerator
 import net.minecraft.world.level.levelgen.*
 import net.minecraft.world.level.levelgen.blending.Blender
-import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executor
@@ -58,70 +59,6 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
-/** 世界最小 Y 坐标（糖果世界从 Y=0 开始）。  */
-private const val MIN_Y = 0
-
-/** 世界总高度（256 格）。  */
-private const val HEIGHT = 256
-
-/** 海平面高度（Y=63）。  */
-private const val SEA_LEVEL = 63
-
-/** 岩浆/液态糖果层高度（Y=10）。  */
-private const val LAVA_LEVEL = 10
-
-/** 洞穴雕刻时检查的周围区块范围（±8 区块）。  */
-private const val CARVER_RANGE = 8
-
-/** 噪声采样网格尺寸（XZ 方向 5 个采样点）。  */
-private const val NOISE_SIZE_XZ = 5
-
-/** 噪声采样网格尺寸（Y 方向 33 个采样点）。  */
-private const val NOISE_SIZE_Y = 33
-
-/** 巧克力池塘扫描时最多访问的列数上限，防止性能退化。  */
-private const val MAX_POND_SCAN_COLUMNS = 32768
-
-/** 插值单元格宽度（XZ 方向，4 块）。  */
-private const val CELL_WIDTH = 4
-
-/** 插值单元格高度（Y 方向，8 块）。  */
-private const val CELL_HEIGHT = 8
-
-// 噪声缩放相关常量（与旧版 1.12 地形生成参数保持一致）
-private const val COORDINATE_SCALE = 684.412
-private const val HEIGHT_SCALE = 684.412
-private const val MAIN_NOISE_SCALE_XZ = 80.0
-private const val MAIN_NOISE_SCALE_Y = 160.0
-private const val LOWER_LIMIT_SCALE = 512.0
-private const val UPPER_LIMIT_SCALE = 512.0
-private const val DEPTH_NOISE_SCALE_XZ = 200.0
-
-/** 生物群系深度权重。  */
-private const val BIOME_DEPTH_WEIGHT = 1.0
-
-/** 生物群系缩放权重。  */
-private const val BIOME_SCALE_WEIGHT = 1.0
-private const val BIOME_DEPTH_OFFSET = 0.0
-private const val BIOME_SCALE_OFFSET = 0.0
-
-/** 基础地形尺寸。  */
-private const val BASE_SIZE = 8.5
-
-/** Y 轴拉伸系数。  */
-private const val STRETCH_Y = 12.0
-
-/** 抛物线权重场，用于生物群系地形过渡时的平滑插值。  */
-private val PARABOLIC_FIELD = FloatArray(25).also {
-    for (x in -2..2) {
-        for (z in -2..2) {
-            it[x + 2 + (z + 2) * 5] = 10.0f / Mth.sqrt(x * x + z * z + 0.2f)
-        }
-    }
-}
-
-//private const val SPAWN_LAND_RADIUS_BLOCKS = 100
-//private const val SPAWN_LAND_MAX_RADIUS_BLOCKS = 148
 
 class CandyChunkGenerator(
     val source: CandyBiomeSource,
@@ -150,11 +87,9 @@ class CandyChunkGenerator(
         private val top_pudding_block: BlockState = CBlocks.custard_pudding_block.defaultBlockState()
         private val pudding_block = CBlocks.pudding_block.defaultBlockState()
         private val ice_cream = CBlocks.ice_cream.defaultBlockState()
-        private val grenadine: BlockState = CBlocks.grenadine.defaultBlockState()
 
         //岩浆
         private val liquid_candy: BlockState = CBlocks.liquid_candy.defaultBlockState()
-        private val liquid_chocolate: BlockState = CBlocks.liquid_chocolate.defaultBlockState()
         fun bootstrap(context: BootstapContext<NoiseGeneratorSettings>) {
             context.register(
                 candyland_noise_settings, NoiseGeneratorSettings(
@@ -187,54 +122,53 @@ class CandyChunkGenerator(
     }
 
 
-    private fun scheduleFluidTick(region: WorldGenRegion, pos: BlockPos, state: BlockState) {
-        val fluidState = state.fluidState
-        if (!fluidState.isEmpty) {
-            region.scheduleTick(pos.immutable(), fluidState.type, fluidState.type.getTickDelay(region))
-        }
-    }
+    // 根据比例和深度，在“本群系材质”和“默认材质”之间选择
+    private fun blendSurfaceState(
+        selfState: BlockState,
+        blendState: BlockState,
+        ratio: Double,
+        worldX: Int,
+        worldZ: Int,
+        depth: Int,
+    ): BlockState {
+        if (selfState == blendState || ratio >= 0.999) return selfState
 
-    operator fun ChunkPos.contains(pos: BlockPos): Boolean {
-        return pos.x in minBlockX..maxBlockX && pos.z in minBlockZ..maxBlockZ
+        // 次表层及更深层，越深越偏向默认材质
+        var effective = ratio
+        if (depth > 0) {
+            effective *= 1.0 - (depth - 1) * 0.35
+            if (effective <= 0.0) return blendState
+        }
+        if (effective >= 0.999) return selfState
+
+        // 用方块坐标哈希产生 0..1 的阈值，避免每格独立随机导致颗粒感过重
+        val threshold = (positiveHash(worldX, 0, worldZ, 0x5C0FFEE15EEDL) and 0xFFFFFF).toDouble() / 16777216.0
+        return if (effective > threshold) selfState else blendState
     }
 
     /**
-     * 唤醒 [changedPos] 六个方向上已有的流体。
+     * 从邻域材质统计表 [counts] 中选出出现次数最多的“主导材质”。
      *
-     * 世界生成期间直接写入 ChunkAccess 不会触发任何邻居方块更新，因此被我们挖开/替换的位置
-     * 旁边那些“本来就存在”的水（或液态糖果、岩浆）会一直保持静止，即便侧边已经变成空气也不会流动。
-     * 这里为它们补排一次流体刻，等区块真正开始 ticking 时就会正常扩散，
-     * 作用等价于原版 SpringFeature 放完泉水后重新 setBlock 唤醒邻居液体的做法。
-     *
-     * @param woken 本次生成中已唤醒过的坐标（[BlockPos.asLong]），用于去重，避免同一个水源排队多次
+     * 群系边界处如果直接用当前列自身群系的材质，会出现锯齿状的突变；改用 5×5 邻域内的
+     * 多数材质，可以让占主导的群系材质平滑地延伸到少数群系一侧，配合 [blendSurfaceState]
+     * 的比例混合得到更自然的过渡。统计表为空（未开启混合）时回退到当前列自身的材质 [fallback]。
      */
-    private fun wakeUpNeighborFluids(
-        region: WorldGenRegion,
-        chunk: ChunkAccess,
-        changedPos: BlockPos,
-        woken: MutableSet<Long>,
-    ) {
-        val cursor = BlockPos.MutableBlockPos()
-        for (direction in Direction.entries) {
-            val neighbor = cursor.set(
-                changedPos.x + direction.stepX,
-                changedPos.y + direction.stepY,
-                changedPos.z + direction.stepZ,
-            )
-            // 本区块走 chunk（可读到本次刚写入的状态），越界一格走 region（生成区域含一圈邻接区块）
-            val state =
-                if (chunk.pos.contains(neighbor)) chunk.getBlockState(neighbor) else region.getBlockState(neighbor)
-            val fluidState = state.fluidState
-            if (fluidState.isEmpty) {
-                continue
+    private fun dominantMaterial(counts: Object2IntOpenHashMap<BlockState>, fallback: BlockState?): BlockState? {
+        var best = fallback
+        var bestCount = Int.MIN_VALUE
+        val iterator = counts.object2IntEntrySet().fastIterator()
+        while (iterator.hasNext()) {
+            val entry = iterator.next()
+            // 材质 top 可为空，统计时可能混入 null 键，这里跳过
+            val key = entry.key ?: continue
+            if (entry.intValue > bestCount) {
+                bestCount = entry.intValue
+                best = key
             }
-            val immutable = neighbor.immutable()
-            if (!woken.add(immutable.asLong())) {
-                continue
-            }
-            region.scheduleTick(immutable, fluidState.type, fluidState.type.getTickDelay(region))
         }
+        return best
     }
+
 
     private fun terrainNoiseSet(
         randomState: RandomState,
@@ -345,35 +279,34 @@ class CandyChunkGenerator(
         return state.`is`(base_stone.block)
     }
 
+    private val surfaceMaterials = mapOf(
+        cotton_candy_plains to
+                SurfaceMaterials(
+                    CBlocks.cotton_candy_block.defaultBlockState(),
+                    CBlocks.milk_brownie_block.defaultBlockState()
+                ),
+        chocolate_forest to
+                SurfaceMaterials(
+                    CBlocks.chocolate_covered_white_brownie.defaultBlockState(),
+                    CBlocks.white_brownie_block.defaultBlockState()
+                ),
+        ice_cream_sky_mountains to
+                SurfaceMaterials(
+                    ice_cream,
+                    pudding_block
+                )
+    )
+    private val defaultSurfaceMaterials = SurfaceMaterials(top_pudding_block, pudding_block, pudding_block)
     private fun surfaceMaterials(
         biomeId: ResourceKey<Biome>,
         worldX: Int,
         worldZ: Int,
         randomState: RandomState,
     ): SurfaceMaterials {
+        if (biomeId in surfaceMaterials) return surfaceMaterials[biomeId]!!
         return when (biomeId) {
-            cotton_candy_plains ->
-                SurfaceMaterials(
-                    /*TODO CBlocks.candy_grass_block.defaultBlockState()*/
-                    Blocks.GRASS_BLOCK.defaultBlockState(),
-                    CBlocks.milk_brownie_block.defaultBlockState()
-                )
-
-            chocolate_forest ->
-                SurfaceMaterials(
-                    CBlocks.chocolate_covered_white_brownie.defaultBlockState(),
-                    CBlocks.white_brownie_block.defaultBlockState()
-                )
-
             gummy_swamp -> gummySurfaceMaterials(worldX, worldZ, randomState)
-
-            ice_cream_sky_mountains ->
-                SurfaceMaterials(
-                    ice_cream,
-                    pudding_block
-                )
-
-            else -> SurfaceMaterials(top_pudding_block, pudding_block, pudding_block)
+            else -> defaultSurfaceMaterials
         }
     }
 
@@ -414,17 +347,6 @@ class CandyChunkGenerator(
         .maximumSize(65536)
         .build()
 
-
-    /** 巧克力池塘扫描结果缓存（记录哪些水列应变为巧克力）。  */
-    private val pondChocolateCache: Cache<Long, Boolean> = CacheBuilder.newBuilder()
-        .maximumSize(65536)
-        .build()
-
-    /** 开放水域列缓存。  */
-    private val openWaterColumnCache: Cache<Long, Boolean> = CacheBuilder.newBuilder()
-        .maximumSize(65536)
-        .build()
-
     override fun getBiomeSource() = super.biomeSource as CandyBiomeSource
 
     override fun fillFromNoise(
@@ -452,17 +374,6 @@ class CandyChunkGenerator(
         val mutable = BlockPos.MutableBlockPos()
         val worldXs = IntArray(16) { pos.getBlockX(it) }
         val worldZs = IntArray(16) { pos.getBlockZ(it) }
-        // 预计算每个列的液体类型（水或巧克力），避免在每个 Y 层级重复查询生物群系
-        val columnFluids = Array(256) {
-            val localX = it / 16
-            val localZ = it % 16
-            fluidForColumn(worldXs[localX], worldZs[localZ], randomState)
-        }
-        for (localX in 0..15) {
-            for (localZ in 0..15) {
-                columnFluids[localX * 16 + localZ] = fluidForColumn(worldXs[localX], worldZs[localZ], randomState)
-            }
-        }
         // 遍历单元格（4×4 个，Y 方向 32 个单元格 = 256 格）
         for (cellX in 0..3) {
             val x0: Int = cellX * NOISE_SIZE_XZ
@@ -509,7 +420,7 @@ class CandyChunkGenerator(
                                 // 密度 > 0 → 固体（结晶糖）；否则海平面以下为液体，以上为空气
                                 val state: BlockState = when {
                                     density > 0.0 -> base_stone
-                                    y < SEA_LEVEL -> columnFluids[localX * 16 + localZ]
+                                    y < SEA_LEVEL -> water
                                     else -> air
                                 }
                                 if (!state.isAir && y >= chunk.minBuildHeight && y < chunk.maxBuildHeight) {
@@ -532,7 +443,7 @@ class CandyChunkGenerator(
         }
         // 生成底部平整层和洞穴
         carveCaves(chunk, randomState)
-        applyBedrock(chunk)
+        applyBedrock(chunk, randomState)
     }
 
     /**
@@ -587,35 +498,86 @@ class CandyChunkGenerator(
         val mutable = BlockPos.MutableBlockPos()
         val pos = chunk.pos
 
-        // 遍历每个列，用群系对应的地表材质替换顶层方块
+        // 预计算当前区块 + 周围 2 格的生物群系网格
+        val blendRadius = 2
+        val biomeGrid = Array(16 + 2 * blendRadius) { gx ->
+            Array(16 + 2 * blendRadius) { gz ->
+                biomeId(pos.getBlockX(gx - blendRadius), pos.getBlockZ(gz - blendRadius), randomState)
+            }
+        }
+
         for (localX in 0..15) {
             val worldX = pos.getBlockX(localX)
             for (localZ in 0..15) {
                 val worldZ = pos.getBlockZ(localZ)
-                val biomeId = biomeId(worldX, worldZ, randomState)
-                val materials: SurfaceMaterials = surfaceMaterials(biomeId, worldX, worldZ, randomState)
+                // 直接从预计算网格取当前列生物群系
+                val biomeId = biomeGrid[localX + blendRadius][localZ + blendRadius]
                 val top = findTopSolid(chunk, worldX, worldZ)
-                // 判断是否为水下环境（海平面以下，或海洋/河流群系）
                 val underwater = top < SEA_LEVEL - 1 || biomeId == sugar_oceans || biomeId == sugar_river
-                // 地表替换深度：3~5 格，带随机变化
                 val depth: Int = 3 + abs(hash(worldX, 0, worldZ)) % 3
                 var replaced = 0
+                // 计算混合比例
+                val materials = surfaceMaterials(biomeId, worldX, worldZ, randomState)
+                // 始终扫描 r=2 材质：只要周围格的材质与当前列不一致，就直接判定该列需要混合
+                val scanRadius = 2
+                val tops = Object2IntOpenHashMap<BlockState>()
+                val unders = Object2IntOpenHashMap<BlockState>()
+                val ratio = run {
+                    var self = 0.0
+                    for (dz in -scanRadius..scanRadius) {
+                        for (dx in -scanRadius..scanRadius) {
+                            val weight = PARABOLIC_FIELD[dx + 2 + (dz + 2) * 5].toDouble()
+                            val gx = localX + 2 + dx
+                            val gz = localZ + 2 + dz
+                            val neighborMaterial =
+                                surfaceMaterials(biomeGrid[gx][gz], worldX + dx, worldZ + dz, randomState)
+                            // 邻域格的表层与次表层材质都与当前列一致时，才计入自身权重；
+                            // 只要有任意邻域格材质不同，ratio 就会 < 1，从而判定为需要混合。
+                            if (neighborMaterial == materials || neighborMaterial.top == materials.top && neighborMaterial.under == materials.under) {
+                                self += weight
+                            }
+                            tops.computeInt(neighborMaterial.top) { _, n -> n?.plus(1) ?: 1 }
+                            unders.computeInt(neighborMaterial.under) { _, n -> n?.plus(1) ?: 1 }
+                        }
+                    }
+                    self / PARABOLIC_FIELD_TOTAL
+                }
+                // 取邻域内出现次数最多的材质作为主导材质，使群系边界过渡更平滑；
+                // 未开启混合时统计表为空，会回退到当前列自身的材质。
+                val blendTop = dominantMaterial(tops, materials.top) ?: materials.top
+                val blendUnder = dominantMaterial(unders, materials.under) ?: materials.under
 
                 var y = top
                 while (y > MIN_Y && replaced <= depth) {
                     val state = chunk.getBlockState(mutable.set(worldX, y, worldZ))
                     if (!isBaseStone(state)) {
-                        // 如果已经开始替换但遇到非基岩方块，停止向下
-                        if (replaced > 0) {
-                            break
-                        }
+                        if (replaced > 0) break
                         --y
                         continue
                     }
 
-                    // 水下使用水下材质，非水下则使用表层/次表层材质
-                    val replacement =
-                        (if (underwater) underwaterMaterial(replaced) else if (replaced > 0) materials.under else materials.top)!!
+                    // 替换材质时使用混合函数
+                    val replacement = when {
+                        underwater -> underwaterMaterial(replaced)
+                        replaced > 0 -> blendSurfaceState(
+                            materials.under,
+                            blendUnder,
+                            ratio,
+                            worldX,
+                            worldZ,
+                            replaced
+                        )
+
+                        else -> blendSurfaceState(
+                            materials.top,
+                            blendTop,
+                            ratio,
+                            worldX,
+                            worldZ,
+                            0
+                        )
+                    }
+
                     chunk.setBlockState(mutable, replacement, false)
                     replaced++
                     --y
@@ -623,11 +585,6 @@ class CandyChunkGenerator(
             }
         }
 
-        // 生成地表池塘（石榴糖浆 / 液态糖果）
-        generateSurfacePools(region, chunk, randomState)
-        // 生成山脉糖果泉
-        generateMountainCandySprings(region, chunk, randomState)
-        // 生成粉色结晶糖装饰
         decoratePinkCrystallizedSugar(region, chunk, randomState)
     }
 
@@ -707,223 +664,6 @@ class CandyChunkGenerator(
         }
     }
 
-    /**
-     * 生成地表池塘。
-     * 每个区块有低概率生成石榴糖浆池塘（1/1200）或液态糖果池塘（1/1400）。
-     */
-    private fun generateSurfacePools(region: WorldGenRegion, chunk: ChunkAccess, randomState: RandomState) {
-        val pos = chunk.pos
-        val seed: Long = worldSeed(randomState).nextLong()
-        // 石榴糖浆池塘判定
-        val poolRoll: Long = positiveHash(pos.x, pos.z, 0, seed xor 0x4752454E4144494EL) // 'GRENADIE'
-        if (poolRoll % 1200L == 0L) {
-            generateSurfacePool(region, chunk, randomState, grenadine, seed xor 0x6C616B655F677265L)
-        }
-
-        // 液态糖果池塘判定
-        val candyRoll: Long = positiveHash(pos.x, pos.z, 0, seed xor 0x4C49515549444341L) // 'LIQUIDCA'
-        if (candyRoll % 1400L == 0L) {
-            generateSurfacePool(region, chunk, randomState, liquid_candy, seed xor 0x6C616B655F63616EL)
-        }
-    }
-
-    /**
-     * 生成单个地表池塘（由多个椭球体拼接而成）。
-     * 池塘中心位于区块中心，深度约 3 格，使用流体填充。
-     *
-     * @param fluid 池塘使用的流体
-     * @param salt  随机种子盐
-     */
-    private fun generateSurfacePool(
-        region: WorldGenRegion,
-        chunk: ChunkAccess,
-        randomState: RandomState,
-        fluid: BlockState,
-        salt: Long,
-    ) {
-        val pos = chunk.pos
-        val bits: Long = positiveHash(pos.x, pos.z, 0, salt)
-        val centerX = pos.getBlockX(8)
-        val centerZ = pos.getBlockZ(8)
-        val biomeId = biomeId(centerX, centerZ, randomState)
-        // 海洋/河流群系不生成池塘
-        if (biomeId == sugar_oceans || biomeId == sugar_river) {
-            return
-        }
-
-        val centerTop = findTopTerrain(chunk, centerX, centerZ)
-        // 限制生成高度范围
-        if (centerTop <= SEA_LEVEL - 4 || centerTop >= HEIGHT - 3) {
-            return
-        }
-
-        val random = Random(bits)
-        // 使用多个随机椭球体构建池塘形状
-        val lake = BooleanArray(16 * 16 * 8)
-        val ellipsoids = 4 + random.nextInt(4)
-        repeat(ellipsoids) {
-            val sizeX = random.nextDouble() * 6.0 + 3.0
-            val sizeY = random.nextDouble() * 4.0 + 2.0
-            val sizeZ = random.nextDouble() * 6.0 + 3.0
-            val ellipsoidX = random.nextDouble() * (16.0 - sizeX - 2.0) + 1.0 + sizeX / 2.0
-            val ellipsoidY = random.nextDouble() * (8.0 - sizeY - 4.0) + 2.0 + sizeY / 2.0
-            val ellipsoidZ = random.nextDouble() * (16.0 - sizeZ - 2.0) + 1.0 + sizeZ / 2.0
-            // 填充椭圆体内部
-            for (x in 1..14) {
-                val dx = (x - ellipsoidX) / (sizeX / 2.0)
-                for (z in 1..14) {
-                    val dz = (z - ellipsoidZ) / (sizeZ / 2.0)
-                    for (y in 1..6) {
-                        val dy = (y - ellipsoidY) / (sizeY / 2.0)
-                        if (dx * dx + dy * dy + dz * dz < 1.0) {
-                            lake[(x * 16 + z) * 8 + y] = true
-                        }
-                    }
-                }
-            }
-        }
-
-        val mutable = BlockPos.MutableBlockPos()
-        val waterline = centerTop - 1
-        val originY = waterline - 3
-        val woken = HashSet<Long>()
-        // 填充池塘流体
-        for (x in 0..15) {
-            val worldX = pos.minBlockX + x
-            for (z in 0..15) {
-                val worldZ = pos.minBlockZ + z
-                // 跳过地形高度变化过大的列
-                if (abs(findTopTerrain(chunk, worldX, worldZ) - centerTop) > 4) {
-                    continue
-                }
-                for (y in 0..7) {
-                    if (!lake[(x * 16 + z) * 8 + y]) {
-                        continue
-                    }
-                    val worldY = originY + y
-                    if (worldY <= chunk.minBuildHeight || worldY >= chunk.maxBuildHeight) {
-                        continue
-                    }
-                    // 池塘底部 4 层填流体，上方填空气
-                    val state = if (y < 4) fluid else air
-                    chunk.setBlockState(mutable.set(worldX, worldY, worldZ), state, false)
-                    scheduleFluidTick(region, mutable, state)
-                    // 被替换掉的地形原本可能正挡着附近的水，必须一并唤醒，否则那些水会永远静止
-                    wakeUpNeighborFluids(region, chunk, mutable, woken)
-                }
-            }
-        }
-
-        // 在池塘底部铺设地表下层材质
-        for (x in 0..15) {
-            val worldX = pos.minBlockX + x
-            for (z in 0..15) {
-                val worldZ = pos.minBlockZ + z
-                val localBiome = biomeId(worldX, worldZ, randomState)
-                val rim: BlockState = surfaceMaterials(localBiome, worldX, worldZ, randomState).under
-                for (y in 0..7) {
-                    if (!lake[(x * 16 + z) * 8 + y] || y >= 4) {
-                        continue
-                    }
-                    val worldY = originY + y
-                    val floor: BlockPos = mutable.set(worldX, worldY - 1, worldZ)
-                    if (worldY > chunk.minBuildHeight && chunk.getBlockState(floor).isAir) {
-                        chunk.setBlockState(floor, rim, false)
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * 在山脉生物群系中生成糖果泉。
-     * 每个区块有 1/90 概率尝试，仅在糖山脉、地狱糖果山脉或冰淇淋天空山脉中生成。
-     */
-    private fun generateMountainCandySprings(region: WorldGenRegion, chunk: ChunkAccess, randomState: RandomState) {
-        val pos = chunk.pos
-        val seed = worldSeed(randomState).nextLong()
-        val roll = positiveHash(pos.x, pos.z, 0, seed xor 0x4D544E5F53595250L) // 'MTN_SYRP'
-        if (roll % 90L != 0L) return
-
-        // 从区块内随机选择一个位置
-        val worldX = pos.getBlockX(2 + (roll ushr 8 and 11L).toInt())
-        val worldZ = pos.getBlockZ(2 + (roll ushr 12 and 11L).toInt())
-        val biomeId = biomeId(worldX, worldZ, randomState)
-        if (biomeId != sugar_mountains && biomeId != sugar_hell_mountains && biomeId != ice_cream_sky_mountains) {
-            return
-        }
-
-        val top = findTopTerrain(chunk, worldX, worldZ)
-        if (top < SEA_LEVEL + 8 || top > HEIGHT - 8) {
-            return
-        }
-
-        val mutable = BlockPos.MutableBlockPos()
-        for (attempt in 0..5) {
-            val y = top - 2 - attempt * 2
-            if (y <= SEA_LEVEL/* || y >= HEIGHT - 2*/) {
-                continue
-            }
-            if (tryPlaceMountainCandySpring(
-                    region, chunk, mutable, worldX, y, worldZ,
-                    if (biomeId == sugar_hell_mountains) liquid_candy else grenadine
-                )
-            ) return
-        }
-    }
-
-    private fun tryPlaceMountainCandySpring(
-        region: WorldGenRegion,
-        chunk: ChunkAccess,
-        mutable: BlockPos.MutableBlockPos,
-        worldX: Int,
-        y: Int,
-        worldZ: Int,
-        fluid: BlockState,
-    ): Boolean {
-        if (!isBaseStone(chunk.getBlockState(mutable.set(worldX, y, worldZ)))) {
-            return false
-        }
-
-        var airSides = 0
-        var solidSides = 0
-        var outX = worldX
-        var outZ = worldZ
-        val directions = arrayOf<IntArray>(intArrayOf(1, 0), intArrayOf(-1, 0), intArrayOf(0, 1), intArrayOf(0, -1))
-        for (direction in directions) {
-            val neighbor = chunk.getBlockState(mutable.set(worldX + direction[0], y, worldZ + direction[1]))
-            if (neighbor.isAir) {
-                airSides++
-                outX = worldX + direction[0]
-                outZ = worldZ + direction[1]
-            } else if (isBaseStone(neighbor)) {
-                solidSides++
-            }
-        }
-
-        if (airSides != 1 || solidSides < 3 || !isBaseStone(
-                chunk.getBlockState(
-                    mutable.set(
-                        worldX,
-                        y - 1,
-                        worldZ
-                    )
-                )
-            )
-        ) {
-            return false
-        }
-
-        val woken = HashSet<Long>(12)
-        chunk.setBlockState(mutable.set(worldX, y, worldZ), fluid, false)
-        scheduleFluidTick(region, mutable, fluid)
-        wakeUpNeighborFluids(region, chunk, mutable, woken)
-        chunk.setBlockState(mutable.set(outX, y, outZ), fluid, false)
-        scheduleFluidTick(region, mutable, fluid)
-        wakeUpNeighborFluids(region, chunk, mutable, woken)
-        return true
-    }
-
     override fun applyCarvers(
         region: WorldGenRegion, seed: Long, randomState: RandomState, biomeManager: BiomeManager,
         structureManager: StructureManager, chunk: ChunkAccess, carvingStep: GenerationStep.Carving,
@@ -975,7 +715,7 @@ class CandyChunkGenerator(
 
     @OptIn(ExperimentalStdlibApi::class)
     override fun addDebugScreenInfo(info: MutableList<String?>, randomState: RandomState, pos: BlockPos) {
-        info.add("$MOD_NAME Chunk Generator v1.0: S=${worldSeed(randomState).nextLong().toHexString()}")
+        info.add("$MOD_NAME Chunk Generator v1.0: WS=${worldSeed(randomState).nextLong().toHexString()}")
         info.add("Candy Biome Shape: " + biomeShape(pos.x, pos.z, randomState))
     }
 
@@ -991,15 +731,14 @@ class CandyChunkGenerator(
         val noiseZ = z / CELL_WIDTH.toDouble()
         val noise = terrainNoiseSet(randomState)
         val heightConfig = heightConfigAt(Mth.floor(noiseX).toDouble(), Mth.floor(noiseZ).toDouble(), randomState)
-        val columnFluid = fluidForColumn(x, z, randomState)
         val states: Array<BlockState> = Array(height) { i ->
             val y = minY + i
             val noiseY = y / CELL_HEIGHT.toDouble()
             val density = sampleDensity(noise, noiseX, noiseY, noiseZ, heightConfig)
             when {
-                y <= MIN_Y + 1 -> flat_bottom
+                y <= MIN_Y -> flat_bottom
                 density > 0.0 -> base_stone
-                y < SEA_LEVEL -> columnFluid
+                y < SEA_LEVEL -> water
                 else -> air
             }
         }
@@ -1008,7 +747,6 @@ class CandyChunkGenerator(
     }
 
     private fun heightConfigAt(noiseX: Double, noiseZ: Double, randomState: RandomState): HeightConfig {
-//        val random = worldSeed(randomState)
         val center = biomeShape(Mth.floor(noiseX * CELL_WIDTH), Mth.floor(noiseZ * CELL_WIDTH), randomState)
         var scale = 0.0
         var depth = 0.0
@@ -1040,20 +778,11 @@ class CandyChunkGenerator(
         scale = scale * 0.9 + 0.1
         depth = (depth * 4.0 - 1.0) / 8.0
 
-//        val blockX: Double = noiseX * CELL_WIDTH
-//        val blockZ: Double = noiseZ * CELL_WIDTH
-//        val spawnIsland: Double = spawnIslandInfluence(blockX, blockZ, random)
-//        if (spawnIsland > 0.0) {
-//            val islandNoise: Double = octaveNoise2D(blockX * 0.018, blockZ * 0.018, 4, random.nextLong())
-//            val detailNoise: Double = octaveNoise2D(blockX * 0.055, blockZ * 0.055, 2, random.nextLong())
-//            depth += spawnIsland * (0.045 + islandNoise * 0.035 + detailNoise * 0.012)
-//            scale += spawnIsland * (0.035 + abs(islandNoise) * 0.025)
-//        }
-
         return HeightConfig(depth, scale)
     }
 
-    private fun applyBedrock(chunk: ChunkAccess) {
+    private fun applyBedrock(chunk: ChunkAccess, random: RandomState) {
+        val random = random.getOrCreateRandomFactory(caveRandom).at(chunk.pos.x, 0, chunk.pos.z)
         val pos = chunk.pos
         val mutable = BlockPos.MutableBlockPos()
 
@@ -1061,8 +790,12 @@ class CandyChunkGenerator(
             val worldX = pos.getBlockX(localX)
             for (localZ in 0..15) {
                 val worldZ = pos.getBlockZ(localZ)
-                chunk.setBlockState(mutable.set(worldX, MIN_Y, worldZ).immutable(), flat_bottom, false)
-                chunk.setBlockState(mutable.set(worldX, MIN_Y + 1, worldZ).immutable(), flat_bottom, false)
+                val total = random.nextInt(3) + 1//[1,3]
+                repeat(total) { i ->
+                    if (i == 0 || random.nextBoolean()) {
+                        chunk.setBlockState(mutable.set(worldX, MIN_Y + i, worldZ).immutable(), flat_bottom, false)
+                    }
+                }
             }
         }
     }
@@ -1368,113 +1101,19 @@ class CandyChunkGenerator(
         return MIN_Y
     }
 
-    private fun findTopTerrain(chunk: ChunkAccess, worldX: Int, worldZ: Int): Int {
-        val mutable = BlockPos.MutableBlockPos()
-        for (y in min(chunk.maxBuildHeight - 1, HEIGHT - 1) downTo MIN_Y) {
-            val state = chunk.getBlockState(mutable.set(worldX, y, worldZ))
-            if (!state.isAir && state.fluidState.isEmpty) {
-                return y
-            }
-        }
-        return MIN_Y
-    }
-
-    private fun fluidForColumn(worldX: Int, worldZ: Int, randomState: RandomState): BlockState {
-        if (biomeId(worldX, worldZ, randomState) == chocolate_forest) {
-            val key: Long = packColumnPos(worldX, worldZ)
-            var chocolate = pondChocolateCache.getIfPresent(key)
-            if (chocolate == null) {
-                scanChocolatePond(worldX, worldZ, randomState)
-                chocolate = pondChocolateCache.getIfPresent(key) ?: false
-            }
-            if (chocolate) return liquid_chocolate
-        }
-        return water
-    }
-
-    /**
-     * Chocolate liquid only appears in water bodies that are fully enclosed by chocolate-forest
-     * surface (chocolate-covered white brownie top blocks). Any connection to foreign-biome water
-     * (ocean/river/other) or a non-forest shore keeps the whole body as plain water. The result is
-     * shared with every visited water column so each connected body is scanned only once.
-     */
-    private fun scanChocolatePond(startX: Int, startZ: Int, randomState: RandomState) {
-        val queue = ArrayDeque<Long>()
-        val visited = HashSet<Long>()
-        queue.add(packColumnPos(startX, startZ))
-        var enclosed = true
-
-        while (!queue.isEmpty()) {
-            if (visited.size >= MAX_POND_SCAN_COLUMNS) {
-                enclosed = false
-                break
-            }
-            val packed = queue.poll()!!
-            if (!visited.add(packed)) {
-                continue
-            }
-            val x = (packed shr 32).toInt()
-            val z = packed.toInt()
-            if (chocolate_forest != biomeId(x, z, randomState)) {
-                enclosed = false
-                break
-            }
-            if (isOpenWaterColumn(x, z, randomState)) {
-                queue.add(packColumnPos(x + 1, z))
-                queue.add(packColumnPos(x - 1, z))
-                queue.add(packColumnPos(x, z + 1))
-                queue.add(packColumnPos(x, z - 1))
-            }
-        }
-
-        for (packed in visited) {
-            pondChocolateCache.put(packed, enclosed)
-        }
-    }
-
-    /** Open water means no solid terrain at the two topmost sea-level layers of this column.  */
-    private fun isOpenWaterColumn(x: Int, z: Int, randomState: RandomState): Boolean {
-        val key: Long = packColumnPos(x, z)
-        return openWaterColumnCache.get(key) {
-            val noise: TerrainNoiseSet = terrainNoiseSet(randomState)
-            val noiseX = x / CELL_WIDTH.toDouble()
-            val noiseZ = z / CELL_WIDTH.toDouble()
-            val heightConfig = heightConfigAt(Mth.floor(noiseX).toDouble(), Mth.floor(noiseZ).toDouble(), randomState)
-            val depthNoise: Double = sampleDepthNoise(noise, noiseX, noiseZ)
-            sampleDensity(
-                noise,
-                noiseX,
-                (SEA_LEVEL - 1) / CELL_HEIGHT.toDouble(),
-                noiseZ,
-                heightConfig,
-                depthNoise
-            ) <= 0.0
-                    && sampleDensity(
-                noise,
-                noiseX,
-                SEA_LEVEL / CELL_HEIGHT.toDouble(),
-                noiseZ,
-                heightConfig,
-                depthNoise
-            ) <= 0.0
-        }
-    }
-
     private val biomeShapes: Map<ResourceKey<Biome>, BiomeShape> = mapOf(
-        sugar_plains to BiomeShape(0.05f, 0.1f),
+        pudding_plains to BiomeShape(0.05f, 0.1f),
         sugar_forest to BiomeShape(0.1f, 0.15f),
         chocolate_forest to BiomeShape(0.1f, 0.15f),
-        sugar_cold_forest to BiomeShape(0.1f, 0.3f),
+        white_chocolate_forest to BiomeShape(0.1f, 0.3f),
         sugar_river to BiomeShape(-0.5f, 0.0f),
         sugar_oceans to BiomeShape(-1.0f, 0.1f),
-        sugar_enchanted_forest to BiomeShape(0.23f, 0.25f),
+        enchanted_forest to BiomeShape(0.23f, 0.25f),
         caramel_forest to BiomeShape(0.05f, 0.1f),
         cotton_candy_plains to BiomeShape(0.05f, 0.1f),
-        gummy_swamp to BiomeShape(-0.1f, 0.1f),
+        gummy_swamp to BiomeShape(0.05f, 0.1f),
         ice_cream_plains to BiomeShape(0.05f, 0.1f),
-        hard_candy_plains to BiomeShape(0.05f, 0.1f),
-        sugar_mountains to BiomeShape(0.5f, 0.8f),
-        sugar_hell_mountains to BiomeShape(1.9f, 2.0f),
+        pudding_hill to BiomeShape(1f, 1f),
         ice_cream_sky_mountains to BiomeShape(3.55f, 2.9f)
     )
 
@@ -1482,7 +1121,7 @@ class CandyChunkGenerator(
         val key = x.toLong() shl 32 xor (z.toLong() and 0xFFFFFFFFL)
         return biomeShapeCache.get(key) {
             val location = biomeId(x, z, randomState)
-            biomeShapes[location] ?: biomeShapes[sugar_plains]!!
+            biomeShapes[location] ?: biomeShapes[pudding_plains]!!
         }
 
     }
@@ -1494,49 +1133,8 @@ class CandyChunkGenerator(
             Mth.floorDiv(z, 4),
             random.sampler()
         )
-        return biome.unwrapKey().getOrDefault(sugar_plains)
+        return biome.unwrapKey().getOrDefault(pudding_plains)
     }
-
-//    private fun isSpawnLandRadius(quartX: Int, quartZ: Int, random: RandomSource): Boolean {
-//        val blockX = quartX.toLong() shl 2
-//        val blockZ = quartZ.toLong() shl 2
-//        return isWithinSpawnIsland(blockX.toDouble(), blockZ.toDouble(), random)
-//    }
-//
-//    fun isWithinSpawnIsland(blockX: Double, blockZ: Double, random: RandomSource): Boolean {
-//        val distance = sqrt(blockX * blockX + blockZ * blockZ)
-//        if (distance <= SPAWN_LAND_RADIUS_BLOCKS) {
-//            return true
-//        }
-//        if (distance > SPAWN_LAND_MAX_RADIUS_BLOCKS) {
-//            return false
-//        }
-//        return distance <= spawnIslandRadius(blockX, blockZ, random)
-//    }
-//
-//    fun spawnIslandInfluence(blockX: Double, blockZ: Double, random: RandomSource): Double {
-//        val distance = sqrt(blockX * blockX + blockZ * blockZ)
-//        if (distance <= SPAWN_LAND_RADIUS_BLOCKS) {
-//            return 1.0
-//        }
-//
-//        val radius = spawnIslandRadius(blockX, blockZ, random)
-//        if (distance >= radius) {
-//            return 0.0
-//        }
-//
-//        var blend = (radius - distance) / max(radius - SPAWN_LAND_RADIUS_BLOCKS, 1.0)
-//        blend = max(0.0, min(1.0, blend))
-//        return blend * blend * (3.0 - 2.0 * blend)
-//    }
-//
-//    private fun spawnIslandRadius(blockX: Double, blockZ: Double, random: RandomSource): Double {
-//        val broad = octaveNoise2D(blockX * 0.016, blockZ * 0.016, 4, random.nextLong())
-//        val detail = octaveNoise2D(blockX * 0.045, blockZ * 0.045, 2, random.nextLong())
-//        val radius = 124.0 + broad * 22.0 + detail * 7.0
-//        return max(SPAWN_LAND_RADIUS_BLOCKS + 2.0, min(SPAWN_LAND_MAX_RADIUS_BLOCKS.toDouble(), radius))
-//    }
-
 }
 
 
@@ -1544,7 +1142,7 @@ private data class BiomeShape(val baseHeight: Float, val variation: Float)
 
 private data class HeightConfig(val depth: Double, val scale: Double)
 
-private data class SurfaceMaterials(val top: BlockState?, val under: BlockState, val underwater: BlockState? = under)
+private data class SurfaceMaterials(val top: BlockState, val under: BlockState, val underwater: BlockState? = under)
 
 private class TerrainNoiseSet(random: RandomSource) {
     constructor(seed: Long) : this(RandomSource.create(seed))
@@ -1554,85 +1152,3 @@ private class TerrainNoiseSet(random: RandomSource) {
     val main = LegacyPerlinOctaveNoise(random, 8, true)
     val depth = LegacyPerlinOctaveNoise(random, 16, true)
 }
-
-private fun packColumnPos(x: Int, z: Int): Long {
-    return x.toLong() shl 32 xor (z.toLong() and 0xFFFFFFFFL)
-}
-
-
-private fun octaveNoise2D(x: Double, z: Double, octaves: Int, salt: Long): Double {
-    var value = 0.0
-    var amplitude = 1.0
-    var frequency = 1.0
-    var total = 0.0
-
-    for (i in 0..<octaves) {
-        value += smoothNoise2D(x * frequency, z * frequency, salt + i * 0x632BE59BD9B4E019L) * amplitude
-        total += amplitude
-        amplitude *= 0.5
-        frequency *= 2.0
-    }
-
-    return value / total
-}
-
-
-private fun smoothNoise2D(x: Double, z: Double, salt: Long): Double {
-    val x0 = Mth.floor(x)
-    val z0 = Mth.floor(z)
-    val tx: Double = fade(x - x0)
-    val tz: Double = fade(z - z0)
-    val a: Double = randomUnit(x0, 0, z0, salt)
-    val b: Double = randomUnit(x0 + 1, 0, z0, salt)
-    val c: Double = randomUnit(x0, 0, z0 + 1, salt)
-    val d: Double = randomUnit(x0 + 1, 0, z0 + 1, salt)
-    return Mth.lerp(tz, Mth.lerp(tx, a, b), Mth.lerp(tx, c, d))
-}
-
-//private fun smoothNoise3D(x: Double, y: Double, z: Double, salt: Long): Double {
-//    val x0 = Mth.floor(x)
-//    val y0 = Mth.floor(y)
-//    val z0 = Mth.floor(z)
-//    val tx: Double = fade(x - x0)
-//    val ty: Double = fade(y - y0)
-//    val tz: Double = fade(z - z0)
-//    val a = Mth.lerp(tx, randomUnit(x0, y0, z0, salt), randomUnit(x0 + 1, y0, z0, salt))
-//    val b = Mth.lerp(tx, randomUnit(x0, y0, z0 + 1, salt), randomUnit(x0 + 1, y0, z0 + 1, salt))
-//    val c = Mth.lerp(tx, randomUnit(x0, y0 + 1, z0, salt), randomUnit(x0 + 1, y0 + 1, z0, salt))
-//    val d = Mth.lerp(tx, randomUnit(x0, y0 + 1, z0 + 1, salt), randomUnit(x0 + 1, y0 + 1, z0 + 1, salt))
-//    return Mth.lerp(tz, Mth.lerp(ty, a, c), Mth.lerp(ty, b, d))
-//}
-
-private fun fade(value: Double): Double {
-    return value * value * value * (value * (value * 6.0 - 15.0) + 10.0)
-}
-
-private fun randomUnit(x: Int, y: Int, z: Int, salt: Long): Double {
-    val bits: Long = hash(x, y, z, salt)
-    return (bits ushr 11) * 1.1102230246251565E-16 * 2.0 - 1.0
-}
-
-private fun hash(x: Int, y: Int, z: Int): Int {
-    return hash(x, y, z, -0x340d631b7bdddcdbL).toInt()
-}
-
-private fun positiveHash(x: Int, y: Int, z: Int, salt: Long): Long {
-    return hash(x, y, z, salt) and Long.MAX_VALUE
-}
-
-private fun hash(x: Int, y: Int, z: Int, salt: Long): Long {
-    var h = salt
-    h = h xor x * -0x61c8864680b583ebL
-    h = h.rotateLeft(27) * -0x6b2fb644ecceee15L
-    h = h xor y * -0x3d4d51c2d82b14b1L
-    h = h.rotateLeft(31) * 0x2545F4914F6CDD1DL
-    h = h xor z * 0x165667B19E3779F9L
-    h = h xor (h ushr 33)
-    h *= -0xae502812aa7333L
-    h = h xor (h ushr 33)
-    h *= -0x3b314601e57a13adL
-    h = h xor (h ushr 33)
-    return h
-}
-
-fun PositionalRandomFactory.at(chunk: ChunkPos): RandomSource = at(chunk.x shl 4, 0, chunk.z shl 4)
