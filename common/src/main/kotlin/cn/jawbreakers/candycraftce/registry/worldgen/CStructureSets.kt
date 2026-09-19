@@ -38,9 +38,9 @@ object CStructureSets {
             floating_island_set,
             StructureSet(
                 structures.getOrThrow(floating_island),
-                RandomSpreadStructurePlacement(8, 0, RandomSpreadType.LINEAR, 14357619)
+                RandomSpreadStructurePlacement(8, 2, RandomSpreadType.LINEAR, 14357619)
             )
-        );
+        )
 
     }
 

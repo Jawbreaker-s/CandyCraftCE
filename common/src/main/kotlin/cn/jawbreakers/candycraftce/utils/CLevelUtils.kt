@@ -15,8 +15,8 @@ import kotlin.math.max
 import kotlin.math.min
 
 /**
- * @author [Bread_NiceCat](https://gitee.com/Bread_NiceCat)
- * @date 2022/12/24 18:41
+ * Author [Bread_NiceCat](https://gitee.com/Bread_NiceCat)
+ * Date 2022/12/24 18:41
  */
 object CLevelUtils {
     operator fun ChunkPos.contains(pos: BlockPos): Boolean {

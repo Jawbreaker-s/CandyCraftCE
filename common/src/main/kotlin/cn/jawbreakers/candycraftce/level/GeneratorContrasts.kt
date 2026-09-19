@@ -23,9 +23,6 @@ const val NOISE_SIZE_XZ = 5
 /** 噪声采样网格尺寸（Y 方向 33 个采样点）。  */
 const val NOISE_SIZE_Y = 33
 
-/** 巧克力池塘扫描时最多访问的列数上限，防止性能退化。  */
-const val MAX_POND_SCAN_COLUMNS = 32768
-
 /** 插值单元格宽度（XZ 方向，4 块）。  */
 const val CELL_WIDTH = 4
 
@@ -92,20 +89,6 @@ fun smoothNoise2D(x: Double, z: Double, salt: Long): Double {
     val d: Double = randomUnit(x0 + 1, 0, z0 + 1, salt)
     return Mth.lerp(tz, Mth.lerp(tx, a, b), Mth.lerp(tx, c, d))
 }
-
-//private fun smoothNoise3D(x: Double, y: Double, z: Double, salt: Long): Double {
-//    val x0 = Mth.floor(x)
-//    val y0 = Mth.floor(y)
-//    val z0 = Mth.floor(z)
-//    val tx: Double = fade(x - x0)
-//    val ty: Double = fade(y - y0)
-//    val tz: Double = fade(z - z0)
-//    val a = Mth.lerp(tx, randomUnit(x0, y0, z0, salt), randomUnit(x0 + 1, y0, z0, salt))
-//    val b = Mth.lerp(tx, randomUnit(x0, y0, z0 + 1, salt), randomUnit(x0 + 1, y0, z0 + 1, salt))
-//    val c = Mth.lerp(tx, randomUnit(x0, y0 + 1, z0, salt), randomUnit(x0 + 1, y0 + 1, z0, salt))
-//    val d = Mth.lerp(tx, randomUnit(x0, y0 + 1, z0 + 1, salt), randomUnit(x0 + 1, y0 + 1, z0 + 1, salt))
-//    return Mth.lerp(tz, Mth.lerp(ty, a, c), Mth.lerp(ty, b, d))
-//}
 
 fun fade(value: Double): Double {
     return value * value * value * (value * (value * 6.0 - 15.0) + 10.0)

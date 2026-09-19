@@ -32,12 +32,16 @@ object CBiomes {
     val white_chocolate_forest = bind("white_chocolate_forest")
     val enchanted_forest = bind("enchanted_forest")
     val sugar_forest = bind("sugar_forest")
-
-    //
     val pudding_hill = bind("pudding_hill")
     val pudding_plains = bind("pudding_plains")
     val sugar_oceans = bind("sugar_oceans")
     val sugar_river = bind("sugar_river")
+
+    val allCandyBiomes = listOf(
+        caramel_forest, chocolate_forest, cotton_candy_plains, gummy_swamp, ice_cream_plains, ice_cream_sky_mountains,
+        white_chocolate_forest, enchanted_forest, sugar_forest, pudding_hill, pudding_plains, sugar_oceans, sugar_river
+    )
+
     private fun bind(name: String): ResourceKey<Biome> {
         return ResourceKey.create(Registries.BIOME, name.modLoc())
     }
@@ -350,8 +354,5 @@ private class StepScope(
     }
 
     operator fun ResourceKey<PlacedFeature>.unaryPlus() = add(this)
-    fun addAll(keys: List<ResourceKey<PlacedFeature>>) {
-        keys.forEach(::add)
-    }
 
 }

@@ -1,9 +1,17 @@
 {
-  "remove": [
+  "values": [
+    "candycraftce:caramel_forest",
+    "candycraftce:chocolate_forest",
+    "candycraftce:cotton_candy_plains",
+    "candycraftce:gummy_swamp",
+    "candycraftce:ice_cream_plains",
+    "candycraftce:ice_cream_sky_mountains",
+    "candycraftce:white_chocolate_forest",
+    "candycraftce:enchanted_forest",
+    "candycraftce:sugar_forest",
+    "candycraftce:pudding_hill",
+    "candycraftce:pudding_plains",
     "candycraftce:sugar_oceans",
     "candycraftce:sugar_river"
-  ],
-  "values": [
-    "#candycraftce:candy_biomes"
   ]
 }

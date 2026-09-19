@@ -31,24 +31,10 @@ class CBiomeTagsProvider(
                     .add(caramel_forest)
 
                 tag(candy_biomes)
-                    .add(caramel_forest)
-                    .add(chocolate_forest)
-                    .add(cotton_candy_plains)
-                    .add(gummy_swamp)
-                    .add(ice_cream_plains)
-                    .add(ice_cream_sky_mountains)
-                    .add(white_chocolate_forest)
-                    .add(enchanted_forest)
-                    .add(sugar_forest)
-                    .add(pudding_hill)
-                    .add(sugar_oceans)
-                    .add(pudding_plains)
-                    .add(sugar_river)
+                    .add(*allCandyBiomes.toTypedArray())
 
                 tag(has_floating_island)
-                    .addTag(candy_biomes)
-                    .remove(sugar_oceans)
-                    .remove(sugar_river)
+                    .add(*allCandyBiomes.filter { it != sugar_oceans || it != sugar_river }.toTypedArray())
             }
         }
     }

@@ -1,4 +1,4 @@
-// 1.20.1	2026-09-20T02:11:59.0392181	Registries
+// 1.20.1	2026-09-20T02:26:31.5729889	Registries
 65e566499f992d29d9fd2c28209ac6a1b832114d data/candycraftce/worldgen/biome/caramel_forest.json
 d2a59b57b5e618495308d7a04ba5216bb7bbfe8c data/candycraftce/worldgen/biome/chocolate_forest.json
 b20591ddc5c2b10ffd2aa66d4fc2f6b05eda0e04 data/candycraftce/worldgen/biome/cotton_candy_plains.json
@@ -47,4 +47,4 @@ fc339505bb0f2f9ff31e06dfad8ba142604e5a2b data/candycraftce/worldgen/placed_featu
 5bae4e8647c4c8c329671611614f97e179e1bb12 data/candycraftce/worldgen/placed_feature/tree_white_chocolate_forest.json
 5bae4e8647c4c8c329671611614f97e179e1bb12 data/candycraftce/worldgen/placed_feature/tree_white_chocolate_mountain.json
 356720683c9dd31139a0f8e088970100984223e3 data/candycraftce/worldgen/structure/floating_island.json
-c38732cc30edc70fad57292a65575bf340aae486 data/candycraftce/worldgen/structure_set/floating_island.json
+7e8f39152b9f8552cf61fda8ad3065ccb13b53c9 data/candycraftce/worldgen/structure_set/floating_island.json

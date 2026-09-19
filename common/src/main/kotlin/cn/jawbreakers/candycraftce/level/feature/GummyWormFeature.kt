@@ -64,15 +64,14 @@ class GummyWormFeature : Feature<NoneFeatureConfiguration>(NoneFeatureConfigurat
         val vertical = state.setValue(RotatedPillarBlock.AXIS, Direction.Axis.Y)
         var pos = position.below(startDepth)
         var placed = false
-
-        for (i in 0..height + startDepth) {
+        repeat(height + startDepth + 1) {
             pos = pos.above()
             placed = placed or place(level, pos, vertical)
         }
 
         val horizontal =
             state.setValue(RotatedPillarBlock.AXIS, direction.axis)
-        for (i in 0..2 + random.nextInt(2)) {
+        repeat(2 + random.nextInt(2) + 1) {
             pos = pos.relative(direction)
             placed = placed or place(level, pos, horizontal)
         }
@@ -81,7 +80,7 @@ class GummyWormFeature : Feature<NoneFeatureConfiguration>(NoneFeatureConfigurat
             pos = pos.below()
             placed = placed or place(level, pos, vertical)
         }
-        for (i in 0..4 + random.nextInt(4)) {
+        repeat(4 + random.nextInt(4) + 1) {
             pos = pos.below()
             placed = placed or place(level, pos, vertical)
         }

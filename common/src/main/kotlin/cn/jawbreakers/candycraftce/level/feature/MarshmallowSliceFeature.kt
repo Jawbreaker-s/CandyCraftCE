@@ -29,7 +29,7 @@ class MarshmallowSliceFeature : Feature<NoneFeatureConfiguration>(NoneFeatureCon
         }
 
         var placed = false
-        for (i in 0..9) {
+        repeat(10) {
             val target = origin.offset(
                 random.nextInt(8) - random.nextInt(8),
                 random.nextInt(4) - random.nextInt(4),

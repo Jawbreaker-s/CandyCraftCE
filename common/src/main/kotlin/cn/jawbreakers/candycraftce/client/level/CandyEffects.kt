@@ -51,7 +51,7 @@ object CandyEffects : DimensionSpecialEffects(192.0f, true, SkyType.NORMAL, fals
     private const val FOG_NIGHT_FLOOR = 0.22f
 
     /**
-     * 由 [renderSky] 每帧写入。雾色与清屏色在 renderSky 之前就由原版算好了，
+     * 由renderSky每帧写入。雾色与清屏色在 renderSky 之前就由原版算好了，
      * 所以这里取的是上一帧的值（滞后一帧，肉眼不可见）。
      */
     @Volatile
