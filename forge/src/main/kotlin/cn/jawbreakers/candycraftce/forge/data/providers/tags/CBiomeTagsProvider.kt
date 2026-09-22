@@ -17,6 +17,12 @@ class CBiomeTagsProvider(
     override fun addTags(provider: HolderLookup.Provider) {
         CBiomeTags.apply {
             CBiomes.apply {
+
+                val water = listOf(sugar_oceans, sugar_river)
+                val forest =
+                    listOf(caramel_forest, chocolate_forest, sugar_forest, white_chocolate_forest, enchanted_forest)
+
+
                 tag(is_cold)
                     .add(ice_cream_plains)
                     .add(ice_cream_sky_mountains)
@@ -34,7 +40,9 @@ class CBiomeTagsProvider(
                     .add(*allCandyBiomes.toTypedArray())
 
                 tag(has_floating_island)
-                    .add(*allCandyBiomes.filter { it != sugar_oceans || it != sugar_river }.toTypedArray())
+                    .add(*allCandyBiomes.filter {
+                        it !in water && it !in forest
+                    }.toTypedArray())
             }
         }
     }

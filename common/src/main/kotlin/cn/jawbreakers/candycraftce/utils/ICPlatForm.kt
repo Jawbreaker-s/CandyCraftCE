@@ -10,9 +10,12 @@ import com.mojang.datafixers.types.Type
 import com.mojang.serialization.Codec
 import net.minecraft.client.color.block.BlockColor
 import net.minecraft.client.color.item.ItemColor
+import net.minecraft.client.particle.ParticleEngine
 import net.minecraft.client.renderer.DimensionSpecialEffects
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.core.RegistrySetBuilder
+import net.minecraft.core.particles.ParticleOptions
+import net.minecraft.core.particles.ParticleType
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.BucketItem
 import net.minecraft.world.item.CreativeModeTab
@@ -34,15 +37,19 @@ object CPlatformUtils : ICPlatForm by CandyCraftCE.platform {
 
     inline fun <R> ifDev(action: () -> R): R? = if (isDev) action() else null
 
-    fun registerBlockColor(vararg blocks: Entry<out Block>, color: Int) =
-        registerBlockColor(*blocks) { _, _, _, _ -> color }
+    fun registerBlockColor(vararg blocks: Entry<out Block>, color: Int) {
+        clients?.registerBlockColor(*blocks) { _, _, _, _ -> color }
+    }
 
-    fun registerItemColor(vararg items: Entry<out Item>, color: Int) =
-        registerItemColor(*items) { _, _ -> color }
+    fun registerItemColor(vararg items: Entry<out Item>, color: Int) {
+        clients?.registerItemColor(*items) { _, _ -> color }
+    }
 
     fun registerBlockAndItemColor(vararg entries: Entry<out Block>, color: Int) {
-        registerBlockColor(*entries, color = color)
-        registerItemColor(*entries.map { it.asItemEntry() }.toTypedArray(), color = color)
+        ifClient {
+            registerBlockColor(*entries, color = color)
+            registerItemColor(*entries.map { it.asItemEntry() }.toTypedArray(), color = color)
+        }
     }
 }
 
@@ -53,6 +60,7 @@ interface ICPlatForm {
     val fluids: ICPlatformFluids
     val levels: ICPlatformLevels
     val datagen: ICPlatformDatagen?
+    val clients: ICPlatFormClients?
 
     //当所有对象注册完毕后
     fun <T> whenInitialized(action: () -> T): Accessor<T>
@@ -64,20 +72,9 @@ interface ICPlatForm {
         dsl: Type<*>?,
     ): Entry<BlockEntityType<E>>
 
-    //    fun <E> Registry<in E>.register(name: String, factory: Supplier<E>): Entry<E>
+    fun <P : ParticleType<*>> registerParticleType(name: String, factory: Supplier<P>): Entry<P>
 
     fun registerCreativeTab(name: String, builder: Consumer<CreativeModeTab.Builder>): Entry<CreativeModeTab>
-
-    //client part
-    @ClientOnly
-    fun setRenderLayer(block: Entry<out Block>, layer: RenderType)
-
-    @ClientOnly
-    fun registerBlockColor(vararg blocks: Entry<out Block>, color: BlockColor)
-
-    @ClientOnly
-    fun registerItemColor(vararg items: Entry<out Item>, color: ItemColor)
-
 }
 
 interface ICPlatformFluids {
@@ -105,4 +102,15 @@ interface ICPlatformLevels {
 
 interface ICPlatformDatagen {
     fun onBootstrap(action: RegistrySetBuilder.() -> Unit)
+}
+
+@ClientOnly
+interface ICPlatFormClients {
+    fun setRenderLayer(block: Entry<out Block>, layer: RenderType)
+    fun registerBlockColor(vararg blocks: Entry<out Block>, color: BlockColor)
+    fun registerItemColor(vararg items: Entry<out Item>, color: ItemColor)
+    fun <T : ParticleOptions> registerParticleFactory(
+        type: Entry<out ParticleType<T>>,
+        factory: ParticleEngine.SpriteParticleRegistration<T>,
+    )
 }

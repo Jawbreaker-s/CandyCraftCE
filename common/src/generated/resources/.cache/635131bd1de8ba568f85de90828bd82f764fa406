@@ -1,5 +1,8 @@
-// 1.20.1	2026-09-19T19:47:02.1758702	Tags for minecraft:block mod id candycraftce
+// 1.20.1	2026-09-22T13:15:07.7436085	Tags for minecraft:block mod id candycraftce
+cf5d266c009eeebfd376771338c175ff87a5c270 data/candycraftce/tags/blocks/candy_portal_frame.json
 65a15d828274b5302ffb94a19a3e8a8e41939fd5 data/candycraftce/tags/blocks/candy_soil.json
+1462b33e5af314745dd0141a26096af5bf4004c0 data/candycraftce/tags/blocks/can_light_portal.json
+c83a29d7980defd64a1bfe4cc08f0ed7768673d3 data/candycraftce/tags/blocks/caramel_portal.json
 86767b85a8fff61ad5e8b22ac21eb8a491db227d data/candycraftce/tags/blocks/ice_cream.json
 6e9bb7335eaaab8450568b4ffcede1ce78854e1c data/candycraftce/tags/blocks/ice_soil.json
 58a0307c49b5516c68a7d41c9b871136645b12a5 data/candycraftce/tags/blocks/marshmallow_logs.json

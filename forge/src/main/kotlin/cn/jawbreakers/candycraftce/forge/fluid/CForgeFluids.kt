@@ -44,10 +44,10 @@ object CForgeFluids : ICPlatformFluids {
         ).block { block.get() }
             .tickRate(presets.tickRate)
             .bucket { presets.references.getBucket() }
-        source = fluid.register("${presets.name}_${SOURCE_SUFFIX}") {
+        source = fluid.register("${presets.name}${SOURCE_SUFFIX}") {
             OverridedForgeFluid.Source(presets, fluidProperties)
         }.asEntry()
-        flowing = fluid.register("${presets.name}_${FLOWING_SUFFIX}") {
+        flowing = fluid.register("${presets.name}${FLOWING_SUFFIX}") {
             OverridedForgeFluid.Flowing(presets, fluidProperties)
         }.asEntry()
         block = blocks.register(presets.name) {

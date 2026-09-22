@@ -5,8 +5,9 @@
   "refmap": "${mod_id}.refmap.json",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "entity.EntityMixin", "item.AxeItemAccessor", "item.MixinBowItem", "item.MixinItem", "level.MixinChunkMap",
-    "level.MixinTrunkPlacer", "level.NoiseRouterDataAccessor"
+    "entity.EntityMixin", "item.AxeItemAccessor", "item.MixinBowItem", "item.MixinItem", "level.MixinBiome",
+    "level.MixinChunkMap", "level.MixinTrunkPlacer", "level.NoiseRouterDataAccessor", "portal.MixinEntity",
+    "portal.MixinLevel"
   ],
   "client": ["render.MixinDimensionSpecialEffects", "render.MixinLevelRenderer"],
   "server": [],

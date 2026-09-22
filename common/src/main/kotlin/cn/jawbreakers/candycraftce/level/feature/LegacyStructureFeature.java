@@ -23,11 +23,9 @@ import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RotatedPillarBlock;
-import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.SpawnerBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
@@ -532,19 +530,19 @@ public class LegacyStructureFeature extends Feature<NoneFeatureConfiguration> {
 //		}
 //	}
 
-	private static void decorateChewingGumIsland(WorldGenLevel level, RandomSource random, List<BlockPos> top) {
-		for (BlockPos pos : top) {
-			BlockPos above = pos.above();
-			if (!level.isEmptyBlock(above)) {
-				continue;
-			}
-			if (random.nextBoolean()) {
-				set(level, above, CCBlocks.CHEWING_GUM_PUDDLE.get().defaultBlockState());
-			} else if (random.nextInt(3) == 0) {
-				set(level, above, randomSweetGrass(random));
-			}
-		}
-	}
+//	private static void decorateChewingGumIsland(WorldGenLevel level, RandomSource random, List<BlockPos> top) {
+//		for (BlockPos pos : top) {
+//			BlockPos above = pos.above();
+//			if (!level.isEmptyBlock(above)) {
+//				continue;
+//			}
+//			if (random.nextBoolean()) {
+//				set(level, above, CCBlocks.CHEWING_GUM_PUDDLE.get().defaultBlockState());
+//			} else if (random.nextInt(3) == 0) {
+//				set(level, above, randomSweetGrass(random));
+//			}
+//		}
+//	}
 
 	private static void decorateOrdinaryIsland(WorldGenLevel level, RandomSource random, List<BlockPos> top) {
 		for (BlockPos pos : top) {
@@ -844,54 +842,54 @@ public class LegacyStructureFeature extends Feature<NoneFeatureConfiguration> {
 		set(level, pos, state);
 	}
 
-	private static void buildVillageHouse(WorldGenLevel level, RandomSource random, BlockPos base, int side, boolean window) {
-		int metadata = random.nextInt(3);
-		BlockState planks = marshmallowPlanks(metadata);
-		BlockState roofPlanks = CCBlocks.MARSHMALLOW_PLANKS.get().defaultBlockState();
-		BlockState logs = marshmallowLog(metadata, Direction.Axis.Y);
-		BlockState logX = marshmallowLog(metadata, Direction.Axis.X);
-		BlockState logZ = marshmallowLog(metadata, Direction.Axis.Z);
-		BlockState slab = marshmallowSlab(metadata).setValue(SlabBlock.TYPE, SlabType.TOP);
-		for (int dx = 0; dx < 5; dx++) {
-			for (int dz = 0; dz < 5; dz++) {
-				set(level, base.offset(dx, 0, dz), CCBlocks.CHOCOLATE_STONE.get().defaultBlockState());
-				set(level, base.offset(dx, 3, dz), roofPlanks);
-			}
-		}
-		for (int y = 1; y <= 2; y++) {
-			for (int dx = 0; dx < 5; dx++) {
-				for (int dz = 0; dz < 5; dz++) {
-					boolean corner = (dx == 0 || dx == 4) && (dz == 0 || dz == 4);
-					boolean edge = dx == 0 || dx == 4 || dz == 0 || dz == 4;
-					set(level, base.offset(dx, y, dz), corner ? logs : edge ? planks : Blocks.AIR.defaultBlockState());
-				}
-			}
-		}
-		for (int dx = 1; dx <= 3; dx++) {
-			set(level, base.offset(dx, 3, 0), logX);
-			set(level, base.offset(dx, 3, 4), logX);
-		}
-		for (int dz = 1; dz <= 3; dz++) {
-			set(level, base.offset(0, 3, dz), logZ);
-			set(level, base.offset(4, 3, dz), logZ);
-		}
-
-		if (window) {
-			BlockPos glass = houseWindowPos(base, side, random.nextInt(3));
-			set(level, glass, random.nextInt(3) == 0
-					? CCBlocks.CARAMEL_PANE.get().defaultBlockState()
-					: random.nextBoolean() ? CCBlocks.CARAMEL_PANE_ROUND.get().defaultBlockState() : CCBlocks.CARAMEL_PANE_DIAMOND.get().defaultBlockState());
-			connectCaramelPane(level, glass);
-		}
-		BlockPos door = houseWallPos(base, side, random.nextInt(3));
-		set(level, door, Blocks.AIR.defaultBlockState());
-		set(level, door.above(), slab);
-		set(level, base.offset(0, 3, 0), Blocks.AIR.defaultBlockState());
-		set(level, base.offset(4, 3, 0), Blocks.AIR.defaultBlockState());
-		set(level, base.offset(4, 3, 4), Blocks.AIR.defaultBlockState());
-		set(level, base.offset(0, 3, 4), Blocks.AIR.defaultBlockState());
-		spawnGingerbread(level, base.offset(2, 2, 2), base.getY() > 100 ? GingerbreadManEntity.ELDER : -1);
-	}
+//	private static void buildVillageHouse(WorldGenLevel level, RandomSource random, BlockPos base, int side, boolean window) {
+//		int metadata = random.nextInt(3);
+//		BlockState planks = marshmallowPlanks(metadata);
+//		BlockState roofPlanks = CCBlocks.MARSHMALLOW_PLANKS.get().defaultBlockState();
+//		BlockState logs = marshmallowLog(metadata, Direction.Axis.Y);
+//		BlockState logX = marshmallowLog(metadata, Direction.Axis.X);
+//		BlockState logZ = marshmallowLog(metadata, Direction.Axis.Z);
+//		BlockState slab = marshmallowSlab(metadata).setValue(SlabBlock.TYPE, SlabType.TOP);
+//		for (int dx = 0; dx < 5; dx++) {
+//			for (int dz = 0; dz < 5; dz++) {
+//				set(level, base.offset(dx, 0, dz), CCBlocks.CHOCOLATE_STONE.get().defaultBlockState());
+//				set(level, base.offset(dx, 3, dz), roofPlanks);
+//			}
+//		}
+//		for (int y = 1; y <= 2; y++) {
+//			for (int dx = 0; dx < 5; dx++) {
+//				for (int dz = 0; dz < 5; dz++) {
+//					boolean corner = (dx == 0 || dx == 4) && (dz == 0 || dz == 4);
+//					boolean edge = dx == 0 || dx == 4 || dz == 0 || dz == 4;
+//					set(level, base.offset(dx, y, dz), corner ? logs : edge ? planks : Blocks.AIR.defaultBlockState());
+//				}
+//			}
+//		}
+//		for (int dx = 1; dx <= 3; dx++) {
+//			set(level, base.offset(dx, 3, 0), logX);
+//			set(level, base.offset(dx, 3, 4), logX);
+//		}
+//		for (int dz = 1; dz <= 3; dz++) {
+//			set(level, base.offset(0, 3, dz), logZ);
+//			set(level, base.offset(4, 3, dz), logZ);
+//		}
+//
+//		if (window) {
+//			BlockPos glass = houseWindowPos(base, side, random.nextInt(3));
+//			set(level, glass, random.nextInt(3) == 0
+//					? CCBlocks.CARAMEL_PANE.get().defaultBlockState()
+//					: random.nextBoolean() ? CCBlocks.CARAMEL_PANE_ROUND.get().defaultBlockState() : CCBlocks.CARAMEL_PANE_DIAMOND.get().defaultBlockState());
+//			connectCaramelPane(level, glass);
+//		}
+//		BlockPos door = houseWallPos(base, side, random.nextInt(3));
+//		set(level, door, Blocks.AIR.defaultBlockState());
+//		set(level, door.above(), slab);
+//		set(level, base.offset(0, 3, 0), Blocks.AIR.defaultBlockState());
+//		set(level, base.offset(4, 3, 0), Blocks.AIR.defaultBlockState());
+//		set(level, base.offset(4, 3, 4), Blocks.AIR.defaultBlockState());
+//		set(level, base.offset(0, 3, 4), Blocks.AIR.defaultBlockState());
+//		spawnGingerbread(level, base.offset(2, 2, 2), base.getY() > 100 ? GingerbreadManEntity.ELDER : -1);
+//	}
 
 	private static BlockPos houseWallPos(BlockPos base, int side, int offset) {
 		int direction = side & 3;

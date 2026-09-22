@@ -184,10 +184,9 @@ object CItems {
     val caramel_leaf = register("caramel_leaf")
     val candied_cherry_leaf = register("candied_cherry_leaf")
 
-    //todo BLOCK
-    val lollipop_seeds = register("lollipop_seeds")//, () -> CCBlocks.LOLLIPOP_PLANT.get());
-    val dragibus =
-        register("dragibus")//, { DragibusSeedFoodItem(CCBlocks.DRAGIBUS_CROPS.get(), Properties().food(1,0.3f)) });
+    val lollipop_stem = register("lollipop_stem") { BlockItem(CBlocks.lollipop_stem.get(), Properties()) }
+    val lollipop_seeds = register("lollipop_seeds") { ItemNameBlockItem(CBlocks.lollipop_stem.get(), Properties()) }
+    val dragibus = register("dragibus") { ItemNameBlockItem(CBlocks.dragibus_crops.get(), Properties().food(1, 0.3f)) }
 
     //=====================
     //=====================

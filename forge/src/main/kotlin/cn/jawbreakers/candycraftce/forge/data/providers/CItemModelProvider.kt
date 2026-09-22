@@ -143,12 +143,16 @@ class CItemModelProvider(output: PackOutput, efHelper: ExistingFileHelper) :
                 chocolate_leaf,
                 caramel_leaf,
                 candied_cherry_leaf,
+                lollipop_seeds,
             ).forEach {
                 when (it) {
                     is Entry<*> -> basicItem(it.get() as Item)
                     is IEntrySet<*> -> it.entries().forEach { entry -> basicItem(entry.get() as Item) }
                     else -> throw IllegalStateException("Unsupported type: $it")
                 }
+            }
+            lollipop_stem.also {
+                generated(it, it.id.withPath { path -> "block/${path}_2" })
             }
             listOf(
                 licorice_short_sword,
@@ -176,7 +180,7 @@ class CItemModelProvider(output: PackOutput, efHelper: ExistingFileHelper) :
     companion object {
         private fun Entry<out Item>.getTextureLocation(suffix: String = ""): ResourceLocation {
             return if (suffix.isEmpty()) get().key.withPrefix("item/")
-            else get().key.withPrefix("item/$suffix/")
+            else get().key.withPath { "item/$it$suffix" }
         }
 
         fun ItemModelProvider.generated(item: Entry<out Item>, texture: ResourceLocation = item.getTextureLocation()) {

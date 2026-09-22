@@ -1,0 +1,7 @@
+{
+  "parent": "candycraftce:block/caramel_portal_y_template",
+  "textures": {
+    "particle": "candycraftce:block/liquid_candy_portal",
+    "portal": "candycraftce:block/liquid_candy_portal"
+  }
+}

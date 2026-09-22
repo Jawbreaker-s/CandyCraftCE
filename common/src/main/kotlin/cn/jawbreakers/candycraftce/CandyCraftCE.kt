@@ -22,17 +22,18 @@ object CandyCraftCE {
 
 
     @Suppress("UnusedExpression")
-    fun init(platform: ICPlatForm, postWorks: () -> Unit = {}) {
+    fun init(platform: ICPlatForm, preWorks: () -> Unit = {}, postWorks: () -> Unit = {}) {
         this.platform = platform
         mainLog.info("Initializing $MOD_NAME...")
         CLogUtils.markSignBegin()
         measureTime {
+            preWorks()
             CTabs
             CFluids
             CBlocks
             CBlockEntities
             CItems
-            //world
+            CParticles
             CLevels
             ifClient {
                 PuddingColor.initColor()

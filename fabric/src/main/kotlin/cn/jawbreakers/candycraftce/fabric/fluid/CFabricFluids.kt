@@ -30,8 +30,8 @@ private fun registerSimple(
 ): FluidReference<OverridedExtendedFluid> {
     val id = presets.name.modLoc()
     return FluidRegistry.register(
-        id.withSuffix("_$SOURCE_SUFFIX"),
-        id.withSuffix("_$FLOWING_SUFFIX"),
+        id.withSuffix(SOURCE_SUFFIX),
+        id.withSuffix(FLOWING_SUFFIX),
         id,
         OverridedExtendedFluid.ofStill(presets),
         OverridedExtendedFluid.ofFlowing(presets),

@@ -2,11 +2,13 @@ package cn.jawbreakers.candycraftce.forge.data.providers
 
 import cn.jawbreakers.candycraftce.CandyCraftCE
 import cn.jawbreakers.candycraftce.block.CandyFarmlandBlock
+import cn.jawbreakers.candycraftce.block.CaramelPortalBlock
 import cn.jawbreakers.candycraftce.forge.data.providers.CItemModelProvider.Companion.generated
 import cn.jawbreakers.candycraftce.registry.CBlocks
 import cn.jawbreakers.candycraftce.registry.CBlocks.asItemEntry
 import cn.jawbreakers.candycraftce.registry.CItems.asItem
 import cn.jawbreakers.candycraftce.utils.CUtils.key
+import cn.jawbreakers.candycraftce.utils.CUtils.mcLoc
 import cn.jawbreakers.candycraftce.utils.CUtils.modLoc
 import cn.jawbreakers.candycraftce.utils.registry.Entry
 import net.minecraft.data.PackOutput
@@ -175,12 +177,23 @@ class CBlockStateProvider(output: PackOutput, val efHelper: ExistingFileHelper) 
                 rope_licorice,
                 mint,
                 banana_seaweed,
+                lollipop_fruit
             ).forEach {
                 val texture = it.getBlockTexture()
                 simpleBlock(it.get(), models().cross(it.id.path, texture))
                 itemModels().generated(it.asItemEntry(), texture)
             }
-            listOf(marshmallow_slice, marshmallow_slice_flower).forEach {
+            //l4 crop
+            listOf(dragibus_crops, lollipop_stem).forEach {
+                val crop = it.get()
+                val textures = Array(crop.maxStage + 1) { i -> it.getBlockTexture("_${i}") }
+                val models = textures.mapIndexed { i, tex -> models().cross("${it.id.path}_$i", tex) }
+                getVariantBuilder(crop).forAllStates { state ->
+                    models[crop.getStage(state)].configuredArray()
+                }
+            }
+
+            listOf(marshmallow_slice, marshmallow_slice_flower, chewing_gum_puddle).forEach {
                 val tex = it.getBlockTexture()
                 val model = models().withExistingParent(it.id.toString(), "block/lily_pad")
                     .texture("texture", tex)
@@ -353,7 +366,24 @@ class CBlockStateProvider(output: PackOutput, val efHelper: ExistingFileHelper) 
                     }
                 simpleBlockItem(it.get(), model)
             }
-
+            //portal
+            listOf(caramel_portal, liquid_candy_portal).forEach {
+                val name = it.id.path
+                val block = it.get()
+                val tex = it.getBlockTexture()
+                val baseName = "block/$name"
+                val x = models().withExistingParent(baseName + "_x", "block/nether_portal_ew".mcLoc())
+                    .texture("portal", tex)
+                    .texture("particle", tex)
+                val y = models().withExistingParent(baseName + "_y", "block/caramel_portal_y_template".modLoc())
+                    .texture("portal", tex)
+                    .texture("particle", tex)
+                
+                getMultipartBuilder(block).part().modelFile(x).addModel()
+                    .condition(CaramelPortalBlock.X, true).end()
+                    .part().modelFile(x).rotationY(90).addModel().condition(CaramelPortalBlock.Z, true).end()
+                    .part().modelFile(y).addModel().condition(CaramelPortalBlock.Y, true).end()
+            }
             //fluids
             particle(grenadine, grenadine.getBlockTexture("_static"))
             particle(caramel, caramel.getBlockTexture("_static"))

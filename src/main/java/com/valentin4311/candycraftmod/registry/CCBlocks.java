@@ -160,8 +160,8 @@ public final class CCBlocks {
 	//	public static final RegistryObject<Block> TRAMPOJELLY = translucent(register("trampojelly", () -> new JellyBlock(2.0D, jelly())));
 //	public static final RegistryObject<Block> RED_TRAMPOJELLY = translucent(register("red_trampojelly", () -> new JellyBlock(4.0D, jelly())));
 //	public static final RegistryObject<Block> JELLY_SHOCK_ABSORBER = translucent(register("jelly_shock_absorber", () -> new JellyBlock(-1.0D, jelly())));
-	public static final RegistryObject<Block> LOLLIPOP_BLOCK = cutout(register("lollipop_block", () -> new LollipopBlock(cropPlant().strength(0.0F, 0.0F))));
-	public static final RegistryObject<Block> LOLLIPOP_PLANT = cutout(register("lollipop_plant", () -> new LollipopPlantBlock(cropPlant().randomTicks())));
+//	public static final RegistryObject<Block> LOLLIPOP_BLOCK = cutout(register("lollipop_block", () -> new LollipopBlock(cropPlant().strength(0.0F, 0.0F))));
+//	public static final RegistryObject<Block> LOLLIPOP_PLANT = cutout(register("lollipop_plant", () -> new LollipopPlantBlock(cropPlant().randomTicks())));
 	//	public static final RegistryObject<Block> CARAMEL_BLOCK = register("caramel_block", () -> new Block(metal(MapColor.COLOR_ORANGE).strength(2.0F, 2000.0F)));
 	public static final RegistryObject<Block> SUGAR_FACTORY = register("sugar_factory", () -> new SugarFactoryBlock(false, metal(MapColor.METAL).strength(2.0F, 5.0F)));
 	public static final RegistryObject<Block> LICORICE_FURNACE = register("licorice_furnace", () -> new LicoriceFurnaceBlock(false, stone().strength(5.0F, 10.0F)));
@@ -254,7 +254,7 @@ public final class CCBlocks {
 //	public static final RegistryObject<Block> NOUGAT_HEAD = register("nougat_head", () -> new NougatHeadBlock(metal(MapColor.COLOR_BROWN).strength(1.0F)));
 //	public static final RegistryObject<Block> BANANA_BLOCK = register("banana_block", () -> new Block(wool(MapColor.COLOR_YELLOW).strength(1.0F).sound(SoundType.GRASS)));
 //	public static final RegistryObject<Block> CHEWING_GUM_BLOCK = register("chewing_gum_block", () -> new ChewingGumBlock(jelly().mapColor(MapColor.COLOR_PINK).strength(1.0F).noOcclusion()));
-	public static final RegistryObject<Block> CHEWING_GUM_PUDDLE = cutout(register("chewing_gum_puddle", () -> new ChewingGumPuddleBlock(jelly().mapColor(MapColor.COLOR_PINK).strength(1.0F).noCollission().noOcclusion())));
+//	public static final RegistryObject<Block> CHEWING_GUM_PUDDLE = cutout(register("chewing_gum_puddle", () -> new ChewingGumPuddleBlock(jelly().mapColor(MapColor.COLOR_PINK).strength(1.0F).noCollission().noOcclusion())));
 	public static final RegistryObject<Block> ALCHEMY_TABLE = cutout(register("alchemy_table", () -> new AlchemyTableBlock(stone().mapColor(MapColor.COLOR_BROWN).strength(1.0F).sound(SoundType.METAL).noOcclusion())));
 	//	public static final RegistryObject<Block> MARSHMALLOW_FLOWER_BLOCK = cutout(register("marshmallow_flower_block", () -> new CandyWaterlilyBlock(true, lilyPad(MapColor.COLOR_PINK))));
 	//	public static final RegistryObject<Block> GRENADINE_BLOCK = translucent(register("grenadine_block", () -> new GlassBlock(glass(MapColor.COLOR_RED).strength(1.0F))));

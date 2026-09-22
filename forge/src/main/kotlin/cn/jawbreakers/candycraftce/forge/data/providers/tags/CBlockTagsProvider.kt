@@ -8,6 +8,7 @@ import net.minecraft.core.HolderLookup
 import net.minecraft.data.PackOutput
 import net.minecraft.tags.BlockTags
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.Blocks
 import net.minecraftforge.common.data.BlockTagsProvider
 import net.minecraftforge.common.data.ExistingFileHelper
 import java.util.concurrent.CompletableFuture
@@ -50,6 +51,16 @@ class CBlockTagsProvider(
 
                 tag(ice_soil)
                     .addTag(CBlockTags.ice_cream)
+
+                tag(candy_portal_frame)
+                    .add(sugar_block.get())
+                    .add(caramel_block.get())
+                tag(can_light_portal)
+                    .add(Blocks.LAVA)
+                    .add(liquid_candy.get())
+                tag(CBlockTags.candy_portal)
+                    .add(CBlocks.caramel_portal.get())
+                    .add(CBlocks.liquid_candy_portal.get())
 
                 tag(worm_blocks)
                     .add(orange_gummy_family.block.get())

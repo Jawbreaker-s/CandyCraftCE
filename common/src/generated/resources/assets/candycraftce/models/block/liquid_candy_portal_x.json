@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/nether_portal_ew",
+  "textures": {
+    "particle": "candycraftce:block/liquid_candy_portal",
+    "portal": "candycraftce:block/liquid_candy_portal"
+  }
+}

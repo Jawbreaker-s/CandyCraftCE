@@ -6,7 +6,6 @@ import cn.jawbreakers.candycraftce.utils.CLogUtils
 import cn.jawbreakers.candycraftce.utils.CMixins
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils.ifClient
-import cn.jawbreakers.candycraftce.utils.CPlatformUtils.setRenderLayer
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils.whenInitialized
 import cn.jawbreakers.candycraftce.utils.CUtils.never
 import cn.jawbreakers.candycraftce.utils.IEntrySet
@@ -544,7 +543,9 @@ object CBlocks {
         FragileGrenadineIce(properties(Blocks.ICE).mapColor(MapColor.COLOR_RED))
     }.transparent().noSimpleItem()
     val banana_block = register("banana_block", hay(MapColor.COLOR_YELLOW))
-    val chewing_gum_block = register("chewing_gum_block", jelly(MapColor.COLOR_PINK))
+    val chewing_gum_block = register("chewing_gum_block") {
+        ChewingGumBlock(jelly(MapColor.COLOR_PINK))
+    }
     val mint_block = register("mint_block", hay(MapColor.COLOR_LIGHT_GREEN))
     val raspberry_block = register("raspberry_block", hay(MapColor.COLOR_RED))
     val honey_lamp =
@@ -663,11 +664,15 @@ object CBlocks {
     }.cutout()
     val fraise_tagada_flower = register("fraise_tagada_flower") { CandyPlantBlock(plant(MapColor.COLOR_PINK)) }
         .cutout()
-    val acid_mint_flower = register("acid_mint_flower") { CandyPlantBlock(plant(MapColor.GRASS)) }
-        .cutout()
+    val acid_mint_flower = register("acid_mint_flower") {
+        AcidMintFlowerBlock(plant(MapColor.GRASS))
+    }.cutout()
     val sugar_essence_flower = register("sugar_essence_flower") { IceCandyPlantBlock(plant(MapColor.GOLD)) }
         .cutout()
 
+    val chewing_gum_puddle = register("chewing_gum_puddle") {
+        ChewingGumPuddleBlock(jelly(MapColor.COLOR_PURPLE).strength(1.0f).noCollission().noOcclusion())
+    }.cutout()
     val marshmallow_slice = register("marshmallow_slice") {
         CandyWaterlilyBlock(false, properties(Blocks.LILY_PAD).mapColor(MapColor.COLOR_PINK).randomTicks())
     }.cutout()
@@ -687,6 +692,25 @@ object CBlocks {
         .cutout()
     val banana_seaweed = register("banana_seaweed") { SeaweedBlock(false, plant(MapColor.COLOR_YELLOW)) }
         .cutout()
+
+    val lollipop_fruit = register("lollipop_fruit") {
+        LollipopBlock(plant(MapColor.COLOR_PINK))
+    }
+    val lollipop_stem = register("lollipop_stem") {
+        LollipopStemBlock(plant(MapColor.COLOR_PINK).randomTicks())
+    }.noSimpleItem()
+    val dragibus_crops = register("dragibus_crops") {
+        CandyCropBlock.createL4(plant(MapColor.COLOR_RED))
+    }.cutout().noSimpleItem()
+
+    val caramel_portal = register("caramel_portal") {
+        CaramelPortalBlock(properties(Blocks.NETHER_PORTAL).mapColor(MapColor.COLOR_ORANGE))
+    }.transparent().noSimpleItem()
+
+    val liquid_candy_portal = register("liquid_candy_portal") {
+        CaramelPortalBlock(properties(Blocks.NETHER_PORTAL).mapColor(MapColor.COLOR_PINK))
+    }.transparent().noSimpleItem()
+
     val caramel = CFluids.caramel.block
     val grenadine = CFluids.grenadine.block
     val liquid_chocolate = CFluids.liquid_chocolate.block
@@ -694,7 +718,7 @@ object CBlocks {
     //======================
 
     init {
-        ifClient {
+        CPlatformUtils.clients?.apply {
             cutouts.forEach { setRenderLayer(it, RenderType.cutoutMipped()) }
             transparent.forEach { setRenderLayer(it, RenderType.translucent()) }
         }

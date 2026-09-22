@@ -3,28 +3,20 @@ package cn.jawbreakers.candycraftce.fabric
 import cn.jawbreakers.candycraftce.CandyCraftCE
 import cn.jawbreakers.candycraftce.fabric.fluid.CFabricFluids
 import cn.jawbreakers.candycraftce.fabric.level.CFabricLevels
+import cn.jawbreakers.candycraftce.utils.*
 import cn.jawbreakers.candycraftce.utils.CLogUtils.clog
 import cn.jawbreakers.candycraftce.utils.CLogUtils.logRegister
-import cn.jawbreakers.candycraftce.utils.CPlatformUtils.ifClient
 import cn.jawbreakers.candycraftce.utils.CUtils.modLoc
 import cn.jawbreakers.candycraftce.utils.CUtils.register
-import cn.jawbreakers.candycraftce.utils.ICPlatForm
-import cn.jawbreakers.candycraftce.utils.ICPlatformDatagen
-import cn.jawbreakers.candycraftce.utils.ICPlatformFluids
-import cn.jawbreakers.candycraftce.utils.ICPlatformLevels
 import cn.jawbreakers.candycraftce.utils.registry.Accessor
 import cn.jawbreakers.candycraftce.utils.registry.Entry
 import cn.jawbreakers.candycraftce.utils.registry.LateInitAccessor
 import com.mojang.datafixers.types.Type
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.ModInitializer
-import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap
-import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup
 import net.fabricmc.loader.api.FabricLoader
-import net.minecraft.client.color.block.BlockColor
-import net.minecraft.client.color.item.ItemColor
-import net.minecraft.client.renderer.RenderType
+import net.minecraft.core.particles.ParticleType
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.CreativeModeTab
@@ -54,38 +46,12 @@ class CandyCraftCEFabric : ModInitializer, ICPlatForm {
     override val fluids: ICPlatformFluids get() = CFabricFluids
     override val levels: ICPlatformLevels get() = CFabricLevels
     override val datagen: ICPlatformDatagen? = null
+    override val clients: ICPlatFormClients? get() = if (isClient) CFabricClients else null
 
     override fun <T> whenInitialized(action: () -> T): Accessor<T> {
         val accessor = LateInitAccessor<T>()
         lateUsage?.add { accessor.set(action()) } ?: throw IllegalStateException("Too late")
         return accessor
-    }
-
-    //=================================
-
-
-    override fun setRenderLayer(block: Entry<out Block>, layer: RenderType) {
-        ifClient {
-            whenInitialized {
-                BlockRenderLayerMap.INSTANCE.putBlock(block.get(), layer)
-            }
-        }
-    }
-
-    override fun registerBlockColor(vararg blocks: Entry<out Block>, color: BlockColor) {
-        ifClient {
-            whenInitialized {
-                ColorProviderRegistry.BLOCK.register(color, *blocks.map { it.get() }.toTypedArray())
-            }
-        }
-    }
-
-    override fun registerItemColor(vararg items: Entry<out Item>, color: ItemColor) {
-        ifClient {
-            whenInitialized {
-                ColorProviderRegistry.ITEM.register(color, *items.map { it.get() }.toTypedArray())
-            }
-        }
     }
 
     //=================================
@@ -126,6 +92,14 @@ class CandyCraftCEFabric : ModInitializer, ICPlatForm {
     ): Entry<BlockEntityType<E>> =
         register("BlockEntity", key, { builder.get().build(dsl) }) { id, it ->
             BuiltInRegistries.BLOCK_ENTITY_TYPE.register(id, it)
+        }
+
+    override fun <P : ParticleType<*>> registerParticleType(
+        name: String,
+        factory: Supplier<P>,
+    ): Entry<P> =
+        register("ParticleType", name, factory::get) { id, it ->
+            BuiltInRegistries.PARTICLE_TYPE.register(id, it)
         }
 
     override fun registerCreativeTab(name: String, builder: Consumer<CreativeModeTab.Builder>): Entry<CreativeModeTab> =

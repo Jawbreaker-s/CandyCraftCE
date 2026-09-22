@@ -19,6 +19,10 @@ object CItemTags {
 }
 
 object CBlockTags {
+    val candy_portal = bind("caramel_portal")
+    val can_light_portal = bind("can_light_portal")
+    val candy_portal_frame = bind("candy_portal_frame")
+    
     val ice_soil = bind("ice_soil")
     val candy_soil = bind("candy_soil")
     val seaweed_soil = bind("seaweed_soil")

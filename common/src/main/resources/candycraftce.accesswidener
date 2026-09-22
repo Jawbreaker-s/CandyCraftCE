@@ -4,3 +4,4 @@ accessible field net/minecraft/world/level/block/LiquidBlock fluid Lnet/minecraf
 accessible method net/minecraft/world/level/block/LiquidBlock shouldSpreadLiquid (Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)Z
 extendable method net/minecraft/world/level/block/LiquidBlock shouldSpreadLiquid (Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)Z
 accessible method net/minecraft/world/level/levelgen/feature/foliageplacers/FoliagePlacerType <init> (Lcom/mojang/serialization/Codec;)V
+accessible class net/minecraft/client/particle/ParticleEngine$SpriteParticleRegistration

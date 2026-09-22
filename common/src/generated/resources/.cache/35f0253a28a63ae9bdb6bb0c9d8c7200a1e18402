@@ -1,4 +1,4 @@
-// 1.20.1	2026-08-29T23:29:12.8945219	Item Models: candycraftce
+// 1.20.1	2026-09-21T22:58:21.621035	Item Models: candycraftce
 b69597e7c0247f206126a171c16f29a35d95fc6a assets/candycraftce/models/item/beetle_dungeon_key.json
 25d132c98968b3b9e009984f76c396b6921347cd assets/candycraftce/models/item/butter.json
 60b8ce2c2fdcb069d6f5914177b36d6016006a2b assets/candycraftce/models/item/candied_cherry.json
@@ -85,6 +85,7 @@ b640010ac8d2ebfb6541b01d5fb024640c26d97f assets/candycraftce/models/item/licoric
 165217fb4bcf392e138560fb9efe6ca2d4fbeb05 assets/candycraftce/models/item/liquid_chocolate_bucket.json
 b0e36a3a17e6baa926e524b670bae3b4b594a7e6 assets/candycraftce/models/item/lollipop.json
 c3cb1179b9903f4777775334a846f022cacf9cf8 assets/candycraftce/models/item/lollipop_seeds.json
+be3faf0e7dbe5f2c6b665b70fa8bf0251ef332d7 assets/candycraftce/models/item/lollipop_stem.json
 670e64307cbfc2cc43889e9529e294c98e60869c assets/candycraftce/models/item/magical_leaf.json
 58089f75a655bf4511ab8213126537533236a695 assets/candycraftce/models/item/magic_candy.json
 554e66bb32f2f6c2ce488c4d65f25da123839332 assets/candycraftce/models/item/marshmallow_axe.json

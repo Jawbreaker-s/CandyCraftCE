@@ -28,7 +28,7 @@ object CLevels {
     val candy_effects = "candy_effects".modLoc()
     val candy_chunk_generator = levels.registerChunkGenerator("candyland") { CandyChunkGenerator.codec }
 
-
+    @JvmField
     val candyland: ResourceKey<Level> = ResourceKey.create(Registries.DIMENSION, "candyland".modLoc())
     val dungeons: ResourceKey<Level> = ResourceKey.create(Registries.DIMENSION, "dungeons".modLoc())
 

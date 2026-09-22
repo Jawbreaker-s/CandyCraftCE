@@ -20,7 +20,7 @@ class CandySaplingBlock(treeGrower: AbstractTreeGrower?, properties: Properties)
     override fun isValidSugarTarget(level: LevelReader, pos: BlockPos, state: BlockState, isClient: Boolean) = true
 
     override fun isSugarSuccess(level: Level, random: RandomSource, pos: BlockPos, state: BlockState): Boolean {
-        return level.random.nextFloat() < 0.45
+        return level.random.nextFloat() < 0.3
     }
 
     override fun performSugar(level: ServerLevel, random: RandomSource, pos: BlockPos, state: BlockState) {
