@@ -1,30 +1,18 @@
 package cn.jawbreakers.candycraftce.block
 
+import cn.jawbreakers.candycraftce.registry.CBlocks
+import cn.jawbreakers.candycraftce.registry.CBlocks.defaultBlockState
 import cn.jawbreakers.candycraftce.registry.CBlocks.pudding_block
 import net.minecraft.core.BlockPos
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.util.RandomSource
+import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.LevelReader
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockState
 
 class CustardPuddingBlock(properties: Properties) : Block(properties), ISugarTarget {
-    //TODO mapColor for pudding
-    //
-    //	public MapColor getMapColor(BlockState state, BlockGetter level, BlockPos pos, MapColor defaultColor) {
-    //		if (level instanceof LevelReader reader && pos != null) {
-    //			String biome = reader.getBiome(pos).unwrapKey()
-    //					.map(key -> key.location())
-    //					.filter(id -> CandyCraft.MODID.equals(id.getNamespace()))
-    //					.map(ResourceLocation::getPath)
-    //					.orElse("");
-    //			if ("ice_cream_plains".equals(biome) || "ice_cream_sky_mountains".equals(biome) || "sugar_hell_mountains".equals(biome)) {
-    //				return MapColor.SNOW;
-    //			}
-    //		}
-    //		return defaultColor;
-    //	}
     @Deprecated("Deprecated in Java")
     override fun randomTick(state: BlockState, level: ServerLevel, pos: BlockPos, random: RandomSource) {
         if (level.getMaxLocalRawBrightness(pos.above()) < 4 && level.getBlockState(pos.above())
@@ -34,7 +22,13 @@ class CustardPuddingBlock(properties: Properties) : Block(properties), ISugarTar
         }
     }
 
-    override fun isValidSugarTarget(level: LevelReader, pos: BlockPos, state: BlockState, isClient: Boolean) = true
+    override fun isValidSugarTarget(
+        level: LevelReader,
+        stack: ItemStack,
+        pos: BlockPos,
+        state: BlockState,
+        isClient: Boolean,
+    ) = true
 
     override fun isSugarSuccess(level: Level, random: RandomSource, pos: BlockPos, state: BlockState) = true
 
@@ -54,10 +48,10 @@ class CustardPuddingBlock(properties: Properties) : Block(properties), ISugarTar
             }
 
             if (target != null && level.isEmptyBlock(target)) {
-                val growth: BlockState = if (random.nextInt(8) == 0)
-                    TODO()
-//                CBlocks.FRAISE_TAGADA_FLOWER.get().defaultBlockState()
-                else randomSweetGrass(random)
+                val growth: BlockState = when (random.nextInt(8)) {
+                    0 -> CBlocks.fraise_tagada_flower.defaultBlockState()
+                    else -> randomSweetGrass(random)
+                }
 
                 if (growth.canSurvive(level, target)) {
                     level.setBlockAndUpdate(target, growth)

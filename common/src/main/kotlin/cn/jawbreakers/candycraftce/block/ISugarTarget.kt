@@ -1,5 +1,6 @@
 package cn.jawbreakers.candycraftce.block
 
+import cn.jawbreakers.candycraftce.utils.UsedByMixin
 import net.minecraft.core.BlockPos
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.util.RandomSource
@@ -14,10 +15,11 @@ interface ISugarTarget {
          * @see [cn.jawbreakers.candycraftce.mixin.item.MixinItem.useOn]
          * */
         @JvmStatic
-        fun grow(item: ItemStack, level: Level, pos: BlockPos): Boolean {
+        @UsedByMixin
+        fun grow(item: ItemStack, stack: ItemStack, level: Level, pos: BlockPos): Boolean {
             val state = level.getBlockState(pos)
             val block = state.block
-            if (block is ISugarTarget && block.isValidSugarTarget(level, pos, state, level.isClientSide)
+            if (block is ISugarTarget && block.isValidSugarTarget(level, stack, pos, state, level.isClientSide)
             ) {
                 if (level !is ServerLevel) return true
                 item.shrink(1)
@@ -30,7 +32,13 @@ interface ISugarTarget {
         }
     }
 
-    fun isValidSugarTarget(level: LevelReader, pos: BlockPos, state: BlockState, isClient: Boolean): Boolean
+    fun isValidSugarTarget(
+        level: LevelReader,
+        stack: ItemStack,
+        pos: BlockPos,
+        state: BlockState,
+        isClient: Boolean,
+    ): Boolean
 
     fun isSugarSuccess(level: Level, random: RandomSource, pos: BlockPos, state: BlockState): Boolean
 

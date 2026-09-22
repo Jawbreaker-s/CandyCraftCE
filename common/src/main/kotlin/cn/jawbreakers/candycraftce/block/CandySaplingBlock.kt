@@ -4,6 +4,7 @@ import cn.jawbreakers.candycraftce.registry.CBlockTags
 import net.minecraft.core.BlockPos
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.util.RandomSource
+import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.LevelReader
@@ -17,7 +18,13 @@ class CandySaplingBlock(treeGrower: AbstractTreeGrower?, properties: Properties)
         return state.`is`(CBlockTags.candy_soil)
     }
 
-    override fun isValidSugarTarget(level: LevelReader, pos: BlockPos, state: BlockState, isClient: Boolean) = true
+    override fun isValidSugarTarget(
+        level: LevelReader,
+        stack: ItemStack,
+        pos: BlockPos,
+        state: BlockState,
+        isClient: Boolean,
+    ) = true
 
     override fun isSugarSuccess(level: Level, random: RandomSource, pos: BlockPos, state: BlockState): Boolean {
         return level.random.nextFloat() < 0.3

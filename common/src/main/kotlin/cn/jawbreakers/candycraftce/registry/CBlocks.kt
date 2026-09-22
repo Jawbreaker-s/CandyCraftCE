@@ -157,7 +157,6 @@ object CBlocks {
         wall = { properties(Blocks.SANDSTONE) },
         mapColor = MapColor.SNOW
     )
-
     val cotton_candy_block =
         register("cotton_candy_block", properties(Blocks.HAY_BLOCK).mapColor(MapColor.COLOR_PINK))
     val cotton_candy_family = registerFamily(
@@ -576,6 +575,7 @@ object CBlocks {
 
     val chocolate_covered_white_brownie =
         register("chocolate_covered_white_brownie", properties(Blocks.DIRT).mapColor(MapColor.SAND))
+            .cutout()
 
     val milk_brownie_block = register("milk_brownie_block", cake(MapColor.DIRT))
     val milk_chiffon_cake_block = register("milk_chiffon_cake_block") {
@@ -602,9 +602,9 @@ object CBlocks {
     }
 
     val cake_block = register("cake_block", cake(MapColor.TERRACOTTA_BROWN))
-    val candy_cotton_grass_block =
-        register("candy_cotton_grass_block", properties(Blocks.GRASS_BLOCK).mapColor(MapColor.TERRACOTTA_BROWN))
-
+    val cotton_candy_grass_block =
+        register("cotton_candy_grass_block", properties(Blocks.GRASS_BLOCK).mapColor(MapColor.COLOR_PINK))
+            .cutout()
 
     val licorice_ore = register("licorice_ore", stone(MapColor.TERRACOTTA_WHITE))
     val honey_ore = register("honey_ore", stone(MapColor.TERRACOTTA_WHITE).strength(3.0F, 5.0F))

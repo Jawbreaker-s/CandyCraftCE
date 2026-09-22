@@ -8,21 +8,28 @@ import cn.jawbreakers.candycraftce.registry.CBlocks.pudding_block
 import cn.jawbreakers.candycraftce.registry.CBlocks.pudding_farmland
 import cn.jawbreakers.candycraftce.registry.worldgen.CStructurePieceTypes.floating_island_piece
 import cn.jawbreakers.candycraftce.registry.worldgen.CStructureTypes
+import cn.jawbreakers.candycraftce.utils.CLevelUtils.component1
+import cn.jawbreakers.candycraftce.utils.CLevelUtils.component2
+import cn.jawbreakers.candycraftce.utils.CLevelUtils.component3
 import com.mojang.serialization.Codec
 import net.minecraft.core.BlockPos
+import net.minecraft.core.Direction
 import net.minecraft.core.Vec3i
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.util.RandomSource
 import net.minecraft.world.level.ChunkPos
 import net.minecraft.world.level.StructureManager
 import net.minecraft.world.level.WorldGenLevel
-import net.minecraft.world.level.block.CropBlock
+import net.minecraft.world.level.block.*
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.block.state.properties.SlabType
 import net.minecraft.world.level.chunk.ChunkGenerator
 import net.minecraft.world.level.levelgen.structure.BoundingBox
 import net.minecraft.world.level.levelgen.structure.ScatteredFeaturePiece
 import net.minecraft.world.level.levelgen.structure.SinglePieceStructure
 import net.minecraft.world.level.levelgen.structure.StructureType
+import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext
+import java.util.function.Supplier
 
 
 /**
@@ -31,25 +38,37 @@ import net.minecraft.world.level.levelgen.structure.StructureType
  * Author: [Bread_NiceCat](https://github.com/Bread-NiceCat)
  */
 class FloatingIslandStructure(settings: StructureSettings) : SinglePieceStructure(
-    ::FloatingIslandPiece, SIZE_X, SIZE_Y, settings,
+    ::FloatingIslandPiece, SIZE_X, SIZE_Z, settings,
 ) {
     companion object {
         const val SIZE_X = 32
-        const val SIZE_Y = 32
+        const val SIZE_Z = 32
         val codec: Codec<FloatingIslandStructure> = simpleCodec(::FloatingIslandStructure)
     }
 
     override fun type(): StructureType<*> = CStructureTypes.floating_island_type.get()
 
     class FloatingIslandPiece : ScatteredFeaturePiece {
+        val seed: Long
+
         constructor(random: RandomSource, x: Int, z: Int) : super(
             floating_island_piece.get(),
             x, 128, z,
-            SIZE_X, random.nextInt(3) + 7, SIZE_Y,
+            SIZE_X, random.nextInt(3) + 7, SIZE_Z,
             getRandomHorizontalDirection(random)
-        )
+        ) {
+            seed = random.nextLong()
+        }
 
-        constructor(tag: CompoundTag) : super(floating_island_piece.get(), tag)
+        constructor(tag: CompoundTag) : super(floating_island_piece.get(), tag) {
+            seed = tag.getLong("seed")
+        }
+
+        override fun addAdditionalSaveData(context: StructurePieceSerializationContext, tag: CompoundTag) {
+            super.addAdditionalSaveData(context, tag)
+            tag.putLong("seed", seed)
+        }
+
 
         override fun postProcess(
             level: WorldGenLevel,
@@ -60,6 +79,8 @@ class FloatingIslandStructure(settings: StructureSettings) : SinglePieceStructur
             chunkPos: ChunkPos,
             pos: BlockPos,
         ) {
+            val random = RandomSource.create(seed)
+            val type = random.nextInt(10)
             val nX = random.nextInt(8) - 4
             val nZ = random.nextInt(8) - 4
             var lastLayer = Array(32) { BooleanArray(32) }
@@ -112,21 +133,18 @@ class FloatingIslandStructure(settings: StructureSettings) : SinglePieceStructur
                 }
             }
 
-            val type = random.nextInt(10)
             when (type) {
-                0 -> Unit//boss
-                in 1..3 -> Unit//house
-                else -> decoratePigFeedIsland(level, random, top, box)
-            }
-            if (type == 0 || type == 1) {
-            }
-            if (type == 1) {
-//                val house = base.offset(14 + random.nextInt(4) - 2, height - 1, 14 + random.nextInt(4) - 2)
-//            LegacyStructureFeature.buildVillageHouse(level, random, house, random.nextInt(4), true)
-            }
-            if (type == 2) {
-//            LegacyStructureFeature.decorateChewingGumIsland(level, random, top)
+                0 -> {
+                    decorateChewingGumIsland(level, random, top, box)
 //            LegacyStructureFeature.spawnBossBeetle(level, base.offset(16, height + 2, 16))
+                }
+
+                1, 2, 3 -> {
+                    val offset = Vec3i(14 + random.nextInt(4) - 2, height - 1, 14 + random.nextInt(4) - 2)
+                    buildVillageHouse(level, random, offset, box)
+                }
+
+                else -> decoratePigFeedIsland(level, random, top, box)
             }
         }
 
@@ -135,7 +153,7 @@ class FloatingIslandStructure(settings: StructureSettings) : SinglePieceStructur
             layer: Array<BooleanArray>,
             x: Int, y: Int, z: Int, box: BoundingBox,
         ) {
-            if (x !in 0..<32 || z !in 0..32) return
+            if (x !in 0 until 32 || z !in 0 until 32) return
             layer[x][z] = true
             placeBlock(level, floatingIslandBlockForHeight(y, random), x, y, z, box)
         }
@@ -165,7 +183,7 @@ class FloatingIslandStructure(settings: StructureSettings) : SinglePieceStructur
         ) {
             for (pos in top) {
                 val above = pos.above()
-                if (random.nextInt(3) == 0) {
+                if (random.nextInt(3) > 0) {
                     placeBlock(level, pudding_farmland.defaultBlockState(), pos.x, pos.y, pos.z, box)
                     placeBlock(
                         level,
@@ -176,197 +194,134 @@ class FloatingIslandStructure(settings: StructureSettings) : SinglePieceStructur
                 }
             }
         }
-//
-//        private fun buildVillageHouse(
-//            level: WorldGenLevel,
-//            random: RandomSource,
-//            base: BlockPos,
-//            side: Int,
-//            window: Boolean,
-//        ) {
-//            val metadata = random.nextInt(3)
-//            val planks = LegacyStructureFeature.marshmallowPlanks(metadata)
-//            val roofPlanks = CCBlocks.MARSHMALLOW_PLANKS.get().defaultBlockState()
-//            val logs = LegacyStructureFeature.marshmallowLog(metadata, Direction.Axis.Y)
-//            val logX = LegacyStructureFeature.marshmallowLog(metadata, Direction.Axis.X)
-//            val logZ = LegacyStructureFeature.marshmallowLog(metadata, Direction.Axis.Z)
-//            val slab = LegacyStructureFeature.marshmallowSlab(metadata)
-//                .setValue<SlabType?, SlabType?>(SlabBlock.TYPE, SlabType.TOP)
-//            for (dx in 0..4) {
-//                for (dz in 0..4) {
-//                    LegacyStructureFeature.set(
-//                        level,
-//                        base.offset(dx, 0, dz),
-//                        CCBlocks.CHOCOLATE_STONE.get().defaultBlockState()
-//                    )
-//                    LegacyStructureFeature.set(level, base.offset(dx, 3, dz), roofPlanks)
-//                }
-//            }
-//            for (y in 1..2) {
-//                for (dx in 0..4) {
-//                    for (dz in 0..4) {
-//                        val corner = (dx == 0 || dx == 4) && (dz == 0 || dz == 4)
-//                        val edge = dx == 0 || dx == 4 || dz == 0 || dz == 4
-//                        LegacyStructureFeature.set(
-//                            level,
-//                            base.offset(dx, y, dz),
-//                            if (corner) logs else if (edge) planks else Blocks.AIR.defaultBlockState()
-//                        )
-//                    }
-//                }
-//            }
-//            for (dx in 1..3) {
-//                LegacyStructureFeature.set(level, base.offset(dx, 3, 0), logX)
-//                LegacyStructureFeature.set(level, base.offset(dx, 3, 4), logX)
-//            }
-//            for (dz in 1..3) {
-//                LegacyStructureFeature.set(level, base.offset(0, 3, dz), logZ)
-//                LegacyStructureFeature.set(level, base.offset(4, 3, dz), logZ)
-//            }
-//
-//            if (window) {
-//                val glass = LegacyStructureFeature.houseWindowPos(base, side, random.nextInt(3))
-//                LegacyStructureFeature.set(
-//                    level, glass, if (random.nextInt(3) == 0)
-//                        CCBlocks.CARAMEL_PANE.get().defaultBlockState()
-//                    else
-//                        if (random.nextBoolean()) CCBlocks.CARAMEL_PANE_ROUND.get()
-//                            .defaultBlockState() else CCBlocks.CARAMEL_PANE_DIAMOND.get().defaultBlockState()
-//                )
-//                LegacyStructureFeature.connectCaramelPane(level, glass)
-//            }
-//            val door = LegacyStructureFeature.houseWallPos(base, side, random.nextInt(3))
-//            LegacyStructureFeature.set(level, door, Blocks.AIR.defaultBlockState())
-//            LegacyStructureFeature.set(level, door.above(), slab)
-//            LegacyStructureFeature.set(level, base.offset(0, 3, 0), Blocks.AIR.defaultBlockState())
-//            LegacyStructureFeature.set(level, base.offset(4, 3, 0), Blocks.AIR.defaultBlockState())
-//            LegacyStructureFeature.set(level, base.offset(4, 3, 4), Blocks.AIR.defaultBlockState())
-//            LegacyStructureFeature.set(level, base.offset(0, 3, 4), Blocks.AIR.defaultBlockState())
+
+        private fun decorateChewingGumIsland(
+            level: WorldGenLevel,
+            random: RandomSource,
+            top: MutableList<Vec3i>,
+            box: BoundingBox,
+        ) {
+            for (pos in top) {
+                if (random.nextBoolean()) {
+                    placeBlock(
+                        level,
+                        CBlocks.chewing_gum_puddle.get().defaultBlockState(),
+                        pos.x,
+                        pos.y + 1,
+                        pos.z,
+                        box
+                    )
+                }
+            }
+        }
+
+        private data class WoodFamily(
+            val planks: BlockState,
+            val logs: BlockState,
+            val slabTop: BlockState,
+        ) {
+            val logZ: BlockState = logs.setValue(RotatedPillarBlock.AXIS, Direction.Axis.Z)
+            val logX: BlockState = logs.setValue(RotatedPillarBlock.AXIS, Direction.Axis.X)
+            val roof = CBlocks.marshmallow_planks.defaultBlockState()
+
+            constructor(planks: Block, logs: RotatedPillarBlock, slabTop: SlabBlock) : this(
+                planks.defaultBlockState(),
+                logs.defaultBlockState(),
+                slabTop.defaultBlockState().setValue(SlabBlock.TYPE, SlabType.TOP)
+            )
+
+            constructor(
+                planks: Supplier<out Block>,
+                logs: Supplier<out RotatedPillarBlock>,
+                slabTop: Supplier<out SlabBlock>,
+            ) : this(planks.get(), logs.get(), slabTop.get())
+        }
+
+        private val woods = arrayOf(
+            WoodFamily(CBlocks.marshmallow_planks, CBlocks.marshmallow_log, CBlocks.marshmallow_family.slab!!),
+            WoodFamily(
+                CBlocks.light_marshmallow_planks,
+                CBlocks.light_marshmallow_log,
+                CBlocks.light_marshmallow_family.slab!!
+            ),
+            WoodFamily(
+                CBlocks.dark_marshmallow_planks,
+                CBlocks.dark_marshmallow_log,
+                CBlocks.dark_marshmallow_family.slab!!
+            ),
+        )
+
+        private fun buildVillageHouse(
+            level: WorldGenLevel,
+            random: RandomSource,
+            offset: Vec3i,
+            box: BoundingBox,
+        ) {
+            val (x, y, z) = offset
+            val materials = woods[random.nextInt(3)]
+            val air = Blocks.AIR.defaultBlockState()
+            for (dx in 0..4) {
+                val x = x + dx
+                for (dz in 0..4) {
+                    val z = z + dz
+                    placeBlock(level, chocolate_stone.defaultBlockState(), x, y, z, box)
+                    placeBlock(level, materials.roof, dx + offset.x, y + 3, z, box)
+                }
+            }
+
+            for (dy in 1..2) {
+                val y = y + dy
+                for (dx in 0..4) {
+                    val x = x + dx
+                    for (dz in 0..4) {
+                        val z = z + dz
+
+                        val corner = (dx == 0 || dx == 4) && (dz == 0 || dz == 4)
+                        val edge = dx == 0 || dx == 4 || dz == 0 || dz == 4
+                        placeBlock(
+                            level,
+                            when {
+                                corner -> materials.logs
+                                edge -> materials.planks
+                                else -> Blocks.AIR.defaultBlockState()
+                            },
+                            x, y, z, box
+                        )
+                    }
+                }
+            }
+            for (dx in 1..3) {
+                placeBlock(level, materials.logX, x + dx, y + 3, z, box)
+                placeBlock(level, materials.logX, x + dx, y + 3, z + 4, box)
+            }
+            for (dz in 1..3) {
+                placeBlock(level, materials.logZ, x, y + 3, z + dz, box)
+                placeBlock(level, materials.logZ, x + 4, y + 3, z + dz, box)
+            }
+            val glass = when (random.nextInt(3)) {
+                0 -> CBlocks.caramel_pane.defaultBlockState()
+                1 -> CBlocks.caramel_pane_round.defaultBlockState()
+                else -> CBlocks.caramel_pane_diamond.defaultBlockState()
+            }
+            placeBlock(level, glass, x + 4, y + 2, z + 1 + random.nextInt(3), box)
+            run {
+                val y = y + 1
+                val z = z + 1 + random.nextInt(3)
+                placeBlock(level, air, x, y, z, box)
+                placeBlock(level, materials.slabTop, x, y + 1, z, box)
+                placeBlock(level, air, x, y + 3, z, box)
+                placeBlock(level, air, x + 4, y + 3, z, box)
+                placeBlock(level, air, x + 4, y + 3, z + 4, box)
+                placeBlock(level, air, x, y + 3, z + 4, box)
+
+            }
 //            LegacyStructureFeature.spawnGingerbread(
 //                level,
 //                base.offset(2, 2, 2),
 //                if (base.getY() > 100) GingerbreadManEntity.ELDER else -1
 //            )
-//        }
+        }
 
-        //	private static boolean floatingIsland(WorldGenLevel level, RandomSource random, BlockPos origin) {
-        //		BlockPos base = origin.offset(-16, 0, -16);
-        //		int nX = random.nextInt(8) - 4;
-        //		int nZ = random.nextInt(8) - 4;
-        //		int[][] lastLayer = new int[32][32];
-        //		lastLayer[16][16] = 2;
-        //		lastLayer[16 + nX][16 + nZ] = 2;
-        //		int maxHeight = random.nextInt(3) + 7;
-        //
-        //		for (int y = 0; y < maxHeight; y++) {
-        //			int[][] newLayer = new int[32][32];
-        //			for (int x = 1; x < 31; x++) {
-        //				for (int z = 1; z < 31; z++) {
-        //					if (lastLayer[x][z] != 2) {
-        //						continue;
-        //					}
-        //					placeFloatingIslandColumn(level, random, base, newLayer, x, y, z, maxHeight);
-        //					if (random.nextInt(4) < 3 || y == maxHeight - 1) {
-        //						placeFloatingIslandColumn(level, random, base, newLayer, x + 1, y, z, maxHeight);
-        //					}
-        //					if (random.nextInt(4) < 3 || y == maxHeight - 1) {
-        //						placeFloatingIslandColumn(level, random, base, newLayer, x - 1, y, z, maxHeight);
-        //					}
-        //					if (random.nextInt(4) < 3 || y == maxHeight - 1) {
-        //						placeFloatingIslandColumn(level, random, base, newLayer, x, y, z - 1, maxHeight);
-        //					}
-        //					if (random.nextInt(4) < 3 || y == maxHeight - 1) {
-        //						placeFloatingIslandColumn(level, random, base, newLayer, x, y, z + 1, maxHeight);
-        //					}
-        //					if (random.nextInt(4) < 1) {
-        //						placeFloatingIslandColumn(level, random, base, newLayer, x - 1, y, z - 1, maxHeight);
-        //					}
-        //					if (random.nextInt(4) < 1) {
-        //						placeFloatingIslandColumn(level, random, base, newLayer, x + 1, y, z + 1, maxHeight);
-        //					}
-        //					if (random.nextInt(4) < 1) {
-        //						placeFloatingIslandColumn(level, random, base, newLayer, x + 1, y, z - 1, maxHeight);
-        //					}
-        //					if (random.nextInt(4) < 1) {
-        //						placeFloatingIslandColumn(level, random, base, newLayer, x - 1, y, z + 1, maxHeight);
-        //					}
-        //				}
-        //			}
-        //			lastLayer = newLayer;
-        //		}
-        //
-        //		List<BlockPos> top = new ArrayList<>();
-        //		for (int x = 0; x < 32; x++) {
-        //			for (int z = 0; z < 32; z++) {
-        //				if (lastLayer[x][z] == 2) {
-        //					top.add(base.offset(x, maxHeight - 1, z));
-        //				}
-        //			}
-        //		}
-        //
-        //		int type = random.nextInt(3);
-        //		if (type == 0 || type == 1) {
-        //			decoratePigFeedIsland(level, random, top);
-        //		}
-        //		if (type == 1) {
-        //			BlockPos house = base.offset(14 + random.nextInt(4) - 2, maxHeight - 1, 14 + random.nextInt(4) - 2);
-        //			buildVillageHouse(level, random, house, random.nextInt(4), true);
-        //		}
-        //		if (type == 2) {
-        //			decorateChewingGumIsland(level, random, top);
-        //			spawnBossBeetle(level, base.offset(16, maxHeight + 2, 16));
-        //		}
-        //		return true;
-        //	}
-        //
-        //	private static void placeFloatingIslandColumn(WorldGenLevel level, RandomSource random, BlockPos base, int[][] layer,
-        //	                                              int x, int y, int z, int maxHeight) {
-        //		if (x < 0 || x >= 32 || z < 0 || z >= 32) {
-        //			return;
-        //		}
-        //		layer[x][z] = 2;
-        //		set(level, base.offset(x, y, z), floatingIslandBlockForHeight(y, maxHeight, random));
-        //	}
-        //
-        //	private static BlockState floatingIslandBlockForHeight(int height, int maxHeight, RandomSource random) {
-        //		int distance = maxHeight - height;
-        //		if (distance == 1) {
-        //			return CCBlocks.PUDDING.get().defaultBlockState();
-        //		}
-        //		if (distance == 2) {
-        //			return CCBlocks.FLOUR.get().defaultBlockState();
-        //		}
-        //		if (distance > 2 && distance <= 6) {
-        //			return random.nextInt(5) < distance
-        //					? CCBlocks.CHOCOLATE_STONE.get().defaultBlockState()
-        //					: CCBlocks.FLOUR.get().defaultBlockState();
-        //		}
-        //		return CCBlocks.CHOCOLATE_STONE.get().defaultBlockState();
-        //	}
-        //	private static void decoratePigFeedIsland(WorldGenLevel level, RandomSource random, List<BlockPos> top) {
-        //		for (BlockPos pos : top) {
-        //			BlockPos above = pos.above();
-        //			if (random.nextInt(3) == 0) {
-        //				set(level, pos, CCBlocks.CANDY_FARMLAND.get().defaultBlockState());
-        //				set(level, above, CCBlocks.DRAGIBUS_CROPS.get().defaultBlockState().setValue(CropBlock.AGE, 7));
-        //			} else if (level.isEmptyBlock(above) && random.nextBoolean()) {
-        //				set(level, above, randomSweetGrass(random));
-        //			}
-        //		}
-        //	}
-//        private fun decorateChewingGumIsland(level: WorldGenLevel, random: RandomSource, top: MutableList<BlockPos>) {
-//            for (pos in top) {
-//                val above = pos.above()
-//                if (!level.isEmptyBlock(above)) {
-//                    continue
-//                }
-//                if (random.nextBoolean()) {
-//                    LegacyStructureFeature.set(level, above, CBlocks.chewing_gum_block.get().defaultBlockState())
-//                } else if (random.nextInt(3) == 0) {
-//                    LegacyStructureFeature.set(level, above, LegacyStructureFeature.randomSweetGrass(random))
-//                }
-//            }
-//        }
 
         private fun spawnBossBeetle(level: WorldGenLevel?, pos: BlockPos) {
             //TODO

@@ -139,7 +139,7 @@ object CandyEffects : DimensionSpecialEffects(192.0f, true, SkyType.NORMAL, fals
         setupFog.run()
 
         val color = Vec3.fromRGB24(
-            PuddingColor.getBlendedPuddingColor(level, pos, PuddingColor.radius)
+            PuddingColor.getBlendedPuddingColor(level, pos, PuddingColor.blendRadius)
         )
         val biomeSky = color// level.getSkyColor(camera.position, partialTick)
         val dayWeight = Mth.clamp((dayFactor - 0.35f) * 2.0f, 0.0f, 1.0f)

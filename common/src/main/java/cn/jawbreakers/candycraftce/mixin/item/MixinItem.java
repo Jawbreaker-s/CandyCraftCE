@@ -20,7 +20,7 @@ public class MixinItem {
 		if ((Object) this == Items.SUGAR) {
 			BlockPos pos = context.getClickedPos();
 			Level level = context.getLevel();
-			if (ISugarTarget.grow(context.getItemInHand(), level, pos)) {
+			if (ISugarTarget.grow(context.getItemInHand(), context.getItemInHand(), level, pos)) {
 				if (!level.isClientSide) {
 					level.levelEvent(LevelEvent.PARTICLES_AND_SOUND_PLANT_GROWTH, pos, 0);
 				}

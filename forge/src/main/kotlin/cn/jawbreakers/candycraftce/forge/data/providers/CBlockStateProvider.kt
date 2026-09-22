@@ -217,24 +217,7 @@ class CBlockStateProvider(output: PackOutput, val efHelper: ExistingFileHelper) 
                     .partialState().addModels(*models)
                 itemModels().generated(it.asItemEntry(), it.getBlockTexture("_0"))
             }
-            chocolate_covered_white_brownie.also {
-                val model = models().cubeBottomTop(
-                    it.id.path,
-                    it.getBlockTexture("_side"),
-                    white_brownie_block.getBlockTexture(),
-                    chocolate_stone.getBlockTexture(),
-                )
-                simpleBlockWithItem(it.get(), model)
-            }
-            candy_cotton_grass_block.also {
-                val model = models().cubeBottomTop(
-                    it.id.path,
-                    it.getBlockTexture("_side"),
-                    milk_brownie_block.getBlockTexture(),
-                    cotton_candy_block.getBlockTexture("")
-                )
-                simpleBlockWithItem(it.get(), model)
-            }
+
             //ladder
             marshmallow_ladder.also {
                 val tex = it.getBlockTexture()
@@ -336,17 +319,22 @@ class CBlockStateProvider(output: PackOutput, val efHelper: ExistingFileHelper) 
                 simpleBlockItem(it.get(), model)
             }
 
-            listOf(strawberry_filled_pudding, custard_pudding_block).forEach {
+            listOf(
+                strawberry_filled_pudding to pudding_block,
+                custard_pudding_block to pudding_block,
+                chocolate_covered_white_brownie to white_brownie_block,
+                cotton_candy_grass_block to milk_brownie_block
+            ).forEach { (it, base) ->
+                val base = base.getBlockTexture()
+                val top = when (it) {
+                    chocolate_covered_white_brownie, cotton_candy_grass_block -> cotton_candy_grass_block
+                    else -> custard_pudding_block
+                }.getBlockTexture("_top_overlay")
                 val model = models().withExistingParent(it.id.toString(), "block/grass_block")
-                    .texture("particle", pudding_block.getBlockTexture())
-                    .texture("bottom", pudding_block.getBlockTexture())
-                    .texture(
-                        "top", custard_pudding_block.getBlockTexture(
-//                            if (it == custard_pudding_block) "_top_overlay" else "_top"
-                            "_top_overlay"
-                        )
-                    )
-                    .texture("side", it.getBlockTexture("_side"))
+                    .texture("particle", base)
+                    .texture("bottom", base)
+                    .texture("top", top)
+                    .texture("side", base)
                     .texture("overlay", custard_pudding_block.getBlockTexture("_side_overlay"))
                 simpleBlockWithItem(it.get(), model)
             }
@@ -378,7 +366,7 @@ class CBlockStateProvider(output: PackOutput, val efHelper: ExistingFileHelper) 
                 val y = models().withExistingParent(baseName + "_y", "block/caramel_portal_y_template".modLoc())
                     .texture("portal", tex)
                     .texture("particle", tex)
-                
+
                 getMultipartBuilder(block).part().modelFile(x).addModel()
                     .condition(CaramelPortalBlock.X, true).end()
                     .part().modelFile(x).rotationY(90).addModel().condition(CaramelPortalBlock.Z, true).end()

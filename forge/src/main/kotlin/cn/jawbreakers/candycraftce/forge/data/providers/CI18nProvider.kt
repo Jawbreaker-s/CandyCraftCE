@@ -396,7 +396,7 @@ class CI18nProvider(output: PackOutput) : DataProvider {
             addBlock(dark_chiffon_cake_block, "Dark Chiffon Cake Block", "黑巧克力风味千层蛋糕块")
             addBlock(dark_brownie_cake_roll_block, "Dark Brownie Cake Roll Block", "黑巧克力布朗尼蛋糕卷")
             addBlock(cake_block, "Cake Block", "蛋糕块")
-            addBlock(candy_cotton_grass_block, "Candy Grass Block", "棉花糖草方块")
+            addBlock(cotton_candy_grass_block, "Candy Grass Block", "棉花糖草方块")
 
             addBlock(licorice_ore, "Licorice Ore", "盐甘草矿石")
             addBlock(jelly_ore, "Jelly Ore", "果冻矿石")

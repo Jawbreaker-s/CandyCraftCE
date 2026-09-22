@@ -5,6 +5,7 @@ import net.minecraft.core.BlockPos
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.util.Mth
 import net.minecraft.util.RandomSource
+import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.LevelReader
@@ -141,7 +142,13 @@ open class CandyCropBlock(
         pBuilder.add(AGE)
     }
 
-    override fun isValidSugarTarget(level: LevelReader, pos: BlockPos, state: BlockState, isClient: Boolean): Boolean {
+    override fun isValidSugarTarget(
+        level: LevelReader,
+        stack: ItemStack,
+        pos: BlockPos,
+        state: BlockState,
+        isClient: Boolean,
+    ): Boolean {
         return getAge(state) < MAX_AGE
     }
 

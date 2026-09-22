@@ -1,10 +1,10 @@
 {
   "parent": "minecraft:block/grass_block",
   "textures": {
-    "bottom": "candycraftce:block/white_brownie_block",
+    "bottom": "candycraftce:block/milk_brownie_block",
     "overlay": "candycraftce:block/custard_pudding_block_side_overlay",
-    "particle": "candycraftce:block/white_brownie_block",
-    "side": "candycraftce:block/white_brownie_block",
+    "particle": "candycraftce:block/milk_brownie_block",
+    "side": "candycraftce:block/milk_brownie_block",
     "top": "candycraftce:block/cotton_candy_grass_block_top_overlay"
   }
 }

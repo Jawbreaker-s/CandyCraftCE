@@ -84,7 +84,6 @@ class CandyChunkGenerator(
         private val water: BlockState = Blocks.WATER.defaultBlockState()
         private val flat_bottom: BlockState = CBlocks.jawbreaker_block.defaultBlockState()
         private val base_stone: BlockState = CBlocks.crystallized_sugar.defaultBlockState()
-        private val top_pudding_block: BlockState = CBlocks.custard_pudding_block.defaultBlockState()
         private val pudding_block = CBlocks.pudding_block.defaultBlockState()
         private val ice_cream = CBlocks.ice_cream.defaultBlockState()
 
@@ -282,7 +281,7 @@ class CandyChunkGenerator(
     private val surfaceMaterials = mapOf(
         cotton_candy_plains to
                 SurfaceMaterials(
-                    CBlocks.cotton_candy_block.defaultBlockState(),
+                    CBlocks.cotton_candy_grass_block.defaultBlockState(),
                     CBlocks.milk_brownie_block.defaultBlockState()
                 ),
         chocolate_forest to
@@ -296,15 +295,20 @@ class CandyChunkGenerator(
                     pudding_block
                 )
     )
-    private val defaultSurfaceMaterials = SurfaceMaterials(top_pudding_block, pudding_block, pudding_block)
+    private val defaultSurfaceMaterials =
+        SurfaceMaterials(
+            CBlocks.custard_pudding_block.defaultBlockState(),
+            pudding_block, pudding_block
+        )
+
     private fun surfaceMaterials(
         biomeId: ResourceKey<Biome>,
         worldX: Int,
         worldZ: Int,
         randomState: RandomState,
     ): SurfaceMaterials {
-        if (biomeId in surfaceMaterials) return surfaceMaterials[biomeId]!!
         return when (biomeId) {
+            in surfaceMaterials -> surfaceMaterials[biomeId]!!
             gummy_swamp -> gummySurfaceMaterials(worldX, worldZ, randomState)
             else -> defaultSurfaceMaterials
         }
