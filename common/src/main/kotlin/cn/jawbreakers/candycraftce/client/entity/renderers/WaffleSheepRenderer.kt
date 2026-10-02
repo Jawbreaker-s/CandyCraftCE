@@ -1,6 +1,6 @@
 package cn.jawbreakers.candycraftce.client.entity.renderers
 
-import cn.jawbreakers.candycraftce.entity.WaffleSheepEntity
+import cn.jawbreakers.candycraftce.entity.WaffleSheep
 import cn.jawbreakers.candycraftce.utils.CUtils.entityTex
 import cn.jawbreakers.candycraftce.utils.CUtils.modLoc
 import com.mojang.blaze3d.vertex.PoseStack
@@ -15,7 +15,7 @@ import net.minecraft.client.renderer.entity.layers.RenderLayer
 import net.minecraft.resources.ResourceLocation
 
 open class WaffleSheepRenderer(base: ResourceLocation, context: EntityRendererProvider.Context) :
-    MobRenderer<WaffleSheepEntity, SheepModel<WaffleSheepEntity>>(
+    MobRenderer<WaffleSheep, SheepModel<WaffleSheep>>(
         context,
         SheepModel(context.bakeLayer(ModelLayers.SHEEP)),
         0.7f
@@ -25,26 +25,26 @@ open class WaffleSheepRenderer(base: ResourceLocation, context: EntityRendererPr
     protected val texture = base.entityTex()
     protected val hurtTexture = base.entityTex("_hurt")
     protected val furTexture = base.entityTex("_fur")
-    open fun hasFur(sheep: WaffleSheepEntity): Boolean = true
+    open fun hasFur(sheep: WaffleSheep): Boolean = true
 
     init {
         addLayer(FurLayer(context))
     }
 
-    override fun getTextureLocation(entity: WaffleSheepEntity): ResourceLocation {
+    override fun getTextureLocation(entity: WaffleSheep): ResourceLocation {
         return if (entity.hurtTime > 0) hurtTexture else texture
     }
 
     inner class FurLayer(context: EntityRendererProvider.Context) :
-        RenderLayer<WaffleSheepEntity, SheepModel<WaffleSheepEntity>>(this) {
+        RenderLayer<WaffleSheep, SheepModel<WaffleSheep>>(this) {
 
-        private val model = SheepFurModel<WaffleSheepEntity>(context.bakeLayer(ModelLayers.SHEEP_FUR))
+        private val model = SheepFurModel<WaffleSheep>(context.bakeLayer(ModelLayers.SHEEP_FUR))
 
         override fun render(
             poseStack: PoseStack,
             buffer: MultiBufferSource,
             packedLight: Int,
-            sheep: WaffleSheepEntity,
+            sheep: WaffleSheep,
             limbSwing: Float,
             limbSwingAmount: Float,
             partialTick: Float,

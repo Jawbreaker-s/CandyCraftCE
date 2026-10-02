@@ -136,12 +136,12 @@ public final class CCEntityTypes {
 					.clientTrackingRange(10)
 					.build(CandyCraft.MODID + ":gummy_bunny")
 	);
-	public static final RegistryObject<EntityType<CottonCandySheepEntity>> COTTON_CANDY_SHEEP = ENTITY_TYPES.register("cotton_candy_sheep", () ->
-			EntityType.Builder.of(CottonCandySheepEntity::new, MobCategory.CREATURE)
-					.sized(0.9F, 1.3F)
-					.clientTrackingRange(10)
-					.build(CandyCraft.MODID + ":cotton_candy_sheep")
-	);
+	//	public static final RegistryObject<EntityType<CottonCandySheepEntity>> COTTON_CANDY_SHEEP = ENTITY_TYPES.register("cotton_candy_sheep", () ->
+//			EntityType.Builder.of(CottonCandySheepEntity::new, MobCategory.CREATURE)
+//					.sized(0.9F, 1.3F)
+//					.clientTrackingRange(10)
+//					.build(CandyCraft.MODID + ":cotton_candy_sheep")
+//	);
 	public static final RegistryObject<EntityType<EasterChickenEntity>> EASTER_CHICKEN = ENTITY_TYPES.register("easter_chicken", () ->
 			EntityType.Builder.of(EasterChickenEntity::new, MobCategory.CREATURE)
 					.sized(0.4F, 0.7F)
@@ -183,12 +183,12 @@ public final class CCEntityTypes {
 					.clientTrackingRange(10)
 					.build(CandyCraft.MODID + ":gingerbread_man")
 	);
-	public static final RegistryObject<EntityType<CandyFishEntity>> CANDY_FISH = ENTITY_TYPES.register("candy_fish", () ->
-			EntityType.Builder.of(CandyFishEntity::new, MobCategory.WATER_AMBIENT)
-					.sized(0.95F, 0.95F)
-					.clientTrackingRange(8)
-					.build(CandyCraft.MODID + ":candy_fish")
-	);
+	//	public static final RegistryObject<EntityType<CandyFishEntity>> CANDY_FISH = ENTITY_TYPES.register("candy_fish", () ->
+//			EntityType.Builder.of(CandyFishEntity::new, MobCategory.WATER_AMBIENT)
+//					.sized(0.95F, 0.95F)
+//					.clientTrackingRange(8)
+//					.build(CandyCraft.MODID + ":candy_fish")
+//	);
 	public static final RegistryObject<EntityType<PingouinEntity>> PINGOUIN = ENTITY_TYPES.register("pingouin", () ->
 			EntityType.Builder.of(PingouinEntity::new, MobCategory.CREATURE)
 					.sized(0.6F, 1.0F)

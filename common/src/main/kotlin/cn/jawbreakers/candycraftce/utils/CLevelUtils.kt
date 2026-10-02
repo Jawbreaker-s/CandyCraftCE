@@ -5,7 +5,9 @@ import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.core.Vec3i
 import net.minecraft.core.particles.ParticleOptions
+import net.minecraft.world.InteractionHand
 import net.minecraft.world.entity.item.ItemEntity
+import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.ChunkPos
 import net.minecraft.world.level.Level
@@ -139,5 +141,22 @@ object CLevelUtils {
             level.addParticle(particle, xm, ym, w, 0.0, 0.0, 0.0)
             w += step
         }
+    }
+
+    /**
+     * 消耗玩家手上的物品并给予物品
+     * @return true 给予成功 false 未给予
+     * */
+    fun consumeAndGive(player: Player, hand: InteractionHand, give: ItemStack): Boolean {
+        val stack = player.getItemInHand(hand)
+        if (stack.count == 1 && !player.abilities.instabuild) {
+            player.setItemInHand(hand, give)
+        } else {
+            if (!player.abilities.instabuild) {
+                stack.shrink(1)
+            }
+            return player.addItem(give)
+        }
+        return true
     }
 }

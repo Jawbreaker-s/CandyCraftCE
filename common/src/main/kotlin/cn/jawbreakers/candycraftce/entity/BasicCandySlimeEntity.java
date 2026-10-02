@@ -1,5 +1,6 @@
 package cn.jawbreakers.candycraftce.entity;
 
+import cn.jawbreakers.candycraftce.utils.CandyTargeting;
 import com.valentin4311.candycraftmod.registry.CCEntityTypes;
 import com.valentin4311.candycraftmod.registry.CCFluids;
 import com.valentin4311.candycraftmod.registry.CCItems;

@@ -21,8 +21,7 @@ object CItemTags {
 object CBlockTags {
     val withItems = mutableListOf<ItemBlockTagkey>()
 
-    val pudding_animal_spawnable_on = bind("pudding_animal_spawnable_on")
-    val cotton_animal_spawnable_on = bind("cotton_animal_spawnable_on")
+    val candy_animal_spawnable_on = bind("candy_animal_spawnable_on")
 
     val sweet_grass = withItem("sweet_grass")
 
@@ -35,7 +34,8 @@ object CBlockTags {
     val seaweed_soil = bind("seaweed_soil")
     val marshmallow_planks = withItem("marshmallow_planks")
     val ice_cream = bind("ice_cream")
-    val worm_blocks = bind("worm_blocks")
+    val worm_blocks = withItem("worm_blocks")
+    val gummy_blocks = withItem("gummy_blocks")
     val marshmallow_logs = bind("marshmallow_logs")
     private fun bind(name: String): TagKey<Block> {
         return TagKey.create(Registries.BLOCK, name.modLoc())

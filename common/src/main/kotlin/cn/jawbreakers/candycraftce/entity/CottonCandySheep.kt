@@ -1,7 +1,9 @@
 package cn.jawbreakers.candycraftce.entity
 
+import cn.jawbreakers.candycraftce.registry.CEntityTypes
 import cn.jawbreakers.candycraftce.registry.CItems
 import cn.jawbreakers.candycraftce.registry.CItems.defaultInstance
+import cn.jawbreakers.candycraftce.utils.CLevelUtils
 import net.minecraft.core.BlockPos
 import net.minecraft.network.syncher.EntityDataAccessor
 import net.minecraft.network.syncher.EntityDataSerializers
@@ -18,11 +20,11 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
 
-class CottonCandySheepEntity(type: EntityType<out CottonCandySheepEntity?>, level: Level) :
-    WaffleSheepEntity(type, level) {
+class CottonCandySheep(type: EntityType<out CottonCandySheep?>, level: Level) :
+    WaffleSheep(type, level) {
     companion object {
         val fur: EntityDataAccessor<Boolean> =
-            SynchedEntityData.defineId(CottonCandySheepEntity::class.java, EntityDataSerializers.BOOLEAN)
+            SynchedEntityData.defineId(CottonCandySheep::class.java, EntityDataSerializers.BOOLEAN)
 
         fun createAttributes(): AttributeSupplier.Builder {
             return createMobAttributes()
@@ -45,15 +47,12 @@ class CottonCandySheepEntity(type: EntityType<out CottonCandySheepEntity?>, leve
         if (!isBaby && furry && stack.`is`(CItems.marshmallow_stick.get())) {
             furry = false
             if (!level().isClientSide) {
-                if (stack.count == 1 && !player.abilities.instabuild) {
-                    player.setItemInHand(hand, CItems.cotton_candy.get().defaultInstance)
-                } else {
-                    if (!player.abilities.instabuild) {
-                        stack.shrink(1)
-                    }
-                    if (!player.addItem(CItems.cotton_candy.get().defaultInstance)) {
-                        spawnAtLocation(CItems.cotton_candy.get().defaultInstance)
-                    }
+                val give = when (type) {
+                    CEntityTypes.raspberry_cotton_sheep.get() -> CItems.raspberry_cotton_candy.get()
+                    else -> CItems.cotton_candy.get()
+                }.defaultInstance
+                if (!CLevelUtils.consumeAndGive(player, hand, give)) {
+                    spawnAtLocation(give)
                 }
             }
             playSound(SoundEvents.SHEEP_SHEAR, 1.0f, 1.0f)

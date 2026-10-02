@@ -12,8 +12,8 @@ import cn.jawbreakers.candycraftce.utils.CLogUtils
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils
 import cn.jawbreakers.candycraftce.utils.CUtils.instance
 import cn.jawbreakers.candycraftce.utils.IEntrySet
-import cn.jawbreakers.candycraftce.utils.MCTimeUnit.Companion.tick
 import cn.jawbreakers.candycraftce.utils.registry.Entry
+import cn.jawbreakers.candycraftce.utils.tick
 import net.minecraft.world.effect.MobEffectInstance
 import net.minecraft.world.effect.MobEffects
 import net.minecraft.world.food.FoodProperties

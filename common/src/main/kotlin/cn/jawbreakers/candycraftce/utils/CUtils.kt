@@ -1,7 +1,6 @@
 package cn.jawbreakers.candycraftce.utils
 
 import cn.jawbreakers.candycraftce.CandyCraftCE.MOD_ID
-import cn.jawbreakers.candycraftce.utils.MCTimeUnit.Companion.tick
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.core.Registry
 import net.minecraft.core.registries.BuiltInRegistries
@@ -9,6 +8,7 @@ import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.Tag
 import net.minecraft.resources.ResourceKey
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.util.RandomSource
 import net.minecraft.util.profiling.ProfilerFiller
 import net.minecraft.world.effect.MobEffect
 import net.minecraft.world.effect.MobEffectInstance
@@ -21,8 +21,9 @@ object CUtils {
 
     fun never(vararg any: Any): Boolean = false
     fun always(vararg any: Any): Boolean = true
-    fun <R> ResourceLocation.toKey(registry: ResourceKey<Registry<R>>): ResourceKey<R> {
-        return ResourceKey.create(registry, this)
+    fun <E> RandomSource.choice(k: List<E>): E {
+        require(k.isNotEmpty()) { "Collection must not be empty" }
+        return k[nextInt(k.size)]
     }
 
     fun String.modLoc(modId: String = MOD_ID) = ResourceLocation(modId, this)
@@ -56,13 +57,13 @@ object CUtils {
      * @param ambient 是否显示粒子
      * */
     fun MobEffect.instance(
-        duration: MCTimeUnit = 0.tick,
+        duration: Ticks = 0.tick,
         amplifier: Int = 0,
         ambient: Boolean = false,
         visible: Boolean = true,
         showIcon: Boolean = visible,
     ): MobEffectInstance {
-        return MobEffectInstance(this, duration.toTick, amplifier, ambient, visible, showIcon)
+        return MobEffectInstance(this, duration, amplifier, ambient, visible, showIcon)
     }
 
     fun GameRules.Key<GameRules.BooleanValue>.get(level: Level): Boolean = level.gameRules.getBoolean(this)

@@ -1,15 +1,14 @@
 package cn.jawbreakers.candycraftce.entity;
 
+import cn.jawbreakers.candycraftce.utils.CandyTargeting;
 import com.valentin4311.candycraftmod.CandyCraft;
+import com.valentin4311.candycraftmod.block.DungeonTeleporterBlock.DungeonKind;
 import com.valentin4311.candycraftmod.item.SugarPillItem;
 import com.valentin4311.candycraftmod.registry.CCEntityTypes;
 import com.valentin4311.candycraftmod.registry.CCFluids;
 import com.valentin4311.candycraftmod.registry.CCItems;
 import com.valentin4311.candycraftmod.registry.CCSoundEvents;
-import com.valentin4311.candycraftmod.block.DungeonTeleporterBlock.DungeonKind;
 import com.valentin4311.candycraftmod.world.DungeonProgressData;
-import java.util.List;
-import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -24,38 +23,20 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
-import net.minecraft.world.BossEvent;
-import net.minecraft.world.Difficulty;
-import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.*;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityDimensions;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.entity.PathfinderMob;
-import net.minecraft.world.entity.PlayerRideableJumping;
-import net.minecraft.world.entity.Pose;
-import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.FloatGoal;
-import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
-import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.world.entity.ai.goal.PanicGoal;
-import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameRules;
@@ -67,1548 +48,1550 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.pathfinder.BlockPathTypes;
 import net.minecraft.world.phys.Vec3;
 
+import javax.annotation.Nullable;
+
 public class BasicCandyZombieEntity extends PathfinderMob implements PlayerRideableJumping {
-    private static final int PLAYER_TARGET_SEARCH_INTERVAL = 10;
-    private static final int BOSS_SUGUARD_LOST_TARGET_TICKS = 200;
-    private static final int BOSS_SUGUARD_BOW_DRAW_DURATION = 14;
-    private static final double BOSS_SUGUARD_CLOSE_BARRAGE_RANGE_SQR = 9.0D;
-    private static final int BOSS_SUGUARD_CLOSE_BARRAGE_VOLLEYS = 5;
-    private static final int DORMANT_BOSS_HEAL_INTERVAL_TICKS = 20;
-    private static final float DORMANT_BOSS_HEAL_AMOUNT = 5.0F;
-    private static final double DRAGON_MIN_ASCENT_SPEED = 0.16D;
-    private static final double DRAGON_MAX_ASCENT_SPEED = 0.42D;
-    private static final String TAG_ANGRY = "Angry";
-    private static final String TAG_WAITING = "Waiting";
-    private static final String TAG_SPAWNED = "Spawned";
-    private static final String TAG_COUNTDOWN = "CountDown";
-    private static final EntityDataAccessor<Integer> LEGACY_VARIANT = SynchedEntityData.defineId(BasicCandyZombieEntity.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Boolean> SADDLED = SynchedEntityData.defineId(BasicCandyZombieEntity.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Boolean> BABY_DRAGON = SynchedEntityData.defineId(BasicCandyZombieEntity.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Integer> MOUNT_POWER = SynchedEntityData.defineId(BasicCandyZombieEntity.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Boolean> DRAGON_FALLING = SynchedEntityData.defineId(BasicCandyZombieEntity.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Boolean> DRAGON_FLYING = SynchedEntityData.defineId(BasicCandyZombieEntity.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Integer> BOSS_BOW_DRAW_TICKS = SynchedEntityData.defineId(BasicCandyZombieEntity.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Boolean> BOSS_SUGUARD_AWAKE = SynchedEntityData.defineId(BasicCandyZombieEntity.class, EntityDataSerializers.BOOLEAN);
-    private static final EntityDataAccessor<Integer> BOSS_SUGUARD_STAT = SynchedEntityData.defineId(BasicCandyZombieEntity.class, EntityDataSerializers.INT);
-    private static final EntityDataAccessor<Boolean> CHOCOLATE_FOREST_SUGUARD = SynchedEntityData.defineId(BasicCandyZombieEntity.class, EntityDataSerializers.BOOLEAN);
-    private boolean angry;
-    private boolean waiting;
-    private boolean spawnedMinions;
-    private int summonCooldown;
-    private int rangedCooldown;
-    private int mageTargetSearchCooldown;
-    private int bossTargetSearchCooldown;
-    private int bossSuguardCounter = 300;
-    private int bossSuguardSeeTicks;
-    private int bossSuguardLostTargetTicks;
-    private boolean bossSuguardDormantRotationInitialized;
-    private float bossSuguardDormantYRot;
-    private float bossSuguardDormantYHeadRot;
-    private boolean bossHealthBarRevealed;
-    private int dragonShootTicks;
-    private int kingBeetleExplosionCount;
-    private int dragonAgeTicks;
-    private boolean mountJumpRequested;
-    private float mountJumpCharge;
-    @Nullable
-    private BlockPos mermaidSwimTarget;
-    @Nullable
-    private BlockPos nessieSwimTarget;
-    private final ServerBossEvent bossEvent = new ServerBossEvent(getDisplayName(), BossEvent.BossBarColor.WHITE, BossEvent.BossBarOverlay.PROGRESS);
-
-    public BasicCandyZombieEntity(EntityType<? extends BasicCandyZombieEntity> type, Level level) {
-        super(type, level);
-        setPathfindingMalus(BlockPathTypes.WATER, isNessie() ? 1.0F : -1.0F);
-        this.waiting = isMageSuguard();
-        this.angry = isMageSuguard();
-        if (isBossSuguard()) {
-            bossEvent.setName(type.getDescription());
-            bossEvent.setColor(BossEvent.BossBarColor.WHITE);
-            bossEvent.setVisible(false);
-            xpReward = 500;
-        }
-        if (isDragon()) {
-            setMountPower(getMountMaxPower());
-        }
-        if (isMermaid()) {
-            rangedCooldown = 20;
-        }
-    }
-
-    @Override
-    public void onAddedToWorld() {
-        super.onAddedToWorld();
-        if (!level().isClientSide) {
-            ensureDefaultEquipment();
-        }
-    }
-
-    public static AttributeSupplier.Builder createAttributes() {
-        return Monster.createMonsterAttributes()
-            .add(Attributes.MAX_HEALTH, 30.0D)
-            .add(Attributes.MOVEMENT_SPEED, 0.3D)
-            .add(Attributes.ATTACK_DAMAGE, 6.0D);
-    }
-
-    @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        entityData.define(LEGACY_VARIANT, 0);
-        entityData.define(SADDLED, false);
-        entityData.define(BABY_DRAGON, false);
-        entityData.define(MOUNT_POWER, 0);
-        entityData.define(DRAGON_FALLING, false);
-        entityData.define(DRAGON_FLYING, false);
-        entityData.define(BOSS_BOW_DRAW_TICKS, 0);
-        entityData.define(BOSS_SUGUARD_AWAKE, false);
-        entityData.define(BOSS_SUGUARD_STAT, 0);
-        entityData.define(CHOCOLATE_FOREST_SUGUARD, false);
-    }
-
-    @Override
-    protected void registerGoals() {
-        if (!isMermaid()) {
-            goalSelector.addGoal(1, new FloatGoal(this));
-        }
-        if (isPassiveCreature()) {
-            goalSelector.addGoal(2, new PanicGoal(this, 1.1D));
-            goalSelector.addGoal(5, new RandomStrollGoal(this, 0.2D));
-            goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
-            goalSelector.addGoal(7, new RandomLookAroundGoal(this));
-            return;
-        }
-        if (isBossSuguard()) {
-            goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
-            goalSelector.addGoal(6, new RandomLookAroundGoal(this));
-            targetSelector.addGoal(1, new SuguardTargetGoal(this));
-            targetSelector.addGoal(2, new HurtByTargetGoal(this));
-            return;
-        }
-        if (isMermaid()) {
-            targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true));
-            targetSelector.addGoal(2, new HurtByTargetGoal(this));
-            return;
-        }
-        goalSelector.addGoal(4, new SuguardAttackGoal(this));
-        goalSelector.addGoal(5, new RandomStrollGoal(this, 0.2D));
-        goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        goalSelector.addGoal(6, new RandomLookAroundGoal(this));
-        targetSelector.addGoal(1, new SuguardTargetGoal(this));
-        targetSelector.addGoal(2, new HurtByTargetGoal(this));
-    }
-
-    @Override
-    public boolean canBreatheUnderwater() {
-        return isBossSuguard() || isMermaid() || super.canBreatheUnderwater();
-    }
-
-    @Override
-    public boolean isPushedByFluid() {
-        return !isMermaid() && super.isPushedByFluid();
-    }
-
-    @Override
-    public boolean canBeAffected(MobEffectInstance effect) {
-        return !effect.getEffect().equals(MobEffects.POISON) && super.canBeAffected(effect);
-    }
-
-    @Override
-    @Nullable
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty,
-            net.minecraft.world.entity.MobSpawnType reason, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
-        SpawnGroupData data = super.finalizeSpawn(level, difficulty, reason, spawnData, dataTag);
-        ensureDefaultEquipment();
-        if ((isSuguard() || isMageSuguard())
-            && reason != net.minecraft.world.entity.MobSpawnType.MOB_SUMMONED
-            && level instanceof ServerLevel serverLevel && random.nextInt(50) == 0) {
-            CaramelBeeEntity bee = CCEntityTypes.CARAMEL_BEE.get().create(serverLevel);
-            if (bee != null) {
-                bee.moveTo(getX(), getY(), getZ(), getYRot(), 0.0F);
-                bee.setAlwaysHostile(true);
-                serverLevel.addFreshEntity(bee);
-                startRiding(bee, true);
-            }
-        }
-        return data;
-    }
-
-    @Override
-    public void addAdditionalSaveData(CompoundTag tag) {
-        super.addAdditionalSaveData(tag);
-        tag.putBoolean(TAG_ANGRY, angry);
-        tag.putBoolean(TAG_WAITING, waiting);
-        tag.putBoolean(TAG_SPAWNED, spawnedMinions);
-        tag.putInt(TAG_COUNTDOWN, summonCooldown);
-        tag.putInt("Power", getMountPower());
-        tag.putInt("BossSuguardStat", getBossSuguardStat());
-        tag.putInt("BossSuguardCounter", bossSuguardCounter);
-        tag.putInt("BossSuguardLostTargetTicks", bossSuguardLostTargetTicks);
-        tag.putBoolean("BossHealthBarRevealed", bossHealthBarRevealed);
-        tag.putInt("DragonShootTicks", dragonShootTicks);
-        tag.putInt("KingBeetleExplosionCount", kingBeetleExplosionCount);
-        tag.putInt("Variant", getLegacyVariant());
-        tag.putBoolean("ChocolateForestSuguard", isChocolateForestSuguard());
-        tag.putBoolean("Saddle", isNessieSaddled());
-        tag.putBoolean("BabyDragon", isBabyDragon());
-        tag.putInt("DragonAgeTicks", dragonAgeTicks);
-    }
-
-    @Override
-    public void readAdditionalSaveData(CompoundTag tag) {
-        super.readAdditionalSaveData(tag);
-        angry = tag.getBoolean(TAG_ANGRY);
-        setBossSuguardAwake(angry);
-        waiting = tag.getBoolean(TAG_WAITING);
-        spawnedMinions = tag.getBoolean(TAG_SPAWNED);
-        summonCooldown = tag.getInt(TAG_COUNTDOWN);
-        setMountPower(tag.getInt("Power"));
-        setBossSuguardStat(tag.getInt("BossSuguardStat"));
-        bossSuguardCounter = tag.contains("BossSuguardCounter") ? tag.getInt("BossSuguardCounter") : 300;
-        bossSuguardLostTargetTicks = tag.contains("BossSuguardLostTargetTicks")
-            ? tag.getInt("BossSuguardLostTargetTicks")
-            : angry ? BOSS_SUGUARD_LOST_TARGET_TICKS : 0;
-        bossHealthBarRevealed = tag.getBoolean("BossHealthBarRevealed") || isBossSuguard() && angry;
-        dragonShootTicks = tag.getInt("DragonShootTicks");
-        kingBeetleExplosionCount = tag.getInt("KingBeetleExplosionCount");
-        setLegacyVariant(tag.getInt("Variant"));
-        setChocolateForestSuguard(tag.getBoolean("ChocolateForestSuguard"));
-        setNessieSaddled(tag.getBoolean("Saddle"));
-        setBabyDragon(tag.getBoolean("BabyDragon"));
-        dragonAgeTicks = tag.getInt("DragonAgeTicks");
-        ensureDefaultEquipment();
-    }
-
-    @Override
-    public void aiStep() {
-        boolean mermaid = isMermaid();
-        boolean bossSuguard = isBossSuguard();
-        boolean mageSuguard = isMageSuguard();
-        boolean dragon = isDragon();
-        boolean kingBeetle = isKingBeetle();
-        boolean nessie = isNessie();
-        if ((nessie || dragon || kingBeetle) && getTarget() != null) {
-            setTarget(null);
-        }
-        if (bossSuguard && !isBossSuguardAwake()) {
-            tickDormantBossSuguard();
-            updateBossBar();
-            super.aiStep();
-            freezeDormantBossSuguard();
-            return;
-        }
-        LivingEntity target = getTarget();
-        if (target != null && !CandyTargeting.canAttackEntity(target)) {
-            setTarget(null);
-        }
-        if (bossSuguard) {
-            updateBossBar();
-        }
-        if (!bossSuguard && !nessie && !mermaid && !dragon && (isInWaterRainOrBubble() || isInGrenadine())) {
-            hurt(damageSources().drown(), 1.0F);
-        }
-
-        if (!level().isClientSide && level() instanceof ServerLevel serverLevel) {
-            if (mageSuguard) {
-                tickMageBehavior(serverLevel);
-            }
-            if (mermaid || bossSuguard) {
-                if (rangedCooldown > 0) {
-                    rangedCooldown--;
-                }
-                if (mermaid) {
-                    tickMermaidRangedBehavior(serverLevel);
-                } else {
-                    tickBossSuguard(serverLevel);
-                }
-            }
-        }
-
-        if (nessie || dragon || kingBeetle || mermaid) {
-            tickMovementAbilities(nessie, dragon, kingBeetle, mermaid);
-        }
-        if (level().isClientSide) {
-            spawnLegacyParticles();
-        }
-        super.aiStep();
-    }
-
-    @Override
-    public void travel(Vec3 travelVector) {
-        if ((isNessie() || isDragon() || isKingBeetle()) && getControllingPassenger() != null) {
-            LivingEntity rider = getControllingPassenger();
-            setYRot(rider.getYRot());
-            yRotO = getYRot();
-            setXRot(isKingBeetle() ? 0.0F : rider.getXRot() * 0.5F);
-            setRot(getYRot(), getXRot());
-            yBodyRot = getYRot();
-            yHeadRot = yBodyRot;
-            float forward = rider.zza;
-            float strafe = rider.xxa * 0.35F;
-            if (forward <= 0.0F) {
-                forward *= 0.25F;
-            }
-            if (isDragon()) {
-                travelDragon(rider, strafe, forward);
-                return;
-            }
-            if (isKingBeetle()) {
-                travelKingBeetle(rider, strafe, forward);
-                return;
-            }
-            double speed = 0.12D;
-            if (isNessie() && isInWater()) {
-                setDeltaMovement(getDeltaMovement().add(0.0D, -rider.getXRot() / 900.0D, 0.0D));
-            }
-            setSpeed((float)speed);
-            super.travel(new Vec3(strafe, travelVector.y, forward));
-            return;
-        }
-        if (isNessie() && isEffectiveAi() && isInWater()) {
-            moveRelative(0.03F, travelVector);
-            move(MoverType.SELF, getDeltaMovement());
-            setDeltaMovement(getDeltaMovement().multiply(0.8D, 0.8D, 0.8D).add(0.0D, -0.02D, 0.0D));
-            return;
-        }
-        if (isMermaid()) {
-            if (!isInWater() && !isNoGravity()) {
-                setDeltaMovement(getDeltaMovement().add(0.0D, -0.08D, 0.0D));
-            }
-            move(MoverType.SELF, getDeltaMovement());
-            if (isInWater()) {
-                setDeltaMovement(getDeltaMovement().multiply(0.8D, 0.8D, 0.8D).add(0.0D, -0.02D, 0.0D));
-            } else {
-                double groundFriction = onGround() ? 0.55D : 0.98D;
-                setDeltaMovement(getDeltaMovement().multiply(groundFriction, 0.98D, groundFriction));
-            }
-            return;
-        }
-        super.travel(travelVector);
-    }
-
-    private void travelDragon(LivingEntity rider, float strafe, float forward) {
-        getNavigation().stop();
-        setTarget(null);
-
-        boolean exhausted = isDragonFalling();
-        boolean airborne = !onGround();
-        float ascentCharge = consumeMountJumpCharge();
-        Vec3 look = rider.getLookAngle();
-        Vec3 horizontalLook = new Vec3(look.x, 0.0D, look.z);
-        if (horizontalLook.lengthSqr() < 1.0E-4D) {
-            horizontalLook = Vec3.directionFromRotation(0.0F, rider.getYRot()).multiply(1.0D, 0.0D, 1.0D);
-        }
-        horizontalLook = horizontalLook.normalize();
-
-        if (exhausted) {
-            if (airborne) {
-                travelExhaustedDragonGlide(horizontalLook, forward, strafe);
-            } else {
-                setNoGravity(false);
-                setDragonFlying(false);
-                setSpeed(0.15F);
-                super.travel(new Vec3(strafe * 0.35F, 0.0D, forward * 0.45F));
-            }
-            return;
-        }
-
-        if (ascentCharge > 0.0F) {
-            airborne = true;
-        }
-
-        double forwardInput = Mth.clamp(forward, -0.35F, 1.0F);
-        double strafeInput = Mth.clamp(strafe, -0.35F, 0.35F);
-        Vec3 side = new Vec3(horizontalLook.z, 0.0D, -horizontalLook.x).scale(strafeInput * 0.42D);
-        Vec3 travelDirection = airborne ? look.normalize() : horizontalLook;
-        Vec3 desired = travelDirection.scale(forwardInput * 0.52D).add(side);
-        Vec3 current = getDeltaMovement();
-
-        if (airborne && Math.abs(forwardInput) < 0.05D) {
-            desired = new Vec3(current.x * 0.72D, current.y * 0.45D, current.z * 0.72D).add(side);
-        }
-
-        double response = airborne ? 0.32D : 0.45D;
-        Vec3 motion = current.scale(1.0D - response).add(desired.scale(response));
-        motion = new Vec3(
-            Mth.clamp(motion.x, -0.62D, 0.62D),
-            Mth.clamp(motion.y, -0.48D, 0.48D),
-            Mth.clamp(motion.z, -0.62D, 0.62D)
-        );
-        if (ascentCharge > 0.0F) {
-            double ascentSpeed = Mth.lerp(ascentCharge, DRAGON_MIN_ASCENT_SPEED, DRAGON_MAX_ASCENT_SPEED);
-            motion = new Vec3(motion.x, Math.max(motion.y, ascentSpeed), motion.z);
-        }
-        setNoGravity(airborne);
-        setDragonFlying(airborne);
-        setDeltaMovement(motion);
-        move(MoverType.SELF, motion);
-        hasImpulse = true;
-        calculateEntityAnimation(false);
-    }
-
-    private void travelExhaustedDragonGlide(Vec3 horizontalLook, float forward, float strafe) {
-        Vec3 current = getDeltaMovement();
-        double forwardSpeed = Mth.clamp(forward, 0.0F, 1.0F) * 0.26D;
-        double strafeSpeed = Mth.clamp(strafe, -0.35F, 0.35F) * 0.16D;
-        Vec3 side = new Vec3(horizontalLook.z, 0.0D, -horizontalLook.x).scale(strafeSpeed);
-        Vec3 desiredHorizontal = horizontalLook.scale(forwardSpeed).add(side);
-        Vec3 horizontal = new Vec3(current.x, 0.0D, current.z).scale(0.94D).add(desiredHorizontal.scale(0.06D));
-        double descent = Mth.clamp(current.y - 0.012D, -0.16D, -0.035D);
-        Vec3 motion = new Vec3(horizontal.x, descent, horizontal.z);
-        setNoGravity(true);
-        setDragonFlying(true);
-        setDeltaMovement(motion);
-        move(MoverType.SELF, motion);
-        hasImpulse = true;
-        calculateEntityAnimation(false);
-    }
-
-    private void travelKingBeetle(LivingEntity rider, float strafe, float forward) {
-        getNavigation().stop();
-        setTarget(null);
-        if (getMountPower() < getMountMaxPower()) {
-            setMountPower(getMountPower() + 1);
-        }
-        if (consumeMountJumpRequest() && onGround()) {
-            jumpFromGround();
-        }
-        if (forward <= 0.0F) {
-            forward *= 0.2F;
-        }
-        Vec3 input = new Vec3(strafe, 0.0D, forward);
-        if (input.lengthSqr() > 1.0D) {
-            input = input.normalize();
-        }
-        moveRelative(0.32F, input);
-        move(MoverType.SELF, getDeltaMovement());
-        setSpeed(0.32F);
-        if (!onGround()) {
-            setDeltaMovement(getDeltaMovement().multiply(0.67D, 1.0D, 0.67D));
-        } else {
-            setDeltaMovement(getDeltaMovement().multiply(0.6D, 1.0D, 0.6D));
-        }
-        calculateEntityAnimation(false);
-    }
-
-    private boolean consumeMountJumpRequest() {
-        boolean requested = mountJumpRequested;
-        mountJumpRequested = false;
-        mountJumpCharge = 0.0F;
-        return requested;
-    }
-
-    private float consumeMountJumpCharge() {
-        if (!mountJumpRequested) {
-            return 0.0F;
-        }
-        float charge = mountJumpCharge;
-        mountJumpRequested = false;
-        mountJumpCharge = 0.0F;
-        return charge;
-    }
-
-    @Override
-    @Nullable
-    public LivingEntity getControllingPassenger() {
-        Entity passenger = getFirstPassenger();
-        if (!(passenger instanceof Player player)) {
-            return null;
-        }
-        if (isNessie() && !isNessieSaddled()) {
-            return null;
-        }
-        if (isDragon() && isBabyDragon()) {
-            return null;
-        }
-        return player;
-    }
-
-    @Override
-    public void onPlayerJump(int jumpPower) {
-        if (canJump() && jumpPower > 0) {
-            mountJumpRequested = true;
-            mountJumpCharge = Mth.clamp(jumpPower / 100.0F, 0.0F, 1.0F);
-        }
-    }
-
-    @Override
-    public boolean canJump() {
-        return isKingBeetle() || (isDragon() && !isBabyDragon() && !isDragonFalling());
-    }
-
-    @Override
-    public void handleStartJump(int jumpPower) {
-    }
-
-    @Override
-    public void handleStopJump() {
-    }
-
-    @Override
-    public double getPassengersRidingOffset() {
-        if (isDragon()) {
-            return getBbHeight() - 1.2D - Math.sin(tickCount * 0.05F) / 6.0D;
-        }
-        if (isKingBeetle()) {
-            return getBbHeight() - 0.05D;
-        }
-        return super.getPassengersRidingOffset();
-    }
-
-    @Override
-    public InteractionResult mobInteract(Player player, InteractionHand hand) {
-        ItemStack stack = player.getItemInHand(hand);
-        if (isNessie()) {
-            if (!level().isClientSide && !isNessieSaddled() && stack.is(Items.SADDLE)) {
-                setNessieSaddled(true);
-                if (!player.getAbilities().instabuild) {
-                    stack.shrink(1);
-                }
-                return InteractionResult.SUCCESS;
-            }
-            if (!level().isClientSide && isNessieSaddled() && player.isShiftKeyDown()) {
-                setNessieSaddled(false);
-                spawnAtLocation(Items.SADDLE);
-                return InteractionResult.SUCCESS;
-            }
-            if (!level().isClientSide && isNessieSaddled() && getControllingPassenger() == null) {
-                player.startRiding(this);
-                return InteractionResult.SUCCESS;
-            }
-        } else if (isDragon() && !isBabyDragon() && !level().isClientSide && getControllingPassenger() == null) {
-            player.startRiding(this);
-            dragonShootTicks = 0;
-            return InteractionResult.SUCCESS;
-        } else if (isKingBeetle() && !level().isClientSide && getControllingPassenger() == null) {
-            player.startRiding(this);
-            kingBeetleExplosionCount = 0;
-            return InteractionResult.SUCCESS;
-        }
-        return super.mobInteract(player, hand);
-    }
-
-    @Override
-    public boolean hurt(DamageSource source, float amount) {
-        LivingEntity livingAttacker = getLivingAttacker(source);
-        Player attackingPlayer = livingAttacker instanceof Player player ? player : null;
-        Player playerAttacker = attackingPlayer != null && CandyTargeting.canAttackPlayer(attackingPlayer)
-            ? attackingPlayer
-            : null;
-        if (isSuguard() && source.getEntity() instanceof LivingEntity) {
-            angry = true;
-        }
-        if (isBossSuguard()) {
-            if (!level().isClientSide && livingAttacker != null && livingAttacker != this) {
-                activateBossSuguard(CandyTargeting.canAttackEntity(livingAttacker) ? livingAttacker : null);
-            }
-            if (source.is(net.minecraft.world.damagesource.DamageTypes.DROWN)) {
-                return false;
-            }
-            if (source.is(net.minecraft.tags.DamageTypeTags.IS_PROJECTILE)
-                    || source.is(net.minecraft.tags.DamageTypeTags.IS_FIRE)) {
-                return false;
-            }
-            boolean hurt = super.hurt(source, amount);
-            if (hurt) {
-                alertCaramelBeeWitnesses(playerAttacker);
-            }
-            return hurt;
-        }
-        if ((isDragon() || isKingBeetle()) && getControllingPassenger() != null && getControllingPassenger().equals(source.getEntity())) {
-            return false;
-        }
-        if (isKingBeetle() && source.is(net.minecraft.tags.DamageTypeTags.IS_EXPLOSION)) {
-            return false;
-        }
-        boolean hurt = super.hurt(source, amount);
-        if (hurt) {
-            alertCaramelBeeWitnesses(playerAttacker);
-        }
-        return hurt;
-    }
-
-    @Nullable
-    private static LivingEntity getLivingAttacker(DamageSource source) {
-        if (source.getEntity() instanceof LivingEntity attacker) {
-            return attacker;
-        }
-        if (source.getDirectEntity() instanceof LivingEntity attacker) {
-            return attacker;
-        }
-        return null;
-    }
-
-    private void alertCaramelBeeWitnesses(@Nullable Player attacker) {
-        if (attacker != null && level() instanceof ServerLevel serverLevel
-                && (isSuguard() || isMageSuguard() || isBossSuguard())) {
-            CaramelBeeEntity.alertSuguardAttackWitnesses(serverLevel, this, attacker);
-        }
-    }
-
-    @Override
-    public boolean causeFallDamage(float distance, float damageMultiplier, DamageSource source) {
-        return isDragon() ? false : super.causeFallDamage(distance, damageMultiplier, source);
-    }
-
-    @Override
-    public void startSeenByPlayer(ServerPlayer player) {
-        super.startSeenByPlayer(player);
-        if (isBossSuguard()) {
-            bossEvent.addPlayer(player);
-        }
-    }
-
-    @Override
-    public void stopSeenByPlayer(ServerPlayer player) {
-        super.stopSeenByPlayer(player);
-        bossEvent.removePlayer(player);
-    }
-
-    @Override
-    public boolean doHurtTarget(Entity target) {
-        if (isPassiveCreature()) {
-            setTarget(null);
-            return false;
-        }
-        if (!CandyTargeting.canAttackEntity(target)) {
-            setTarget(null);
-            return false;
-        }
-        ItemStack held = getItemBySlot(EquipmentSlot.MAINHAND);
-        if (isMageSuguard()) {
-            boolean success = super.doHurtTarget(target);
-            if (success) {
-                target.setSecondsOnFire(6);
-            }
-            return success;
-        }
-        if (isBossSuguard()) {
-            return false;
-        }
-        if (held.is(CCItems.DYNAMITE.get())) {
-            if (target.getBoundingBox().maxY > getBoundingBox().minY && target.getBoundingBox().minY < getBoundingBox().maxY) {
-                boolean mobGriefing = level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
-                level().explode(this, getX(), getY(), getZ(), 2.0F,
-                    mobGriefing ? Level.ExplosionInteraction.MOB : Level.ExplosionInteraction.NONE);
-                discard();
-                return true;
-            }
-        } else if (random.nextInt(10) == 0 && onGround()) {
-            double dx = target.getX() - getX();
-            double dz = target.getZ() - getZ();
-            double distance = Math.max(Math.sqrt(dx * dx + dz * dz), 1.0E-4D);
-            setDeltaMovement(
-                dx / distance * 0.4D + getDeltaMovement().x * 0.2D,
-                0.6D,
-                dz / distance * 0.4D + getDeltaMovement().z * 0.2D
-            );
-        }
-        if (isSuguard() && getAttribute(Attributes.ATTACK_DAMAGE) != null) {
-            getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(getSuguardAttackDamage());
-        }
-        return super.doHurtTarget(target);
-    }
-
-    @Override
-    protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHit) {
-        if (isMageSuguard()) {
-            ItemStack stack = new ItemStack(CCItems.SUGAR_PILL.get());
-            MobEffect[] choices = {
-                MobEffects.MOVEMENT_SPEED, MobEffects.MOVEMENT_SLOWDOWN, MobEffects.DIG_SPEED, MobEffects.DIG_SLOWDOWN,
-                MobEffects.DAMAGE_BOOST, MobEffects.HEAL, MobEffects.HARM, MobEffects.JUMP,
-                MobEffects.CONFUSION, MobEffects.REGENERATION, MobEffects.DAMAGE_RESISTANCE, MobEffects.FIRE_RESISTANCE,
-                MobEffects.WATER_BREATHING, MobEffects.INVISIBILITY, MobEffects.BLINDNESS, MobEffects.NIGHT_VISION,
-                MobEffects.HUNGER, MobEffects.WEAKNESS, MobEffects.POISON, MobEffects.WITHER
-            };
-            java.util.ArrayList<MobEffectInstance> effects = new java.util.ArrayList<>(4);
-            int[] colors = new int[4];
-            for (int i = 0; i < 4; i++) {
-                MobEffect effect = choices[random.nextInt(choices.length)];
-                effects.add(new MobEffectInstance(effect, 20 * 60, 0));
-                colors[i] = effect.getColor();
-            }
-            SugarPillItem.setData(stack, effects, colors);
-            spawnAtLocation(stack);
-            return;
-        }
-        if (isBossSuguard()) {
-            spawnAtLocation(CCItems.RECORD_2.get());
-            spawnAtLocation(CCItems.SUGUARD_KEY.get());
-            spawnAtLocation(CCItems.SUGUARD_EMBLEM.get());
-            if (level() instanceof ServerLevel serverLevel) {
-                DungeonProgressData.get(serverLevel.getServer()).markBossDefeated(DungeonKind.SUGUARD, blockPosition());
-            }
-            return;
-        }
-        ItemStack held = getItemBySlot(EquipmentSlot.MAINHAND);
-        if (isSuguard() && held.is(CCItems.LICORICE_SPEAR.get()) && random.nextFloat() <= 0.1F) {
-            ItemStack drop = held.copy();
-            int maxDamage = Math.max(drop.getMaxDamage() - 25, 1);
-            int remaining = drop.getMaxDamage() - random.nextInt(random.nextInt(maxDamage) + 1);
-            remaining = Math.max(1, Math.min(maxDamage, remaining));
-            drop.setDamageValue(remaining);
-            spawnAtLocation(drop);
-        }
-    }
-
-    @Override
-    protected SoundEvent getAmbientSound() {
-        if (usesLegacySilentSounds()) {
-            return null;
-        }
-        return isNessie() ? CCSoundEvents.MOB_NESSIE.get() : SoundEvents.ZOMBIE_AMBIENT;
-    }
-
-    @Override
-    protected SoundEvent getHurtSound(DamageSource damageSource) {
-        if (usesLegacySilentSounds()) {
-            return null;
-        }
-        return isNessie() ? CCSoundEvents.MOB_NESSIE_HURT.get() : SoundEvents.ZOMBIE_HURT;
-    }
-
-    @Override
-    protected SoundEvent getDeathSound() {
-        if (usesLegacySilentSounds()) {
-            return null;
-        }
-        return isNessie() ? CCSoundEvents.MOB_NESSIE_HURT.get() : SoundEvents.ZOMBIE_DEATH;
-    }
-
-    @Override
-    protected void playStepSound(BlockPos pos, BlockState state) {
-        if (usesLegacySilentSounds() || isNessie()) {
-            return;
-        }
-        super.playStepSound(pos, state);
-    }
-
-    private void ensureDefaultEquipment() {
-        if (!getItemBySlot(EquipmentSlot.MAINHAND).isEmpty()) {
-            return;
-        }
-        if (isMermaid()) {
-            setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(CCItems.CARAMEL_BOW.get()));
-        } else if (isMageSuguard()) {
-            setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(CCItems.JUMP_WAND.get()));
-            setDropChance(EquipmentSlot.MAINHAND, 0.0F);
-        } else if (isBossSuguard()) {
-            setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(CCItems.CARAMEL_BOW.get()));
-            setDropChance(EquipmentSlot.MAINHAND, 0.0F);
-        } else if (isSuguard()) {
-            setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(CCItems.LICORICE_SPEAR.get()));
-            setDropChance(EquipmentSlot.MAINHAND, 0.0F);
-        }
-    }
-
-    private void tickMovementAbilities(boolean nessie, boolean dragon, boolean kingBeetle, boolean mermaid) {
-        if (nessie) {
-            setAirSupply(getMaxAirSupply());
-            if (isInWater() && getControllingPassenger() == null && !level().isClientSide) {
-                tickNessieSwimming();
-            } else if (!isInWater() && onGround()) {
-                nessieSwimTarget = null;
-                zza = 0.0F;
-                setDeltaMovement(getDeltaMovement().multiply(0.15D, 1.0D, 0.15D).add(0.0D, 0.01D, 0.0D));
-            }
-        } else if (dragon) {
-            tickDragonGrowth();
-            tickDragonStamina();
-            tickDragonPower();
-        } else if (kingBeetle) {
-            if (getMountPower() < getMountMaxPower()) {
-                setMountPower(getMountPower() + 1);
-            }
-            tickKingBeetlePower();
-        } else if (mermaid) {
-            setAirSupply(getMaxAirSupply());
-            if (isInWater()) {
-                LivingEntity target = getTarget();
-                if (target != null && CandyTargeting.canAttackEntity(target)) {
-                    mermaidSwimTarget = target.blockPosition();
-                } else if (!isValidMermaidSwimTarget(mermaidSwimTarget)
-                        || random.nextInt(100) == 0
-                        || mermaidSwimTarget.distToCenterSqr(position()) < 4.0D) {
-                    mermaidSwimTarget = chooseMermaidSwimTarget();
-                }
-                if (mermaidSwimTarget != null) {
-                    swimToward(mermaidSwimTarget.getX() + 0.5D, mermaidSwimTarget.getY() + 0.1D,
-                        mermaidSwimTarget.getZ() + 0.5D, 0.15D, 0.26D);
-                }
-            } else if (onGround() && tickCount % 10 == 0) {
-                mermaidSwimTarget = null;
-                playSound(SoundEvents.GUARDIAN_FLOP, 1.0F, 1.0F);
-                setDeltaMovement(random.nextFloat() - 0.5F, getDeltaMovement().y + 0.34D, random.nextFloat() - 0.5F);
-                setYRot(random.nextFloat() * 360.0F);
-                yRotO = getYRot();
-            }
-        }
-    }
-
-    @Nullable
-    private BlockPos chooseMermaidSwimTarget() {
-        BlockPos origin = blockPosition();
-        for (int i = 0; i < 12; i++) {
-            BlockPos candidate = origin.offset(
-                random.nextInt(14) - random.nextInt(14),
-                random.nextInt(3) - 1,
-                random.nextInt(14) - random.nextInt(14));
-            if (isValidMermaidSwimTarget(candidate)) {
-                return candidate;
-            }
-        }
-        return isValidMermaidSwimTarget(origin) ? origin : null;
-    }
-
-    private boolean isValidMermaidSwimTarget(@Nullable BlockPos pos) {
-        return pos != null
-            && pos.getY() > level().getMinBuildHeight()
-            && level().getFluidState(pos).is(FluidTags.WATER);
-    }
-
-    private void tickNessieSwimming() {
-        LivingEntity target = getTarget();
-        if (target != null && CandyTargeting.canAttackEntity(target) && target.isInWater()) {
-            swimToward(target.getX(), target.getY() + target.getBbHeight() * 0.4D, target.getZ(), 0.18D, 0.75D);
-            return;
-        }
-
-        if (!isValidNessieSwimTarget(nessieSwimTarget)
-                || random.nextInt(100) == 0
-                || nessieSwimTarget.distToCenterSqr(position()) < 4.0D) {
-            nessieSwimTarget = chooseNessieSwimTarget();
-        }
-
-        if (nessieSwimTarget != null) {
-            swimToward(nessieSwimTarget.getX() + 0.5D, nessieSwimTarget.getY() + 0.1D, nessieSwimTarget.getZ() + 0.5D, 0.15D, 0.7D);
-        }
-    }
-
-    private void swimToward(double x, double y, double z, double horizontalSpeed, double verticalSpeed) {
-        double dx = x - getX();
-        double dy = y - getY();
-        double dz = z - getZ();
-        Vec3 movement = getDeltaMovement();
-        setDeltaMovement(
-            movement.x + (Math.signum(dx) * horizontalSpeed - movement.x) * 0.1D,
-            movement.y + (Math.signum(dy) * verticalSpeed - movement.y) * 0.1D,
-            movement.z + (Math.signum(dz) * horizontalSpeed - movement.z) * 0.1D
-        );
-        float yaw = (float)(Mth.atan2(getDeltaMovement().z, getDeltaMovement().x) * Mth.RAD_TO_DEG) - 90.0F;
-        float yawDelta = Mth.wrapDegrees(yaw - getYRot());
-        setYRot(getYRot() + yawDelta);
-        yBodyRot = getYRot();
-        yHeadRot = getYRot();
-        zza = 0.5F;
-    }
-
-    @Nullable
-    private BlockPos chooseNessieSwimTarget() {
-        BlockPos origin = blockPosition();
-        for (int i = 0; i < 12; i++) {
-            BlockPos candidate = origin.offset(random.nextInt(17) - 8, random.nextInt(5) - 2, random.nextInt(17) - 8);
-            if (isValidNessieSwimTarget(candidate)) {
-                return candidate;
-            }
-        }
-        return isValidNessieSwimTarget(origin) ? origin : null;
-    }
-
-    private boolean isValidNessieSwimTarget(@Nullable BlockPos pos) {
-        return pos != null
-            && pos.getY() > level().getMinBuildHeight()
-            && level().getFluidState(pos).is(FluidTags.WATER)
-            && level().getFluidState(pos.above()).is(FluidTags.WATER);
-    }
-
-    private void tickMermaidRangedBehavior(ServerLevel level) {
-        if (rangedCooldown <= 0) {
-            LivingEntity target = getTarget();
-            if (target != null && !CandyTargeting.canAttackEntity(target)) {
-                setTarget(null);
-                target = null;
-            }
-            if (target != null && distanceToSqr(target) <= 245.0D && hasLineOfSight(target)) {
-                float attackStrength = Mth.clamp(distanceTo(target) / 15.0F, 0.1F, 1.0F);
-                rangedCooldown = Mth.floor(attackStrength * 10.0F + 20.0F);
-                HoneyArrowEntity ball = new HoneyArrowEntity(level, this);
-                double dx = target.getX() - getX();
-                double dy = target.getEyeY() - ball.getY();
-                double dz = target.getZ() - getZ();
-                ball.setBaseDamage(attackStrength * 3.0F + random.nextGaussian() * 0.25D
-                    + level.getDifficulty().getId() * 0.11F);
-                ball.shoot(dx, dy, dz, 1.4F, 8.0F);
-                level.addFreshEntity(ball);
-                playSound(SoundEvents.ARROW_SHOOT, 1.0F, 1.0F / (random.nextFloat() * 0.4F + 0.8F));
-            }
-        }
-    }
-
-    private void tickBossSuguard(ServerLevel level) {
-        if (!isBossSuguardAwake()) {
-            tickDormantBossSuguard();
-            return;
-        }
-        setMovementSpeedBase(0.35D);
-        if (--bossSuguardCounter <= 0) {
-            bossSuguardCounter = 300;
-            setBossSuguardStat((getBossSuguardStat() + 1) % 4);
-        }
-        LivingEntity target = getTarget();
-        if (target != null && (!CandyTargeting.canAttackEntity(target) || distanceToSqr(target) > 48.0D * 48.0D)) {
-            setTarget(null);
-            target = null;
-        }
-        if (bossTargetSearchCooldown > 0) {
-            bossTargetSearchCooldown--;
-        }
-        if (target == null && bossTargetSearchCooldown <= 0) {
-            target = CandyTargeting.nearestAttackablePlayer(level, this, 48.0D);
-            bossTargetSearchCooldown = PLAYER_TARGET_SEARCH_INTERVAL;
-        }
-        if (target == null) {
-            bossSuguardSeeTicks = 0;
-            getNavigation().stop();
-            entityData.set(BOSS_BOW_DRAW_TICKS, 0);
-            if (bossSuguardLostTargetTicks > 0) {
-                bossSuguardLostTargetTicks--;
-            } else {
-                setBossSuguardAwake(false);
-                tickDormantBossSuguard();
-            }
-            return;
-        }
-        bossSuguardLostTargetTicks = BOSS_SUGUARD_LOST_TARGET_TICKS;
-        setTarget(target);
-        getLookControl().setLookAt(target, 10.0F, getMaxHeadXRot());
-        double distanceSqr = distanceToSqr(target);
-        boolean canSee = getSensing().hasLineOfSight(target);
-        if (canSee && (getBossBowDrawTicks() > 0 || distanceSqr <= 245.0D)) {
-            faceBossSuguardTarget(target);
-        }
-        bossSuguardSeeTicks = canSee ? bossSuguardSeeTicks + 1 : 0;
-        if (distanceSqr <= 245.0D && bossSuguardSeeTicks >= 20) {
-            getNavigation().stop();
-        } else {
-            getNavigation().moveTo(target, 1.0D);
-        }
-
-        // The legacy boss fires five extra volleys every tick when its target gets within three blocks.
-        if (distanceSqr < BOSS_SUGUARD_CLOSE_BARRAGE_RANGE_SQR) {
-            getNavigation().stop();
-            faceBossSuguardTarget(target);
-            entityData.set(BOSS_BOW_DRAW_TICKS, 1);
-            fireBossSuguardCloseBarrage(level, target);
-            return;
-        }
-
-        int drawTicks = getBossBowDrawTicks();
-        if (drawTicks > 0) {
-            if (distanceSqr > 245.0D || !canSee) {
-                entityData.set(BOSS_BOW_DRAW_TICKS, 0);
-                return;
-            }
-            int remainingTicks = drawTicks - 1;
-            entityData.set(BOSS_BOW_DRAW_TICKS, remainingTicks);
-            if (remainingTicks <= 0) {
-                fireBossSuguardVolley(level, target, distanceSqr);
-            }
-            return;
-        }
-        if (rangedCooldown > 0 || distanceSqr > 245.0D || !canSee) {
-            return;
-        }
-        entityData.set(BOSS_BOW_DRAW_TICKS, BOSS_SUGUARD_BOW_DRAW_DURATION);
-    }
-
-    private void fireBossSuguardCloseBarrage(ServerLevel level, LivingEntity target) {
-        int shotsPerVolley = getBossSuguardStat() == 1 ? 4 : 1;
-        for (int volley = 0; volley < BOSS_SUGUARD_CLOSE_BARRAGE_VOLLEYS; volley++) {
-            for (int shot = 0; shot < shotsPerVolley; shot++) {
-                shootBossSuguardArrow(level, target, 1.0F);
-            }
-        }
-    }
-
-    private void faceBossSuguardTarget(LivingEntity target) {
-        double dx = target.getX() - getX();
-        double dz = target.getZ() - getZ();
-        float targetYaw = (float)(Mth.atan2(dz, dx) * Mth.RAD_TO_DEG) - 90.0F;
-        float facingYaw = Mth.rotLerp(30.0F, getYRot(), targetYaw);
-        setYRot(facingYaw);
-        yBodyRot = facingYaw;
-        yHeadRot = facingYaw;
-    }
-
-    private void fireBossSuguardVolley(ServerLevel level, LivingEntity target, double distanceSqr) {
-        float distanceFactor = Mth.sqrt((float)distanceSqr) / 15.0F;
-        float attackStrength = Mth.clamp(distanceFactor, 0.1F, 1.0F);
-        rangedCooldown = Mth.floor(distanceFactor * 10.0F + 20.0F);
-        int shots = getBossSuguardStat() == 1 ? 4 : 1;
-        for (int i = 0; i < shots; i++) {
-            shootBossSuguardArrow(level, target, attackStrength);
-        }
-    }
-
-    private void shootBossSuguardArrow(ServerLevel level, LivingEntity target, float attackStrength) {
-        HoneyArrowEntity arrow = new HoneyArrowEntity(level, this);
-        arrow.markBossSuguardProjectile();
-        arrow.setPos(getX(), getEyeY() - 0.05D, getZ());
-        arrow.setBaseDamage(attackStrength * 3.0F + random.nextGaussian() * 0.25D + level.getDifficulty().getId() * 0.11F);
-        arrow.setSecondsOnFire(getBossSuguardStat() == 3 ? 5 : 0);
-        arrow.setHoneyGlue(getBossSuguardStat() == 2);
-        if (distanceTo(target) < 3.0F) {
-            arrow.setKnockback(2);
-        }
-        float inaccuracy = 14.0F - level.getDifficulty().getId() * 4.0F;
-        arrow.shoot(target.getX() - getX(), target.getEyeY() - arrow.getY(), target.getZ() - getZ(), 1.6F, inaccuracy);
-        level.addFreshEntity(arrow);
-        playSound(SoundEvents.ARROW_SHOOT, 1.0F, 1.0F / (random.nextFloat() * 0.4F + 0.8F));
-    }
-
-    private void activateBossSuguard(@Nullable LivingEntity target) {
-        if (!isBossSuguard()) {
-            return;
-        }
-        setBossSuguardAwake(true);
-        bossSuguardLostTargetTicks = BOSS_SUGUARD_LOST_TARGET_TICKS;
-        rangedCooldown = Math.max(rangedCooldown, 20);
-        if (target != null) {
-            setTarget(target);
-        }
-    }
-
-    public int getMountMaxPower() {
-        return isKingBeetle() ? 1200 : 1500;
-    }
-
-    private int getMountPowerUsed() {
-        return 1200;
-    }
-
-    public int getMountPower() {
-        return entityData.get(MOUNT_POWER);
-    }
-
-    private void setMountPower(int value) {
-        entityData.set(MOUNT_POWER, Mth.clamp(value, 0, getMountMaxPower()));
-    }
-
-    public boolean isDragonFalling() {
-        return isDragon() && entityData.get(DRAGON_FALLING);
-    }
-
-    public boolean isDragonFlying() {
-        return isDragon() && entityData.get(DRAGON_FLYING);
-    }
-
-    private void setDragonFalling(boolean falling) {
-        if (isDragon()) {
-            entityData.set(DRAGON_FALLING, falling);
-        }
-    }
-
-    private void setDragonFlying(boolean flying) {
-        if (isDragon()) {
-            entityData.set(DRAGON_FLYING, flying);
-        }
-    }
-
-    private void tickDragonStamina() {
-        if (level().isClientSide) {
-            return;
-        }
-        LivingEntity controller = getControllingPassenger();
-        if (controller == null) {
-            setDragonFlying(false);
-            setNoGravity(false);
-            if (onGround()) {
-                setDragonFalling(false);
-                setMountPower(Math.min(getMountMaxPower(), getMountPower() + 8));
-            }
-            return;
-        }
-        if (!onGround()) {
-            setDragonFlying(true);
-        }
-        if (controller != null && !onGround() && !isDragonFalling()) {
-            setMountPower(getMountPower() - 2);
-            if (getMountPower() <= 0) {
-                setDragonFalling(true);
-            }
-        } else if (onGround()) {
-            setDragonFlying(false);
-            setNoGravity(false);
-            setMountPower(Math.min(getMountMaxPower(), getMountPower() + 8));
-            if (isDragonFalling() && getMountPower() >= getMountMaxPower() / 5) {
-                setDragonFalling(false);
-            }
-        }
-    }
-
-    private void tryUnleashMountPower() {
-        if (getMountPower() < getMountPowerUsed()) {
-            return;
-        }
-        if (isKingBeetle()) {
-            setMountPower(0);
-            kingBeetleExplosionCount = 8 + random.nextInt(8);
-        }
-    }
-
-    private void tickDragonPower() {
-        if (isBabyDragon()) {
-            dragonShootTicks = 0;
-            return;
-        }
-        LivingEntity controller = getControllingPassenger();
-        if (controller == null) {
-            dragonShootTicks = 0;
-            return;
-        }
-        if (controller.swinging && dragonShootTicks <= 0) {
-            dragonShootTicks = 10 + random.nextInt(8);
-        }
-        if (dragonShootTicks > 0 && tickCount % 2 == 0 && !level().isClientSide && level() instanceof ServerLevel serverLevel) {
-            setYRot(controller.getYRot());
-            GummyBallEntity ball = new GummyBallEntity(serverLevel, controller, 2);
-            double yaw = controller.getYRot() * Math.PI / 180.0D;
-            double offsetX = Math.sin(yaw) * 3.5D;
-            double offsetZ = -Math.cos(yaw) * 3.5D;
-            ball.setPos(getX() - offsetX, getY() + controller.getEyeHeight(), getZ() - offsetZ);
-            ball.shoot(-offsetX, -controller.getXRot() * 0.05D, -offsetZ, 1.4F, 1.0F);
-            serverLevel.addFreshEntity(ball);
-            setDeltaMovement(offsetX / 3.4D, getDeltaMovement().y, offsetZ / 3.4D);
-            playSound(SoundEvents.ARROW_SHOOT, 0.5F, 0.4F / (random.nextFloat() * 0.4F + 0.8F));
-            dragonShootTicks--;
-        }
-    }
-
-    private void tickKingBeetlePower() {
-        LivingEntity controller = getControllingPassenger();
-        if (controller == null) {
-            kingBeetleExplosionCount = 0;
-            return;
-        }
-        if (controller.swinging && kingBeetleExplosionCount <= 0) {
-            tryUnleashMountPower();
-        }
-        if (!level().isClientSide && kingBeetleExplosionCount > 0 && tickCount % 5 == 0 && level() instanceof ServerLevel serverLevel) {
-            double x = getX() + random.nextInt(6) - 3;
-            double y = getY() + random.nextInt(5) - 2;
-            double z = getZ() + random.nextInt(6) - 3;
-            serverLevel.explode(controller, x, y, z, 2.0F, Level.ExplosionInteraction.NONE);
-            for (int dx = -3; dx <= 3; dx++) {
-                for (int dz = -3; dz <= 3; dz++) {
-                    BlockPos pos = blockPosition().offset(dx, 0, dz);
-                    if (random.nextBoolean() && serverLevel.getBlockState(pos).isAir()
-                        && com.valentin4311.candycraftmod.registry.CCBlocks.CHEWING_GUM_PUDDLE.get().defaultBlockState().canSurvive(serverLevel, pos)) {
-                        serverLevel.setBlockAndUpdate(pos, com.valentin4311.candycraftmod.registry.CCBlocks.CHEWING_GUM_PUDDLE.get().defaultBlockState());
-                    }
-                }
-            }
-            kingBeetleExplosionCount--;
-        }
-    }
-
-    private void tickDragonGrowth() {
-        if (!isBabyDragon() || level().isClientSide) {
-            return;
-        }
-        dragonAgeTicks++;
-        if (dragonAgeTicks >= 24000) {
-            setBabyDragon(false);
-            dragonAgeTicks = 0;
-        }
-    }
-
-    private void updateBossBar() {
-        if (level().isClientSide) {
-            return;
-        }
-        bossEvent.setProgress(Math.max(0.0F, Math.min(1.0F, getHealth() / getMaxHealth())));
-        bossEvent.setVisible(bossHealthBarRevealed && isBossSuguardAwake());
-    }
-
-    private void tickMageBehavior(ServerLevel level) {
-        LivingEntity currentTarget = getTarget();
-        if (currentTarget != null && !CandyTargeting.canAttackEntity(currentTarget)) {
-            setTarget(null);
-            currentTarget = null;
-        }
-        if (mageTargetSearchCooldown > 0) {
-            mageTargetSearchCooldown--;
-        }
-        Player nearby = null;
-        if (currentTarget == null && mageTargetSearchCooldown <= 0) {
-            nearby = CandyTargeting.nearestAttackablePlayer(level, this, 8.0D);
-            mageTargetSearchCooldown = PLAYER_TARGET_SEARCH_INTERVAL;
-        }
-        LivingEntity trigger = currentTarget != null ? currentTarget : nearby;
-        waiting = trigger == null;
-        if (waiting) {
-            getNavigation().stop();
-            setDeltaMovement(0.0D, getDeltaMovement().y, 0.0D);
-        }
-
-        if (summonCooldown > 0) {
-            summonCooldown--;
-            if (summonCooldown == 0) {
-                spawnedMinions = false;
-            }
-        }
-
-        if (trigger != null) {
-            setTarget(trigger);
-            clearFire();
-            if (random.nextFloat() < 0.05F) {
-                BlockPos firePos = blockPosition();
-                BlockState fire = Blocks.FIRE.defaultBlockState();
-                if (level.getBlockState(firePos).isAir() && fire.canSurvive(level, firePos)) {
-                    level.setBlock(firePos, fire, 3);
-                }
-            }
-            if (!spawnedMinions) {
-                summonSupportCircle(level, trigger);
-                spawnedMinions = true;
-                summonCooldown = 2400;
-            }
-        }
-    }
-
-    private void summonSupportCircle(ServerLevel level, LivingEntity target) {
-        for (int i = 0; i <= 8; i++) {
-            double angle = i / 3.75F * Math.PI;
-            double x = -Math.sin(angle) * 2.5D + getX();
-            double z = Math.cos(angle) * 2.5D + getZ();
-            double y = getY() + 2.0D;
-
-            BasicCandyZombieEntity summoned = CCEntityTypes.SUGUARD.get().create(level);
-            if (summoned == null) {
-                continue;
-            }
-            summoned.angry = true;
-            summoned.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(CCItems.DYNAMITE.get()));
-            summoned.setTarget(target);
-            if (summoned.getAttribute(Attributes.MAX_HEALTH) != null) {
-                summoned.getAttribute(Attributes.MAX_HEALTH).setBaseValue(10.0D);
-            }
-            if (summoned.getAttribute(Attributes.ATTACK_DAMAGE) != null) {
-                summoned.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(6.0D);
-            }
-            summoned.setHealth(10.0F);
-
-            BlockPos spawnPos = BlockPos.containing(x, y, z);
-            if (!level.getBlockState(spawnPos).isAir() || !level.getBlockState(spawnPos.above()).isAir()) {
-                spawnPos = blockPosition();
-            }
-            summoned.moveTo(spawnPos.getX() + 0.5D, spawnPos.getY(), spawnPos.getZ() + 0.5D, getYRot(), 0.0F);
-            if (!level.noCollision(summoned)) {
-                summoned.moveTo(getX(), getY(), getZ(), getYRot(), 0.0F);
-            }
-            level.addFreshEntityWithPassengers(summoned);
-        }
-    }
-
-    private void spawnLegacyParticles() {
-        if (random.nextInt(30) != 0) {
-            return;
-        }
-        if (isMageSuguard()) {
-            for (int i = 0; i < 5; i++) {
-                level().addParticle(ParticleTypes.FLAME,
-                    getX() + (random.nextDouble() - 0.5D) * getBbWidth() * 2.0D,
-                    getY() + random.nextDouble() * getBbHeight(),
-                    getZ() + (random.nextDouble() - 0.5D) * getBbWidth() * 2.0D,
-                    0.0D, 0.0D, 0.0D);
-            }
-        } else {
-            for (int i = 0; i < 2; i++) {
-                level().addParticle(ParticleTypes.CLOUD,
-                    getX() + (random.nextDouble() - 0.5D) * getBbWidth(),
-                    getY() + random.nextDouble() * getBbHeight(),
-                    getZ() + (random.nextDouble() - 0.5D) * getBbWidth(),
-                    0.0D, 0.0D, 0.0D);
-            }
-        }
-    }
-
-    private boolean isMageSuguard() {
-        return getType() == CCEntityTypes.MAGE_SUGUARD.get();
-    }
-
-    private boolean isSuguard() {
-        return getType() == CCEntityTypes.SUGUARD.get();
-    }
-
-    private boolean isBossSuguard() {
-        return getType() == CCEntityTypes.BOSS_SUGUARD.get();
-    }
-
-    @Override
-    protected float getStandingEyeHeight(Pose pose, EntityDimensions dimensions) {
-        if (isSuguard() || isMageSuguard() || isBossSuguard()) {
-            return dimensions.height * 0.85F;
-        }
-        return super.getStandingEyeHeight(pose, dimensions);
-    }
-
-    private boolean hasSuguardJumpClearance() {
-        return level().noCollision(this, getBoundingBox().move(0.0D, 0.42D, 0.0D));
-    }
-
-    public boolean isBossSuguardAwake() {
-        return isBossSuguard() && entityData.get(BOSS_SUGUARD_AWAKE);
-    }
-
-    private void setBossSuguardAwake(boolean awake) {
-        if (isBossSuguardAwake() != awake) {
-            bossSuguardDormantRotationInitialized = false;
-        }
-        angry = awake;
-        entityData.set(BOSS_SUGUARD_AWAKE, awake);
-        if (isBossSuguard()) {
-            setNoGravity(false);
-            bossHealthBarRevealed = awake;
-            if (!level().isClientSide) {
-                bossEvent.setVisible(awake);
-            }
-        }
-        if (!awake) {
-            bossSuguardLostTargetTicks = 0;
-        }
-    }
-
-    private void tickDormantBossSuguard() {
-        setNoGravity(false);
-        bossSuguardSeeTicks = 0;
-        if (getBossSuguardStat() != 0) {
-            setBossSuguardStat(0);
-        }
-        if (tickCount % DORMANT_BOSS_HEAL_INTERVAL_TICKS == 0) {
-            heal(DORMANT_BOSS_HEAL_AMOUNT);
-        }
-        if (getTarget() != null) {
-            setTarget(null);
-        }
-        getNavigation().stop();
-        setJumping(false);
-        setMovementSpeedBase(0.0D);
-        entityData.set(BOSS_BOW_DRAW_TICKS, 0);
-        freezeDormantBossSuguard();
-    }
-
-    private void freezeDormantBossSuguard() {
-        if (!bossSuguardDormantRotationInitialized) {
-            bossSuguardDormantYRot = getYRot();
-            bossSuguardDormantYHeadRot = getYHeadRot();
-            bossSuguardDormantRotationInitialized = true;
-        }
-        if (getTarget() != null) {
-            setTarget(null);
-        }
-        getNavigation().stop();
-        setJumping(false);
-        stopHorizontalMovement();
-        setYRot(bossSuguardDormantYRot);
-        yRotO = bossSuguardDormantYRot;
-        yBodyRot = bossSuguardDormantYRot;
-        yBodyRotO = bossSuguardDormantYRot;
-        yHeadRot = bossSuguardDormantYHeadRot;
-        yHeadRotO = bossSuguardDormantYHeadRot;
-    }
-
-    private void setMovementSpeedBase(double value) {
-        AttributeInstance speed = getAttribute(Attributes.MOVEMENT_SPEED);
-        if (speed != null && speed.getBaseValue() != value) {
-            speed.setBaseValue(value);
-        }
-    }
-
-    private void stopHorizontalMovement() {
-        Vec3 movement = getDeltaMovement();
-        if (movement.x != 0.0D || movement.z != 0.0D) {
-            setDeltaMovement(0.0D, movement.y, 0.0D);
-        }
-    }
-
-    public int getBossSuguardStat() {
-        return entityData.get(BOSS_SUGUARD_STAT);
-    }
-
-    private void setBossSuguardStat(int stat) {
-        entityData.set(BOSS_SUGUARD_STAT, Mth.clamp(stat, 0, 3));
-    }
-
-    public int getBossBowDrawTicks() {
-        return entityData.get(BOSS_BOW_DRAW_TICKS);
-    }
-
-    public float getBossBowDrawProgress(float partialTicks) {
-        int remainingTicks = getBossBowDrawTicks();
-        if (!isBossSuguard() || remainingTicks <= 0) {
-            return 0.0F;
-        }
-        float interpolatedRemaining = Math.max(0.0F, remainingTicks - partialTicks);
-        return Mth.clamp(1.0F - interpolatedRemaining / BOSS_SUGUARD_BOW_DRAW_DURATION, 0.0F, 1.0F);
-    }
-
-    private boolean isNessie() {
-        return false;
-    }
-
-    private boolean isDragon() {
-        return getType() == CCEntityTypes.DRAGON.get();
-    }
-
-    public boolean isBabyDragon() {
-        return entityData.get(BABY_DRAGON);
-    }
-
-    public void setBabyDragon(boolean babyDragon) {
-        entityData.set(BABY_DRAGON, babyDragon);
-    }
-
-    public int getLegacyVariant() {
-        return entityData.get(LEGACY_VARIANT);
-    }
-
-    private void setLegacyVariant(int variant) {
-        entityData.set(LEGACY_VARIANT, Math.max(0, variant));
-    }
-
-    public boolean isChocolateForestSuguard() {
-        return entityData.get(CHOCOLATE_FOREST_SUGUARD);
-    }
-
-    public void setChocolateForestSuguard(boolean chocolateForestSuguard) {
-        entityData.set(CHOCOLATE_FOREST_SUGUARD, chocolateForestSuguard);
-    }
-
-    public boolean isNessieSaddled() {
-        return entityData.get(SADDLED);
-    }
-
-    private void setNessieSaddled(boolean saddled) {
-        entityData.set(SADDLED, saddled);
-    }
-
-    private void randomizeNessieVariant() {
-        int selected = random.nextInt(4);
-        if (random.nextInt(20) == 0) {
-            selected = 4;
-        }
-        if (random.nextInt(20) == 0) {
-            selected = 5;
-        }
-        if (random.nextInt(20) == 0) {
-            selected = 6;
-        }
-        if (random.nextInt(40) == 0) {
-            selected = 6;
-        }
-        setLegacyVariant(selected);
-    }
-
-    private boolean isMermaid() {
-        return getType() == CCEntityTypes.MERMAID.get();
-    }
-
-    private boolean isKingBeetle() {
-        return getType() == CCEntityTypes.KING_BEETLE.get();
-    }
-
-    private boolean isPassiveCreature() {
-        return isNessie() || isDragon() || isKingBeetle();
-    }
-
-    private boolean usesLegacySilentSounds() {
-        return isSuguard() || isMageSuguard() || isBossSuguard() || isMermaid() || isDragon() || isKingBeetle();
-    }
-
-    private boolean isAquatic() {
-        return isNessie() || isMermaid();
-    }
-
-    private boolean isInGrenadine() {
-        FluidState state = level().getFluidState(blockPosition());
-        return state.is(CCFluids.SOURCE_GRENADINE.get()) || state.is(CCFluids.FLOWING_GRENADINE.get());
-    }
-
-    private boolean isHostileBiome() {
-        ResourceLocation biomeId = level().getBiome(blockPosition()).unwrapKey()
-            .map(key -> key.location())
-            .orElse(null);
-        return biomeId != null
-            && CandyCraft.MODID.equals(biomeId.getNamespace())
-            && "caramel_forest".equals(biomeId.getPath());
-    }
-
-    private boolean shouldActHostile() {
-        return !isPassiveCreature() && (angry || isHostileBiome() || level().isNight());
-    }
-
-    @Override
-    public boolean shouldDespawnInPeaceful() {
-        return !isBossSuguard() && !isPassiveCreature() && super.shouldDespawnInPeaceful();
-    }
-
-    @Override
-    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
-        return !isBossSuguard() && !isPassiveCreature() && super.removeWhenFarAway(distanceToClosestPlayer);
-    }
-
-    @Override
-    public boolean isPushable() {
-        return (!isBossSuguard() || isBossSuguardAwake()) && super.isPushable();
-    }
-
-    private double getSuguardAttackDamage() {
-        Difficulty difficulty = level().getDifficulty();
-        if (difficulty == Difficulty.HARD) {
-            return 10.0D;
-        }
-        if (difficulty == Difficulty.EASY) {
-            return 5.0D;
-        }
-        return 7.0D;
-    }
-
-    private static final class SuguardTargetGoal extends NearestAttackableTargetGoal<Player> {
-        private final BasicCandyZombieEntity suguard;
-
-        private SuguardTargetGoal(BasicCandyZombieEntity suguard) {
-            super(suguard, Player.class, 10, true, false,
-                entity -> entity instanceof Player player && CandyTargeting.canAttackPlayer(player));
-            this.suguard = suguard;
-        }
-
-        @Override
-        public boolean canUse() {
-            return suguard.shouldActHostile() && super.canUse();
-        }
-    }
-
-    private static final class SuguardAttackGoal extends MeleeAttackGoal {
-        private final BasicCandyZombieEntity suguard;
-
-        private SuguardAttackGoal(BasicCandyZombieEntity suguard) {
-            super(suguard, 1.0D, true);
-            this.suguard = suguard;
-        }
-
-        @Override
-        public boolean canContinueToUse() {
-            if (!suguard.hasSuguardJumpClearance()) {
-                suguard.setJumping(false);
-            } else if (suguard.getRandom().nextBoolean()) {
-                suguard.setJumping(true);
-            }
-            return super.canContinueToUse();
-        }
-
-        @Override
-        protected double getAttackReachSqr(LivingEntity target) {
-            return 4.0F + target.getBbWidth();
-        }
-    }
+	private static final int PLAYER_TARGET_SEARCH_INTERVAL = 10;
+	private static final int BOSS_SUGUARD_LOST_TARGET_TICKS = 200;
+	private static final int BOSS_SUGUARD_BOW_DRAW_DURATION = 14;
+	private static final double BOSS_SUGUARD_CLOSE_BARRAGE_RANGE_SQR = 9.0D;
+	private static final int BOSS_SUGUARD_CLOSE_BARRAGE_VOLLEYS = 5;
+	private static final int DORMANT_BOSS_HEAL_INTERVAL_TICKS = 20;
+	private static final float DORMANT_BOSS_HEAL_AMOUNT = 5.0F;
+	private static final double DRAGON_MIN_ASCENT_SPEED = 0.16D;
+	private static final double DRAGON_MAX_ASCENT_SPEED = 0.42D;
+	private static final String TAG_ANGRY = "Angry";
+	private static final String TAG_WAITING = "Waiting";
+	private static final String TAG_SPAWNED = "Spawned";
+	private static final String TAG_COUNTDOWN = "CountDown";
+	private static final EntityDataAccessor<Integer> LEGACY_VARIANT = SynchedEntityData.defineId(BasicCandyZombieEntity.class, EntityDataSerializers.INT);
+	private static final EntityDataAccessor<Boolean> SADDLED = SynchedEntityData.defineId(BasicCandyZombieEntity.class, EntityDataSerializers.BOOLEAN);
+	private static final EntityDataAccessor<Boolean> BABY_DRAGON = SynchedEntityData.defineId(BasicCandyZombieEntity.class, EntityDataSerializers.BOOLEAN);
+	private static final EntityDataAccessor<Integer> MOUNT_POWER = SynchedEntityData.defineId(BasicCandyZombieEntity.class, EntityDataSerializers.INT);
+	private static final EntityDataAccessor<Boolean> DRAGON_FALLING = SynchedEntityData.defineId(BasicCandyZombieEntity.class, EntityDataSerializers.BOOLEAN);
+	private static final EntityDataAccessor<Boolean> DRAGON_FLYING = SynchedEntityData.defineId(BasicCandyZombieEntity.class, EntityDataSerializers.BOOLEAN);
+	private static final EntityDataAccessor<Integer> BOSS_BOW_DRAW_TICKS = SynchedEntityData.defineId(BasicCandyZombieEntity.class, EntityDataSerializers.INT);
+	private static final EntityDataAccessor<Boolean> BOSS_SUGUARD_AWAKE = SynchedEntityData.defineId(BasicCandyZombieEntity.class, EntityDataSerializers.BOOLEAN);
+	private static final EntityDataAccessor<Integer> BOSS_SUGUARD_STAT = SynchedEntityData.defineId(BasicCandyZombieEntity.class, EntityDataSerializers.INT);
+	private static final EntityDataAccessor<Boolean> CHOCOLATE_FOREST_SUGUARD = SynchedEntityData.defineId(BasicCandyZombieEntity.class, EntityDataSerializers.BOOLEAN);
+	private boolean angry;
+	private boolean waiting;
+	private boolean spawnedMinions;
+	private int summonCooldown;
+	private int rangedCooldown;
+	private int mageTargetSearchCooldown;
+	private int bossTargetSearchCooldown;
+	private int bossSuguardCounter = 300;
+	private int bossSuguardSeeTicks;
+	private int bossSuguardLostTargetTicks;
+	private boolean bossSuguardDormantRotationInitialized;
+	private float bossSuguardDormantYRot;
+	private float bossSuguardDormantYHeadRot;
+	private boolean bossHealthBarRevealed;
+	private int dragonShootTicks;
+	private int kingBeetleExplosionCount;
+	private int dragonAgeTicks;
+	private boolean mountJumpRequested;
+	private float mountJumpCharge;
+	@Nullable
+	private BlockPos mermaidSwimTarget;
+	@Nullable
+	private BlockPos nessieSwimTarget;
+	private final ServerBossEvent bossEvent = new ServerBossEvent(getDisplayName(), BossEvent.BossBarColor.WHITE, BossEvent.BossBarOverlay.PROGRESS);
+
+	public BasicCandyZombieEntity(EntityType<? extends BasicCandyZombieEntity> type, Level level) {
+		super(type, level);
+		setPathfindingMalus(BlockPathTypes.WATER, isNessie() ? 1.0F : -1.0F);
+		this.waiting = isMageSuguard();
+		this.angry = isMageSuguard();
+		if (isBossSuguard()) {
+			bossEvent.setName(type.getDescription());
+			bossEvent.setColor(BossEvent.BossBarColor.WHITE);
+			bossEvent.setVisible(false);
+			xpReward = 500;
+		}
+		if (isDragon()) {
+			setMountPower(getMountMaxPower());
+		}
+		if (isMermaid()) {
+			rangedCooldown = 20;
+		}
+	}
+
+	@Override
+	public void onAddedToWorld() {
+		super.onAddedToWorld();
+		if (!level().isClientSide) {
+			ensureDefaultEquipment();
+		}
+	}
+
+	public static AttributeSupplier.Builder createAttributes() {
+		return Monster.createMonsterAttributes()
+				.add(Attributes.MAX_HEALTH, 30.0D)
+				.add(Attributes.MOVEMENT_SPEED, 0.3D)
+				.add(Attributes.ATTACK_DAMAGE, 6.0D);
+	}
+
+	@Override
+	protected void defineSynchedData() {
+		super.defineSynchedData();
+		entityData.define(LEGACY_VARIANT, 0);
+		entityData.define(SADDLED, false);
+		entityData.define(BABY_DRAGON, false);
+		entityData.define(MOUNT_POWER, 0);
+		entityData.define(DRAGON_FALLING, false);
+		entityData.define(DRAGON_FLYING, false);
+		entityData.define(BOSS_BOW_DRAW_TICKS, 0);
+		entityData.define(BOSS_SUGUARD_AWAKE, false);
+		entityData.define(BOSS_SUGUARD_STAT, 0);
+		entityData.define(CHOCOLATE_FOREST_SUGUARD, false);
+	}
+
+	@Override
+	protected void registerGoals() {
+		if (!isMermaid()) {
+			goalSelector.addGoal(1, new FloatGoal(this));
+		}
+		if (isPassiveCreature()) {
+			goalSelector.addGoal(2, new PanicGoal(this, 1.1D));
+			goalSelector.addGoal(5, new RandomStrollGoal(this, 0.2D));
+			goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
+			goalSelector.addGoal(7, new RandomLookAroundGoal(this));
+			return;
+		}
+		if (isBossSuguard()) {
+			goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
+			goalSelector.addGoal(6, new RandomLookAroundGoal(this));
+			targetSelector.addGoal(1, new SuguardTargetGoal(this));
+			targetSelector.addGoal(2, new HurtByTargetGoal(this));
+			return;
+		}
+		if (isMermaid()) {
+			targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, true));
+			targetSelector.addGoal(2, new HurtByTargetGoal(this));
+			return;
+		}
+		goalSelector.addGoal(4, new SuguardAttackGoal(this));
+		goalSelector.addGoal(5, new RandomStrollGoal(this, 0.2D));
+		goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
+		goalSelector.addGoal(6, new RandomLookAroundGoal(this));
+		targetSelector.addGoal(1, new SuguardTargetGoal(this));
+		targetSelector.addGoal(2, new HurtByTargetGoal(this));
+	}
+
+	@Override
+	public boolean canBreatheUnderwater() {
+		return isBossSuguard() || isMermaid() || super.canBreatheUnderwater();
+	}
+
+	@Override
+	public boolean isPushedByFluid() {
+		return !isMermaid() && super.isPushedByFluid();
+	}
+
+	@Override
+	public boolean canBeAffected(MobEffectInstance effect) {
+		return !effect.getEffect().equals(MobEffects.POISON) && super.canBeAffected(effect);
+	}
+
+	@Override
+	@Nullable
+	public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty,
+	                                    net.minecraft.world.entity.MobSpawnType reason, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag dataTag) {
+		SpawnGroupData data = super.finalizeSpawn(level, difficulty, reason, spawnData, dataTag);
+		ensureDefaultEquipment();
+		if ((isSuguard() || isMageSuguard())
+				&& reason != net.minecraft.world.entity.MobSpawnType.MOB_SUMMONED
+				&& level instanceof ServerLevel serverLevel && random.nextInt(50) == 0) {
+			CaramelBee bee = CCEntityTypes.CARAMEL_BEE.get().create(serverLevel);
+			if (bee != null) {
+				bee.moveTo(getX(), getY(), getZ(), getYRot(), 0.0F);
+				bee.setAlwaysHostile(true);
+				serverLevel.addFreshEntity(bee);
+				startRiding(bee, true);
+			}
+		}
+		return data;
+	}
+
+	@Override
+	public void addAdditionalSaveData(CompoundTag tag) {
+		super.addAdditionalSaveData(tag);
+		tag.putBoolean(TAG_ANGRY, angry);
+		tag.putBoolean(TAG_WAITING, waiting);
+		tag.putBoolean(TAG_SPAWNED, spawnedMinions);
+		tag.putInt(TAG_COUNTDOWN, summonCooldown);
+		tag.putInt("Power", getMountPower());
+		tag.putInt("BossSuguardStat", getBossSuguardStat());
+		tag.putInt("BossSuguardCounter", bossSuguardCounter);
+		tag.putInt("BossSuguardLostTargetTicks", bossSuguardLostTargetTicks);
+		tag.putBoolean("BossHealthBarRevealed", bossHealthBarRevealed);
+		tag.putInt("DragonShootTicks", dragonShootTicks);
+		tag.putInt("KingBeetleExplosionCount", kingBeetleExplosionCount);
+		tag.putInt("Variant", getLegacyVariant());
+		tag.putBoolean("ChocolateForestSuguard", isChocolateForestSuguard());
+		tag.putBoolean("Saddle", isNessieSaddled());
+		tag.putBoolean("BabyDragon", isBabyDragon());
+		tag.putInt("DragonAgeTicks", dragonAgeTicks);
+	}
+
+	@Override
+	public void readAdditionalSaveData(CompoundTag tag) {
+		super.readAdditionalSaveData(tag);
+		angry = tag.getBoolean(TAG_ANGRY);
+		setBossSuguardAwake(angry);
+		waiting = tag.getBoolean(TAG_WAITING);
+		spawnedMinions = tag.getBoolean(TAG_SPAWNED);
+		summonCooldown = tag.getInt(TAG_COUNTDOWN);
+		setMountPower(tag.getInt("Power"));
+		setBossSuguardStat(tag.getInt("BossSuguardStat"));
+		bossSuguardCounter = tag.contains("BossSuguardCounter") ? tag.getInt("BossSuguardCounter") : 300;
+		bossSuguardLostTargetTicks = tag.contains("BossSuguardLostTargetTicks")
+				? tag.getInt("BossSuguardLostTargetTicks")
+				: angry ? BOSS_SUGUARD_LOST_TARGET_TICKS : 0;
+		bossHealthBarRevealed = tag.getBoolean("BossHealthBarRevealed") || isBossSuguard() && angry;
+		dragonShootTicks = tag.getInt("DragonShootTicks");
+		kingBeetleExplosionCount = tag.getInt("KingBeetleExplosionCount");
+		setLegacyVariant(tag.getInt("Variant"));
+		setChocolateForestSuguard(tag.getBoolean("ChocolateForestSuguard"));
+		setNessieSaddled(tag.getBoolean("Saddle"));
+		setBabyDragon(tag.getBoolean("BabyDragon"));
+		dragonAgeTicks = tag.getInt("DragonAgeTicks");
+		ensureDefaultEquipment();
+	}
+
+	@Override
+	public void aiStep() {
+		boolean mermaid = isMermaid();
+		boolean bossSuguard = isBossSuguard();
+		boolean mageSuguard = isMageSuguard();
+		boolean dragon = isDragon();
+		boolean kingBeetle = isKingBeetle();
+		boolean nessie = isNessie();
+		if ((nessie || dragon || kingBeetle) && getTarget() != null) {
+			setTarget(null);
+		}
+		if (bossSuguard && !isBossSuguardAwake()) {
+			tickDormantBossSuguard();
+			updateBossBar();
+			super.aiStep();
+			freezeDormantBossSuguard();
+			return;
+		}
+		LivingEntity target = getTarget();
+		if (target != null && !CandyTargeting.canAttackEntity(target)) {
+			setTarget(null);
+		}
+		if (bossSuguard) {
+			updateBossBar();
+		}
+		if (!bossSuguard && !nessie && !mermaid && !dragon && (isInWaterRainOrBubble() || isInGrenadine())) {
+			hurt(damageSources().drown(), 1.0F);
+		}
+
+		if (!level().isClientSide && level() instanceof ServerLevel serverLevel) {
+			if (mageSuguard) {
+				tickMageBehavior(serverLevel);
+			}
+			if (mermaid || bossSuguard) {
+				if (rangedCooldown > 0) {
+					rangedCooldown--;
+				}
+				if (mermaid) {
+					tickMermaidRangedBehavior(serverLevel);
+				} else {
+					tickBossSuguard(serverLevel);
+				}
+			}
+		}
+
+		if (nessie || dragon || kingBeetle || mermaid) {
+			tickMovementAbilities(nessie, dragon, kingBeetle, mermaid);
+		}
+		if (level().isClientSide) {
+			spawnLegacyParticles();
+		}
+		super.aiStep();
+	}
+
+	@Override
+	public void travel(Vec3 travelVector) {
+		if ((isNessie() || isDragon() || isKingBeetle()) && getControllingPassenger() != null) {
+			LivingEntity rider = getControllingPassenger();
+			setYRot(rider.getYRot());
+			yRotO = getYRot();
+			setXRot(isKingBeetle() ? 0.0F : rider.getXRot() * 0.5F);
+			setRot(getYRot(), getXRot());
+			yBodyRot = getYRot();
+			yHeadRot = yBodyRot;
+			float forward = rider.zza;
+			float strafe = rider.xxa * 0.35F;
+			if (forward <= 0.0F) {
+				forward *= 0.25F;
+			}
+			if (isDragon()) {
+				travelDragon(rider, strafe, forward);
+				return;
+			}
+			if (isKingBeetle()) {
+				travelKingBeetle(rider, strafe, forward);
+				return;
+			}
+			double speed = 0.12D;
+			if (isNessie() && isInWater()) {
+				setDeltaMovement(getDeltaMovement().add(0.0D, -rider.getXRot() / 900.0D, 0.0D));
+			}
+			setSpeed((float) speed);
+			super.travel(new Vec3(strafe, travelVector.y, forward));
+			return;
+		}
+		if (isNessie() && isEffectiveAi() && isInWater()) {
+			moveRelative(0.03F, travelVector);
+			move(MoverType.SELF, getDeltaMovement());
+			setDeltaMovement(getDeltaMovement().multiply(0.8D, 0.8D, 0.8D).add(0.0D, -0.02D, 0.0D));
+			return;
+		}
+		if (isMermaid()) {
+			if (!isInWater() && !isNoGravity()) {
+				setDeltaMovement(getDeltaMovement().add(0.0D, -0.08D, 0.0D));
+			}
+			move(MoverType.SELF, getDeltaMovement());
+			if (isInWater()) {
+				setDeltaMovement(getDeltaMovement().multiply(0.8D, 0.8D, 0.8D).add(0.0D, -0.02D, 0.0D));
+			} else {
+				double groundFriction = onGround() ? 0.55D : 0.98D;
+				setDeltaMovement(getDeltaMovement().multiply(groundFriction, 0.98D, groundFriction));
+			}
+			return;
+		}
+		super.travel(travelVector);
+	}
+
+	private void travelDragon(LivingEntity rider, float strafe, float forward) {
+		getNavigation().stop();
+		setTarget(null);
+
+		boolean exhausted = isDragonFalling();
+		boolean airborne = !onGround();
+		float ascentCharge = consumeMountJumpCharge();
+		Vec3 look = rider.getLookAngle();
+		Vec3 horizontalLook = new Vec3(look.x, 0.0D, look.z);
+		if (horizontalLook.lengthSqr() < 1.0E-4D) {
+			horizontalLook = Vec3.directionFromRotation(0.0F, rider.getYRot()).multiply(1.0D, 0.0D, 1.0D);
+		}
+		horizontalLook = horizontalLook.normalize();
+
+		if (exhausted) {
+			if (airborne) {
+				travelExhaustedDragonGlide(horizontalLook, forward, strafe);
+			} else {
+				setNoGravity(false);
+				setDragonFlying(false);
+				setSpeed(0.15F);
+				super.travel(new Vec3(strafe * 0.35F, 0.0D, forward * 0.45F));
+			}
+			return;
+		}
+
+		if (ascentCharge > 0.0F) {
+			airborne = true;
+		}
+
+		double forwardInput = Mth.clamp(forward, -0.35F, 1.0F);
+		double strafeInput = Mth.clamp(strafe, -0.35F, 0.35F);
+		Vec3 side = new Vec3(horizontalLook.z, 0.0D, -horizontalLook.x).scale(strafeInput * 0.42D);
+		Vec3 travelDirection = airborne ? look.normalize() : horizontalLook;
+		Vec3 desired = travelDirection.scale(forwardInput * 0.52D).add(side);
+		Vec3 current = getDeltaMovement();
+
+		if (airborne && Math.abs(forwardInput) < 0.05D) {
+			desired = new Vec3(current.x * 0.72D, current.y * 0.45D, current.z * 0.72D).add(side);
+		}
+
+		double response = airborne ? 0.32D : 0.45D;
+		Vec3 motion = current.scale(1.0D - response).add(desired.scale(response));
+		motion = new Vec3(
+				Mth.clamp(motion.x, -0.62D, 0.62D),
+				Mth.clamp(motion.y, -0.48D, 0.48D),
+				Mth.clamp(motion.z, -0.62D, 0.62D)
+		);
+		if (ascentCharge > 0.0F) {
+			double ascentSpeed = Mth.lerp(ascentCharge, DRAGON_MIN_ASCENT_SPEED, DRAGON_MAX_ASCENT_SPEED);
+			motion = new Vec3(motion.x, Math.max(motion.y, ascentSpeed), motion.z);
+		}
+		setNoGravity(airborne);
+		setDragonFlying(airborne);
+		setDeltaMovement(motion);
+		move(MoverType.SELF, motion);
+		hasImpulse = true;
+		calculateEntityAnimation(false);
+	}
+
+	private void travelExhaustedDragonGlide(Vec3 horizontalLook, float forward, float strafe) {
+		Vec3 current = getDeltaMovement();
+		double forwardSpeed = Mth.clamp(forward, 0.0F, 1.0F) * 0.26D;
+		double strafeSpeed = Mth.clamp(strafe, -0.35F, 0.35F) * 0.16D;
+		Vec3 side = new Vec3(horizontalLook.z, 0.0D, -horizontalLook.x).scale(strafeSpeed);
+		Vec3 desiredHorizontal = horizontalLook.scale(forwardSpeed).add(side);
+		Vec3 horizontal = new Vec3(current.x, 0.0D, current.z).scale(0.94D).add(desiredHorizontal.scale(0.06D));
+		double descent = Mth.clamp(current.y - 0.012D, -0.16D, -0.035D);
+		Vec3 motion = new Vec3(horizontal.x, descent, horizontal.z);
+		setNoGravity(true);
+		setDragonFlying(true);
+		setDeltaMovement(motion);
+		move(MoverType.SELF, motion);
+		hasImpulse = true;
+		calculateEntityAnimation(false);
+	}
+
+	private void travelKingBeetle(LivingEntity rider, float strafe, float forward) {
+		getNavigation().stop();
+		setTarget(null);
+		if (getMountPower() < getMountMaxPower()) {
+			setMountPower(getMountPower() + 1);
+		}
+		if (consumeMountJumpRequest() && onGround()) {
+			jumpFromGround();
+		}
+		if (forward <= 0.0F) {
+			forward *= 0.2F;
+		}
+		Vec3 input = new Vec3(strafe, 0.0D, forward);
+		if (input.lengthSqr() > 1.0D) {
+			input = input.normalize();
+		}
+		moveRelative(0.32F, input);
+		move(MoverType.SELF, getDeltaMovement());
+		setSpeed(0.32F);
+		if (!onGround()) {
+			setDeltaMovement(getDeltaMovement().multiply(0.67D, 1.0D, 0.67D));
+		} else {
+			setDeltaMovement(getDeltaMovement().multiply(0.6D, 1.0D, 0.6D));
+		}
+		calculateEntityAnimation(false);
+	}
+
+	private boolean consumeMountJumpRequest() {
+		boolean requested = mountJumpRequested;
+		mountJumpRequested = false;
+		mountJumpCharge = 0.0F;
+		return requested;
+	}
+
+	private float consumeMountJumpCharge() {
+		if (!mountJumpRequested) {
+			return 0.0F;
+		}
+		float charge = mountJumpCharge;
+		mountJumpRequested = false;
+		mountJumpCharge = 0.0F;
+		return charge;
+	}
+
+	@Override
+	@Nullable
+	public LivingEntity getControllingPassenger() {
+		Entity passenger = getFirstPassenger();
+		if (!(passenger instanceof Player player)) {
+			return null;
+		}
+		if (isNessie() && !isNessieSaddled()) {
+			return null;
+		}
+		if (isDragon() && isBabyDragon()) {
+			return null;
+		}
+		return player;
+	}
+
+	@Override
+	public void onPlayerJump(int jumpPower) {
+		if (canJump() && jumpPower > 0) {
+			mountJumpRequested = true;
+			mountJumpCharge = Mth.clamp(jumpPower / 100.0F, 0.0F, 1.0F);
+		}
+	}
+
+	@Override
+	public boolean canJump() {
+		return isKingBeetle() || (isDragon() && !isBabyDragon() && !isDragonFalling());
+	}
+
+	@Override
+	public void handleStartJump(int jumpPower) {
+	}
+
+	@Override
+	public void handleStopJump() {
+	}
+
+	@Override
+	public double getPassengersRidingOffset() {
+		if (isDragon()) {
+			return getBbHeight() - 1.2D - Math.sin(tickCount * 0.05F) / 6.0D;
+		}
+		if (isKingBeetle()) {
+			return getBbHeight() - 0.05D;
+		}
+		return super.getPassengersRidingOffset();
+	}
+
+	@Override
+	public InteractionResult mobInteract(Player player, InteractionHand hand) {
+		ItemStack stack = player.getItemInHand(hand);
+		if (isNessie()) {
+			if (!level().isClientSide && !isNessieSaddled() && stack.is(Items.SADDLE)) {
+				setNessieSaddled(true);
+				if (!player.getAbilities().instabuild) {
+					stack.shrink(1);
+				}
+				return InteractionResult.SUCCESS;
+			}
+			if (!level().isClientSide && isNessieSaddled() && player.isShiftKeyDown()) {
+				setNessieSaddled(false);
+				spawnAtLocation(Items.SADDLE);
+				return InteractionResult.SUCCESS;
+			}
+			if (!level().isClientSide && isNessieSaddled() && getControllingPassenger() == null) {
+				player.startRiding(this);
+				return InteractionResult.SUCCESS;
+			}
+		} else if (isDragon() && !isBabyDragon() && !level().isClientSide && getControllingPassenger() == null) {
+			player.startRiding(this);
+			dragonShootTicks = 0;
+			return InteractionResult.SUCCESS;
+		} else if (isKingBeetle() && !level().isClientSide && getControllingPassenger() == null) {
+			player.startRiding(this);
+			kingBeetleExplosionCount = 0;
+			return InteractionResult.SUCCESS;
+		}
+		return super.mobInteract(player, hand);
+	}
+
+	@Override
+	public boolean hurt(DamageSource source, float amount) {
+		LivingEntity livingAttacker = getLivingAttacker(source);
+		Player attackingPlayer = livingAttacker instanceof Player player ? player : null;
+		Player playerAttacker = attackingPlayer != null && CandyTargeting.canAttackPlayer(attackingPlayer)
+				? attackingPlayer
+				: null;
+		if (isSuguard() && source.getEntity() instanceof LivingEntity) {
+			angry = true;
+		}
+		if (isBossSuguard()) {
+			if (!level().isClientSide && livingAttacker != null && livingAttacker != this) {
+				activateBossSuguard(CandyTargeting.canAttackEntity(livingAttacker) ? livingAttacker : null);
+			}
+			if (source.is(net.minecraft.world.damagesource.DamageTypes.DROWN)) {
+				return false;
+			}
+			if (source.is(net.minecraft.tags.DamageTypeTags.IS_PROJECTILE)
+					|| source.is(net.minecraft.tags.DamageTypeTags.IS_FIRE)) {
+				return false;
+			}
+			boolean hurt = super.hurt(source, amount);
+			if (hurt) {
+				alertCaramelBeeWitnesses(playerAttacker);
+			}
+			return hurt;
+		}
+		if ((isDragon() || isKingBeetle()) && getControllingPassenger() != null && getControllingPassenger().equals(source.getEntity())) {
+			return false;
+		}
+		if (isKingBeetle() && source.is(net.minecraft.tags.DamageTypeTags.IS_EXPLOSION)) {
+			return false;
+		}
+		boolean hurt = super.hurt(source, amount);
+		if (hurt) {
+			alertCaramelBeeWitnesses(playerAttacker);
+		}
+		return hurt;
+	}
+
+	@Nullable
+	private static LivingEntity getLivingAttacker(DamageSource source) {
+		if (source.getEntity() instanceof LivingEntity attacker) {
+			return attacker;
+		}
+		if (source.getDirectEntity() instanceof LivingEntity attacker) {
+			return attacker;
+		}
+		return null;
+	}
+
+	private void alertCaramelBeeWitnesses(@Nullable Player attacker) {
+		if (attacker != null && level() instanceof ServerLevel serverLevel
+				&& (isSuguard() || isMageSuguard() || isBossSuguard())) {
+			CaramelBee.alertSuguardAttackWitnesses(serverLevel, this, attacker);
+		}
+	}
+
+	@Override
+	public boolean causeFallDamage(float distance, float damageMultiplier, DamageSource source) {
+		return isDragon() ? false : super.causeFallDamage(distance, damageMultiplier, source);
+	}
+
+	@Override
+	public void startSeenByPlayer(ServerPlayer player) {
+		super.startSeenByPlayer(player);
+		if (isBossSuguard()) {
+			bossEvent.addPlayer(player);
+		}
+	}
+
+	@Override
+	public void stopSeenByPlayer(ServerPlayer player) {
+		super.stopSeenByPlayer(player);
+		bossEvent.removePlayer(player);
+	}
+
+	@Override
+	public boolean doHurtTarget(Entity target) {
+		if (isPassiveCreature()) {
+			setTarget(null);
+			return false;
+		}
+		if (!CandyTargeting.canAttackEntity(target)) {
+			setTarget(null);
+			return false;
+		}
+		ItemStack held = getItemBySlot(EquipmentSlot.MAINHAND);
+		if (isMageSuguard()) {
+			boolean success = super.doHurtTarget(target);
+			if (success) {
+				target.setSecondsOnFire(6);
+			}
+			return success;
+		}
+		if (isBossSuguard()) {
+			return false;
+		}
+		if (held.is(CCItems.DYNAMITE.get())) {
+			if (target.getBoundingBox().maxY > getBoundingBox().minY && target.getBoundingBox().minY < getBoundingBox().maxY) {
+				boolean mobGriefing = level().getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
+				level().explode(this, getX(), getY(), getZ(), 2.0F,
+						mobGriefing ? Level.ExplosionInteraction.MOB : Level.ExplosionInteraction.NONE);
+				discard();
+				return true;
+			}
+		} else if (random.nextInt(10) == 0 && onGround()) {
+			double dx = target.getX() - getX();
+			double dz = target.getZ() - getZ();
+			double distance = Math.max(Math.sqrt(dx * dx + dz * dz), 1.0E-4D);
+			setDeltaMovement(
+					dx / distance * 0.4D + getDeltaMovement().x * 0.2D,
+					0.6D,
+					dz / distance * 0.4D + getDeltaMovement().z * 0.2D
+			);
+		}
+		if (isSuguard() && getAttribute(Attributes.ATTACK_DAMAGE) != null) {
+			getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(getSuguardAttackDamage());
+		}
+		return super.doHurtTarget(target);
+	}
+
+	@Override
+	protected void dropCustomDeathLoot(DamageSource source, int looting, boolean recentlyHit) {
+		if (isMageSuguard()) {
+			ItemStack stack = new ItemStack(CCItems.SUGAR_PILL.get());
+			MobEffect[] choices = {
+					MobEffects.MOVEMENT_SPEED, MobEffects.MOVEMENT_SLOWDOWN, MobEffects.DIG_SPEED, MobEffects.DIG_SLOWDOWN,
+					MobEffects.DAMAGE_BOOST, MobEffects.HEAL, MobEffects.HARM, MobEffects.JUMP,
+					MobEffects.CONFUSION, MobEffects.REGENERATION, MobEffects.DAMAGE_RESISTANCE, MobEffects.FIRE_RESISTANCE,
+					MobEffects.WATER_BREATHING, MobEffects.INVISIBILITY, MobEffects.BLINDNESS, MobEffects.NIGHT_VISION,
+					MobEffects.HUNGER, MobEffects.WEAKNESS, MobEffects.POISON, MobEffects.WITHER
+			};
+			java.util.ArrayList<MobEffectInstance> effects = new java.util.ArrayList<>(4);
+			int[] colors = new int[4];
+			for (int i = 0; i < 4; i++) {
+				MobEffect effect = choices[random.nextInt(choices.length)];
+				effects.add(new MobEffectInstance(effect, 20 * 60, 0));
+				colors[i] = effect.getColor();
+			}
+			SugarPillItem.setData(stack, effects, colors);
+			spawnAtLocation(stack);
+			return;
+		}
+		if (isBossSuguard()) {
+			spawnAtLocation(CCItems.RECORD_2.get());
+			spawnAtLocation(CCItems.SUGUARD_KEY.get());
+			spawnAtLocation(CCItems.SUGUARD_EMBLEM.get());
+			if (level() instanceof ServerLevel serverLevel) {
+				DungeonProgressData.get(serverLevel.getServer()).markBossDefeated(DungeonKind.SUGUARD, blockPosition());
+			}
+			return;
+		}
+		ItemStack held = getItemBySlot(EquipmentSlot.MAINHAND);
+		if (isSuguard() && held.is(CCItems.LICORICE_SPEAR.get()) && random.nextFloat() <= 0.1F) {
+			ItemStack drop = held.copy();
+			int maxDamage = Math.max(drop.getMaxDamage() - 25, 1);
+			int remaining = drop.getMaxDamage() - random.nextInt(random.nextInt(maxDamage) + 1);
+			remaining = Math.max(1, Math.min(maxDamage, remaining));
+			drop.setDamageValue(remaining);
+			spawnAtLocation(drop);
+		}
+	}
+
+	@Override
+	protected SoundEvent getAmbientSound() {
+		if (usesLegacySilentSounds()) {
+			return null;
+		}
+		return isNessie() ? CCSoundEvents.MOB_NESSIE.get() : SoundEvents.ZOMBIE_AMBIENT;
+	}
+
+	@Override
+	protected SoundEvent getHurtSound(DamageSource damageSource) {
+		if (usesLegacySilentSounds()) {
+			return null;
+		}
+		return isNessie() ? CCSoundEvents.MOB_NESSIE_HURT.get() : SoundEvents.ZOMBIE_HURT;
+	}
+
+	@Override
+	protected SoundEvent getDeathSound() {
+		if (usesLegacySilentSounds()) {
+			return null;
+		}
+		return isNessie() ? CCSoundEvents.MOB_NESSIE_HURT.get() : SoundEvents.ZOMBIE_DEATH;
+	}
+
+	@Override
+	protected void playStepSound(BlockPos pos, BlockState state) {
+		if (usesLegacySilentSounds() || isNessie()) {
+			return;
+		}
+		super.playStepSound(pos, state);
+	}
+
+	private void ensureDefaultEquipment() {
+		if (!getItemBySlot(EquipmentSlot.MAINHAND).isEmpty()) {
+			return;
+		}
+		if (isMermaid()) {
+			setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(CCItems.CARAMEL_BOW.get()));
+		} else if (isMageSuguard()) {
+			setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(CCItems.JUMP_WAND.get()));
+			setDropChance(EquipmentSlot.MAINHAND, 0.0F);
+		} else if (isBossSuguard()) {
+			setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(CCItems.CARAMEL_BOW.get()));
+			setDropChance(EquipmentSlot.MAINHAND, 0.0F);
+		} else if (isSuguard()) {
+			setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(CCItems.LICORICE_SPEAR.get()));
+			setDropChance(EquipmentSlot.MAINHAND, 0.0F);
+		}
+	}
+
+	private void tickMovementAbilities(boolean nessie, boolean dragon, boolean kingBeetle, boolean mermaid) {
+		if (nessie) {
+			setAirSupply(getMaxAirSupply());
+			if (isInWater() && getControllingPassenger() == null && !level().isClientSide) {
+				tickNessieSwimming();
+			} else if (!isInWater() && onGround()) {
+				nessieSwimTarget = null;
+				zza = 0.0F;
+				setDeltaMovement(getDeltaMovement().multiply(0.15D, 1.0D, 0.15D).add(0.0D, 0.01D, 0.0D));
+			}
+		} else if (dragon) {
+			tickDragonGrowth();
+			tickDragonStamina();
+			tickDragonPower();
+		} else if (kingBeetle) {
+			if (getMountPower() < getMountMaxPower()) {
+				setMountPower(getMountPower() + 1);
+			}
+			tickKingBeetlePower();
+		} else if (mermaid) {
+			setAirSupply(getMaxAirSupply());
+			if (isInWater()) {
+				LivingEntity target = getTarget();
+				if (target != null && CandyTargeting.canAttackEntity(target)) {
+					mermaidSwimTarget = target.blockPosition();
+				} else if (!isValidMermaidSwimTarget(mermaidSwimTarget)
+						|| random.nextInt(100) == 0
+						|| mermaidSwimTarget.distToCenterSqr(position()) < 4.0D) {
+					mermaidSwimTarget = chooseMermaidSwimTarget();
+				}
+				if (mermaidSwimTarget != null) {
+					swimToward(mermaidSwimTarget.getX() + 0.5D, mermaidSwimTarget.getY() + 0.1D,
+							mermaidSwimTarget.getZ() + 0.5D, 0.15D, 0.26D);
+				}
+			} else if (onGround() && tickCount % 10 == 0) {
+				mermaidSwimTarget = null;
+				playSound(SoundEvents.GUARDIAN_FLOP, 1.0F, 1.0F);
+				setDeltaMovement(random.nextFloat() - 0.5F, getDeltaMovement().y + 0.34D, random.nextFloat() - 0.5F);
+				setYRot(random.nextFloat() * 360.0F);
+				yRotO = getYRot();
+			}
+		}
+	}
+
+	@Nullable
+	private BlockPos chooseMermaidSwimTarget() {
+		BlockPos origin = blockPosition();
+		for (int i = 0; i < 12; i++) {
+			BlockPos candidate = origin.offset(
+					random.nextInt(14) - random.nextInt(14),
+					random.nextInt(3) - 1,
+					random.nextInt(14) - random.nextInt(14));
+			if (isValidMermaidSwimTarget(candidate)) {
+				return candidate;
+			}
+		}
+		return isValidMermaidSwimTarget(origin) ? origin : null;
+	}
+
+	private boolean isValidMermaidSwimTarget(@Nullable BlockPos pos) {
+		return pos != null
+				&& pos.getY() > level().getMinBuildHeight()
+				&& level().getFluidState(pos).is(FluidTags.WATER);
+	}
+
+	private void tickNessieSwimming() {
+		LivingEntity target = getTarget();
+		if (target != null && CandyTargeting.canAttackEntity(target) && target.isInWater()) {
+			swimToward(target.getX(), target.getY() + target.getBbHeight() * 0.4D, target.getZ(), 0.18D, 0.75D);
+			return;
+		}
+
+		if (!isValidNessieSwimTarget(nessieSwimTarget)
+				|| random.nextInt(100) == 0
+				|| nessieSwimTarget.distToCenterSqr(position()) < 4.0D) {
+			nessieSwimTarget = chooseNessieSwimTarget();
+		}
+
+		if (nessieSwimTarget != null) {
+			swimToward(nessieSwimTarget.getX() + 0.5D, nessieSwimTarget.getY() + 0.1D, nessieSwimTarget.getZ() + 0.5D, 0.15D, 0.7D);
+		}
+	}
+
+	private void swimToward(double x, double y, double z, double horizontalSpeed, double verticalSpeed) {
+		double dx = x - getX();
+		double dy = y - getY();
+		double dz = z - getZ();
+		Vec3 movement = getDeltaMovement();
+		setDeltaMovement(
+				movement.x + (Math.signum(dx) * horizontalSpeed - movement.x) * 0.1D,
+				movement.y + (Math.signum(dy) * verticalSpeed - movement.y) * 0.1D,
+				movement.z + (Math.signum(dz) * horizontalSpeed - movement.z) * 0.1D
+		);
+		float yaw = (float) (Mth.atan2(getDeltaMovement().z, getDeltaMovement().x) * Mth.RAD_TO_DEG) - 90.0F;
+		float yawDelta = Mth.wrapDegrees(yaw - getYRot());
+		setYRot(getYRot() + yawDelta);
+		yBodyRot = getYRot();
+		yHeadRot = getYRot();
+		zza = 0.5F;
+	}
+
+	@Nullable
+	private BlockPos chooseNessieSwimTarget() {
+		BlockPos origin = blockPosition();
+		for (int i = 0; i < 12; i++) {
+			BlockPos candidate = origin.offset(random.nextInt(17) - 8, random.nextInt(5) - 2, random.nextInt(17) - 8);
+			if (isValidNessieSwimTarget(candidate)) {
+				return candidate;
+			}
+		}
+		return isValidNessieSwimTarget(origin) ? origin : null;
+	}
+
+	private boolean isValidNessieSwimTarget(@Nullable BlockPos pos) {
+		return pos != null
+				&& pos.getY() > level().getMinBuildHeight()
+				&& level().getFluidState(pos).is(FluidTags.WATER)
+				&& level().getFluidState(pos.above()).is(FluidTags.WATER);
+	}
+
+	private void tickMermaidRangedBehavior(ServerLevel level) {
+		if (rangedCooldown <= 0) {
+			LivingEntity target = getTarget();
+			if (target != null && !CandyTargeting.canAttackEntity(target)) {
+				setTarget(null);
+				target = null;
+			}
+			if (target != null && distanceToSqr(target) <= 245.0D && hasLineOfSight(target)) {
+				float attackStrength = Mth.clamp(distanceTo(target) / 15.0F, 0.1F, 1.0F);
+				rangedCooldown = Mth.floor(attackStrength * 10.0F + 20.0F);
+				HoneyArrowEntity ball = new HoneyArrowEntity(level, this);
+				double dx = target.getX() - getX();
+				double dy = target.getEyeY() - ball.getY();
+				double dz = target.getZ() - getZ();
+				ball.setBaseDamage(attackStrength * 3.0F + random.nextGaussian() * 0.25D
+						+ level.getDifficulty().getId() * 0.11F);
+				ball.shoot(dx, dy, dz, 1.4F, 8.0F);
+				level.addFreshEntity(ball);
+				playSound(SoundEvents.ARROW_SHOOT, 1.0F, 1.0F / (random.nextFloat() * 0.4F + 0.8F));
+			}
+		}
+	}
+
+	private void tickBossSuguard(ServerLevel level) {
+		if (!isBossSuguardAwake()) {
+			tickDormantBossSuguard();
+			return;
+		}
+		setMovementSpeedBase(0.35D);
+		if (--bossSuguardCounter <= 0) {
+			bossSuguardCounter = 300;
+			setBossSuguardStat((getBossSuguardStat() + 1) % 4);
+		}
+		LivingEntity target = getTarget();
+		if (target != null && (!CandyTargeting.canAttackEntity(target) || distanceToSqr(target) > 48.0D * 48.0D)) {
+			setTarget(null);
+			target = null;
+		}
+		if (bossTargetSearchCooldown > 0) {
+			bossTargetSearchCooldown--;
+		}
+		if (target == null && bossTargetSearchCooldown <= 0) {
+			target = CandyTargeting.nearestAttackablePlayer(level, this, 48.0D);
+			bossTargetSearchCooldown = PLAYER_TARGET_SEARCH_INTERVAL;
+		}
+		if (target == null) {
+			bossSuguardSeeTicks = 0;
+			getNavigation().stop();
+			entityData.set(BOSS_BOW_DRAW_TICKS, 0);
+			if (bossSuguardLostTargetTicks > 0) {
+				bossSuguardLostTargetTicks--;
+			} else {
+				setBossSuguardAwake(false);
+				tickDormantBossSuguard();
+			}
+			return;
+		}
+		bossSuguardLostTargetTicks = BOSS_SUGUARD_LOST_TARGET_TICKS;
+		setTarget(target);
+		getLookControl().setLookAt(target, 10.0F, getMaxHeadXRot());
+		double distanceSqr = distanceToSqr(target);
+		boolean canSee = getSensing().hasLineOfSight(target);
+		if (canSee && (getBossBowDrawTicks() > 0 || distanceSqr <= 245.0D)) {
+			faceBossSuguardTarget(target);
+		}
+		bossSuguardSeeTicks = canSee ? bossSuguardSeeTicks + 1 : 0;
+		if (distanceSqr <= 245.0D && bossSuguardSeeTicks >= 20) {
+			getNavigation().stop();
+		} else {
+			getNavigation().moveTo(target, 1.0D);
+		}
+
+		// The legacy boss fires five extra volleys every tick when its target gets within three blocks.
+		if (distanceSqr < BOSS_SUGUARD_CLOSE_BARRAGE_RANGE_SQR) {
+			getNavigation().stop();
+			faceBossSuguardTarget(target);
+			entityData.set(BOSS_BOW_DRAW_TICKS, 1);
+			fireBossSuguardCloseBarrage(level, target);
+			return;
+		}
+
+		int drawTicks = getBossBowDrawTicks();
+		if (drawTicks > 0) {
+			if (distanceSqr > 245.0D || !canSee) {
+				entityData.set(BOSS_BOW_DRAW_TICKS, 0);
+				return;
+			}
+			int remainingTicks = drawTicks - 1;
+			entityData.set(BOSS_BOW_DRAW_TICKS, remainingTicks);
+			if (remainingTicks <= 0) {
+				fireBossSuguardVolley(level, target, distanceSqr);
+			}
+			return;
+		}
+		if (rangedCooldown > 0 || distanceSqr > 245.0D || !canSee) {
+			return;
+		}
+		entityData.set(BOSS_BOW_DRAW_TICKS, BOSS_SUGUARD_BOW_DRAW_DURATION);
+	}
+
+	private void fireBossSuguardCloseBarrage(ServerLevel level, LivingEntity target) {
+		int shotsPerVolley = getBossSuguardStat() == 1 ? 4 : 1;
+		for (int volley = 0; volley < BOSS_SUGUARD_CLOSE_BARRAGE_VOLLEYS; volley++) {
+			for (int shot = 0; shot < shotsPerVolley; shot++) {
+				shootBossSuguardArrow(level, target, 1.0F);
+			}
+		}
+	}
+
+	private void faceBossSuguardTarget(LivingEntity target) {
+		double dx = target.getX() - getX();
+		double dz = target.getZ() - getZ();
+		float targetYaw = (float) (Mth.atan2(dz, dx) * Mth.RAD_TO_DEG) - 90.0F;
+		float facingYaw = Mth.rotLerp(30.0F, getYRot(), targetYaw);
+		setYRot(facingYaw);
+		yBodyRot = facingYaw;
+		yHeadRot = facingYaw;
+	}
+
+	private void fireBossSuguardVolley(ServerLevel level, LivingEntity target, double distanceSqr) {
+		float distanceFactor = Mth.sqrt((float) distanceSqr) / 15.0F;
+		float attackStrength = Mth.clamp(distanceFactor, 0.1F, 1.0F);
+		rangedCooldown = Mth.floor(distanceFactor * 10.0F + 20.0F);
+		int shots = getBossSuguardStat() == 1 ? 4 : 1;
+		for (int i = 0; i < shots; i++) {
+			shootBossSuguardArrow(level, target, attackStrength);
+		}
+	}
+
+	private void shootBossSuguardArrow(ServerLevel level, LivingEntity target, float attackStrength) {
+		HoneyArrowEntity arrow = new HoneyArrowEntity(level, this);
+		arrow.markBossSuguardProjectile();
+		arrow.setPos(getX(), getEyeY() - 0.05D, getZ());
+		arrow.setBaseDamage(attackStrength * 3.0F + random.nextGaussian() * 0.25D + level.getDifficulty().getId() * 0.11F);
+		arrow.setSecondsOnFire(getBossSuguardStat() == 3 ? 5 : 0);
+		arrow.setHoneyGlue(getBossSuguardStat() == 2);
+		if (distanceTo(target) < 3.0F) {
+			arrow.setKnockback(2);
+		}
+		float inaccuracy = 14.0F - level.getDifficulty().getId() * 4.0F;
+		arrow.shoot(target.getX() - getX(), target.getEyeY() - arrow.getY(), target.getZ() - getZ(), 1.6F, inaccuracy);
+		level.addFreshEntity(arrow);
+		playSound(SoundEvents.ARROW_SHOOT, 1.0F, 1.0F / (random.nextFloat() * 0.4F + 0.8F));
+	}
+
+	private void activateBossSuguard(@Nullable LivingEntity target) {
+		if (!isBossSuguard()) {
+			return;
+		}
+		setBossSuguardAwake(true);
+		bossSuguardLostTargetTicks = BOSS_SUGUARD_LOST_TARGET_TICKS;
+		rangedCooldown = Math.max(rangedCooldown, 20);
+		if (target != null) {
+			setTarget(target);
+		}
+	}
+
+	public int getMountMaxPower() {
+		return isKingBeetle() ? 1200 : 1500;
+	}
+
+	private int getMountPowerUsed() {
+		return 1200;
+	}
+
+	public int getMountPower() {
+		return entityData.get(MOUNT_POWER);
+	}
+
+	private void setMountPower(int value) {
+		entityData.set(MOUNT_POWER, Mth.clamp(value, 0, getMountMaxPower()));
+	}
+
+	public boolean isDragonFalling() {
+		return isDragon() && entityData.get(DRAGON_FALLING);
+	}
+
+	public boolean isDragonFlying() {
+		return isDragon() && entityData.get(DRAGON_FLYING);
+	}
+
+	private void setDragonFalling(boolean falling) {
+		if (isDragon()) {
+			entityData.set(DRAGON_FALLING, falling);
+		}
+	}
+
+	private void setDragonFlying(boolean flying) {
+		if (isDragon()) {
+			entityData.set(DRAGON_FLYING, flying);
+		}
+	}
+
+	private void tickDragonStamina() {
+		if (level().isClientSide) {
+			return;
+		}
+		LivingEntity controller = getControllingPassenger();
+		if (controller == null) {
+			setDragonFlying(false);
+			setNoGravity(false);
+			if (onGround()) {
+				setDragonFalling(false);
+				setMountPower(Math.min(getMountMaxPower(), getMountPower() + 8));
+			}
+			return;
+		}
+		if (!onGround()) {
+			setDragonFlying(true);
+		}
+		if (controller != null && !onGround() && !isDragonFalling()) {
+			setMountPower(getMountPower() - 2);
+			if (getMountPower() <= 0) {
+				setDragonFalling(true);
+			}
+		} else if (onGround()) {
+			setDragonFlying(false);
+			setNoGravity(false);
+			setMountPower(Math.min(getMountMaxPower(), getMountPower() + 8));
+			if (isDragonFalling() && getMountPower() >= getMountMaxPower() / 5) {
+				setDragonFalling(false);
+			}
+		}
+	}
+
+	private void tryUnleashMountPower() {
+		if (getMountPower() < getMountPowerUsed()) {
+			return;
+		}
+		if (isKingBeetle()) {
+			setMountPower(0);
+			kingBeetleExplosionCount = 8 + random.nextInt(8);
+		}
+	}
+
+	private void tickDragonPower() {
+		if (isBabyDragon()) {
+			dragonShootTicks = 0;
+			return;
+		}
+		LivingEntity controller = getControllingPassenger();
+		if (controller == null) {
+			dragonShootTicks = 0;
+			return;
+		}
+		if (controller.swinging && dragonShootTicks <= 0) {
+			dragonShootTicks = 10 + random.nextInt(8);
+		}
+		if (dragonShootTicks > 0 && tickCount % 2 == 0 && !level().isClientSide && level() instanceof ServerLevel serverLevel) {
+			setYRot(controller.getYRot());
+			GummyBallEntity ball = new GummyBallEntity(serverLevel, controller, 2);
+			double yaw = controller.getYRot() * Math.PI / 180.0D;
+			double offsetX = Math.sin(yaw) * 3.5D;
+			double offsetZ = -Math.cos(yaw) * 3.5D;
+			ball.setPos(getX() - offsetX, getY() + controller.getEyeHeight(), getZ() - offsetZ);
+			ball.shoot(-offsetX, -controller.getXRot() * 0.05D, -offsetZ, 1.4F, 1.0F);
+			serverLevel.addFreshEntity(ball);
+			setDeltaMovement(offsetX / 3.4D, getDeltaMovement().y, offsetZ / 3.4D);
+			playSound(SoundEvents.ARROW_SHOOT, 0.5F, 0.4F / (random.nextFloat() * 0.4F + 0.8F));
+			dragonShootTicks--;
+		}
+	}
+
+	private void tickKingBeetlePower() {
+		LivingEntity controller = getControllingPassenger();
+		if (controller == null) {
+			kingBeetleExplosionCount = 0;
+			return;
+		}
+		if (controller.swinging && kingBeetleExplosionCount <= 0) {
+			tryUnleashMountPower();
+		}
+		if (!level().isClientSide && kingBeetleExplosionCount > 0 && tickCount % 5 == 0 && level() instanceof ServerLevel serverLevel) {
+			double x = getX() + random.nextInt(6) - 3;
+			double y = getY() + random.nextInt(5) - 2;
+			double z = getZ() + random.nextInt(6) - 3;
+			serverLevel.explode(controller, x, y, z, 2.0F, Level.ExplosionInteraction.NONE);
+			for (int dx = -3; dx <= 3; dx++) {
+				for (int dz = -3; dz <= 3; dz++) {
+					BlockPos pos = blockPosition().offset(dx, 0, dz);
+					if (random.nextBoolean() && serverLevel.getBlockState(pos).isAir()
+							&& com.valentin4311.candycraftmod.registry.CCBlocks.CHEWING_GUM_PUDDLE.get().defaultBlockState().canSurvive(serverLevel, pos)) {
+						serverLevel.setBlockAndUpdate(pos, com.valentin4311.candycraftmod.registry.CCBlocks.CHEWING_GUM_PUDDLE.get().defaultBlockState());
+					}
+				}
+			}
+			kingBeetleExplosionCount--;
+		}
+	}
+
+	private void tickDragonGrowth() {
+		if (!isBabyDragon() || level().isClientSide) {
+			return;
+		}
+		dragonAgeTicks++;
+		if (dragonAgeTicks >= 24000) {
+			setBabyDragon(false);
+			dragonAgeTicks = 0;
+		}
+	}
+
+	private void updateBossBar() {
+		if (level().isClientSide) {
+			return;
+		}
+		bossEvent.setProgress(Math.max(0.0F, Math.min(1.0F, getHealth() / getMaxHealth())));
+		bossEvent.setVisible(bossHealthBarRevealed && isBossSuguardAwake());
+	}
+
+	private void tickMageBehavior(ServerLevel level) {
+		LivingEntity currentTarget = getTarget();
+		if (currentTarget != null && !CandyTargeting.canAttackEntity(currentTarget)) {
+			setTarget(null);
+			currentTarget = null;
+		}
+		if (mageTargetSearchCooldown > 0) {
+			mageTargetSearchCooldown--;
+		}
+		Player nearby = null;
+		if (currentTarget == null && mageTargetSearchCooldown <= 0) {
+			nearby = CandyTargeting.nearestAttackablePlayer(level, this, 8.0D);
+			mageTargetSearchCooldown = PLAYER_TARGET_SEARCH_INTERVAL;
+		}
+		LivingEntity trigger = currentTarget != null ? currentTarget : nearby;
+		waiting = trigger == null;
+		if (waiting) {
+			getNavigation().stop();
+			setDeltaMovement(0.0D, getDeltaMovement().y, 0.0D);
+		}
+
+		if (summonCooldown > 0) {
+			summonCooldown--;
+			if (summonCooldown == 0) {
+				spawnedMinions = false;
+			}
+		}
+
+		if (trigger != null) {
+			setTarget(trigger);
+			clearFire();
+			if (random.nextFloat() < 0.05F) {
+				BlockPos firePos = blockPosition();
+				BlockState fire = Blocks.FIRE.defaultBlockState();
+				if (level.getBlockState(firePos).isAir() && fire.canSurvive(level, firePos)) {
+					level.setBlock(firePos, fire, 3);
+				}
+			}
+			if (!spawnedMinions) {
+				summonSupportCircle(level, trigger);
+				spawnedMinions = true;
+				summonCooldown = 2400;
+			}
+		}
+	}
+
+	private void summonSupportCircle(ServerLevel level, LivingEntity target) {
+		for (int i = 0; i <= 8; i++) {
+			double angle = i / 3.75F * Math.PI;
+			double x = -Math.sin(angle) * 2.5D + getX();
+			double z = Math.cos(angle) * 2.5D + getZ();
+			double y = getY() + 2.0D;
+
+			BasicCandyZombieEntity summoned = CCEntityTypes.SUGUARD.get().create(level);
+			if (summoned == null) {
+				continue;
+			}
+			summoned.angry = true;
+			summoned.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(CCItems.DYNAMITE.get()));
+			summoned.setTarget(target);
+			if (summoned.getAttribute(Attributes.MAX_HEALTH) != null) {
+				summoned.getAttribute(Attributes.MAX_HEALTH).setBaseValue(10.0D);
+			}
+			if (summoned.getAttribute(Attributes.ATTACK_DAMAGE) != null) {
+				summoned.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(6.0D);
+			}
+			summoned.setHealth(10.0F);
+
+			BlockPos spawnPos = BlockPos.containing(x, y, z);
+			if (!level.getBlockState(spawnPos).isAir() || !level.getBlockState(spawnPos.above()).isAir()) {
+				spawnPos = blockPosition();
+			}
+			summoned.moveTo(spawnPos.getX() + 0.5D, spawnPos.getY(), spawnPos.getZ() + 0.5D, getYRot(), 0.0F);
+			if (!level.noCollision(summoned)) {
+				summoned.moveTo(getX(), getY(), getZ(), getYRot(), 0.0F);
+			}
+			level.addFreshEntityWithPassengers(summoned);
+		}
+	}
+
+	private void spawnLegacyParticles() {
+		if (random.nextInt(30) != 0) {
+			return;
+		}
+		if (isMageSuguard()) {
+			for (int i = 0; i < 5; i++) {
+				level().addParticle(ParticleTypes.FLAME,
+						getX() + (random.nextDouble() - 0.5D) * getBbWidth() * 2.0D,
+						getY() + random.nextDouble() * getBbHeight(),
+						getZ() + (random.nextDouble() - 0.5D) * getBbWidth() * 2.0D,
+						0.0D, 0.0D, 0.0D);
+			}
+		} else {
+			for (int i = 0; i < 2; i++) {
+				level().addParticle(ParticleTypes.CLOUD,
+						getX() + (random.nextDouble() - 0.5D) * getBbWidth(),
+						getY() + random.nextDouble() * getBbHeight(),
+						getZ() + (random.nextDouble() - 0.5D) * getBbWidth(),
+						0.0D, 0.0D, 0.0D);
+			}
+		}
+	}
+
+	private boolean isMageSuguard() {
+		return getType() == CCEntityTypes.MAGE_SUGUARD.get();
+	}
+
+	private boolean isSuguard() {
+		return getType() == CCEntityTypes.SUGUARD.get();
+	}
+
+	private boolean isBossSuguard() {
+		return getType() == CCEntityTypes.BOSS_SUGUARD.get();
+	}
+
+	@Override
+	protected float getStandingEyeHeight(Pose pose, EntityDimensions dimensions) {
+		if (isSuguard() || isMageSuguard() || isBossSuguard()) {
+			return dimensions.height * 0.85F;
+		}
+		return super.getStandingEyeHeight(pose, dimensions);
+	}
+
+	private boolean hasSuguardJumpClearance() {
+		return level().noCollision(this, getBoundingBox().move(0.0D, 0.42D, 0.0D));
+	}
+
+	public boolean isBossSuguardAwake() {
+		return isBossSuguard() && entityData.get(BOSS_SUGUARD_AWAKE);
+	}
+
+	private void setBossSuguardAwake(boolean awake) {
+		if (isBossSuguardAwake() != awake) {
+			bossSuguardDormantRotationInitialized = false;
+		}
+		angry = awake;
+		entityData.set(BOSS_SUGUARD_AWAKE, awake);
+		if (isBossSuguard()) {
+			setNoGravity(false);
+			bossHealthBarRevealed = awake;
+			if (!level().isClientSide) {
+				bossEvent.setVisible(awake);
+			}
+		}
+		if (!awake) {
+			bossSuguardLostTargetTicks = 0;
+		}
+	}
+
+	private void tickDormantBossSuguard() {
+		setNoGravity(false);
+		bossSuguardSeeTicks = 0;
+		if (getBossSuguardStat() != 0) {
+			setBossSuguardStat(0);
+		}
+		if (tickCount % DORMANT_BOSS_HEAL_INTERVAL_TICKS == 0) {
+			heal(DORMANT_BOSS_HEAL_AMOUNT);
+		}
+		if (getTarget() != null) {
+			setTarget(null);
+		}
+		getNavigation().stop();
+		setJumping(false);
+		setMovementSpeedBase(0.0D);
+		entityData.set(BOSS_BOW_DRAW_TICKS, 0);
+		freezeDormantBossSuguard();
+	}
+
+	private void freezeDormantBossSuguard() {
+		if (!bossSuguardDormantRotationInitialized) {
+			bossSuguardDormantYRot = getYRot();
+			bossSuguardDormantYHeadRot = getYHeadRot();
+			bossSuguardDormantRotationInitialized = true;
+		}
+		if (getTarget() != null) {
+			setTarget(null);
+		}
+		getNavigation().stop();
+		setJumping(false);
+		stopHorizontalMovement();
+		setYRot(bossSuguardDormantYRot);
+		yRotO = bossSuguardDormantYRot;
+		yBodyRot = bossSuguardDormantYRot;
+		yBodyRotO = bossSuguardDormantYRot;
+		yHeadRot = bossSuguardDormantYHeadRot;
+		yHeadRotO = bossSuguardDormantYHeadRot;
+	}
+
+	private void setMovementSpeedBase(double value) {
+		AttributeInstance speed = getAttribute(Attributes.MOVEMENT_SPEED);
+		if (speed != null && speed.getBaseValue() != value) {
+			speed.setBaseValue(value);
+		}
+	}
+
+	private void stopHorizontalMovement() {
+		Vec3 movement = getDeltaMovement();
+		if (movement.x != 0.0D || movement.z != 0.0D) {
+			setDeltaMovement(0.0D, movement.y, 0.0D);
+		}
+	}
+
+	public int getBossSuguardStat() {
+		return entityData.get(BOSS_SUGUARD_STAT);
+	}
+
+	private void setBossSuguardStat(int stat) {
+		entityData.set(BOSS_SUGUARD_STAT, Mth.clamp(stat, 0, 3));
+	}
+
+	public int getBossBowDrawTicks() {
+		return entityData.get(BOSS_BOW_DRAW_TICKS);
+	}
+
+	public float getBossBowDrawProgress(float partialTicks) {
+		int remainingTicks = getBossBowDrawTicks();
+		if (!isBossSuguard() || remainingTicks <= 0) {
+			return 0.0F;
+		}
+		float interpolatedRemaining = Math.max(0.0F, remainingTicks - partialTicks);
+		return Mth.clamp(1.0F - interpolatedRemaining / BOSS_SUGUARD_BOW_DRAW_DURATION, 0.0F, 1.0F);
+	}
+
+	private boolean isNessie() {
+		return false;
+	}
+
+	private boolean isDragon() {
+		return getType() == CCEntityTypes.DRAGON.get();
+	}
+
+	public boolean isBabyDragon() {
+		return entityData.get(BABY_DRAGON);
+	}
+
+	public void setBabyDragon(boolean babyDragon) {
+		entityData.set(BABY_DRAGON, babyDragon);
+	}
+
+	public int getLegacyVariant() {
+		return entityData.get(LEGACY_VARIANT);
+	}
+
+	private void setLegacyVariant(int variant) {
+		entityData.set(LEGACY_VARIANT, Math.max(0, variant));
+	}
+
+	public boolean isChocolateForestSuguard() {
+		return entityData.get(CHOCOLATE_FOREST_SUGUARD);
+	}
+
+	public void setChocolateForestSuguard(boolean chocolateForestSuguard) {
+		entityData.set(CHOCOLATE_FOREST_SUGUARD, chocolateForestSuguard);
+	}
+
+	public boolean isNessieSaddled() {
+		return entityData.get(SADDLED);
+	}
+
+	private void setNessieSaddled(boolean saddled) {
+		entityData.set(SADDLED, saddled);
+	}
+
+	private void randomizeNessieVariant() {
+		int selected = random.nextInt(4);
+		if (random.nextInt(20) == 0) {
+			selected = 4;
+		}
+		if (random.nextInt(20) == 0) {
+			selected = 5;
+		}
+		if (random.nextInt(20) == 0) {
+			selected = 6;
+		}
+		if (random.nextInt(40) == 0) {
+			selected = 6;
+		}
+		setLegacyVariant(selected);
+	}
+
+	private boolean isMermaid() {
+		return getType() == CCEntityTypes.MERMAID.get();
+	}
+
+	private boolean isKingBeetle() {
+		return getType() == CCEntityTypes.KING_BEETLE.get();
+	}
+
+	private boolean isPassiveCreature() {
+		return isNessie() || isDragon() || isKingBeetle();
+	}
+
+	private boolean usesLegacySilentSounds() {
+		return isSuguard() || isMageSuguard() || isBossSuguard() || isMermaid() || isDragon() || isKingBeetle();
+	}
+
+	private boolean isAquatic() {
+		return isNessie() || isMermaid();
+	}
+
+	private boolean isInGrenadine() {
+		FluidState state = level().getFluidState(blockPosition());
+		return state.is(CCFluids.SOURCE_GRENADINE.get()) || state.is(CCFluids.FLOWING_GRENADINE.get());
+	}
+
+	private boolean isHostileBiome() {
+		ResourceLocation biomeId = level().getBiome(blockPosition()).unwrapKey()
+				.map(key -> key.location())
+				.orElse(null);
+		return biomeId != null
+				&& CandyCraft.MODID.equals(biomeId.getNamespace())
+				&& "caramel_forest".equals(biomeId.getPath());
+	}
+
+	private boolean shouldActHostile() {
+		return !isPassiveCreature() && (angry || isHostileBiome() || level().isNight());
+	}
+
+	@Override
+	public boolean shouldDespawnInPeaceful() {
+		return !isBossSuguard() && !isPassiveCreature() && super.shouldDespawnInPeaceful();
+	}
+
+	@Override
+	public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+		return !isBossSuguard() && !isPassiveCreature() && super.removeWhenFarAway(distanceToClosestPlayer);
+	}
+
+	@Override
+	public boolean isPushable() {
+		return (!isBossSuguard() || isBossSuguardAwake()) && super.isPushable();
+	}
+
+	private double getSuguardAttackDamage() {
+		Difficulty difficulty = level().getDifficulty();
+		if (difficulty == Difficulty.HARD) {
+			return 10.0D;
+		}
+		if (difficulty == Difficulty.EASY) {
+			return 5.0D;
+		}
+		return 7.0D;
+	}
+
+	private static final class SuguardTargetGoal extends NearestAttackableTargetGoal<Player> {
+		private final BasicCandyZombieEntity suguard;
+
+		private SuguardTargetGoal(BasicCandyZombieEntity suguard) {
+			super(suguard, Player.class, 10, true, false,
+					entity -> entity instanceof Player player && CandyTargeting.canAttackPlayer(player));
+			this.suguard = suguard;
+		}
+
+		@Override
+		public boolean canUse() {
+			return suguard.shouldActHostile() && super.canUse();
+		}
+	}
+
+	private static final class SuguardAttackGoal extends MeleeAttackGoal {
+		private final BasicCandyZombieEntity suguard;
+
+		private SuguardAttackGoal(BasicCandyZombieEntity suguard) {
+			super(suguard, 1.0D, true);
+			this.suguard = suguard;
+		}
+
+		@Override
+		public boolean canContinueToUse() {
+			if (!suguard.hasSuguardJumpClearance()) {
+				suguard.setJumping(false);
+			} else if (suguard.getRandom().nextBoolean()) {
+				suguard.setJumping(true);
+			}
+			return super.canContinueToUse();
+		}
+
+		@Override
+		protected double getAttackReachSqr(LivingEntity target) {
+			return 4.0F + target.getBbWidth();
+		}
+	}
 }
