@@ -22,6 +22,7 @@ object CFluids {
             isTransparent = true,
             bucket = { CItems.grenadine_bucket },
             mapColor = MapColor.COLOR_RED,
+            tickRate = 5
         )
     )
 
@@ -34,6 +35,7 @@ object CFluids {
             fogColor = 0x914000,
             bucket = { CItems.caramel_bucket },
             mapColor = MapColor.COLOR_ORANGE,
+            tickRate = 10
         )
     )
     val liquid_chocolate: CFluidReferences = fluids.registerLiquidChocolate(
@@ -44,6 +46,7 @@ object CFluids {
             fogColor = 0x482B17,
             bucket = { CItems.liquid_chocolate_bucket },
             mapColor = MapColor.COLOR_BROWN,
+            tickRate = 10
         )
     )
     val liquid_candy: CFluidReferences = fluids.registerLiquidCandy(
@@ -54,6 +57,7 @@ object CFluids {
             fogColor = 0xE674CA,
             bucket = { CItems.liquid_candy_bucket },
             mapColor = MapColor.COLOR_PINK,
+            tickRate = 20
         )
     )
 

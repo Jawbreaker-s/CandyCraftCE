@@ -12,7 +12,7 @@ class LollipopItem(properties: Properties) : Item(properties) {
         target: net.minecraft.world.entity.LivingEntity,
         hand: net.minecraft.world.InteractionHand,
     ): net.minecraft.world.InteractionResult {
-        //TODO 需要实现CandyWolfEntity CandyCreeperEntity
+        //TODO 需要实现CandyWolfEntity CookieCreeper
 //        if (target is CandyWolfEntity && target.health < target.maxHealth) {
 //            if (!player.level().isClientSide) {
 //                target.heal(WOLF_HEAL_AMOUNT)
@@ -25,7 +25,7 @@ class LollipopItem(properties: Properties) : Item(properties) {
 //            return net.minecraft.world.InteractionResult.sidedSuccess(player.level().isClientSide)
 //        }
 //
-//        if (target is CandyCreeperEntity) {
+//        if (target is CookieCreeper) {
 //            if (!player.level().isClientSide) {
 //                target.stallWithLollipop(CREEPER_STALL_TICKS)
 //                consumeOne(stack, player)
@@ -42,7 +42,6 @@ class LollipopItem(properties: Properties) : Item(properties) {
 
     companion object {
         private const val WOLF_HEAL_AMOUNT = 8.0f
-        private const val CREEPER_STALL_TICKS = 20 * 8
 
 //        private fun consumeOne(stack: ItemStack, player: Player) {
 //            if (!player.abilities.instabuild) {

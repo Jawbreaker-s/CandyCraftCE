@@ -33,6 +33,7 @@ object CandyCraftCE {
             CBlocks
             CBlockEntities
             CItems
+            CEntityTypes
             CParticles
             CLevels
             ifClient {

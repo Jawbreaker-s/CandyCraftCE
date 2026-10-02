@@ -10,3 +10,11 @@ package cn.jawbreakers.candycraftce.utils
  */
 @Retention(AnnotationRetention.BINARY)
 annotation class ClientOnly()
+
+/*
+ * An annotation only for notify developers that this function or class is safe for server.
+ *
+ * 当被此注解标注时，这个函数或者类对服务器安全，即使使用了某些客户端代码
+ */
+@Retention(AnnotationRetention.BINARY)
+annotation class ServerSafe()

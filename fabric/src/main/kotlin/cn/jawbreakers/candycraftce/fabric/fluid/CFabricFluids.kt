@@ -109,7 +109,7 @@ object CFabricFluids : ICPlatformFluids {
     override fun registerLiquidChocolate(presets: CFluidPresets): CFluidReferences {
         return registerSimple(
             presets,
-            FluidSettings.lavaLike()
+            FluidSettings.waterLike()
                 .isInfinite(false)
                 .apply(presets)
         ).wrap(presets)

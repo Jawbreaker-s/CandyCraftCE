@@ -310,7 +310,9 @@ object CBiomes {
                     waterFogColor(13473279)
                 },
                 {
-                    //TODO
+                    step(lookup, VEGETAL_DECORATION) {
+                        +placed_candy_grass
+                    }
                 }
             )
             registerBiome(

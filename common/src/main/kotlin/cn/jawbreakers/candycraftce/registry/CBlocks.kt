@@ -546,12 +546,17 @@ object CBlocks {
         ChewingGumBlock(jelly(MapColor.COLOR_PINK))
     }
     val mint_block = register("mint_block", hay(MapColor.COLOR_LIGHT_GREEN))
+    val mint_family = registerFamily(
+        "mint", mint_block,
+        door = { properties(mint_block.get()) },
+        setType = BlockSetType.OAK,
+        mapColor = MapColor.COLOR_LIGHT_GREEN,
+    )
     val raspberry_block = register("raspberry_block", hay(MapColor.COLOR_RED))
     val honey_lamp =
         register("honey_lamp", iron(MapColor.COLOR_YELLOW).strength(1.0F).sound(SoundType.GLASS).lightLevel { 15 })
     val honeycomb_block = register("honeycomb_block", stone(MapColor.COLOR_YELLOW))
     val pez_block = register("pez_block", iron(MapColor.COLOR_RED).strength(5.0F, 10.0F))
-
     val jawbreaker_block = register("jawbreaker_block", properties(Blocks.BEDROCK))
     val jawbreaker_light = register("jawbreaker_light", properties(Blocks.BEDROCK).lightLevel { 15 })
 
@@ -700,7 +705,7 @@ object CBlocks {
         LollipopStemBlock(plant(MapColor.COLOR_PINK).randomTicks())
     }.noSimpleItem()
     val dragibus_crops = register("dragibus_crops") {
-        CandyCropBlock.createL4(plant(MapColor.COLOR_RED))
+        DragibusCropsBlock(plant(MapColor.COLOR_RED).randomTicks())
     }.cutout().noSimpleItem()
 
     val caramel_portal = register("caramel_portal") {
@@ -804,14 +809,14 @@ object CBlocks {
                     door().mapColor(mapColor).noOcclusion().pushReaction(PushReaction.DESTROY), setType
                 )
             }
-        }
+        }?.cutout()
         val trapdoor = trapdoor?.let {
             register("${name}_trapdoor") {
                 TrapDoorBlock(
                     trapdoor().noOcclusion().isValidSpawn(::never).mapColor(mapColor), setType
                 )
             }
-        }
+        }?.cutout()
         val sign = sign?.let {
             Blocks.OAK_SIGN
             register("${name}_sign") {
@@ -824,7 +829,7 @@ object CBlocks {
         //todo sign需要重定向BlockEntity see:CandyStandingSignBlock
         val wallSign = sign?.let {
             register("${name}_wall_sign") { WallSignBlock(sign().mapColor(mapColor).dropsLike(sign.get()), woodType) }
-        }?.cutout()?.noSimpleItem()
+        }?.noSimpleItem()
 
         return BlockFamily(
             original, stairs, slab, wall, fence, fenceGate, door, trapdoor, sign, wallSign

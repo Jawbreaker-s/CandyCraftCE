@@ -12,4 +12,5 @@ object CMixins {
         }
         map[log] = stripped
     }
+
 }

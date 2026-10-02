@@ -9,13 +9,14 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
+import net.minecraft.world.level.block.HalfTransparentBlock
 import net.minecraft.world.level.block.LiquidBlock
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.level.block.state.properties.IntegerProperty
 
-class FragileGrenadineIce(properties: Properties) : Block(properties) {
+class FragileGrenadineIce(properties: Properties) : HalfTransparentBlock(properties) {
     companion object {
         val LEVEL: IntegerProperty = LiquidBlock.LEVEL
         val AGE: IntegerProperty = BlockStateProperties.AGE_3

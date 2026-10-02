@@ -58,9 +58,25 @@ class CBlockTagsProvider(
                 tag(can_light_portal)
                     .add(Blocks.LAVA)
                     .add(liquid_candy.get())
+
+                tag(sweet_grass)
+                    .add(sweet_grass_red.get())
+                    .add(sweet_grass_pale.get())
+                    .add(sweet_grass_pink.get())
+                    .add(sweet_grass_yellow.get())
+                
                 tag(CBlockTags.candy_portal)
                     .add(CBlocks.caramel_portal.get())
                     .add(CBlocks.liquid_candy_portal.get())
+
+                tag(pudding_animal_spawnable_on)
+                    .add(custard_pudding_block.get())
+                    .add(pudding_block.get())
+                    .add(strawberry_filled_pudding.get())
+
+                tag(cotton_animal_spawnable_on)
+                    .add(cotton_candy_grass_block.get())
+
 
                 tag(worm_blocks)
                     .add(orange_gummy_family.block.get())

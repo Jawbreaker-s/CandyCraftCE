@@ -15,16 +15,20 @@ import com.mojang.datafixers.types.Type
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup
+import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricDefaultAttributeRegistry
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.core.particles.ParticleType
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.entity.*
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityType
+import net.minecraft.world.level.levelgen.Heightmap
 import java.util.function.Consumer
 import java.util.function.Supplier
 
@@ -94,6 +98,20 @@ class CandyCraftCEFabric : ModInitializer, ICPlatForm {
             BuiltInRegistries.BLOCK_ENTITY_TYPE.register(id, it)
         }
 
+    override fun <E : Entity> registerEntityType(key: String, type: Supplier<EntityType<E>>): Entry<EntityType<E>> =
+        register("EntityType", key, type::get) { id, it ->
+            BuiltInRegistries.ENTITY_TYPE.register(id, it)
+        }
+
+    override fun <LE : LivingEntity> registerEntityAttribute(
+        entity: Entry<EntityType<LE>>,
+        builder: Supplier<AttributeSupplier.Builder>,
+    ) {
+        whenInitialized {
+            FabricDefaultAttributeRegistry.register(entity.get(), builder.get())
+        }
+    }
+
     override fun <P : ParticleType<*>> registerParticleType(
         name: String,
         factory: Supplier<P>,
@@ -101,6 +119,17 @@ class CandyCraftCEFabric : ModInitializer, ICPlatForm {
         register("ParticleType", name, factory::get) { id, it ->
             BuiltInRegistries.PARTICLE_TYPE.register(id, it)
         }
+
+    override fun <T : Mob> setEntityPlacement(
+        entry: Entry<EntityType<T>>,
+        spawnType: SpawnPlacements.Type,
+        mapType: Heightmap.Types,
+        predicate: SpawnPlacements.SpawnPredicate<T>,
+    ) {
+        whenInitialized {
+            SpawnPlacements.register(entry.get(), spawnType, mapType, predicate)
+        }
+    }
 
     override fun registerCreativeTab(name: String, builder: Consumer<CreativeModeTab.Builder>): Entry<CreativeModeTab> =
         register("CreativeModeTab", name, {

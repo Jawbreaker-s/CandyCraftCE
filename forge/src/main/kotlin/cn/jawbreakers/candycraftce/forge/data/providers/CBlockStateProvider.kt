@@ -289,7 +289,8 @@ class CBlockStateProvider(output: PackOutput, val efHelper: ExistingFileHelper) 
                 chocolate_ice_cream_family,
                 banana_ice_cream_family,
                 chocolate_cobblestone_family,
-                chocolate_stone_family
+                chocolate_stone_family,
+                mint_family
             ).forEach(::family)
 
             gummyFamily(red_gummy_family)

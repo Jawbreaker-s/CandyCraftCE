@@ -6,6 +6,7 @@ import cn.jawbreakers.candycraftce.CandyCraftCE.MOD_NAME
 import cn.jawbreakers.candycraftce.level.noise.LegacyPerlinOctaveNoise
 import cn.jawbreakers.candycraftce.mixin.level.NoiseRouterDataAccessor
 import cn.jawbreakers.candycraftce.registry.CBlocks
+import cn.jawbreakers.candycraftce.registry.CBlocks.custard_pudding_block
 import cn.jawbreakers.candycraftce.registry.CBlocks.defaultBlockState
 import cn.jawbreakers.candycraftce.registry.CFluidTags
 import cn.jawbreakers.candycraftce.registry.worldgen.CBiomes.caramel_forest
@@ -26,7 +27,6 @@ import com.google.common.cache.Cache
 import com.google.common.cache.CacheBuilder
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.core.Holder
@@ -121,53 +121,28 @@ class CandyChunkGenerator(
     }
 
 
-    // 根据比例和深度，在“本群系材质”和“默认材质”之间选择
     private fun blendSurfaceState(
         selfState: BlockState,
-        blendState: BlockState,
+        defaultState: BlockState,
         ratio: Double,
         worldX: Int,
         worldZ: Int,
         depth: Int,
     ): BlockState {
-        if (selfState == blendState || ratio >= 0.999) return selfState
+        if (selfState == defaultState || ratio >= 0.999) return selfState
 
         // 次表层及更深层，越深越偏向默认材质
         var effective = ratio
         if (depth > 0) {
             effective *= 1.0 - (depth - 1) * 0.35
-            if (effective <= 0.0) return blendState
+            if (effective <= 0.0) return defaultState
         }
         if (effective >= 0.999) return selfState
 
         // 用方块坐标哈希产生 0..1 的阈值，避免每格独立随机导致颗粒感过重
         val threshold = (positiveHash(worldX, 0, worldZ, 0x5C0FFEE15EEDL) and 0xFFFFFF).toDouble() / 16777216.0
-        return if (effective > threshold) selfState else blendState
+        return if (effective > threshold) selfState else defaultState
     }
-
-    /**
-     * 从邻域材质统计表 [counts] 中选出出现次数最多的“主导材质”。
-     *
-     * 群系边界处如果直接用当前列自身群系的材质，会出现锯齿状的突变；改用 5×5 邻域内的
-     * 多数材质，可以让占主导的群系材质平滑地延伸到少数群系一侧，配合 [blendSurfaceState]
-     * 的比例混合得到更自然的过渡。统计表为空（未开启混合）时回退到当前列自身的材质 [fallback]。
-     */
-    private fun dominantMaterial(counts: Object2IntOpenHashMap<BlockState>, fallback: BlockState?): BlockState? {
-        var best = fallback
-        var bestCount = Int.MIN_VALUE
-        val iterator = counts.object2IntEntrySet().fastIterator()
-        while (iterator.hasNext()) {
-            val entry = iterator.next()
-            // 材质 top 可为空，统计时可能混入 null 键，这里跳过
-            val key = entry.key ?: continue
-            if (entry.intValue > bestCount) {
-                bestCount = entry.intValue
-                best = key
-            }
-        }
-        return best
-    }
-
 
     private fun terrainNoiseSet(
         randomState: RandomState,
@@ -295,13 +270,13 @@ class CandyChunkGenerator(
                     pudding_block
                 )
     )
-    private val defaultSurfaceMaterials =
+    val defaultSurfaceMaterials =
         SurfaceMaterials(
-            CBlocks.custard_pudding_block.defaultBlockState(),
+            custard_pudding_block.defaultBlockState(),
             pudding_block, pudding_block
         )
 
-    private fun surfaceMaterials(
+    fun surfaceMaterials(
         biomeId: ResourceKey<Biome>,
         worldX: Int,
         worldZ: Int,
@@ -346,7 +321,6 @@ class CandyChunkGenerator(
     }
 
 
-    /** 生物群系形状缓存（记录每个列的基础高度和起伏）。  */
     private val biomeShapeCache: Cache<Long, BiomeShape> = CacheBuilder.newBuilder()
         .maximumSize(65536)
         .build()
@@ -489,12 +463,6 @@ class CandyChunkGenerator(
         return heightMap
     }
 
-    // ========================== 地表生成 ==========================
-    /**
-     * 构建地表（阶段：buildSurface）。
-     * 覆盖在 fillFromNoise 生成的基础地形之上，根据生物群系放置地表方块。
-     * 还会生成地表池塘、山脉糖果泉和粉色结晶糖装饰。
-     */
     override fun buildSurface(
         region: WorldGenRegion, structureManager: StructureManager, randomState: RandomState,
         chunk: ChunkAccess,
@@ -516,40 +484,28 @@ class CandyChunkGenerator(
                 val worldZ = pos.getBlockZ(localZ)
                 // 直接从预计算网格取当前列生物群系
                 val biomeId = biomeGrid[localX + blendRadius][localZ + blendRadius]
+                val materials: SurfaceMaterials = surfaceMaterials(biomeId, worldX, worldZ, randomState)
                 val top = findTopSolid(chunk, worldX, worldZ)
                 val underwater = top < SEA_LEVEL - 1 || biomeId == sugar_oceans || biomeId == sugar_river
                 val depth: Int = 3 + abs(hash(worldX, 0, worldZ)) % 3
                 var replaced = 0
                 // 计算混合比例
-                val materials = surfaceMaterials(biomeId, worldX, worldZ, randomState)
-                // 始终扫描 r=2 材质：只要周围格的材质与当前列不一致，就直接判定该列需要混合
-                val scanRadius = 2
-                val tops = Object2IntOpenHashMap<BlockState>()
-                val unders = Object2IntOpenHashMap<BlockState>()
+
+
                 val ratio = run {
                     var self = 0.0
-                    for (dz in -scanRadius..scanRadius) {
-                        for (dx in -scanRadius..scanRadius) {
+                    for (dz in -2..2) {
+                        for (dx in -2..2) {
                             val weight = PARABOLIC_FIELD[dx + 2 + (dz + 2) * 5].toDouble()
                             val gx = localX + 2 + dx
                             val gz = localZ + 2 + dz
-                            val neighborMaterial =
-                                surfaceMaterials(biomeGrid[gx][gz], worldX + dx, worldZ + dz, randomState)
-                            // 邻域格的表层与次表层材质都与当前列一致时，才计入自身权重；
-                            // 只要有任意邻域格材质不同，ratio 就会 < 1，从而判定为需要混合。
-                            if (neighborMaterial == materials || neighborMaterial.top == materials.top && neighborMaterial.under == materials.under) {
+                            if (biomeGrid[gx][gz] == biomeId) {
                                 self += weight
                             }
-                            tops.computeInt(neighborMaterial.top) { _, n -> n?.plus(1) ?: 1 }
-                            unders.computeInt(neighborMaterial.under) { _, n -> n?.plus(1) ?: 1 }
                         }
                     }
                     self / PARABOLIC_FIELD_TOTAL
                 }
-                // 取邻域内出现次数最多的材质作为主导材质，使群系边界过渡更平滑；
-                // 未开启混合时统计表为空，会回退到当前列自身的材质。
-                val blendTop = dominantMaterial(tops, materials.top) ?: materials.top
-                val blendUnder = dominantMaterial(unders, materials.under) ?: materials.under
 
                 var y = top
                 while (y > MIN_Y && replaced <= depth) {
@@ -564,21 +520,13 @@ class CandyChunkGenerator(
                     val replacement = when {
                         underwater -> underwaterMaterial(replaced)
                         replaced > 0 -> blendSurfaceState(
-                            materials.under,
-                            blendUnder,
-                            ratio,
-                            worldX,
-                            worldZ,
-                            replaced
+                            materials.under, pudding_block,
+                            ratio, worldX, worldZ, replaced
                         )
 
                         else -> blendSurfaceState(
-                            materials.top,
-                            blendTop,
-                            ratio,
-                            worldX,
-                            worldZ,
-                            0
+                            materials.top, custard_pudding_block.defaultBlockState(),
+                            ratio, worldX, worldZ, 0
                         )
                     }
 
@@ -592,10 +540,6 @@ class CandyChunkGenerator(
         decoratePinkCrystallizedSugar(region, chunk, randomState)
     }
 
-    /**
-     * 在粉色糖浆（液态糖果）周围生成稀疏的粉色结晶糖边框。
-     * 这个装饰是稀疏扫描，每列只有 1/8 的概率会被检查，以避免影响区块加载性能。
-     */
     private fun decoratePinkCrystallizedSugar(
         region: WorldGenRegion,
         chunk: ChunkAccess,
@@ -1142,13 +1086,13 @@ class CandyChunkGenerator(
 }
 
 
-private data class BiomeShape(val baseHeight: Float, val variation: Float)
+data class BiomeShape(val baseHeight: Float, val variation: Float)
 
-private data class HeightConfig(val depth: Double, val scale: Double)
+data class HeightConfig(val depth: Double, val scale: Double)
 
-private data class SurfaceMaterials(val top: BlockState, val under: BlockState, val underwater: BlockState? = under)
+data class SurfaceMaterials(val top: BlockState, val under: BlockState, val underwater: BlockState? = under)
 
-private class TerrainNoiseSet(random: RandomSource) {
+class TerrainNoiseSet(random: RandomSource) {
     constructor(seed: Long) : this(RandomSource.create(seed))
 
     val minLimit = LegacyPerlinOctaveNoise(random, 16, true)

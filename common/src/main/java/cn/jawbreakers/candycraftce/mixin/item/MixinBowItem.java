@@ -3,9 +3,7 @@ package cn.jawbreakers.candycraftce.mixin.item;
 import cn.jawbreakers.candycraftce.mixin_stub.IBowItemAddition;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.BowItem;
-import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
@@ -20,11 +18,5 @@ public abstract class MixinBowItem implements IBowItemAddition {
 	)
 	private AbstractArrow modifyCreatedArrow(AbstractArrow abstractarrow) {
 		return candycraftce$customArrow(abstractarrow);
-	}
-
-	@Override
-	@Unique
-	public @NotNull AbstractArrow candycraftce$customArrow(AbstractArrow arrow) {
-		return arrow;
 	}
 }

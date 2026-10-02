@@ -45,19 +45,21 @@ object DungeonEffects : DimensionSpecialEffects(0.0f, true, SkyType.NONE, false,
         isFoggy: Boolean,
         setupFog: Runnable,
     ): Boolean {
-        setupFog.run()
-        RenderSystem.depthMask(false)
-        RenderSystem.disableBlend()
-        RenderSystem.disableCull()
-        RenderSystem.setShader { GameRenderer.getPositionShader() }
-        RenderSystem.setShaderColor(0.0f, 0.0f, 0.0f, 1.0f)
-        poseStack.use {
-            drawSkyBox(poseStack.last().pose(), 128.0f)
+        level.profiler.use("candycraftce_renderSky") {
+            setupFog.run()
+            RenderSystem.depthMask(false)
+            RenderSystem.disableBlend()
+            RenderSystem.disableCull()
+            RenderSystem.setShader { GameRenderer.getPositionShader() }
+            RenderSystem.setShaderColor(0.0f, 0.0f, 0.0f, 1.0f)
+            poseStack.use {
+                drawSkyBox(poseStack.last().pose(), 128.0f)
+            }
+            RenderSystem.enableCull()
+            RenderSystem.depthMask(true)
+            RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f)
+            return true
         }
-        RenderSystem.enableCull()
-        RenderSystem.depthMask(true)
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f)
-        return true
     }
 
 }

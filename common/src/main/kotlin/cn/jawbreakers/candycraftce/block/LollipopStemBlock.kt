@@ -22,7 +22,9 @@ import net.minecraft.world.phys.shapes.VoxelShape
  *
  *
  */
-class LollipopStemBlock(properties: Properties) : CandyCropBlock(properties, shapes, ::stage) {
+class LollipopStemBlock(properties: Properties) : CandyCropBlock(
+    properties, shapes, { CItems.lollipop_seeds.get() }, false, ::stage
+) {
     companion object {
         val shapes = arrayOf<VoxelShape>(
             box(0.0, 0.0, 0.0, 16.0, 6.0, 16.0),

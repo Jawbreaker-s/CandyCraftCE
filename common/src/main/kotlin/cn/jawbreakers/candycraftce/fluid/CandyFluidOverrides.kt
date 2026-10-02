@@ -121,15 +121,20 @@ object CandyFluidOverrides : IFluidBehaviourOverrides {
 
 
     private fun isHotLiquid(state: FluidState): Boolean {
-        return !state.isEmpty && (isVanillaLava(state)
-                || state.`is`(CFluidTags.liquid_candy)
-                || state.`is`(CFluidTags.liquid_chocolate))
+        return !state.isEmpty && (
+                isVanillaLava(state)
+                        || state.`is`(CFluidTags.liquid_candy)
+                )
     }
 
     private fun isColdLiquid(state: FluidState): Boolean {
-        return !state.isEmpty && (state.`is`(FluidTags.WATER)
-                || state.`is`(CFluidTags.caramel)
-                || state.`is`(CFluidTags.grenadine))
+        return !state.isEmpty && (
+                state.`is`(FluidTags.WATER)
+                        || state.`is`(CFluidTags.caramel)
+                        || state.`is`(CFluidTags.grenadine)
+                        || state.`is`(CFluidTags.liquid_chocolate)
+                )
+
     }
 
     private fun isVanillaLava(state: FluidState): Boolean {

@@ -3,8 +3,14 @@ package cn.jawbreakers.candycraftce.block
 import cn.jawbreakers.candycraftce.registry.CBlocks
 import net.minecraft.core.BlockPos
 import net.minecraft.server.level.ServerLevel
+import net.minecraft.sounds.SoundEvents
+import net.minecraft.sounds.SoundSource
 import net.minecraft.util.Mth
 import net.minecraft.util.RandomSource
+import net.minecraft.world.InteractionHand
+import net.minecraft.world.InteractionResult
+import net.minecraft.world.entity.player.Player
+import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
@@ -14,9 +20,12 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.level.block.state.properties.IntegerProperty
+import net.minecraft.world.level.gameevent.GameEvent
+import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.VoxelShape
 import java.util.function.IntUnaryOperator
+import java.util.function.Supplier
 import kotlin.math.min
 
 /**
@@ -29,6 +38,8 @@ import kotlin.math.min
 open class CandyCropBlock(
     properties: Properties,
     protected val shapes: Array<VoxelShape>,
+    protected val seed: Supplier<out Item>? = null,
+    protected val enableFastHarvest: Boolean = true,
     protected val stages: IntUnaryOperator,
 ) : CandyPlantBlock(properties), ISugarTarget {
     init {
@@ -38,30 +49,13 @@ open class CandyCropBlock(
     companion object {
         const val MAX_AGE: Int = 7
         val AGE: IntegerProperty = BlockStateProperties.AGE_7
-        private val SHAPE_L4 = arrayOf(
-            box(0.0, 0.0, 0.0, 16.0, 2.0, 16.0),  //0
-            box(0.0, 0.0, 0.0, 16.0, 4.0, 16.0),  //3
-            box(0.0, 0.0, 0.0, 16.0, 8.0, 16.0),  //5
-            box(0.0, 0.0, 0.0, 16.0, 8.0, 16.0),  //7
-        )
-
-
-        fun createL4(properties: Properties): CandyCropBlock {
-            return CandyCropBlock(properties, SHAPE_L4) {
-                when (it) {
-                    0, 1, 2 -> 0
-                    3, 4 -> 1
-                    5, 6 -> 2
-                    else -> 3
-                }
-            }
-        }
     }
 
     val maxStage: Int = shapes.size - 1
     fun getAge(b: BlockState): Int = b.getValue(AGE)
     fun getStage(b: BlockState): Int = stages.applyAsInt(getAge(b))
 
+    fun isMaxAge(b: BlockState): Boolean = getAge(b) == MAX_AGE
 
     @Deprecated("Deprecated in Java")
     override fun getShape(
@@ -152,6 +146,40 @@ open class CandyCropBlock(
         return getAge(state) < MAX_AGE
     }
 
+    @Deprecated("Deprecated in Java")
+    @Suppress("DEPRECATION")
+    override fun use(
+        state: BlockState,
+        level: Level,
+        pos: BlockPos,
+        player: Player,
+        hand: InteractionHand,
+        hit: BlockHitResult,
+    ): InteractionResult {
+
+        if (!enableFastHarvest || !isMaxAge(state)) {
+            return super.use(state, level, pos, player, hand, hit)
+        }
+
+        if (level is ServerLevel) {
+            var keptSeed = false
+            val seed = seed?.get()
+            for (generated in getDrops(
+                state, level, pos, null, player, player.getItemInHand(hand)
+            )) {
+                val drop = generated.copy()
+                if (seed != null && !keptSeed && drop.`is`(seed)) {
+                    drop.shrink(1)
+                    keptSeed = true
+                }
+                popResource(level, pos, drop)
+            }
+            level.setBlockAndUpdate(pos, state.setValue(AGE, 0))
+            level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos)
+            level.playSound(null, pos, SoundEvents.CROP_BREAK, SoundSource.BLOCKS, 0.8f, 1.0f)
+        }
+        return InteractionResult.sidedSuccess(level.isClientSide)
+    }
 
     override fun performSugar(level: ServerLevel, random: RandomSource, pos: BlockPos, state: BlockState) {
         val age = min(getAge(state) + Mth.nextInt(level.random, 2, 5), MAX_AGE)

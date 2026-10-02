@@ -2,6 +2,8 @@ package cn.jawbreakers.candycraftce.registry
 
 import cn.jawbreakers.candycraftce.fluid.CFluidReferences
 import cn.jawbreakers.candycraftce.item.*
+import cn.jawbreakers.candycraftce.misc.CArmorMaterials
+import cn.jawbreakers.candycraftce.misc.CItemTiers
 import cn.jawbreakers.candycraftce.registry.CTabs.addItem
 import cn.jawbreakers.candycraftce.registry.CTabs.blocks
 import cn.jawbreakers.candycraftce.registry.CTabs.misc
@@ -186,7 +188,8 @@ object CItems {
 
     val lollipop_stem = register("lollipop_stem") { BlockItem(CBlocks.lollipop_stem.get(), Properties()) }
     val lollipop_seeds = register("lollipop_seeds") { ItemNameBlockItem(CBlocks.lollipop_stem.get(), Properties()) }
-    val dragibus = register("dragibus") { ItemNameBlockItem(CBlocks.dragibus_crops.get(), Properties().food(1, 0.3f)) }
+    val dragibus: Entry<ItemNameBlockItem> =
+        register("dragibus") { ItemNameBlockItem(CBlocks.dragibus_crops.get(), Properties().food(1, 0.3f)) }
 
     //=====================
     //=====================
@@ -209,7 +212,7 @@ object CItems {
         }
         CBlocks.withItem().forEach {
             when (it) {
-                in signs -> registerBlock(it) { _ -> SignItem(Properties(), it.get(), signs[it]!!.get()) }
+                in signs -> registerBlock(it) { _ -> SignItem(Properties().stacksTo(16), it.get(), signs[it]!!.get()) }
                 in skips -> {}
                 else -> registerBlock(it)
             }

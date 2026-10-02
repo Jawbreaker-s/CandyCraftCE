@@ -30,7 +30,7 @@ class CItemTagsProvider(
             }
         }
         CBlockTags.apply {
-            copy(marshmallow_planks)
+            withItems.forEach(::copy)
         }
     }
 

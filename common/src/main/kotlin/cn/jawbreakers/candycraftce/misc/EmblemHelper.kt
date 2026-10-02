@@ -11,4 +11,8 @@ object EmblemHelper {
     fun isChewingGumImmune(entity: Player): Boolean {
         return entity.isCreative || entity.isSpectator
     }
+
+    fun shouldCandyMobAvoid(entity: Player): Boolean {
+        return true
+    }
 }

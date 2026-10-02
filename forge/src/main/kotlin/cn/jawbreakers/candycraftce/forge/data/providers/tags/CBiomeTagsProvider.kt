@@ -41,7 +41,7 @@ class CBiomeTagsProvider(
 
                 tag(has_floating_island)
                     .add(*allCandyBiomes.filter {
-                        it !in water && it !in forest
+                        it !in water && it !in forest && it != gummy_swamp && it != cotton_candy_plains
                     }.toTypedArray())
             }
         }

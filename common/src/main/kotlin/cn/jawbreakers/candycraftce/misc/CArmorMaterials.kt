@@ -1,5 +1,6 @@
-package cn.jawbreakers.candycraftce.registry
+package cn.jawbreakers.candycraftce.misc
 
+import cn.jawbreakers.candycraftce.registry.CItems
 import cn.jawbreakers.candycraftce.utils.CUtils.modLoc
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.sounds.SoundEvents

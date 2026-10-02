@@ -5,5 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 public interface IBowItemAddition {
 
-	@NotNull AbstractArrow candycraftce$customArrow(AbstractArrow arrow);
+	default @NotNull AbstractArrow candycraftce$customArrow(AbstractArrow arrow) {
+		return arrow;
+	}
 }

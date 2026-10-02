@@ -10,13 +10,18 @@ import com.mojang.datafixers.types.Type
 import com.mojang.serialization.Codec
 import net.minecraft.client.color.block.BlockColor
 import net.minecraft.client.color.item.ItemColor
+import net.minecraft.client.model.geom.ModelLayerLocation
+import net.minecraft.client.model.geom.builders.LayerDefinition
 import net.minecraft.client.particle.ParticleEngine
 import net.minecraft.client.renderer.DimensionSpecialEffects
 import net.minecraft.client.renderer.RenderType
+import net.minecraft.client.renderer.entity.EntityRendererProvider
 import net.minecraft.core.RegistrySetBuilder
 import net.minecraft.core.particles.ParticleOptions
 import net.minecraft.core.particles.ParticleType
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.entity.*
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier
 import net.minecraft.world.item.BucketItem
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.Item
@@ -24,6 +29,7 @@ import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.chunk.ChunkGenerator
+import net.minecraft.world.level.levelgen.Heightmap
 import net.minecraft.world.level.levelgen.feature.Feature
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacer
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacerType
@@ -37,15 +43,15 @@ object CPlatformUtils : ICPlatForm by CandyCraftCE.platform {
 
     inline fun <R> ifDev(action: () -> R): R? = if (isDev) action() else null
 
-    fun registerBlockColor(vararg blocks: Entry<out Block>, color: Int) {
+    fun ICPlatFormClients.registerBlockColor(vararg blocks: Entry<out Block>, color: Int) {
         clients?.registerBlockColor(*blocks) { _, _, _, _ -> color }
     }
 
-    fun registerItemColor(vararg items: Entry<out Item>, color: Int) {
+    fun ICPlatFormClients.registerItemColor(vararg items: Entry<out Item>, color: Int) {
         clients?.registerItemColor(*items) { _, _ -> color }
     }
 
-    fun registerBlockAndItemColor(vararg entries: Entry<out Block>, color: Int) {
+    fun ICPlatFormClients.registerBlockAndItemColor(vararg entries: Entry<out Block>, color: Int) {
         ifClient {
             registerBlockColor(*entries, color = color)
             registerItemColor(*entries.map { it.asItemEntry() }.toTypedArray(), color = color)
@@ -72,9 +78,21 @@ interface ICPlatForm {
         dsl: Type<*>?,
     ): Entry<BlockEntityType<E>>
 
+    fun <E : Entity> registerEntityType(key: String, type: Supplier<EntityType<E>>): Entry<EntityType<E>>
+    fun <LE : LivingEntity> registerEntityAttribute(
+        entity: Entry<EntityType<LE>>,
+        builder: Supplier<AttributeSupplier.Builder>,
+    )
+
     fun <P : ParticleType<*>> registerParticleType(name: String, factory: Supplier<P>): Entry<P>
 
     fun registerCreativeTab(name: String, builder: Consumer<CreativeModeTab.Builder>): Entry<CreativeModeTab>
+    fun <T : Mob> setEntityPlacement(
+        entry: Entry<EntityType<T>>,
+        spawnType: SpawnPlacements.Type,
+        mapType: Heightmap.Types,
+        predicate: SpawnPlacements.SpawnPredicate<T>,
+    )
 }
 
 interface ICPlatformFluids {
@@ -113,4 +131,7 @@ interface ICPlatFormClients {
         type: Entry<out ParticleType<T>>,
         factory: ParticleEngine.SpriteParticleRegistration<T>,
     )
+
+    fun registerRenderLayers(layer: ModelLayerLocation, provider: Supplier<LayerDefinition>)
+    fun <E : Entity, SE : E> registerEntityRenderer(entry: Entry<EntityType<SE>>, renderer: EntityRendererProvider<E>)
 }

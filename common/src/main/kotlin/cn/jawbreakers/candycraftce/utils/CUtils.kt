@@ -3,7 +3,6 @@ package cn.jawbreakers.candycraftce.utils
 import cn.jawbreakers.candycraftce.CandyCraftCE.MOD_ID
 import cn.jawbreakers.candycraftce.utils.MCTimeUnit.Companion.tick
 import com.mojang.blaze3d.vertex.PoseStack
-import net.minecraft.client.resources.model.ModelResourceLocation
 import net.minecraft.core.Registry
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.nbt.CompoundTag
@@ -28,16 +27,20 @@ object CUtils {
 
     fun String.modLoc(modId: String = MOD_ID) = ResourceLocation(modId, this)
 
+    //for java usage
+    @JvmStatic
+    fun prefix(path: String) = path.modLoc()
+
     /**
      * @return namespace:textures/gui/(path).png
      */
-    fun ResourceLocation.guiTex(): ResourceLocation = withPath { "textures/gui/$it.png" }
+    fun ResourceLocation.guiTex(suffix: String = ""): ResourceLocation = withPath { "textures/gui/$it$suffix.png" }
 
     /**
      * @return namespace:textures/entity/(path).png
      */
-    fun ResourceLocation.entityTex(): ResourceLocation = withPath { "textures/entity/$it.png" }
-    fun ResourceLocation.model(location: String) = ModelResourceLocation(namespace, location, path)
+    fun ResourceLocation.entityTex(suffix: String = ""): ResourceLocation =
+        withPath { "textures/entity/$it$suffix.png" }
 
     fun String.mcLoc() = ResourceLocation(this)
     fun <V> ResourceLocation.get(register: Registry<V>): V? = register.get(this)

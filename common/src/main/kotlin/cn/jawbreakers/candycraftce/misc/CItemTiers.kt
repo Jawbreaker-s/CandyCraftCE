@@ -1,5 +1,8 @@
-package cn.jawbreakers.candycraftce.registry
+package cn.jawbreakers.candycraftce.misc
 
+import cn.jawbreakers.candycraftce.registry.CBlockTags
+import cn.jawbreakers.candycraftce.registry.CItemTags
+import cn.jawbreakers.candycraftce.registry.CItems
 import net.minecraft.world.item.Tier
 import net.minecraft.world.item.crafting.Ingredient
 

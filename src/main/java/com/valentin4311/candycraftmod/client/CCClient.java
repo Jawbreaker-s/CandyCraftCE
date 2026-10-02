@@ -102,10 +102,10 @@ import org.slf4j.Logger;
 public final class CCClient {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final ResourceLocation SUGAR_FACTORY_GUI = new ResourceLocation(CandyCraft.MODID, "textures/gui/gui_sugar.png");
-    private static final ResourceLocation PUDDING_LOADING_TOP = new ResourceLocation(CandyCraft.MODID, "textures/block/pudding_side.png");
-    private static final ResourceLocation FLOUR_LOADING_BACKGROUND = new ResourceLocation(CandyCraft.MODID, "textures/block/flour.png");
-    private static final ResourceLocation JAWBREAKER_LOADING_BACKGROUND = new ResourceLocation(CandyCraft.MODID, "textures/block/jaw_breaker_block.png");
-    private static final ResourceLocation JAWBREAKER_RUNE_BACKGROUND = new ResourceLocation(CandyCraft.MODID, "textures/block/jaw_breaker_light.png");
+//    private static final ResourceLocation PUDDING_LOADING_TOP = new ResourceLocation(CandyCraft.MODID, "textures/block/pudding_side.png");
+//    private static final ResourceLocation FLOUR_LOADING_BACKGROUND = new ResourceLocation(CandyCraft.MODID, "textures/block/flour.png");
+//    private static final ResourceLocation JAWBREAKER_LOADING_BACKGROUND = new ResourceLocation(CandyCraft.MODID, "textures/block/jaw_breaker_block.png");
+//    private static final ResourceLocation JAWBREAKER_RUNE_BACKGROUND = new ResourceLocation(CandyCraft.MODID, "textures/block/jaw_breaker_light.png");
     private static final ResourceLocation VANILLA_PORTAL_OVERLAY = new ResourceLocation("textures/misc/nausea.png");
     private static final ResourceLocation CANDY_WORLD_EFFECTS = new ResourceLocation(CandyCraft.MODID, "candy_world_effects");
     private static final ResourceLocation DUNGEON_EFFECTS = new ResourceLocation(CandyCraft.MODID, "candy_dungeon_effects");
@@ -675,8 +675,8 @@ public final class CCClient {
         event.registerEntityRenderer(CCEntityTypes.THROWN_FORK.get(), ThrownForkRenderer::new);
         event.registerEntityRenderer(CCEntityTypes.THROWN_FORK_BLOCK.get(), ThrownForkBlockRenderer::new);
         event.registerEntityRenderer(CCEntityTypes.GUMMY_BALL.get(), GummyBallRenderer::new);
-        event.registerEntityRenderer(CCEntityTypes.CANDY_PIG.get(), CandyPigRenderer::new);
-        event.registerEntityRenderer(CCEntityTypes.WAFFLE_SHEEP.get(), WaffleSheepRenderer::new);
+//        event.registerEntityRenderer(CCEntityTypes.CANDY_PIG.get(), CandyPigRenderer::new);
+//        event.registerEntityRenderer(CCEntityTypes.WAFFLE_SHEEP.get(), WaffleSheepRenderer::new);
         event.registerEntityRenderer(CCEntityTypes.CANDY_CREEPER.get(), CandyCreeperRenderer::new);
         event.registerEntityRenderer(CCEntityTypes.COTTON_CANDY_SPIDER.get(), CottonCandySpiderRenderer::new);
         event.registerEntityRenderer(CCEntityTypes.SUGUARD.get(), SuguardRenderer::new);
@@ -754,8 +754,8 @@ public final class CCClient {
         event.registerLayerDefinition(GummyBearModel.LAYER, GummyBearModel::createBodyLayer);
         event.registerLayerDefinition(GingerbreadManModel.LAYER, GingerbreadManModel::createBodyLayer);
         event.registerLayerDefinition(SuguardModel.LAYER, SuguardModel::createBodyLayer);
-        event.registerLayerDefinition(WaffleSheepModel.LAYER, WaffleSheepModel::createBodyLayer);
-        event.registerLayerDefinition(WaffleSheepModel.FUR_LAYER, WaffleSheepModel::createFurLayer);
+//        event.registerLayerDefinition(WaffleSheepModel.LAYER, WaffleSheepModel::createBodyLayer);
+//        event.registerLayerDefinition(WaffleSheepModel.FUR_LAYER, WaffleSheepModel::createFurLayer);
         event.registerLayerDefinition(BeeModel.LAYER, BeeModel::createBodyLayer);
         event.registerLayerDefinition(BeetleModel.LAYER, BeetleModel::createBodyLayer);
         event.registerLayerDefinition(NessieModel.LAYER, NessieModel::createBodyLayer);

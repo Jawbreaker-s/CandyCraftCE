@@ -2,6 +2,7 @@ package cn.jawbreakers.candycraftce.forge.levels
 
 import cn.jawbreakers.candycraftce.CandyCraftCE.MOD_ID
 import cn.jawbreakers.candycraftce.forge.CandyCraftCEForge.Companion.instance
+import cn.jawbreakers.candycraftce.utils.CLogUtils
 import cn.jawbreakers.candycraftce.utils.ICPlatformLevels
 import cn.jawbreakers.candycraftce.utils.registry.Entry
 import com.mojang.serialization.Codec
@@ -29,12 +30,14 @@ object CForgeLevels : ICPlatformLevels {
     val structure_piece_type: DeferredRegister<StructurePieceType> = create(Registries.STRUCTURE_PIECE, MOD_ID)
 
     init {
+        CLogUtils.sign()
         MOD_BUS.addListener(::onRegisterDimensionSpecialEffects)
         listOf(
             generator,
             structure,
             feature,
-            foliage_placer
+            foliage_placer,
+            structure_piece_type
         ).forEach { it.register(MOD_BUS) }
     }
 

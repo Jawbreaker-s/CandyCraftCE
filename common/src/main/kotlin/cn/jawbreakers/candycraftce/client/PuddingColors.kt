@@ -29,6 +29,8 @@ import cn.jawbreakers.candycraftce.utils.LinearGradient.Companion.blue
 import cn.jawbreakers.candycraftce.utils.LinearGradient.Companion.green
 import cn.jawbreakers.candycraftce.utils.LinearGradient.Companion.red
 import cn.jawbreakers.candycraftce.utils.LinearGradient.Companion.rgb
+import com.google.common.cache.Cache
+import com.google.common.cache.CacheBuilder
 import net.minecraft.client.Minecraft
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Holder
@@ -60,10 +62,13 @@ object PuddingColor {
     /**
      * @return #dd99aa 粉色
      */
-    const val DEFAULT_PUDDING_COLOR = 0xdda7aa//0xdd99aa
+    const val DEFAULT_PUDDING_COLOR = 0xdd99aa//0xdd99aa
     const val DEFAULT_ENCHANT_COLOR = 0x8f8ac8//0xb0ecff
     const val DEFAULT_COTTON_COLOR = 0xFFC4DF
     const val DEFAULT_CHOCOLATE_BROWNIE_COLOR = 0x754424
+
+    //    val radius: Int get() = Minecraft.getInstance().options.biomeBlendRadius().get()
+    var blendRadius = 10
 
     /**
      * @return #b0ecff 淡蓝色 #b0b0ff 淡紫色 #a376da 深紫色
@@ -75,28 +80,44 @@ object PuddingColor {
         return enchant_color.getColor(r.toFloat()).rgb
     }
 
-    fun getPuddingColor(biome: Holder<Biome>, pos: BlockPos): Int {
-        return when (biome.unwrapKey().getOrNull()) {
-            enchanted_forest -> getEnchantColor(Vec3.atCenterOf(pos))
-            pudding_plains, sugar_forest -> 0xEEAABB
-            pudding_hill -> 0xEEBBCC
-            white_chocolate_forest -> 0xFFDDEE
-            ice_cream_plains, ice_cream_sky_mountains -> 0xFFFFFF
-            sugar_oceans -> 0xB35EFF
-            caramel_forest -> 0xB05C28
-            cotton_candy_plains -> DEFAULT_COTTON_COLOR
-            gummy_swamp -> 0xFFFEB0
-            chocolate_forest -> DEFAULT_CHOCOLATE_BROWNIE_COLOR
-            sugar_river -> 0xFFBBCC
-            else -> DEFAULT_PUDDING_COLOR
+    private val cachedColors: Cache<Long, Int> =
+        CacheBuilder.newBuilder().maximumSize(64L * blendRadius * blendRadius * 9L).build()
+    private val cachedBlended: Cache<Long, Int> =
+        CacheBuilder.newBuilder().maximumSize(1L * blendRadius * blendRadius * 9L).build()
+
+    private var levelCache = 0
+
+    private fun getPuddingColor(biome: Holder<Biome>, pos: BlockPos): Int {
+        val key = pos.asLong()
+        return cachedColors.get(key) {
+            when (biome.unwrapKey().getOrNull()) {
+                enchanted_forest -> getEnchantColor(Vec3.atCenterOf(pos))
+                pudding_plains, sugar_forest -> 0xEEAABB
+                pudding_hill -> 0xEEBBCC
+                white_chocolate_forest -> 0xFFDDEE
+                ice_cream_plains, ice_cream_sky_mountains -> 0xFFFFFF
+                sugar_oceans -> 0xB35EFF
+                caramel_forest -> 0xB05C28
+                cotton_candy_plains -> DEFAULT_COTTON_COLOR
+                gummy_swamp -> 0xFFFEB0
+                chocolate_forest -> DEFAULT_CHOCOLATE_BROWNIE_COLOR
+                sugar_river -> 0xFFBBCC
+                else -> DEFAULT_PUDDING_COLOR
+            }
         }
     }
 
 
     fun getBlendedPuddingColor(reader: BlockAndTintGetter, pos: BlockPos, radius: Int): Int {
-//        val key: Long = pos.x.toLong() shl 32 or pos.z.toLong()
-//        return cachedColor.get(key) { computeColor(reader, pos, radius) }
-        return computeColor(reader, pos, radius)
+        val hashCode = Minecraft.getInstance().level.hashCode()
+        if (levelCache != hashCode) {
+            cachedColors.invalidateAll()
+            cachedBlended.invalidateAll()
+            levelCache = hashCode
+        }
+        val key = pos.asLong()
+        return cachedBlended.get(key) { computeColor(reader, pos, radius) }
+//        return computeColor(reader, pos, radius)
     }
 
     fun computeColor(reader: BlockAndTintGetter, pos: BlockPos, radius: Int): Int {
@@ -121,9 +142,6 @@ object PuddingColor {
         }
         return if (count == 0) DEFAULT_PUDDING_COLOR else rgb(r / count, g / count, b / count)
     }
-
-    //    val radius: Int get() = Minecraft.getInstance().options.biomeBlendRadius().get()
-    var blendRadius = 10
 
     @ClientOnly
     fun initColor() {

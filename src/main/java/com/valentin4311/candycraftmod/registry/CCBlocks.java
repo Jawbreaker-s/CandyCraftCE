@@ -166,8 +166,8 @@ public final class CCBlocks {
 	public static final RegistryObject<Block> SUGAR_FACTORY = register("sugar_factory", () -> new SugarFactoryBlock(false, metal(MapColor.METAL).strength(2.0F, 5.0F)));
 	public static final RegistryObject<Block> LICORICE_FURNACE = register("licorice_furnace", () -> new LicoriceFurnaceBlock(false, stone().strength(5.0F, 10.0F)));
 	public static final RegistryObject<Block> LICORICE_FURNACE_ON = registerNoItem("licorice_furnace_on", () -> new LicoriceFurnaceBlock(true, stone().strength(5.0F, 10.0F).lightLevel(state -> 14)));
-	public static final RegistryObject<CandyPortalBlock> CANDY_PORTAL = translucent(registerNoItem("candy_portal", () -> new CandyPortalBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).strength(-1.0F, 3600000.0F).lightLevel(state -> 12).sound(SoundType.GLASS).noCollission().noOcclusion())));
-	public static final RegistryObject<CandyPortalBlock> LIQUID_CANDY_PORTAL = translucent(registerNoItem("liquid_candy_portal", () -> new CandyPortalBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).strength(-1.0F, 3600000.0F).lightLevel(state -> 13).sound(SoundType.GLASS).noCollission().noOcclusion(), 1.0F, 0.45F, 0.78F)));
+	//	public static final RegistryObject<CandyPortalBlock> CANDY_PORTAL = translucent(registerNoItem("candy_portal", () -> new CandyPortalBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PURPLE).strength(-1.0F, 3600000.0F).lightLevel(state -> 12).sound(SoundType.GLASS).noCollission().noOcclusion())));
+//	public static final RegistryObject<CandyPortalBlock> LIQUID_CANDY_PORTAL = translucent(registerNoItem("liquid_candy_portal", () -> new CandyPortalBlock(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_PINK).strength(-1.0F, 3600000.0F).lightLevel(state -> 13).sound(SoundType.GLASS).noCollission().noOcclusion(), 1.0F, 0.45F, 0.78F)));
 	//	public static final RegistryObject<Block> SUGAR_BLOCK = register("sugar_block", () -> new SugarBlock(BlockBehaviour.Properties.copy(Blocks.SAND).mapColor(MapColor.SAND).strength(0.3F)));
 //	public static final RegistryObject<Block> SUGAR_BLOCK_STAIRS = register("sugar_block_stairs", () -> stairs(SUGAR_BLOCK.get().defaultBlockState(), sugarBlockProperties()));
 //	public static final RegistryObject<Block> SUGAR_BLOCK_SLAB = register("sugar_block_slab", () -> new SlabBlock(sugarBlockProperties()));
@@ -179,7 +179,7 @@ public final class CCBlocks {
 //	public static final RegistryObject<Block> CHOCOLATE_STONE = register("chocolate_stone", () -> new Block(stone().mapColor(MapColor.DIRT).strength(1.5F, 10.0F)));
 //	public static final RegistryObject<Block> CHOCOLATE_COBBLESTONE = register("chocolate_cobblestone", () -> new Block(stone().mapColor(MapColor.COLOR_BROWN).strength(2.0F, 10.0F)));
 //	public static final RegistryObject<Block> CHOCOLATE_COBBLESTONE_WALL = register("chocolate_cobblestone_wall", () -> new WallBlock(stone().mapColor(MapColor.COLOR_BROWN).strength(2.0F, 10.0F)));
-	public static final RegistryObject<Block> DRAGIBUS_CROPS = cutout(registerNoItem("dragibus_crops", () -> new CandyCropBlock(() -> CCItems.DRAGIBUS.get(), cropPlant())));
+//	public static final RegistryObject<Block> DRAGIBUS_CROPS = cutout(registerNoItem("dragibus_crops", () -> new CandyCropBlock(() -> CCItems.DRAGIBUS.get(), cropPlant())));
 	//	public static final RegistryObject<Block> ROPE_LICORICE = cutout(register("rope_licorice", () -> new SeaweedBlock(true, plant())));
 //	public static final RegistryObject<Block> MINT = cutout(register("mint", () -> new SeaweedBlock(false, plant())));
 	public static final RegistryObject<Block> MARSHMALLOW_WORKBENCH = register("marshmallow_workbench", () -> new CandyWorkbenchBlock(CandyWorkbenchBlock.CandyWorkbenchTheme.MARSHMALLOW, wood(MapColor.COLOR_PINK).strength(2.5F)));
@@ -192,7 +192,7 @@ public final class CCBlocks {
 	//	public static final RegistryObject<Block> MARSHMALLOW_DOOR = cutout(register("marshmallow_door", () -> new DoorBlock(oakDoor(MapColor.COLOR_PINK), BlockSetType.OAK)));
 //	public static final RegistryObject<Block> MARSHMALLOW_DOOR_DARK = cutout(register("marshmallow_door_dark", () -> new DoorBlock(oakDoor(MapColor.COLOR_BROWN), BlockSetType.OAK)));
 //	public static final RegistryObject<Block> MARSHMALLOW_DOOR_LIGHT = cutout(register("marshmallow_door_light", () -> new DoorBlock(oakDoor(MapColor.TERRACOTTA_WHITE), BlockSetType.OAK)));
-	public static final RegistryObject<Block> MINT_DOOR = cutout(register("mint_door", () -> new DoorBlock(oakDoor(MapColor.COLOR_LIGHT_GREEN), BlockSetType.OAK)));
+//	public static final RegistryObject<Block> MINT_DOOR = cutout(register("mint_door", () -> new DoorBlock(oakDoor(MapColor.COLOR_LIGHT_GREEN), BlockSetType.OAK)));
 	//	public static final RegistryObject<Block> MILK_CHOCOLATE_DOOR = cutout(register("milk_chocolate_door", () -> new DoorBlock(oakDoor(MapColor.COLOR_BROWN), BlockSetType.OAK)));
 //	public static final RegistryObject<Block> WHITE_CHOCOLATE_DOOR = cutout(register("white_chocolate_door", () -> new DoorBlock(oakDoor(MapColor.SAND), BlockSetType.OAK)));
 //	public static final RegistryObject<Block> DARK_CHOCOLATE_DOOR = cutout(register("dark_chocolate_door", () -> new DoorBlock(oakDoor(MapColor.TERRACOTTA_BROWN), BlockSetType.OAK)));

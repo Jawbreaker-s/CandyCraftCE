@@ -1,11 +1,14 @@
 package cn.jawbreakers.candycraftce.forge.fluid
 
+import cn.jawbreakers.candycraftce.CandyCraftCE
 import cn.jawbreakers.candycraftce.fluid.CFluidPresets
 import cn.jawbreakers.candycraftce.fluid.CFluidReferences
 import cn.jawbreakers.candycraftce.forge.CandyCraftCEForge
 import cn.jawbreakers.candycraftce.forge.ForgeEntry.Companion.asEntry
 import cn.jawbreakers.candycraftce.forge.fluid.FluidTypeWithClient.Companion.lavaLike
 import cn.jawbreakers.candycraftce.forge.fluid.FluidTypeWithClient.Companion.waterLike
+import cn.jawbreakers.candycraftce.utils.CLogUtils
+import cn.jawbreakers.candycraftce.utils.CPlatformUtils.ifClient
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils.whenInitialized
 import cn.jawbreakers.candycraftce.utils.ICPlatformFluids
 import cn.jawbreakers.candycraftce.utils.ICPlatformFluids.Companion.FLOWING_SUFFIX
@@ -20,16 +23,26 @@ import net.minecraft.world.level.block.LiquidBlock
 import net.minecraft.world.level.block.SoundType
 import net.minecraft.world.level.block.state.BlockBehaviour
 import net.minecraft.world.level.material.FlowingFluid
+import net.minecraft.world.level.material.Fluid
 import net.minecraft.world.level.material.MapColor
 import net.minecraft.world.level.material.PushReaction
 import net.minecraftforge.fluids.FluidType
 import net.minecraftforge.fluids.ForgeFlowingFluid
+import net.minecraftforge.registries.DeferredRegister
+import net.minecraftforge.registries.DeferredRegister.create
+import net.minecraftforge.registries.ForgeRegistries
 import net.minecraftforge.registries.RegistryObject
+import thedarkcolour.kotlinforforge.forge.MOD_BUS
 
 object CForgeFluids : ICPlatformFluids {
-    private val fluid = CandyCraftCEForge.instance.fluid
-    private val fluidType = CandyCraftCEForge.instance.fluidType
+    val fluid: DeferredRegister<Fluid> = create(ForgeRegistries.FLUIDS, CandyCraftCE.MOD_ID)
+    val fluidType: DeferredRegister<FluidType> = create(ForgeRegistries.Keys.FLUID_TYPES, CandyCraftCE.MOD_ID)
     private val blocks = CandyCraftCEForge.instance.blocks
+
+    init {
+        CLogUtils.sign()
+        listOf(fluid, fluidType).forEach { it.register(MOD_BUS) }
+    }
 
     private fun registerFluid(
         type: RegistryObject<out FluidType>,
@@ -58,9 +71,11 @@ object CForgeFluids : ICPlatformFluids {
 
     private fun extraSettings(ref: CFluidReferences) {
         whenInitialized {
-            if (ref.presets.isTransparent) {
-                ItemBlockRenderTypes.setRenderLayer(ref.source.get(), RenderType.translucent())
-                ItemBlockRenderTypes.setRenderLayer(ref.flowing.get(), RenderType.translucent())
+            ifClient {
+                if (ref.presets.isTransparent) {
+                    ItemBlockRenderTypes.setRenderLayer(ref.source.get(), RenderType.translucent())
+                    ItemBlockRenderTypes.setRenderLayer(ref.flowing.get(), RenderType.translucent())
+                }
             }
         }
     }
@@ -102,7 +117,7 @@ object CForgeFluids : ICPlatformFluids {
 
     override fun registerLiquidChocolate(presets: CFluidPresets): CFluidReferences {
         val type = fluidType.register(presets.name) {
-            lavaLike(presets)
+            waterLike(presets)
         }
         return registerFluid(type, presets)
     }

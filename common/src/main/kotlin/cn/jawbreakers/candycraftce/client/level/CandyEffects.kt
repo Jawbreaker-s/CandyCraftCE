@@ -126,57 +126,61 @@ object CandyEffects : DimensionSpecialEffects(192.0f, true, SkyType.NORMAL, fals
         isFoggy: Boolean,
         setupFog: Runnable,
     ): Boolean {
-        val pos = camera.blockPosition
-        if (!level.hasChunkAt(pos)) {
-            return false
-        }
-
-        val tickOfDay = tickOfDay(level, partialTick)
-        val dayFactor = candySkyDayFactor(tickOfDay)
-        lastDayFactor = dayFactor
-        val nightFactor = 1.0f - dayFactor
-
-        setupFog.run()
-
-        val color = Vec3.fromRGB24(
-            PuddingColor.getBlendedPuddingColor(level, pos, PuddingColor.blendRadius)
-        )
-        val biomeSky = color// level.getSkyColor(camera.position, partialTick)
-        val dayWeight = Mth.clamp((dayFactor - 0.35f) * 2.0f, 0.0f, 1.0f)
-        val skyColorVec = skyTint.getColor(dayFactor).normal.lerp(biomeSky, dayWeight.toDouble())
-
-        RenderSystem.depthMask(false)
-        RenderSystem.enableBlend()
-        RenderSystem.defaultBlendFunc()
-        RenderSystem.disableCull()
-        RenderSystem.setShader { GameRenderer.getPositionShader() }
-        RenderSystem.setShaderColor(
-            skyColorVec.x.toFloat(),
-            skyColorVec.y.toFloat(),
-            skyColorVec.z.toFloat(),
-            1.0f
-        )
-
-        poseStack.use {
-            drawSkyBox(poseStack.last().pose(), SKY_BOX_RADIUS)
-        }
-
-        //渲染星星
-        if (nightFactor > 0.25f) {
-            val starAlpha = Mth.clamp((nightFactor - 0.25f) / 0.75f, 0.0f, 1.0f)
-            poseStack.use {
-                //星空随时间绕 Y 轴缓慢自转，与原版 celestial angle 的行为保持一致
-                poseStack.mulPose(Axis.YP.rotationDegrees(tickOfDay / DAY_LENGTH * 360.0f))
-                drawCandyStars(poseStack.last().pose(), starAlpha)
+        level.profiler.use("candycraftce_renderSky") {
+            val pos = camera.blockPosition
+            if (!level.hasChunkAt(pos)) {
+                return false
             }
+
+            val tickOfDay = tickOfDay(level, partialTick)
+            val dayFactor = candySkyDayFactor(tickOfDay)
+            lastDayFactor = dayFactor
+            val nightFactor = 1.0f - dayFactor
+
+            setupFog.run()
+            val skyColorVec = level.profiler.use("candycraftce_getBlendedColor") {
+                val color = Vec3.fromRGB24(
+                    PuddingColor.getBlendedPuddingColor(level, pos, PuddingColor.blendRadius / 2)
+                )
+                val biomeSky = color// level.getSkyColor(camera.position, partialTick)
+                val dayWeight = Mth.clamp((dayFactor - 0.35f) * 2.0f, 0.0f, 1.0f)
+                skyTint.getColor(dayFactor).normal.lerp(biomeSky, dayWeight.toDouble())
+            }
+            RenderSystem.depthMask(false)
+            RenderSystem.enableBlend()
+            RenderSystem.defaultBlendFunc()
+            RenderSystem.disableCull()
+            RenderSystem.setShader { GameRenderer.getPositionShader() }
+            RenderSystem.setShaderColor(
+                skyColorVec.x.toFloat(),
+                skyColorVec.y.toFloat(),
+                skyColorVec.z.toFloat(),
+                1.0f
+            )
+            level.profiler.use("candycraftce_drawSkyBox") {
+                poseStack.use {
+                    drawSkyBox(poseStack.last().pose(), SKY_BOX_RADIUS)
+                }
+            }
+            level.profiler.use("candycraftce_drawCandyStars") {
+                //渲染星星
+                if (nightFactor > 0.25f) {
+                    val starAlpha = Mth.clamp((nightFactor - 0.25f) / 0.75f, 0.0f, 1.0f)
+                    poseStack.use {
+                        //星空随时间绕 Y 轴缓慢自转，与原版 celestial angle 的行为保持一致
+                        poseStack.mulPose(Axis.YP.rotationDegrees(tickOfDay / DAY_LENGTH * 360.0f))
+                        drawCandyStars(poseStack.last().pose(), starAlpha)
+                    }
+                }
+            }
+
+            RenderSystem.enableCull()
+            RenderSystem.disableBlend()
+            RenderSystem.depthMask(true)
+            RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f)
+
+            return true
         }
-
-        RenderSystem.enableCull()
-        RenderSystem.disableBlend()
-        RenderSystem.depthMask(true)
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f)
-
-        return true
     }
 
     /**
