@@ -12,8 +12,9 @@ import cn.jawbreakers.candycraftce.registry.worldgen.CLevels
 import cn.jawbreakers.candycraftce.utils.AxisSet
 import cn.jawbreakers.candycraftce.utils.CUtils.instance
 import cn.jawbreakers.candycraftce.utils.CUtils.use
-import cn.jawbreakers.candycraftce.utils.MCTimeUnit.Companion.second
 import cn.jawbreakers.candycraftce.utils.UsedByMixin
+import cn.jawbreakers.candycraftce.utils.second
+import cn.jawbreakers.candycraftce.utils.toTicks
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.core.Direction.Axis
@@ -116,7 +117,7 @@ class CaramelPortalBlock(properties: Properties) : Block(properties) {
                         val newEntity = entity.changeDimension(dest)
                         if (newEntity is LivingEntity) {
                             newEntity.addEffect(
-                                MobEffects.DAMAGE_RESISTANCE.instance(10.second, 5)
+                                MobEffects.DAMAGE_RESISTANCE.instance(10.second.toTicks(), 5)
                             )
                         }
                     }

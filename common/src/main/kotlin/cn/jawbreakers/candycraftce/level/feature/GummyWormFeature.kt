@@ -3,6 +3,7 @@ package cn.jawbreakers.candycraftce.level.feature
 import cn.jawbreakers.candycraftce.registry.CBlockTags
 import cn.jawbreakers.candycraftce.registry.CBlocks
 import cn.jawbreakers.candycraftce.registry.CBlocks.defaultBlockState
+import cn.jawbreakers.candycraftce.utils.CUtils.choice
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.util.RandomSource
@@ -163,17 +164,11 @@ class GummyWormFeature : Feature<NoneFeatureConfiguration>(NoneFeatureConfigurat
     }
 
     private fun isWormBlock(state: BlockState): Boolean {
-        return state.`is`(CBlockTags.worm_blocks)
+        return state.`is`(CBlockTags.worm_blocks.block)
     }
 
     private fun randomWormState(random: RandomSource): BlockState {
-        return when (random.nextInt(5)) {
-            1 -> CBlocks.orange_gummy_family
-            2 -> CBlocks.yellow_gummy_family
-            3 -> CBlocks.white_gummy_family
-            4 -> CBlocks.green_gummy_family
-            else -> CBlocks.red_gummy_family
-        }.worm.defaultBlockState()
+        return random.choice(CBlocks.gummy_families).worm.defaultBlockState()
     }
 }
 

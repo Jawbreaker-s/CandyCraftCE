@@ -333,6 +333,8 @@ object CBlocks {
     val yellow_gummy_family = registerGummyFamily("yellow", MapColor.COLOR_YELLOW)
     val white_gummy_family = registerGummyFamily("white", MapColor.TERRACOTTA_WHITE)
     val green_gummy_family = registerGummyFamily("green", MapColor.COLOR_GREEN)
+    val gummy_families =
+        listOf(red_gummy_family, orange_gummy_family, yellow_gummy_family, white_gummy_family, green_gummy_family)
 
     //hard_candy
     val white_hard_candy_block = register("white_hard_candy_block") {

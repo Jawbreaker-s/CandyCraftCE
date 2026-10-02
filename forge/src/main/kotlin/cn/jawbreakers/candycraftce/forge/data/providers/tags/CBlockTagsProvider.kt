@@ -64,26 +64,32 @@ class CBlockTagsProvider(
                     .add(sweet_grass_pale.get())
                     .add(sweet_grass_pink.get())
                     .add(sweet_grass_yellow.get())
-                
+
                 tag(CBlockTags.candy_portal)
                     .add(CBlocks.caramel_portal.get())
                     .add(CBlocks.liquid_candy_portal.get())
 
-                tag(pudding_animal_spawnable_on)
+                tag(candy_animal_spawnable_on)
+                    .add(cotton_candy_grass_block.get())
                     .add(custard_pudding_block.get())
                     .add(pudding_block.get())
                     .add(strawberry_filled_pudding.get())
-
-                tag(cotton_animal_spawnable_on)
-                    .add(cotton_candy_grass_block.get())
+                
 
 
                 tag(worm_blocks)
-                    .add(orange_gummy_family.block.get())
-                    .add(yellow_gummy_family.block.get())
-                    .add(white_gummy_family.block.get())
-                    .add(green_gummy_family.block.get())
-                    .add(red_gummy_family.block.get())
+                    .apply {
+                        gummy_families.forEach {
+                            add(it.worm.get())
+                        }
+                    }
+
+                tag(gummy_blocks)
+                    .apply {
+                        gummy_families.forEach {
+                            add(it.block.get())
+                        }
+                    }
 
                 tag(CBlockTags.marshmallow_logs)
                     .add(marshmallow_log.get())

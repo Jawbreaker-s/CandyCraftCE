@@ -1,5 +1,6 @@
 package cn.jawbreakers.candycraftce.entity;
 
+import cn.jawbreakers.candycraftce.utils.CandyTargeting;
 import com.valentin4311.candycraftmod.registry.CCBlocks;
 import com.valentin4311.candycraftmod.registry.CCCriteriaTriggers;
 import com.valentin4311.candycraftmod.registry.CCEntityTypes;

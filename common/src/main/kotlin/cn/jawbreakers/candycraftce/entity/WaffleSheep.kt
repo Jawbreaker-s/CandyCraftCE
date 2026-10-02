@@ -5,7 +5,6 @@ import cn.jawbreakers.candycraftce.mixin.entity.SheepAccessor
 import cn.jawbreakers.candycraftce.registry.CBlockTags
 import cn.jawbreakers.candycraftce.registry.CBlocks
 import cn.jawbreakers.candycraftce.registry.CBlocks.defaultBlockState
-import cn.jawbreakers.candycraftce.registry.CEntityTypes
 import cn.jawbreakers.candycraftce.registry.CItems
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerLevel
@@ -28,7 +27,7 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.pathfinder.BlockPathTypes
 import kotlin.math.max
 
-open class WaffleSheepEntity(type: EntityType<out WaffleSheepEntity?>, level: Level) : Sheep(type, level) {
+open class WaffleSheep(type: EntityType<out WaffleSheep?>, level: Level) : Sheep(type, level) {
     companion object {
         val food: Ingredient by lazy { Ingredient.of(CItems.candied_cherry.get()) }
         fun createAttributes(): AttributeSupplier.Builder {
@@ -69,12 +68,10 @@ open class WaffleSheepEntity(type: EntityType<out WaffleSheepEntity?>, level: Le
         return super.hurt(source, amount)
     }
 
-    override fun getBreedOffspring(level: ServerLevel, partner: AgeableMob): WaffleSheepEntity? {
-        if (partner is WaffleSheepEntity) {
-            if (partner is CottonCandySheepEntity && random.nextBoolean()) {
-                return CEntityTypes.cotton_sheep.get().create(level)
-            }
-            return CEntityTypes.waffle_sheep.get().create(level)
+    override fun getBreedOffspring(level: ServerLevel, partner: AgeableMob): WaffleSheep? {
+        if (partner is WaffleSheep) {
+            val type = if (random.nextBoolean()) type else partner.type
+            return type.create(level) as WaffleSheep?
         }
         return null
     }
@@ -90,13 +87,13 @@ open class WaffleSheepEntity(type: EntityType<out WaffleSheepEntity?>, level: Le
 
     inner class CandyEatBlockGoal : EatBlockGoal(this) {
         override fun canUse(): Boolean {
-            val mob = this@WaffleSheepEntity
+            val mob = this@WaffleSheep
             return mob.random.nextInt(if (mob.isBaby) 50 else 1000) == 0
         }
 
         override fun tick() {
-            val accessor = (this@WaffleSheepEntity as EatBlockGoalAccessor)
-            val mob = this@WaffleSheepEntity
+            val accessor = (this@WaffleSheep as EatBlockGoalAccessor)
+            val mob = this@WaffleSheep
             val level = mob.level()
 
             accessor.eatAnimationTick = max(0, accessor.eatAnimationTick - 1)
