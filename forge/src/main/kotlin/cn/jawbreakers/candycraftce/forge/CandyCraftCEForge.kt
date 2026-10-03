@@ -16,6 +16,7 @@ import com.mojang.datafixers.types.Type
 import kotlinx.coroutines.Runnable
 import net.minecraft.core.particles.ParticleType
 import net.minecraft.core.registries.Registries
+import net.minecraft.world.effect.MobEffect
 import net.minecraft.world.entity.*
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier
 import net.minecraft.world.item.CreativeModeTab
@@ -61,11 +62,12 @@ class CandyCraftCEForge : ICPlatForm {
     val items: DeferredRegister<Item> = create(ForgeRegistries.ITEMS, CandyCraftCE.MOD_ID)
     val blocks: DeferredRegister<Block> = create(ForgeRegistries.BLOCKS, CandyCraftCE.MOD_ID)
     val entities: DeferredRegister<EntityType<*>> = create(ForgeRegistries.ENTITY_TYPES, CandyCraftCE.MOD_ID)
-
     val be: DeferredRegister<BlockEntityType<*>> = create(ForgeRegistries.BLOCK_ENTITY_TYPES, CandyCraftCE.MOD_ID)
     val tabs: DeferredRegister<CreativeModeTab> = create(Registries.CREATIVE_MODE_TAB, CandyCraftCE.MOD_ID)
     val particles: DeferredRegister<ParticleType<*>> = create(Registries.PARTICLE_TYPE, CandyCraftCE.MOD_ID)
-    val registries = listOf(items, blocks, entities, be, tabs, particles)
+    val mobEffects: DeferredRegister<MobEffect> = create(ForgeRegistries.MOB_EFFECTS, CandyCraftCE.MOD_ID)
+
+    val registries = listOf(items, blocks, entities, be, tabs, particles, mobEffects)
 
     //=================================
     private var lateUsage: MutableList<Runnable>? = mutableListOf()
@@ -92,6 +94,11 @@ class CandyCraftCEForge : ICPlatForm {
 
     override fun <I : Item> registerItem(name: String, factory: Supplier<I>): Entry<I> =
         register(items, name, factory)
+
+    override fun <M : MobEffect> registerMobEffect(
+        name: String,
+        factory: Supplier<M>,
+    ): Entry<M> = register(mobEffects, name, factory)
 
     override fun <E : Block> registerBlock(name: String, factory: Supplier<E>): Entry<E> =
         register(blocks, name, factory)

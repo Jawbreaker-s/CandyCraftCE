@@ -34,7 +34,8 @@ object CandyCraftCE {
             CBlockEntities
             CItems
             CEntityTypes
-            CParticles
+            CMobEffects
+            CParticleTypes
             CLevels
             ifClient {
                 PuddingColor.initColor()

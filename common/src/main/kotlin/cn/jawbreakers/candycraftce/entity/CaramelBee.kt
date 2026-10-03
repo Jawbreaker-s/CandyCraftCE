@@ -1,6 +1,9 @@
 package cn.jawbreakers.candycraftce.entity
 
+import cn.jawbreakers.candycraftce.registry.CMobEffects
+import cn.jawbreakers.candycraftce.utils.CUtils.instance
 import cn.jawbreakers.candycraftce.utils.CandyTargeting
+import cn.jawbreakers.candycraftce.utils.tick
 import net.minecraft.core.BlockPos
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.syncher.EntityDataAccessor
@@ -174,11 +177,12 @@ class CaramelBee(type: EntityType<out CaramelBee?>, level: Level) : Monster(type
             || random.nextInt(100) == 0
             || flightTarget!!.closerToCenterThan(position(), 2.0)
         ) {
-            flightTarget = blockPosition().offset(
-                random.nextInt(14) - random.nextInt(14),
-                random.nextInt(6) - 2,
-                random.nextInt(14) - random.nextInt(14)
-            )
+            val pos = blockPosition()
+            val dx = random.nextInt(14) - random.nextInt(14)
+            val dz = random.nextInt(14) - random.nextInt(14)
+//            val minY = level().getHeight(Heightmap.Types.MOTION_BLOCKING, pos.x + dx, pos.z + dz)
+            val dy = random.nextInt(6) - 2
+            flightTarget = pos.offset(dx, dy, dz)
         }
 
         var dx = flightTarget!!.x + 0.5 - x
@@ -251,16 +255,13 @@ class CaramelBee(type: EntityType<out CaramelBee?>, level: Level) : Monster(type
         }
         val damage = if (level().difficulty == Difficulty.HARD) 3.0f else 2.0f
         val success = target.hurt(damageSources().mobAttack(this), damage)
-        if (success && target is Player && random.nextBoolean()) {
-            //TODO
-//            target.addEffect(MobEffectInstance(CCMobEffects.HONEY_GLUE.get(), HONEY_GLUE_DURATION_TICKS), this)
+        if (success && target is LivingEntity && random.nextBoolean()) {
+            target.addEffect(CMobEffects.propolis.get().instance(HONEY_GLUE_DURATION_TICKS.tick), this)
         }
         return success
     }
 
-    override fun causeFallDamage(distance: Float, damageMultiplier: Float, source: DamageSource): Boolean {
-        return false
-    }
+    override fun causeFallDamage(distance: Float, damageMultiplier: Float, source: DamageSource): Boolean = false
 
     override fun checkFallDamage(y: Double, onGround: Boolean, state: BlockState, pos: BlockPos) {
     }

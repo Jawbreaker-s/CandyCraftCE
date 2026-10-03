@@ -25,6 +25,7 @@ object CBlockTags {
 
     val sweet_grass = withItem("sweet_grass")
 
+    //portal
     val candy_portal = bind("caramel_portal")
     val can_light_portal = bind("can_light_portal")
     val candy_portal_frame = bind("candy_portal_frame")
@@ -60,6 +61,8 @@ object CFluidTags {
 
 object CBiomeTags {
     val candy_biomes = bind("candy_biomes")
+    val candy_forest = bind("candy_forest")
+    val candy_plains = bind("candy_forest")
     val is_cold = bind("is_cold")
     val has_essence_flower = bind("has_essence_flower")
     val has_mint_flower = bind("has_mint_flower")

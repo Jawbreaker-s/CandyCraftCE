@@ -23,7 +23,7 @@
       "candycraftce:marshmallow_waterlily"
     ]
   ],
-  "has_precipitation": true,
+  "has_precipitation": false,
   "spawn_costs": {},
   "spawners": {
     "ambient": [],

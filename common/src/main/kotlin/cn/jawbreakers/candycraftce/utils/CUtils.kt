@@ -33,7 +33,7 @@ object CUtils {
     fun prefix(path: String) = path.modLoc()
 
     /**
-     * @return namespace:textures/gui/(path).png
+     * @return namespace:textures/gui/(path)].png
      */
     fun ResourceLocation.guiTex(suffix: String = ""): ResourceLocation = withPath { "textures/gui/$it$suffix.png" }
 

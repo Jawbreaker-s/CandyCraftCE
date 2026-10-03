@@ -16,6 +16,7 @@ import net.minecraft.client.Camera
 import net.minecraft.client.multiplayer.ClientLevel
 import net.minecraft.client.renderer.DimensionSpecialEffects
 import net.minecraft.client.renderer.GameRenderer
+import net.minecraft.client.renderer.LightTexture
 import net.minecraft.util.Mth
 import net.minecraft.world.phys.Vec3
 import org.joml.Matrix4f
@@ -23,7 +24,7 @@ import java.awt.Color
 import kotlin.random.Random
 
 @ClientOnly
-object CandyEffects : DimensionSpecialEffects(192.0f, true, SkyType.NORMAL, false, false),
+object CandyEffects : DimensionSpecialEffects(128.0f, true, SkyType.NORMAL, false, false),
     ISpecialEffectsAddition {
 
     private val fogColor = Color(0xEEAABB)
@@ -103,17 +104,23 @@ object CandyEffects : DimensionSpecialEffects(192.0f, true, SkyType.NORMAL, fals
     }
 
     override fun isFoggyAt(x: Int, z: Int): Boolean = false
-
-    override fun `candycraftce$renderClouds`(
+    override fun `candycraftce$renderSnowAndRain`(
         level: ClientLevel,
         ticks: Int,
         partialTick: Float,
-        poseStack: PoseStack,
+        lightTexture: LightTexture,
         camX: Double,
         camY: Double,
         camZ: Double,
-        projectionMatrix: Matrix4f,
-    ): Boolean = true // 无云
+    ): Boolean {
+        MilkRainRenderer.render(level, ticks, partialTick, lightTexture, camX, camY, camZ)
+        return true
+    }
+
+    override fun `candycraftce$tickRain`(level: ClientLevel, ticks: Int, camera: Camera): Boolean {
+        MilkRainRenderer.tick(level, ticks, camera)
+        return true
+    }
 
     @Suppress("DEPRECATION")
     override fun `candycraftce$renderSky`(

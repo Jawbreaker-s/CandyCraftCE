@@ -1,5 +1,6 @@
-// 1.20.1	2026-09-25T19:28:56.3909228	Tags for minecraft:worldgen/biome mod id candycraftce
+// 1.20.1	2026-10-03T20:38:22.940938	Tags for minecraft:worldgen/biome mod id candycraftce
 58e0586d1f3dfabc4f2fa9341bc0e110241b23cd data/candycraftce/tags/worldgen/biome/candy_biomes.json
+ab5b25ef4628d5cdac6ea22344a110680632dae4 data/candycraftce/tags/worldgen/biome/candy_forest.json
 8aae02aa3948f9e6a45d9be55cf0d6aa0fe0ee28 data/candycraftce/tags/worldgen/biome/has_essence_flower.json
 dd8b8115bbd91c7fece184958a4cedb93d0d983b data/candycraftce/tags/worldgen/biome/has_floating_island.json
 8ac2aa53c798b19fabb7f23974d370b572ede744 data/candycraftce/tags/worldgen/biome/has_mint_flower.json

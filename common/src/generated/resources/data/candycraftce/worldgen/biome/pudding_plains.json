@@ -22,7 +22,7 @@
       "candycraftce:tree_candy_plains"
     ]
   ],
-  "has_precipitation": true,
+  "has_precipitation": false,
   "spawn_costs": {},
   "spawners": {
     "ambient": [],

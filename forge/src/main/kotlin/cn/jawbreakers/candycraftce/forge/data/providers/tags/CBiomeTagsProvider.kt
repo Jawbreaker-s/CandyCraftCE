@@ -21,7 +21,13 @@ class CBiomeTagsProvider(
                 val water = listOf(sugar_oceans, sugar_river)
                 val forest =
                     listOf(caramel_forest, chocolate_forest, sugar_forest, white_chocolate_forest, enchanted_forest)
+                tag(candy_forest)
+                    .add(*forest.toTypedArray())
 
+                tag(candy_plains)
+                    .add(ice_cream_plains)
+                    .add(cotton_candy_plains)
+                    .add(pudding_plains)
 
                 tag(is_cold)
                     .add(ice_cream_plains)

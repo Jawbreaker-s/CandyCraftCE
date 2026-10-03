@@ -152,23 +152,23 @@ public final class CCClient {
 
     @SubscribeEvent
     public static void registerParticles(RegisterParticleProvidersEvent event) {
-        event.registerSpriteSet(CCParticleTypes.CHOCOLATE_SPLASH.get(), ChocolateSplashParticle.Provider::new);
-        event.registerSpriteSet(CCParticleTypes.MILK_RAIN_DROP.get(), MilkRainDropParticle.Provider::new);
-        event.registerSpriteSet(CCParticleTypes.MILK_RAIN_SPLASH.get(), MilkRainSplashParticle.Provider::new);
-        event.registerSpriteSet(CCParticleTypes.ALCHEMY_SPLASH.get(), AlchemySplashParticle.Provider::new);
-        event.registerSpriteSet(CCParticleTypes.STRAWBERRY_JELLY_FRAGMENT.get(),
-            sprites -> new JellyFragmentParticle.Provider(sprites, 1.0F, 0.47F, 0.63F));
-        event.registerSpriteSet(CCParticleTypes.CARAMEL_JELLY_FRAGMENT.get(),
-            sprites -> new JellyFragmentParticle.Provider(sprites, 0.93F, 0.43F, 0.08F));
-        event.registerSpriteSet(CCParticleTypes.ROYAL_RATIONS_FRAGMENT.get(),
-            sprites -> new JellyFragmentParticle.Provider(sprites, 0.72F, 0.77F, 0.84F));
-        event.registerSpriteSet(CCParticleTypes.LEMON_JELLY_FRAGMENT.get(),
-            sprites -> new JellyFragmentParticle.Provider(sprites, 0.85F, 0.86F, 0.40F));
-        event.registerSpriteSet(CCParticleTypes.RASPBERRY_JELLY_FRAGMENT.get(),
-            sprites -> new JellyFragmentParticle.Provider(sprites, 0.92F, 0.37F, 0.30F));
-        event.registerSpriteSet(CCParticleTypes.MINT_JELLY_FRAGMENT.get(),
-            sprites -> new JellyFragmentParticle.Provider(sprites, 0.54F, 0.90F, 0.80F));
-        event.registerSpriteSet(CCParticleTypes.LIQUID_CANDY_FLAME.get(), FlameParticle.Provider::new);
+//        event.registerSpriteSet(CCParticleTypes.CHOCOLATE_SPLASH.get(), ChocolateSplashParticle.Provider::new);
+//        event.registerSpriteSet(CCParticleTypes.MILK_RAIN_DROP.get(), MilkRainDropParticle.Provider::new);
+//        event.registerSpriteSet(CCParticleTypes.MILK_RAIN_SPLASH.get(), MilkRainSplashParticle.Provider::new);
+//        event.registerSpriteSet(CCParticleTypes.ALCHEMY_SPLASH.get(), AlchemySplashParticle.Provider::new);
+//        event.registerSpriteSet(CCParticleTypes.STRAWBERRY_JELLY_FRAGMENT.get(),
+//            sprites -> new JellyFragmentParticle.Provider(sprites, 1.0F, 0.47F, 0.63F));
+//        event.registerSpriteSet(CCParticleTypes.CARAMEL_JELLY_FRAGMENT.get(),
+//            sprites -> new JellyFragmentParticle.Provider(sprites, 0.93F, 0.43F, 0.08F));
+//        event.registerSpriteSet(CCParticleTypes.ROYAL_RATIONS_FRAGMENT.get(),
+//            sprites -> new JellyFragmentParticle.Provider(sprites, 0.72F, 0.77F, 0.84F));
+//        event.registerSpriteSet(CCParticleTypes.LEMON_JELLY_FRAGMENT.get(),
+//            sprites -> new JellyFragmentParticle.Provider(sprites, 0.85F, 0.86F, 0.40F));
+//        event.registerSpriteSet(CCParticleTypes.RASPBERRY_JELLY_FRAGMENT.get(),
+//            sprites -> new JellyFragmentParticle.Provider(sprites, 0.92F, 0.37F, 0.30F));
+//        event.registerSpriteSet(CCParticleTypes.MINT_JELLY_FRAGMENT.get(),
+//            sprites -> new JellyFragmentParticle.Provider(sprites, 0.54F, 0.90F, 0.80F));
+//        event.registerSpriteSet(CCParticleTypes.LIQUID_CANDY_FLAME.get(), FlameParticle.Provider::new);
     }
 
     @SubscribeEvent

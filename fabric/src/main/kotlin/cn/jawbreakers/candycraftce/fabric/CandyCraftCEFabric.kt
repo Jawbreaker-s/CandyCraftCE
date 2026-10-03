@@ -20,6 +20,7 @@ import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.core.particles.ParticleType
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.effect.MobEffect
 import net.minecraft.world.entity.*
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier
 import net.minecraft.world.item.CreativeModeTab
@@ -76,6 +77,11 @@ class CandyCraftCEFabric : ModInitializer, ICPlatForm {
         } ?: throw IllegalStateException("Too late")
         return entry
     }
+
+    override fun <M : MobEffect> registerMobEffect(name: String, factory: Supplier<M>): Entry<M> =
+        register("MobEffect", name, factory::get) { id, it ->
+            BuiltInRegistries.MOB_EFFECT.register(id, it)
+        }
 
     override fun <E : Item> registerItem(name: String, factory: Supplier<E>): Entry<E> =
         register("Item", name, factory::get) { id, it ->

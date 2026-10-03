@@ -1,7 +1,7 @@
-// 1.20.1	2026-10-02T20:28:30.2639808	Tags for minecraft:block mod id candycraftce
+// 1.20.1	2026-10-03T15:32:54.8650347	Tags for minecraft:block mod id candycraftce
 1837031f62a4cb30f29d9e1873275d839d2964f8 data/candycraftce/tags/blocks/candy_animal_spawnable_on.json
 cf5d266c009eeebfd376771338c175ff87a5c270 data/candycraftce/tags/blocks/candy_portal_frame.json
-65a15d828274b5302ffb94a19a3e8a8e41939fd5 data/candycraftce/tags/blocks/candy_soil.json
+eecd3202ea85d4e3f078e9c37a71bf1b3ac2509f data/candycraftce/tags/blocks/candy_soil.json
 1462b33e5af314745dd0141a26096af5bf4004c0 data/candycraftce/tags/blocks/can_light_portal.json
 c83a29d7980defd64a1bfe4cc08f0ed7768673d3 data/candycraftce/tags/blocks/caramel_portal.json
 b95f92977d45d0f7a4f5bae8313837b2d6e58a66 data/candycraftce/tags/blocks/gummy_blocks.json

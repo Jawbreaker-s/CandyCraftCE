@@ -7,7 +7,7 @@ import cn.jawbreakers.candycraftce.registry.CBlockTags
 import cn.jawbreakers.candycraftce.registry.CBlockTags.candy_portal
 import cn.jawbreakers.candycraftce.registry.CBlocks
 import cn.jawbreakers.candycraftce.registry.CFluidTags
-import cn.jawbreakers.candycraftce.registry.CParticles
+import cn.jawbreakers.candycraftce.registry.CParticleTypes
 import cn.jawbreakers.candycraftce.registry.worldgen.CLevels
 import cn.jawbreakers.candycraftce.utils.AxisSet
 import cn.jawbreakers.candycraftce.utils.CUtils.instance
@@ -156,7 +156,7 @@ class CaramelPortalBlock(properties: Properties) : Block(properties) {
                 d = pos.x.toDouble() + 0.5 + 0.25 * k.toDouble()
                 g = (random.nextFloat() * 2.0f * k.toFloat()).toDouble()
             }
-            level.addParticle(CParticles.caramel_portal_particle_type.get(), d, e, f, g, h, j)
+            level.addParticle(CParticleTypes.caramel_portal_particle_type.get(), d, e, f, g, h, j)
         }
     }
 

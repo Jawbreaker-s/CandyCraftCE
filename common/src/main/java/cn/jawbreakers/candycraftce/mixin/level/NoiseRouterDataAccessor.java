@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 @Mixin(NoiseRouterData.class)
 public interface NoiseRouterDataAccessor {
 	@Invoker("overworld")
-	public static NoiseRouter overworld(HolderGetter<DensityFunction> densityFunctions, HolderGetter<NormalNoise.NoiseParameters> noiseParameters, boolean large, boolean amplified) {
+	static NoiseRouter getOverworld(HolderGetter<DensityFunction> densityFunctions, HolderGetter<NormalNoise.NoiseParameters> noiseParameters, boolean large, boolean amplified) {
 		throw new AssertionError("Mixin failed to inject");
 	}
 
