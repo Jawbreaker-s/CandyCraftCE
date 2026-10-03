@@ -580,8 +580,8 @@ object CBlocks {
         mapColor = MapColor.COLOR_BROWN,
     )
 
-    val chocolate_covered_white_brownie =
-        register("chocolate_covered_white_brownie", properties(Blocks.DIRT).mapColor(MapColor.SAND))
+    val custard_white_brownie =
+        register("custard_white_brownie", properties(Blocks.DIRT).mapColor(MapColor.SAND))
             .cutout()
 
     val milk_brownie_block = register("milk_brownie_block", cake(MapColor.DIRT))

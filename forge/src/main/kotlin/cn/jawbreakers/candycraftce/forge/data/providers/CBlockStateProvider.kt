@@ -319,18 +319,20 @@ class CBlockStateProvider(output: PackOutput, val efHelper: ExistingFileHelper) 
                 axisBlock(it.get(), model, model)
                 simpleBlockItem(it.get(), model)
             }
-
+            cotton_candy_grass_block.also {
+                val top = cotton_candy_block.getBlockTexture()
+                val bottom = milk_brownie_block.getBlockTexture()
+                val side = cotton_candy_grass_block.getBlockTexture("_side")
+                val model = models().cubeBottomTop(it.id.path, side, bottom, top)
+                simpleBlockWithItem(it.get(), model)
+            }
             listOf(
                 strawberry_filled_pudding to pudding_block,
                 custard_pudding_block to pudding_block,
-                chocolate_covered_white_brownie to white_brownie_block,
-                cotton_candy_grass_block to milk_brownie_block
+                custard_white_brownie to white_brownie_block,
             ).forEach { (it, base) ->
                 val base = base.getBlockTexture()
-                val top = when (it) {
-                    chocolate_covered_white_brownie, cotton_candy_grass_block -> cotton_candy_grass_block
-                    else -> custard_pudding_block
-                }.getBlockTexture("_top_overlay")
+                val top = custard_pudding_block.getBlockTexture("_top_overlay")
                 val model = models().withExistingParent(it.id.toString(), "block/grass_block")
                     .texture("particle", base)
                     .texture("bottom", base)

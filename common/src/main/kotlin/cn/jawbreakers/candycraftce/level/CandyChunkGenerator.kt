@@ -95,7 +95,7 @@ class CandyChunkGenerator(
                     NoiseSettings(MIN_Y, HEIGHT, 1, 2),
                     base_stone,
                     Blocks.WATER.defaultBlockState(),
-                    NoiseRouterDataAccessor.overworld(
+                    NoiseRouterDataAccessor.getOverworld(
                         context.lookup(Registries.DENSITY_FUNCTION),
                         context.lookup(Registries.NOISE),
                         false,
@@ -261,7 +261,7 @@ class CandyChunkGenerator(
                 ),
         chocolate_forest to
                 SurfaceMaterials(
-                    CBlocks.chocolate_covered_white_brownie.defaultBlockState(),
+                    CBlocks.custard_white_brownie.defaultBlockState(),
                     CBlocks.white_brownie_block.defaultBlockState()
                 ),
         ice_cream_sky_mountains to

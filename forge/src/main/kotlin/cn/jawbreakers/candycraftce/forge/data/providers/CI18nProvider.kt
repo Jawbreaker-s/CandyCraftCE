@@ -386,7 +386,7 @@ class CI18nProvider(output: PackOutput) : DataProvider {
             addBlockFamily(chocolate_cobblestone_family, "Chocolate Cobblestone", "巧克力圆石")
             addBlockFamily(mint_family, "Mint", "薄荷")
 
-            addBlock(chocolate_covered_white_brownie, "Chocolate Covered White Brownie", "巧克力裹白布朗尼")
+            addBlock(custard_white_brownie, "Custard White Brownie", "奶皮白布朗尼块")
             addBlock(milk_brownie_block, "Milk Brownie Block", "牛奶布朗尼块")
             addBlock(milk_chiffon_cake_block, "Milk Chiffon Cake Block", "牛奶巧克力风味千层蛋糕块")
             addBlock(milk_brownie_cake_roll_block, "Milk Brownie Cake Roll Block", "牛奶巧克力布朗尼蛋糕卷")

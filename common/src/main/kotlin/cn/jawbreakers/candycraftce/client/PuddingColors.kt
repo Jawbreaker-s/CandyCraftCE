@@ -2,9 +2,9 @@ package cn.jawbreakers.candycraftce.client
 
 import cn.jawbreakers.candycraftce.registry.CBlocks
 import cn.jawbreakers.candycraftce.registry.CBlocks.asItemEntry
-import cn.jawbreakers.candycraftce.registry.CBlocks.chocolate_covered_white_brownie
 import cn.jawbreakers.candycraftce.registry.CBlocks.cotton_candy_grass_block
 import cn.jawbreakers.candycraftce.registry.CBlocks.custard_pudding_block
+import cn.jawbreakers.candycraftce.registry.CBlocks.custard_white_brownie
 import cn.jawbreakers.candycraftce.registry.CBlocks.strawberry_filled_pudding
 import cn.jawbreakers.candycraftce.registry.worldgen.CBiomes.caramel_forest
 import cn.jawbreakers.candycraftce.registry.worldgen.CBiomes.chocolate_forest
@@ -29,6 +29,7 @@ import cn.jawbreakers.candycraftce.utils.LinearGradient.Companion.blue
 import cn.jawbreakers.candycraftce.utils.LinearGradient.Companion.green
 import cn.jawbreakers.candycraftce.utils.LinearGradient.Companion.red
 import cn.jawbreakers.candycraftce.utils.LinearGradient.Companion.rgb
+import cn.jawbreakers.candycraftce.utils.registry.MutableAccessor
 import com.google.common.cache.Cache
 import com.google.common.cache.CacheBuilder
 import net.minecraft.client.Minecraft
@@ -39,7 +40,6 @@ import net.minecraft.world.level.BlockAndTintGetter
 import net.minecraft.world.level.LevelReader
 import net.minecraft.world.level.biome.Biome
 import net.minecraft.world.level.levelgen.synth.NormalNoise
-import net.minecraft.world.phys.Vec3
 import java.awt.Color
 import kotlin.jvm.optionals.getOrNull
 
@@ -70,40 +70,42 @@ object PuddingColor {
     //    val radius: Int get() = Minecraft.getInstance().options.biomeBlendRadius().get()
     var blendRadius = 10
 
+
+    val cacheEnchant: Cache<Long, Int> =
+        CacheBuilder.newBuilder().maximumSize(16L * blendRadius * blendRadius * 9L).build()
+
     /**
      * @return #b0ecff 淡蓝色 #b0b0ff 淡紫色 #a376da 深紫色
      */
-    fun getEnchantColor(pos: Vec3): Int {
-        val d0 = noise.getValue(pos.x, pos.y, pos.z)
-
-        val r = d0 + 0.5 / (0.5 + 0.5)
-        return enchant_color.getColor(r.toFloat()).rgb
+    fun getEnchantColor(pos: BlockPos): Int {
+        return cacheEnchant.get(pos.asLong()) {
+            val vec = pos.center
+            val d0 = noise.getValue(vec.x, vec.y, vec.z)
+            val r = d0 + 0.5 / (0.5 + 0.5)
+            enchant_color.getColor(r.toFloat()).rgb
+        }
     }
 
-    private val cachedColors: Cache<Long, Int> =
-        CacheBuilder.newBuilder().maximumSize(64L * blendRadius * blendRadius * 9L).build()
+
     private val cachedBlended: Cache<Long, Int> =
-        CacheBuilder.newBuilder().maximumSize(1L * blendRadius * blendRadius * 9L).build()
+        CacheBuilder.newBuilder().maximumSize(32L * blendRadius * blendRadius * 9L).build()
 
     private var levelCache = 0
 
     private fun getPuddingColor(biome: Holder<Biome>, pos: BlockPos): Int {
-        val key = pos.asLong()
-        return cachedColors.get(key) {
-            when (biome.unwrapKey().getOrNull()) {
-                enchanted_forest -> getEnchantColor(Vec3.atCenterOf(pos))
-                pudding_plains, sugar_forest -> 0xEEAABB
-                pudding_hill -> 0xEEBBCC
-                white_chocolate_forest -> 0xFFDDEE
-                ice_cream_plains, ice_cream_sky_mountains -> 0xFFFFFF
-                sugar_oceans -> 0xB35EFF
-                caramel_forest -> 0xB05C28
-                cotton_candy_plains -> DEFAULT_COTTON_COLOR
-                gummy_swamp -> 0xFFFEB0
-                chocolate_forest -> DEFAULT_CHOCOLATE_BROWNIE_COLOR
-                sugar_river -> 0xFFBBCC
-                else -> DEFAULT_PUDDING_COLOR
-            }
+        return when (biome.unwrapKey().getOrNull()) {
+            enchanted_forest -> getEnchantColor(pos)
+            pudding_plains, sugar_forest -> 0xEEAABB
+            pudding_hill -> 0xEEBBCC
+            white_chocolate_forest -> 0xFFDDEE
+            ice_cream_plains, ice_cream_sky_mountains -> 0xFFFFFF
+            sugar_oceans -> 0xB35EFF
+            caramel_forest -> 0xB05C28
+            cotton_candy_plains -> DEFAULT_COTTON_COLOR
+            gummy_swamp -> 0xFFFEB0
+            chocolate_forest -> DEFAULT_CHOCOLATE_BROWNIE_COLOR
+            sugar_river -> 0xFFBBCC
+            else -> DEFAULT_PUDDING_COLOR
         }
     }
 
@@ -111,16 +113,22 @@ object PuddingColor {
     fun getBlendedPuddingColor(reader: BlockAndTintGetter, pos: BlockPos, radius: Int): Int {
         val hashCode = Minecraft.getInstance().level.hashCode()
         if (levelCache != hashCode) {
-            cachedColors.invalidateAll()
             cachedBlended.invalidateAll()
             levelCache = hashCode
         }
         val key = pos.asLong()
-        return cachedBlended.get(key) { computeColor(reader, pos, radius) }
+        return cachedBlended.getIfPresent(key) ?: run {
+            val flag = MutableAccessor.create(false)
+            val color = computeColor(reader, pos, radius, flag)
+            if (flag.get()) {
+                cachedBlended.put(key, color)
+            }
+            color
+        }
 //        return computeColor(reader, pos, radius)
     }
 
-    fun computeColor(reader: BlockAndTintGetter, pos: BlockPos, radius: Int): Int {
+    fun computeColor(reader: BlockAndTintGetter, pos: BlockPos, radius: Int, cacheFlag: MutableAccessor<Boolean>): Int {
         val mu = pos.mutable()
         var r = 0
         var g = 0
@@ -137,6 +145,8 @@ object PuddingColor {
                     g += color.green
                     b += color.blue
                     count++
+                } else {
+                    cacheFlag.set(false)
                 }
             }
         }
@@ -151,7 +161,7 @@ object PuddingColor {
                 custard_pudding_block,
                 strawberry_filled_pudding,
                 cotton_candy_grass_block,
-                chocolate_covered_white_brownie
+                custard_white_brownie
             ) { _, level, pos, _ ->
                 if (level != null && pos != null) {
                     val biome = level.getBiome(pos)
@@ -168,12 +178,12 @@ object PuddingColor {
             )
             registerItemColor(cotton_candy_grass_block.asItemEntry(), color = DEFAULT_COTTON_COLOR)
             registerItemColor(
-                chocolate_covered_white_brownie.asItemEntry(),
+                custard_white_brownie.asItemEntry(),
                 color = DEFAULT_CHOCOLATE_BROWNIE_COLOR
             )
 
             registerBlockColor(CBlocks.enchant_candy_leaves) { _, _, pos, _ ->
-                if (pos != null) getEnchantColor(Vec3.atCenterOf(pos)) else DEFAULT_ENCHANT_COLOR
+                if (pos != null) getEnchantColor(pos) else DEFAULT_ENCHANT_COLOR
             }
             registerItemColor(CBlocks.enchant_candy_leaves.asItemEntry(), color = DEFAULT_ENCHANT_COLOR)
 

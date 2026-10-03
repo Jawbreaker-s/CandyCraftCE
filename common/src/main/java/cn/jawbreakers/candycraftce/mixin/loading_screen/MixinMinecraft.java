@@ -49,7 +49,7 @@ public abstract class MixinMinecraft {
 	@Inject(method = "setScreen", at = @At("HEAD"))
 	void onSetScreen(Screen guiScreen, CallbackInfo ci) {
 		CPlatformUtils.INSTANCE.ifDev(() -> {
-			CLogUtils.INSTANCE.getClog().info("Set screen: {}", guiScreen == null ? null : guiScreen.getClass().getName());
+			CLogUtils.INSTANCE.getDebugLog().info("Set screen: {}", guiScreen == null ? null : guiScreen.getClass().getName());
 			return null;
 		});
 

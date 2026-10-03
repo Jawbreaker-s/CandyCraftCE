@@ -3,10 +3,13 @@ package cn.jawbreakers.candycraftce.registry.worldgen
 import cn.jawbreakers.candycraftce.utils.CLogUtils
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils
 import cn.jawbreakers.candycraftce.utils.CUtils.modLoc
+import cn.jawbreakers.candycraftce.utils.registry.Entry
 import net.minecraft.core.HolderGetter
 import net.minecraft.core.registries.Registries
 import net.minecraft.data.worldgen.BootstapContext
 import net.minecraft.resources.ResourceKey
+import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.MobCategory
 import net.minecraft.world.level.biome.Biome
 import net.minecraft.world.level.biome.BiomeGenerationSettings
 import net.minecraft.world.level.biome.BiomeSpecialEffects
@@ -59,7 +62,7 @@ object CBiomes {
         val lookup = ctx.lookup(Registries.PLACED_FEATURE)
         fun registerBiome(
             id: ResourceKey<Biome>,
-            hasPrecipitation: Boolean,
+//            hasPrecipitation: Boolean, //we use [CandyPrecipitation]
             temperature: Float,
             downfall: Float,
             spawns: MobSpawnSettings.Builder.() -> Unit = {},
@@ -68,7 +71,7 @@ object CBiomes {
         ) {
             ctx.register(
                 id, Biome.BiomeBuilder()
-                    .hasPrecipitation(hasPrecipitation)
+                    .hasPrecipitation(false)
                     .temperature(temperature)
                     .downfall(downfall)
                     .mobSpawnSettings(MobSpawnSettings.Builder().apply(spawns).build())
@@ -81,7 +84,7 @@ object CBiomes {
         with(CFeatures) {
             //dungeon
             registerBiome(
-                dungeon, false, 0.8f, 0f,
+                dungeon, 0.8f, 0f,
                 effects = {
                     skyColor(0)
                     fogColor(16767191)
@@ -91,9 +94,10 @@ object CBiomes {
             )
             //caramel_forest
             registerBiome(
-                caramel_forest, false, 0.5f, 0.5f,
+                caramel_forest, 0.5f, 0.5f,
                 {
                     creatureGenerationProbability(0.1f)
+
                 },
                 {
                     skyColor(16764032)
@@ -110,7 +114,7 @@ object CBiomes {
             )
             //gummy_swamp
             registerBiome(
-                gummy_swamp, false, 0.9f, 0.8f,
+                gummy_swamp, 0.9f, 0.8f,
                 {
                     creatureGenerationProbability(3f / 17)
                 },
@@ -128,7 +132,7 @@ object CBiomes {
             )
             //ice_cream_plains
             registerBiome(
-                ice_cream_plains, true, 0.0f, 0.5f,
+                ice_cream_plains, 0.0f, 0.5f,
                 {
                     creatureGenerationProbability(0.1f)
                 },
@@ -146,7 +150,7 @@ object CBiomes {
             )
             //ice_cream_sky_mountains
             registerBiome(
-                ice_cream_sky_mountains, true, 0.0f, 0.5f,
+                ice_cream_sky_mountains, 0.0f, 0.5f,
                 {
                     creatureGenerationProbability(0.1f)
                 },
@@ -164,7 +168,7 @@ object CBiomes {
             )
             //white_chocolate_forest
             registerBiome(
-                white_chocolate_forest, false, 0.0f, 0.5f,
+                white_chocolate_forest, 0.0f, 0.5f,
                 {
                     creatureGenerationProbability(0.1f)
                 },
@@ -183,7 +187,7 @@ object CBiomes {
             )
             //pudding_hill
             registerBiome(
-                pudding_hill, true, 0.0f, 0.5f, {
+                pudding_hill, 0.0f, 0.5f, {
                     creatureGenerationProbability(0.1f)
                 },
                 {
@@ -201,7 +205,7 @@ object CBiomes {
             )
             //pudding_plains
             registerBiome(
-                pudding_plains, true, 0.0f, 0.5f, {
+                pudding_plains, 0.0f, 0.5f, {
                     creatureGenerationProbability(0.1f)
                 },
                 {
@@ -219,7 +223,7 @@ object CBiomes {
             )
             //sugar_forest
             registerBiome(
-                sugar_forest, false, 0.5f, 0.5f,
+                sugar_forest, 0.5f, 0.5f,
                 {
                     creatureGenerationProbability(0.1f)
                 },
@@ -239,7 +243,7 @@ object CBiomes {
             )
             //sugar_river
             registerBiome(
-                sugar_river, true, 0.5f, 0.5f,
+                sugar_river, 0.5f, 0.5f,
                 {
                     creatureGenerationProbability(0.1f)
                 },
@@ -259,7 +263,7 @@ object CBiomes {
             )
             //sugar_oceans
             registerBiome(
-                sugar_oceans, true, 0.5f, 0.5f,
+                sugar_oceans, 0.5f, 0.5f,
                 {
                     creatureGenerationProbability(0.1f)
                 },
@@ -279,7 +283,7 @@ object CBiomes {
             )
             //enchanted_forest
             registerBiome(
-                enchanted_forest, false, 0.5f, 0.5f,
+                enchanted_forest, 0.5f, 0.5f,
                 {
                     creatureGenerationProbability(0.1f)
                 },
@@ -299,7 +303,7 @@ object CBiomes {
             //wip
             //chocolate_forest
             registerBiome(
-                chocolate_forest, true, 0.8f, 0.3f,
+                chocolate_forest, 0.8f, 0.3f,
                 {
                     creatureGenerationProbability(0.1f)
                 },
@@ -316,7 +320,7 @@ object CBiomes {
                 }
             )
             registerBiome(
-                cotton_candy_plains, false, 0.8f, 0.3f,
+                cotton_candy_plains, 0.8f, 0.3f,
                 {
                     creatureGenerationProbability(0.1f)
                 },
@@ -335,6 +339,22 @@ object CBiomes {
 
 
         }
+    }
+}
+
+private fun MobSpawnSettings.Builder.category(
+    category: MobCategory,
+    action: StepScope.() -> Unit,
+) {
+
+}
+
+private class CategoryScope(
+    private val builder: MobSpawnSettings.Builder,
+    val category: MobCategory,
+) {
+    fun add(entity: Entry<out EntityType<*>>, weight: Int, minCount: Int, maxCount: Int) {
+        builder.addSpawn(category, MobSpawnSettings.SpawnerData(entity.value, weight, minCount, maxCount))
     }
 }
 

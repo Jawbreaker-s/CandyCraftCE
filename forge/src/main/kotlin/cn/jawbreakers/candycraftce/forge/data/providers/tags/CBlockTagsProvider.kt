@@ -33,7 +33,7 @@ class CBlockTagsProvider(
                     .add(custard_pudding_block.get())
                     .add(strawberry_filled_pudding.get())
                     .add(pudding_farmland.get())
-                    .add(chocolate_covered_white_brownie.get())
+                    .add(custard_white_brownie.get())
                     .add(milk_brownie_block.get())
                     .add(dark_brownie_block.get())
                     .add(white_brownie_block.get())
@@ -74,7 +74,7 @@ class CBlockTagsProvider(
                     .add(custard_pudding_block.get())
                     .add(pudding_block.get())
                     .add(strawberry_filled_pudding.get())
-                
+
 
 
                 tag(worm_blocks)

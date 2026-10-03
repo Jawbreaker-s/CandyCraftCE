@@ -20,6 +20,7 @@ import net.minecraft.core.RegistrySetBuilder
 import net.minecraft.core.particles.ParticleOptions
 import net.minecraft.core.particles.ParticleType
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.effect.MobEffect
 import net.minecraft.world.entity.*
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier
 import net.minecraft.world.item.BucketItem
@@ -57,6 +58,7 @@ object CPlatformUtils : ICPlatForm by CandyCraftCE.platform {
             registerItemColor(*entries.map { it.asItemEntry() }.toTypedArray(), color = color)
         }
     }
+
 }
 
 interface ICPlatForm {
@@ -70,6 +72,7 @@ interface ICPlatForm {
 
     //当所有对象注册完毕后
     fun <T> whenInitialized(action: () -> T): Accessor<T>
+
     fun <E : Item> registerItem(name: String, factory: Supplier<E>): Entry<E>
     fun <E : Block> registerBlock(name: String, factory: Supplier<E>): Entry<E>
     fun <E : BlockEntity> registerBlockEntity(
@@ -93,6 +96,8 @@ interface ICPlatForm {
         mapType: Heightmap.Types,
         predicate: SpawnPlacements.SpawnPredicate<T>,
     )
+
+    fun <M : MobEffect> registerMobEffect(name: String, factory: Supplier<M>): Entry<M>
 }
 
 interface ICPlatformFluids {

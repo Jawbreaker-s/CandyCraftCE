@@ -13,8 +13,10 @@ import cn.jawbreakers.candycraftce.registry.CBlocks.sweet_grass_red
 import cn.jawbreakers.candycraftce.registry.CBlocks.sweet_grass_yellow
 import cn.jawbreakers.candycraftce.registry.worldgen.CBiomes
 import net.minecraft.core.BlockPos
+import net.minecraft.core.Holder
 import net.minecraft.util.RandomSource
 import net.minecraft.world.level.WorldGenLevel
+import net.minecraft.world.level.biome.Biome
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.levelgen.Heightmap
 import net.minecraft.world.level.levelgen.feature.Feature
@@ -22,6 +24,15 @@ import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration
 
 class CandyGrassFeature : Feature<NoneFeatureConfiguration>(NoneFeatureConfiguration.CODEC) {
+    fun getGrassFactor(biome: Holder<Biome>): Int {
+        return when {
+            biome.`is`(CBiomeTags.is_cold) -> 1
+            biome.`is`(CBiomeTags.candy_forest) -> 2
+            biome.`is`(CBiomeTags.candy_plains) -> 4
+            else -> 2
+        }
+    }
+
     override fun place(context: FeaturePlaceContext<NoneFeatureConfiguration>): Boolean {
         val level = context.level()
         val random = context.random()
@@ -31,7 +42,8 @@ class CandyGrassFeature : Feature<NoneFeatureConfiguration>(NoneFeatureConfigura
         val base = BlockPos(origin.x, surfaceY, origin.z)
 
         var placed = false
-        repeat(128) {
+        val factor = getGrassFactor(level.getBiome(base))
+        repeat(factor * 32) {
             val x = base.x + random.nextInt(8) - random.nextInt(8)
             val y = base.y + random.nextInt(4) - random.nextInt(4)
             val z = base.z + random.nextInt(8) - random.nextInt(8)

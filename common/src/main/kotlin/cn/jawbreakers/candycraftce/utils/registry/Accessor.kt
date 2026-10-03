@@ -7,12 +7,20 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 interface Accessor<T> : Supplier<T>, ReadOnlyProperty<Any?, T> {
+    companion object {
+        fun <T> of(value: T): Accessor<T> = AccessorImpl(value)
+    }
+
     val value: T
     override fun getValue(thisRef: Any?, property: KProperty<*>): T = value
     override fun get(): T = value
 }
 
 interface MutableAccessor<T> : Accessor<T>, Consumer<T>, ReadWriteProperty<Any?, T> {
+    companion object {
+        fun <T> create(initialValue: T): MutableAccessor<T> = MutableAccessorImpl(initialValue)
+    }
+
     override var value: T
 
     fun set(value: T) {
@@ -29,8 +37,8 @@ interface MutableAccessor<T> : Accessor<T>, Consumer<T>, ReadWriteProperty<Any?,
     }
 }
 
-class MutableAccessorImpl<T>(override var value: T) : MutableAccessor<T>
 class AccessorImpl<T>(override val value: T) : Accessor<T>
+class MutableAccessorImpl<T>(override var value: T) : MutableAccessor<T>
 class LateInitAccessor<T> : MutableAccessor<T> {
     private var valueInternal: T? = null
     override var value: T

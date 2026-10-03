@@ -10,8 +10,9 @@
     "level.MixinTrunkPlacer", "level.NoiseRouterDataAccessor", "portal.MixinEntity", "portal.MixinLevel"
   ],
   "client": [
-    "loading_screen.MixinMinecraft", "loading_screen.MixinScreen", "render.MixinDimensionSpecialEffects",
-    "render.MixinLevelRenderer"
+    "loading_screen.MixinMinecraft", "loading_screen.MixinScreen", "render.LivingEntityRendererAccessor",
+    "render.MixinDimensionSpecialEffects", "render.MixinEntityRenderDispatcher", "render.MixinLevelRenderer",
+    "render.RenderTypeAccessor"
   ],
   "server": [],
   "injectors": {
