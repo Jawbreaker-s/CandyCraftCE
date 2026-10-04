@@ -1,7 +1,7 @@
 package cn.jawbreakers.candycraftce.registry.worldgen
 
 import cn.jawbreakers.candycraftce.utils.CLogUtils
-import cn.jawbreakers.candycraftce.utils.CPlatformUtils
+import cn.jawbreakers.candycraftce.utils.CPlatformUtils.ifDatagen
 import cn.jawbreakers.candycraftce.utils.CUtils.modLoc
 import cn.jawbreakers.candycraftce.utils.registry.Entry
 import net.minecraft.core.HolderGetter
@@ -53,8 +53,10 @@ object CBiomes {
     //=======================Data=========================
 
     init {
-        CPlatformUtils.datagen?.onBootstrap {
-            add(Registries.BIOME, ::bootstrap)
+        ifDatagen {
+            onBootstrap {
+                add(Registries.BIOME, ::bootstrap)
+            }
         }
     }
 

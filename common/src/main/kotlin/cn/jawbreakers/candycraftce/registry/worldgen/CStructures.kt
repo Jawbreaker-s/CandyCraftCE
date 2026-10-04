@@ -3,7 +3,7 @@ package cn.jawbreakers.candycraftce.registry.worldgen
 import cn.jawbreakers.candycraftce.level.structure.FloatingIslandStructure
 import cn.jawbreakers.candycraftce.registry.CBiomeTags.has_floating_island
 import cn.jawbreakers.candycraftce.utils.CLogUtils
-import cn.jawbreakers.candycraftce.utils.CPlatformUtils
+import cn.jawbreakers.candycraftce.utils.CPlatformUtils.ifDatagen
 import cn.jawbreakers.candycraftce.utils.registry.Entry
 import net.minecraft.core.registries.Registries
 import net.minecraft.data.worldgen.BootstapContext
@@ -25,8 +25,10 @@ import net.minecraft.world.level.levelgen.structure.TerrainAdjustment
 object CStructures {
     init {
         CLogUtils.sign()
-        CPlatformUtils.datagen?.onBootstrap {
-            add(Registries.STRUCTURE, ::bootstrap)
+        ifDatagen {
+            onBootstrap {
+                add(Registries.STRUCTURE, ::bootstrap)
+            }
         }
     }
 

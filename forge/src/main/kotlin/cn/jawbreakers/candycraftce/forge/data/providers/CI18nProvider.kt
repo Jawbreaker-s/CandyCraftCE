@@ -35,7 +35,7 @@ class CI18nProvider(output: PackOutput) : DataProvider {
         }
         CItems.apply {
             addItem(dynamite, "Nougat Dynamite", "牛轧糖炸药")
-            addItem(glue_dynamite, "Chewing Gum Emblem", "口香糖炸药")
+            addItem(glue_dynamite, "Chewing Gum Dynamite", "口香糖炸药")
             addItem(chewing_gum_emblem, "Chewing Gum Emblem", "口香糖徽章")
             add(
                 chewing_gum_emblem.get().tooltipKey,

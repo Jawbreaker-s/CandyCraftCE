@@ -1,9 +1,10 @@
-// 1.20.1	2026-09-21T22:58:21.621035	Item Models: candycraftce
+// 1.20.1	2026-10-04T22:02:00.3397193	Item Models: candycraftce
 b69597e7c0247f206126a171c16f29a35d95fc6a assets/candycraftce/models/item/beetle_dungeon_key.json
 25d132c98968b3b9e009984f76c396b6921347cd assets/candycraftce/models/item/butter.json
 60b8ce2c2fdcb069d6f5914177b36d6016006a2b assets/candycraftce/models/item/candied_cherry.json
 1db7252b22afc34130202c06fec63a7e983ff1a9 assets/candycraftce/models/item/candied_cherry_leaf.json
 3d18fd42d331d0e83b460f2554faf2e3778f6a64 assets/candycraftce/models/item/candy_cane.json
+63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/candycraftce/models/item/candy_pig_spawn_egg.json
 740f903f84f861942744ed7f5bcc5df0ed6a232f assets/candycraftce/models/item/caramel_bucket.json
 e59acd2f96b003b3dcb12864396e11b29c215d8e assets/candycraftce/models/item/caramel_jelly.json
 12fe8a758b7601c383f68e0fecb20230e459e820 assets/candycraftce/models/item/caramel_jelly_slice.json
@@ -33,10 +34,8 @@ e83027684616bfbbc9b9432eb116af29c17d6e2f assets/candycraftce/models/item/dark_ch
 8809e6a0a39b9144c3e1526d426aaa69bf203107 assets/candycraftce/models/item/dark_chocolate_sword.json
 f905627a7cbf716238285b59ddd8a03522b7d128 assets/candycraftce/models/item/dragibus.json
 a83f71d6f3ed4180c534831ff25387525c281021 assets/candycraftce/models/item/dragibus_stick.json
-f9dc1b6de1cd67f31bf5a2b15d4af61ed23145ae assets/candycraftce/models/item/dynamite.json
 ce279e54f7a6138bf2dbb05fa85133be5ba17890 assets/candycraftce/models/item/fork.json
 34d6f675c08ef63d75aa2d3bf06f83bfc22f7bcd assets/candycraftce/models/item/gingerbread_emblem.json
-266bed2af6ba6c7ca569e765bda277a4e136c62b assets/candycraftce/models/item/glue_dynamite.json
 8ccebdcc6fe6ce6a4c4bb894f15897b080843d2f assets/candycraftce/models/item/green_gummy.json
 945bd5580bbaca63ecabca9c27f63af3a0e6203d assets/candycraftce/models/item/green_gummy_worm.json
 89ed4dfc787bea2402309119dd4de356b3f918ef assets/candycraftce/models/item/green_hard_candy.json

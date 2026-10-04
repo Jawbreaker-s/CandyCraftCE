@@ -75,9 +75,11 @@ object CBlocks {
 
     init {
         whenInitialized {
-            CMixins.addStrippables(marshmallow_log.get(), stripped_marshmallow_log.get())
-            CMixins.addStrippables(light_marshmallow_log.get(), stripped_light_marshmallow_log.get())
-            CMixins.addStrippables(dark_marshmallow_log.get(), stripped_dark_marshmallow_log.get())
+            CMixins.injectStrippable().apply {
+                put(marshmallow_log.get(), stripped_marshmallow_log.get())
+                put(light_marshmallow_log.get(), stripped_light_marshmallow_log.get())
+                put(dark_marshmallow_log.get(), stripped_dark_marshmallow_log.get())
+            }
         }
     }
 
@@ -725,7 +727,7 @@ object CBlocks {
     //======================
 
     init {
-        CPlatformUtils.clients?.apply {
+        ifClient {
             cutouts.forEach { setRenderLayer(it, RenderType.cutoutMipped()) }
             transparent.forEach { setRenderLayer(it, RenderType.translucent()) }
         }
@@ -851,8 +853,8 @@ object CBlocks {
     }
 
     //===============Render Types==================
-    private fun <B : Block> Entry<B>.cutout() = apply { ifClient { cutouts.add(this) } }
-    private fun <B : Block> Entry<B>.transparent() = apply { ifClient { transparent.add(this) } }
+    private fun <B : Block> Entry<B>.cutout() = apply { ifClient { cutouts.add(this@cutout) } }
+    private fun <B : Block> Entry<B>.transparent() = apply { ifClient { transparent.add(this@transparent) } }
     private fun <B : Block> Entry<B>.noSimpleItem() = apply { noItem.add(this) }
 
     //=================================

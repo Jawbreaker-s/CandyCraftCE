@@ -20,7 +20,7 @@ import cn.jawbreakers.candycraftce.registry.worldgen.CBiomes.sugar_oceans
 import cn.jawbreakers.candycraftce.registry.worldgen.CBiomes.sugar_river
 import cn.jawbreakers.candycraftce.registry.worldgen.CBiomes.white_chocolate_forest
 import cn.jawbreakers.candycraftce.utils.CLogUtils.clog
-import cn.jawbreakers.candycraftce.utils.CPlatformUtils
+import cn.jawbreakers.candycraftce.utils.CPlatformUtils.ifClient
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils.registerBlockAndItemColor
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils.registerItemColor
 import cn.jawbreakers.candycraftce.utils.ClientOnly
@@ -156,7 +156,7 @@ object PuddingColor {
     @ClientOnly
     fun initColor() {
         clog.info("Initializing Dynamic Colors...")
-        CPlatformUtils.clients?.apply {
+        ifClient {
             registerBlockColor(
                 custard_pudding_block,
                 strawberry_filled_pudding,

@@ -1,6 +1,7 @@
 package cn.jawbreakers.candycraftce.utils
 
 import cn.jawbreakers.candycraftce.CandyCraftCE.MOD_ID
+import cn.jawbreakers.candycraftce.utils.TickUnit.tick
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.core.Registry
 import net.minecraft.core.registries.BuiltInRegistries

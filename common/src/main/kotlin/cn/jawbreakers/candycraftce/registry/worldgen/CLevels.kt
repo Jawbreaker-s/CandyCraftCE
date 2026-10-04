@@ -4,7 +4,8 @@ import cn.jawbreakers.candycraftce.client.level.CandyEffects
 import cn.jawbreakers.candycraftce.client.level.DungeonEffects
 import cn.jawbreakers.candycraftce.level.CandyChunkGenerator
 import cn.jawbreakers.candycraftce.utils.CLogUtils
-import cn.jawbreakers.candycraftce.utils.CPlatformUtils
+import cn.jawbreakers.candycraftce.utils.CPlatformUtils.ifClient
+import cn.jawbreakers.candycraftce.utils.CPlatformUtils.ifDatagen
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils.levels
 import cn.jawbreakers.candycraftce.utils.CUtils.modLoc
 import net.minecraft.core.registries.Registries
@@ -33,10 +34,12 @@ object CLevels {
     val dungeons: ResourceKey<Level> = ResourceKey.create(Registries.DIMENSION, "dungeons".modLoc())
 
     init {
-        CPlatformUtils.datagen?.onBootstrap {
-            add(Registries.NOISE_SETTINGS, CandyChunkGenerator::bootstrap)
+        ifDatagen {
+            onBootstrap {
+                add(Registries.NOISE_SETTINGS, CandyChunkGenerator::bootstrap)
+            }
         }
-        CPlatformUtils.ifClient {
+        ifClient {
             levels.registerDimensionSpecialEffects(dungeon_effects, DungeonEffects)
             levels.registerDimensionSpecialEffects(candy_effects, CandyEffects)
         }

@@ -12,10 +12,12 @@ import cn.jawbreakers.candycraftce.utils.CPlatformUtils.whenInitialized
 import cn.jawbreakers.candycraftce.utils.ClientOnly
 import cn.jawbreakers.candycraftce.utils.ServerSafe
 import cn.jawbreakers.candycraftce.utils.registry.Entry
+import it.unimi.dsi.fastutil.ints.IntIntPair
 import net.minecraft.client.model.geom.ModelLayerLocation
 import net.minecraft.client.model.geom.builders.LayerDefinition
 import net.minecraft.client.renderer.entity.EntityRenderer
 import net.minecraft.client.renderer.entity.EntityRendererProvider
+import net.minecraft.client.renderer.entity.ThrownItemRenderer
 import net.minecraft.core.BlockPos
 import net.minecraft.util.RandomSource
 import net.minecraft.world.entity.*
@@ -42,11 +44,59 @@ object CEntityTypes {
         CLogUtils.sign()
     }
 
+    internal val eggs = mutableMapOf<Entry<EntityType<out Mob>>, IntIntPair>()
+
+    val honey_arrow = register("honey_arrow") {
+        of(::HoneyArrow, MobCategory.MISC)
+            .sized(0.5F, 0.5F)
+            .clientTrackingRange(4)
+            .updateInterval(20)
+    }
+        .renderer(::HoneyArrowRenderer)
+
+    val dynamite = register("dynamite") {
+        of(::DynamiteEntity, MobCategory.MISC)
+            .sized(0.25F, 0.25F)
+            .clientTrackingRange(4)
+            .updateInterval(10)
+    }
+        .renderer(::ThrownItemRenderer)
+
+    val glue_dynamite = register("glue_dynamite") {
+        of(::GlueDynamiteEntity, MobCategory.MISC)
+            .sized(0.25F, 0.25F)
+            .clientTrackingRange(4)
+            .updateInterval(10)
+    }
+        .renderer(::ThrownItemRenderer)
+
+    //
+//    val gummy_ball = register("gummy_ball") {
+//        of(::GummyBallEntity, MobCategory.MISC)
+//            .sized(0.25F, 0.25F)
+//            .clientTrackingRange(8)
+//            .updateInterval(10)
+//    }
+//
+//    val thrown_fork = register("thrown_fork") {
+//        of(::ThrownForkEntity, MobCategory.MISC)
+//            .sized(0.5F, 0.5F)
+//            .clientTrackingRange(4)
+//            .updateInterval(20)
+//    }
+//
+//    val thrown_fork_block = register("thrown_fork_block") {
+//        of(::ThrownForkBlockEntity, MobCategory.MISC)
+//            .sized(0.65F, 0.65F)
+//            .clientTrackingRange(8)
+//            .updateInterval(2)
+//    }
     val candy_pig = register("candy_pig") {
         of(::CandyPigEntity, MobCategory.CREATURE)
             .sized(0.9F, 0.9F)
             .clientTrackingRange(10)
     }
+        .egg(0xF1C3C3, 0xFB5757)
         .attributes(Pig::createAttributes)
         .renderer(::CandyPigRenderer)
         .placement(::checkCandyAnimalSpawnRules)
@@ -116,6 +166,12 @@ object CEntityTypes {
     private fun <E : Entity> register(name: String, type: Supplier<EntityType.Builder<E>>) =
         CPlatformUtils.registerEntityType(name) { type.get().build("$MOD_ID:$name") }
 
+    @Suppress("UNCHECKED_CAST")
+    private fun <T : Mob> Entry<EntityType<T>>.egg(backgroundColor: Int, highlightColor: Int) =
+        apply {
+            eggs[this as Entry<EntityType<out Mob>>] = IntIntPair.of(backgroundColor, highlightColor)
+        }
+
     private inline fun <T : LivingEntity> Entry<EntityType<T>>.attributes(
         factory: Supplier<AttributeSupplier.Builder>,
         crossinline modifier: (AttributeSupplier.Builder.() -> Unit) = { },
@@ -140,9 +196,9 @@ object CEntityTypes {
     ) =
         apply {
             ifClient {
-                CPlatformUtils.clients?.registerEntityRenderer(this) { provider(it) }
+                registerEntityRenderer(this@renderer) { provider(it) }
                 whenInitialized {
-                    CPlatformUtils.clients?.let { layers(it::registerRenderLayers) }
+                    layers(::registerRenderLayers)
                 }
             }
         }
@@ -151,6 +207,36 @@ object CEntityTypes {
     fun interface LayerRegister {
         fun registerLayer(key: ModelLayerLocation, factory: Supplier<LayerDefinition>)
     }
+
+    //	public static final RegistryObject<Item> WAFFLE_SHEEP_SPAWN_EGG = registerSpawnEgg("waffle_sheep_spawn_egg", CCEntityTypes.WAFFLE_SHEEP, 0xF1C3C3, 0xFFC000);
+    //	public static final RegistryObject<Item> CANDY_CREEPER_SPAWN_EGG = registerSpawnEgg("candy_creeper_spawn_egg", CCEntityTypes.CANDY_CREEPER, 0xF1C3C3, 0x777777);
+    //	public static final RegistryObject<Item> COTTON_CANDY_SPIDER_SPAWN_EGG = registerSpawnEgg("cotton_candy_spider_spawn_egg", CCEntityTypes.COTTON_CANDY_SPIDER, 0xF1C3C3, 0xA00000);
+    //	public static final RegistryObject<Item> SUGUARD_SPAWN_EGG = registerSpawnEgg("suguard_spawn_egg", CCEntityTypes.SUGUARD, 0xF1C3C3, 0x8E0082);
+    //	public static final RegistryObject<Item> MAGE_SUGUARD_SPAWN_EGG = registerSpawnEgg("mage_suguard_spawn_egg", CCEntityTypes.MAGE_SUGUARD, 0xF1C3C3, 0xEB3D00);
+    //	public static final RegistryObject<Item> CANDY_WOLF_SPAWN_EGG = registerSpawnEgg("candy_wolf_spawn_egg", CCEntityTypes.CANDY_WOLF, 0xF1C3C3, 0xDDDDDD);
+    //	public static final RegistryObject<Item> GUMMY_BUNNY_SPAWN_EGG = registerSpawnEgg("gummy_bunny_spawn_egg", CCEntityTypes.GUMMY_BUNNY, 0xF1C3C3, 0xEEFF33);
+    //	public static final RegistryObject<Item> COTTON_CANDY_SHEEP_SPAWN_EGG = registerSpawnEgg("cotton_candy_sheep_spawn_egg", CCEntityTypes.COTTON_CANDY_SHEEP, 0xFF33FF, 0xFFCCFF);
+    //	public static final RegistryObject<Item> EASTER_CHICKEN_SPAWN_EGG = registerSpawnEgg("easter_chicken_spawn_egg", CCEntityTypes.EASTER_CHICKEN, 0x996611, 0x774411);
+    //	public static final RegistryObject<Item> GUMMY_MOUSE_SPAWN_EGG = registerSpawnEgg("gummy_mouse_spawn_egg", CCEntityTypes.GUMMY_MOUSE, 0x00FF00, 0x33BB33);
+    //	public static final RegistryObject<Item> GUMMY_BEAR_SPAWN_EGG = registerSpawnEgg("gummy_bear_spawn_egg", CCEntityTypes.GUMMY_BEAR, 0x00FF00, 0x33BB33);
+    //	public static final RegistryObject<Item> CARAMEL_BEE_SPAWN_EGG = registerSpawnEgg("caramel_bee_spawn_egg", CCEntityTypes.CARAMEL_BEE, 0xF1C3C3, 0xFE7F01);
+    //	public static final RegistryObject<Item> GINGERBREAD_MAN_SPAWN_EGG = registerSpawnEgg("gingerbread_man_spawn_egg", CCEntityTypes.GINGERBREAD_MAN, 0xF1C3C3, 0x61380B);
+    //	public static final RegistryObject<Item> CANDY_FISH_SPAWN_EGG = registerSpawnEgg("candy_fish_spawn_egg", CCEntityTypes.CANDY_FISH, 0xF1C3C3, 0x3A01DF);
+    //	public static final RegistryObject<Item> PINGOUIN_SPAWN_EGG = registerSpawnEgg("pingouin_spawn_egg", CCEntityTypes.PINGOUIN, 0xF1C3C3, 0xFFFFFF);
+    //	public static final RegistryObject<Item> BEETLE_SPAWN_EGG = registerSpawnEgg("beetle_spawn_egg", CCEntityTypes.BEETLE, 0xF1C3C3, 0x250066);
+    //	public static final RegistryObject<Item> NESSIE_SPAWN_EGG = registerSpawnEgg("nessie_spawn_egg", CCEntityTypes.NESSIE, 0xF1C3C3, 0xA9E2F3);
+    //	public static final RegistryObject<Item> DRAGON_SPAWN_EGG = registerSpawnEgg("dragon_spawn_egg", CCEntityTypes.DRAGON, 0x8DC444, 0xA4EDFF);
+    //	public static final RegistryObject<Item> KING_BEETLE_SPAWN_EGG = registerSpawnEgg("king_beetle_spawn_egg", CCEntityTypes.KING_BEETLE, 0x8DC444, 0xA500B3);
+    //	public static final RegistryObject<Item> MERMAID_SPAWN_EGG = registerSpawnEgg("mermaid_spawn_egg", CCEntityTypes.MERMAID, 0x555555, 0x7D82B0);
+    //	public static final RegistryObject<Item> NOUGAT_GOLEM_SPAWN_EGG = registerSpawnEgg("nougat_golem_spawn_egg", CCEntityTypes.NOUGAT_GOLEM, 0xD8C18C, 0x805B38);
+    //	public static final RegistryObject<Item> YELLOW_JELLY_SPAWN_EGG = registerSpawnEgg("yellow_jelly_spawn_egg", CCEntityTypes.YELLOW_JELLY, 0x555555, 0xFFFF00);
+    //	public static final RegistryObject<Item> RED_JELLY_SPAWN_EGG = registerSpawnEgg("red_jelly_spawn_egg", CCEntityTypes.RED_JELLY, 0x555555, 0xFF0000);
+    //	public static final RegistryObject<Item> TORNADO_JELLY_SPAWN_EGG = registerSpawnEgg("tornado_jelly_spawn_egg", CCEntityTypes.TORNADO_JELLY, 0x555555, 0x00FFFF);
+    //	public static final RegistryObject<Item> PEZ_JELLY_SPAWN_EGG = registerSpawnEgg("pez_jelly_spawn_egg", CCEntityTypes.PEZ_JELLY, 0x9166FF, 0xFFFFFF);
+    //	public static final RegistryObject<Item> KING_SLIME_SPAWN_EGG = registerSpawnEgg("king_slime_spawn_egg", CCEntityTypes.KING_SLIME, 0xB23838, 0xE37D11);
+    //	public static final RegistryObject<Item> JELLY_QUEEN_SPAWN_EGG = registerSpawnEgg("jelly_queen_spawn_egg", CCEntityTypes.JELLY_QUEEN, 0xFF7373, 0xCF00EF);
+    //	public static final RegistryObject<Item> BOSS_SUGUARD_SPAWN_EGG = registerSpawnEgg("boss_suguard_spawn_egg", CCEntityTypes.BOSS_SUGUARD, 0xFF7373, 0xDFDFDF);
+    //	public static final RegistryObject<Item> BOSS_BEETLE_SPAWN_EGG = registerSpawnEgg("boss_beetle_spawn_egg", CCEntityTypes.BOSS_BEETLE, 0xFF7373, 0x1C1C1C);
 
     //
 //            event.register(CANDY_PIG.get(), ON_GROUND, MOTION_BLOCKING_NO_LEAVES, CCForgeEvents::canSpawnOnCandySurface, SpawnPlacementRegisterEvent.Operation.REPLACE);

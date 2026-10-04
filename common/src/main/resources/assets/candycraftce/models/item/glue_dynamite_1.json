@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "candycraftce:item/dynamite"
+    "layer0": "candycraftce:item/glue_dynamite_1"
   }
 }

@@ -26,6 +26,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier
 import net.minecraft.world.item.BucketItem
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.Item
+import net.minecraft.world.item.SpawnEggItem
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityType
@@ -40,23 +41,28 @@ import java.util.function.Consumer
 import java.util.function.Supplier
 
 object CPlatformUtils : ICPlatForm by CandyCraftCE.platform {
-    inline fun <R> ifClient(action: () -> R): R? = if (isClient) action() else null
+    @ServerSafe
+    inline fun <R> ifClient(action: ICPlatFormClients. () -> R): R? {
+        return if (isClient) clients?.let(action) else null
+    }
+
+    inline fun <R> ifDatagen(action: ICPlatformDatagen .() -> R): R? {
+        return datagen?.let(action)
+    }
 
     inline fun <R> ifDev(action: () -> R): R? = if (isDev) action() else null
 
     fun ICPlatFormClients.registerBlockColor(vararg blocks: Entry<out Block>, color: Int) {
-        clients?.registerBlockColor(*blocks) { _, _, _, _ -> color }
+        registerBlockColor(*blocks) { _, _, _, _ -> color }
     }
 
     fun ICPlatFormClients.registerItemColor(vararg items: Entry<out Item>, color: Int) {
-        clients?.registerItemColor(*items) { _, _ -> color }
+        registerItemColor(*items) { _, _ -> color }
     }
 
     fun ICPlatFormClients.registerBlockAndItemColor(vararg entries: Entry<out Block>, color: Int) {
-        ifClient {
-            registerBlockColor(*entries, color = color)
-            registerItemColor(*entries.map { it.asItemEntry() }.toTypedArray(), color = color)
-        }
+        registerBlockColor(*entries, color = color)
+        registerItemColor(*entries.map { it.asItemEntry() }.toTypedArray(), color = color)
     }
 
 }
@@ -67,6 +73,7 @@ interface ICPlatForm {
     val isClient: Boolean
     val fluids: ICPlatformFluids
     val levels: ICPlatformLevels
+
     val datagen: ICPlatformDatagen?
     val clients: ICPlatFormClients?
 
@@ -98,6 +105,12 @@ interface ICPlatForm {
     )
 
     fun <M : MobEffect> registerMobEffect(name: String, factory: Supplier<M>): Entry<M>
+    fun createSpawnEggItem(
+        type: Entry<EntityType<out Mob>>,
+        backgroundColor: Int,
+        highlightColor: Int,
+        properties: Item.Properties,
+    ): SpawnEggItem
 }
 
 interface ICPlatformFluids {

@@ -6,6 +6,7 @@ import cn.jawbreakers.candycraftce.level.feature.CandyLiquidLakeFeature.FluidMod
 import cn.jawbreakers.candycraftce.registry.CBlockTags
 import cn.jawbreakers.candycraftce.utils.CLogUtils
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils
+import cn.jawbreakers.candycraftce.utils.CPlatformUtils.ifDatagen
 import cn.jawbreakers.candycraftce.utils.CUtils.modLoc
 import cn.jawbreakers.candycraftce.utils.registry.Entry
 import net.minecraft.core.Vec3i
@@ -71,9 +72,11 @@ object CFeatures {
     //data
 
     init {
-        CPlatformUtils.datagen?.onBootstrap {
-            add(Registries.CONFIGURED_FEATURE, ::bootstrapConfigured)
-            add(Registries.PLACED_FEATURE, ::bootstrapPlaced)
+        ifDatagen {
+            onBootstrap {
+                add(Registries.CONFIGURED_FEATURE, ::bootstrapConfigured)
+                add(Registries.PLACED_FEATURE, ::bootstrapPlaced)
+            }
         }
     }
 

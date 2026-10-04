@@ -26,6 +26,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.Items
+import net.minecraft.world.item.SpawnEggItem
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityType
@@ -55,7 +56,7 @@ class CandyCraftCEFabric : ModInitializer, ICPlatForm {
 
     override fun <T> whenInitialized(action: () -> T): Accessor<T> {
         val accessor = LateInitAccessor<T>()
-        lateUsage?.add { accessor.set(action()) } ?: throw IllegalStateException("Too late")
+        lateUsage?.add { accessor.set(action()) } ?: run { accessor.set(action()) }
         return accessor
     }
 
@@ -87,6 +88,13 @@ class CandyCraftCEFabric : ModInitializer, ICPlatForm {
         register("Item", name, factory::get) { id, it ->
             Items.registerItem(id, it)
         }
+
+    override fun createSpawnEggItem(
+        type: Entry<EntityType<out Mob>>,
+        backgroundColor: Int,
+        highlightColor: Int,
+        properties: Item.Properties,
+    ) = SpawnEggItem(type.get(), backgroundColor, highlightColor, properties)
 
 
     override fun <E : Block> registerBlock(name: String, factory: Supplier<E>): Entry<E> =
@@ -152,8 +160,10 @@ class CandyCraftCEFabric : ModInitializer, ICPlatForm {
             lateInits = null
 
             clog.info("Running `whenInitialized`")
-            lateUsage!!.forEach { it.run() }
-            lateUsage = null
+            lateUsage!!.also {
+                lateUsage = null
+                it.forEach(Runnable::run)
+            }
         }
     }
 

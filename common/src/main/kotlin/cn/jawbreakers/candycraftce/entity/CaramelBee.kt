@@ -3,7 +3,7 @@ package cn.jawbreakers.candycraftce.entity
 import cn.jawbreakers.candycraftce.registry.CMobEffects
 import cn.jawbreakers.candycraftce.utils.CUtils.instance
 import cn.jawbreakers.candycraftce.utils.CandyTargeting
-import cn.jawbreakers.candycraftce.utils.tick
+import cn.jawbreakers.candycraftce.utils.TickUnit.second
 import net.minecraft.core.BlockPos
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.syncher.EntityDataAccessor
@@ -34,8 +34,8 @@ import kotlin.math.max
 
 class CaramelBee(type: EntityType<out CaramelBee?>, level: Level) : Monster(type, level) {
     companion object {
-        private const val HONEY_GLUE_DURATION_TICKS = 5 * 20
-        private const val NATURAL_ANGER_DURATION_TICKS = 30 * 20
+        private val honey_glue_duration_ticks = 5.second
+        private val natural_anger_duration_ticks = 30.second
         private const val SUGUARD_WITNESS_RANGE = 16.0
 
         private val angryKey: EntityDataAccessor<Boolean> =
@@ -122,7 +122,7 @@ class CaramelBee(type: EntityType<out CaramelBee?>, level: Level) : Monster(type
             return
         }
         angerTarget = player.getUUID()
-        angerTicks = NATURAL_ANGER_DURATION_TICKS
+        angerTicks = natural_anger_duration_ticks
         this.isAngry = true
         target = player
     }
@@ -256,7 +256,7 @@ class CaramelBee(type: EntityType<out CaramelBee?>, level: Level) : Monster(type
         val damage = if (level().difficulty == Difficulty.HARD) 3.0f else 2.0f
         val success = target.hurt(damageSources().mobAttack(this), damage)
         if (success && target is LivingEntity && random.nextBoolean()) {
-            target.addEffect(CMobEffects.propolis.get().instance(HONEY_GLUE_DURATION_TICKS.tick), this)
+            target.addEffect(CMobEffects.propolis.get().instance(honey_glue_duration_ticks), this)
         }
         return success
     }

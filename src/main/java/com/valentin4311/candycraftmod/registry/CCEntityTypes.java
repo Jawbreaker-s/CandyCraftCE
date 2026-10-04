@@ -39,61 +39,61 @@ import net.minecraftforge.registries.RegistryObject;
 public final class CCEntityTypes {
 	public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, CandyCraft.MODID);
 
-	public static final RegistryObject<EntityType<HoneyArrowEntity>> HONEY_ARROW = ENTITY_TYPES.register("honey_arrow", () ->
-			EntityType.Builder.<HoneyArrowEntity>of(HoneyArrowEntity::new, MobCategory.MISC)
-					.sized(0.5F, 0.5F)
-					.clientTrackingRange(4)
-					.updateInterval(20)
-					.build(CandyCraft.MODID + ":honey_arrow")
-	);
-
-	public static final RegistryObject<EntityType<HoneyBoltEntity>> HONEY_BOLT = ENTITY_TYPES.register("honey_bolt", () ->
-			EntityType.Builder.<HoneyBoltEntity>of(HoneyBoltEntity::new, MobCategory.MISC)
-					.sized(0.5F, 0.5F)
-					.clientTrackingRange(4)
-					.updateInterval(20)
-					.build(CandyCraft.MODID + ":honey_bolt")
-	);
-
-	public static final RegistryObject<EntityType<DynamiteEntity>> DYNAMITE = ENTITY_TYPES.register("dynamite", () ->
-			EntityType.Builder.<DynamiteEntity>of(DynamiteEntity::new, MobCategory.MISC)
-					.sized(0.25F, 0.25F)
-					.clientTrackingRange(4)
-					.updateInterval(10)
-					.build(CandyCraft.MODID + ":dynamite")
-	);
-
-	public static final RegistryObject<EntityType<GlueDynamiteEntity>> GLUE_DYNAMITE = ENTITY_TYPES.register("glue_dynamite", () ->
-			EntityType.Builder.<GlueDynamiteEntity>of(GlueDynamiteEntity::new, MobCategory.MISC)
-					.sized(0.25F, 0.25F)
-					.clientTrackingRange(4)
-					.updateInterval(10)
-					.build(CandyCraft.MODID + ":glue_dynamite")
-	);
-
-	public static final RegistryObject<EntityType<GummyBallEntity>> GUMMY_BALL = ENTITY_TYPES.register("gummy_ball", () ->
-			EntityType.Builder.<GummyBallEntity>of(GummyBallEntity::new, MobCategory.MISC)
-					.sized(0.25F, 0.25F)
-					.clientTrackingRange(8)
-					.updateInterval(10)
-					.build(CandyCraft.MODID + ":gummy_ball")
-	);
-
-	public static final RegistryObject<EntityType<ThrownForkEntity>> THROWN_FORK = ENTITY_TYPES.register("thrown_fork", () ->
-			EntityType.Builder.<ThrownForkEntity>of(ThrownForkEntity::new, MobCategory.MISC)
-					.sized(0.5F, 0.5F)
-					.clientTrackingRange(4)
-					.updateInterval(20)
-					.build(CandyCraft.MODID + ":thrown_fork")
-	);
-
-	public static final RegistryObject<EntityType<ThrownForkBlockEntity>> THROWN_FORK_BLOCK = ENTITY_TYPES.register("thrown_fork_block", () ->
-			EntityType.Builder.<ThrownForkBlockEntity>of(ThrownForkBlockEntity::new, MobCategory.MISC)
-					.sized(0.65F, 0.65F)
-					.clientTrackingRange(8)
-					.updateInterval(2)
-					.build(CandyCraft.MODID + ":thrown_fork_block")
-	);
+//	public static final RegistryObject<EntityType<HoneyArrowEntity>> HONEY_ARROW = ENTITY_TYPES.register("honey_arrow", () ->
+//			EntityType.Builder.<HoneyArrowEntity>of(HoneyArrowEntity::new, MobCategory.MISC)
+//					.sized(0.5F, 0.5F)
+//					.clientTrackingRange(4)
+//					.updateInterval(20)
+//					.build(CandyCraft.MODID + ":honey_arrow")
+//	);
+//
+//	public static final RegistryObject<EntityType<HoneyBoltEntity>> HONEY_BOLT = ENTITY_TYPES.register("honey_bolt", () ->
+//			EntityType.Builder.<HoneyBoltEntity>of(HoneyBoltEntity::new, MobCategory.MISC)
+//					.sized(0.5F, 0.5F)
+//					.clientTrackingRange(4)
+//					.updateInterval(20)
+//					.build(CandyCraft.MODID + ":honey_bolt")
+//	);
+//
+//	public static final RegistryObject<EntityType<DynamiteEntity>> DYNAMITE = ENTITY_TYPES.register("dynamite", () ->
+//			EntityType.Builder.<DynamiteEntity>of(DynamiteEntity::new, MobCategory.MISC)
+//					.sized(0.25F, 0.25F)
+//					.clientTrackingRange(4)
+//					.updateInterval(10)
+//					.build(CandyCraft.MODID + ":dynamite")
+//	);
+//
+//	public static final RegistryObject<EntityType<GlueDynamiteEntity>> GLUE_DYNAMITE = ENTITY_TYPES.register("glue_dynamite", () ->
+//			EntityType.Builder.<GlueDynamiteEntity>of(GlueDynamiteEntity::new, MobCategory.MISC)
+//					.sized(0.25F, 0.25F)
+//					.clientTrackingRange(4)
+//					.updateInterval(10)
+//					.build(CandyCraft.MODID + ":glue_dynamite")
+//	);
+//
+//	public static final RegistryObject<EntityType<GummyBallEntity>> GUMMY_BALL = ENTITY_TYPES.register("gummy_ball", () ->
+//			EntityType.Builder.<GummyBallEntity>of(GummyBallEntity::new, MobCategory.MISC)
+//					.sized(0.25F, 0.25F)
+//					.clientTrackingRange(8)
+//					.updateInterval(10)
+//					.build(CandyCraft.MODID + ":gummy_ball")
+//	);
+//
+//	public static final RegistryObject<EntityType<ThrownForkEntity>> THROWN_FORK = ENTITY_TYPES.register("thrown_fork", () ->
+//			EntityType.Builder.<ThrownForkEntity>of(ThrownForkEntity::new, MobCategory.MISC)
+//					.sized(0.5F, 0.5F)
+//					.clientTrackingRange(4)
+//					.updateInterval(20)
+//					.build(CandyCraft.MODID + ":thrown_fork")
+//	);
+//
+//	public static final RegistryObject<EntityType<ThrownForkBlockEntity>> THROWN_FORK_BLOCK = ENTITY_TYPES.register("thrown_fork_block", () ->
+//			EntityType.Builder.<ThrownForkBlockEntity>of(ThrownForkBlockEntity::new, MobCategory.MISC)
+//					.sized(0.65F, 0.65F)
+//					.clientTrackingRange(8)
+//					.updateInterval(2)
+//					.build(CandyCraft.MODID + ":thrown_fork_block")
+//	);
 
 //    public static final RegistryObject<EntityType<CandyPigEntity>> CANDY_PIG = ENTITY_TYPES.register("candy_pig", () ->
 //        EntityType.Builder.of(CandyPigEntity::new, MobCategory.CREATURE)

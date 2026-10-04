@@ -3,7 +3,7 @@ package cn.jawbreakers.candycraftce.registry.worldgen
 import cn.jawbreakers.candycraftce.registry.worldgen.CStructureTypes.floating_island_type
 import cn.jawbreakers.candycraftce.registry.worldgen.CStructures.floating_island
 import cn.jawbreakers.candycraftce.utils.CLogUtils
-import cn.jawbreakers.candycraftce.utils.CPlatformUtils
+import cn.jawbreakers.candycraftce.utils.CPlatformUtils.ifDatagen
 import cn.jawbreakers.candycraftce.utils.registry.Entry
 import net.minecraft.core.registries.Registries
 import net.minecraft.data.worldgen.BootstapContext
@@ -21,8 +21,10 @@ import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadType
 object CStructureSets {
     init {
         CLogUtils.sign()
-        CPlatformUtils.datagen?.onBootstrap {
-            add(Registries.STRUCTURE_SET, ::bootstrap)
+        ifDatagen {
+            onBootstrap {
+                add(Registries.STRUCTURE_SET, ::bootstrap)
+            }
         }
     }
 

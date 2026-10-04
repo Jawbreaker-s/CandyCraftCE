@@ -25,6 +25,7 @@ import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.levelgen.Heightmap
+import net.minecraftforge.common.ForgeSpawnEggItem
 import net.minecraftforge.data.loading.DatagenModLoader
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent
 import net.minecraftforge.event.entity.SpawnPlacementRegisterEvent
@@ -72,16 +73,17 @@ class CandyCraftCEForge : ICPlatForm {
     //=================================
     private var lateUsage: MutableList<Runnable>? = mutableListOf()
 
-
     fun onMinecraftSetup(event: FMLCommonSetupEvent) {
         clog.info("Running `whenInitialized`")
-        lateUsage!!.forEach { it.run() }
-        lateUsage = null
+        lateUsage!!.also {
+            lateUsage = null
+            it.forEach(Runnable::run)
+        }
     }
 
     override fun <T> whenInitialized(action: () -> T): Accessor<T> {
         val accessor = LateInitAccessor<T>()
-        lateUsage?.add { accessor.set(action()) } ?: error("Too late")
+        lateUsage?.add { accessor.set(action()) } ?: accessor.set(action())
         return accessor
     }
     //=================================
@@ -91,6 +93,13 @@ class CandyCraftCEForge : ICPlatForm {
             .also { logRegister(register.registryName.path, it.id) }
             .asEntry()
     }
+
+    override fun createSpawnEggItem(
+        type: Entry<EntityType<out Mob>>,
+        backgroundColor: Int,
+        highlightColor: Int,
+        properties: Item.Properties,
+    ) = ForgeSpawnEggItem(type, backgroundColor, highlightColor, properties)
 
     override fun <I : Item> registerItem(name: String, factory: Supplier<I>): Entry<I> =
         register(items, name, factory)

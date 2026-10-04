@@ -1,7 +1,6 @@
 package cn.jawbreakers.candycraftce.client.entity.layers
 
-import cn.jawbreakers.candycraftce.entity.HoneyArrowEntity
-import cn.jawbreakers.candycraftce.entity.HoneyBoltEntity
+import cn.jawbreakers.candycraftce.entity.HoneyArrow
 import cn.jawbreakers.candycraftce.mixin_stub.ICandyStuckProjectileCarrier
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.model.PlayerModel
@@ -38,9 +37,9 @@ class CandyProjectileStuckLayer(
         target: Entity, x: Float, y: Float, z: Float, partialTick: Float,
     ) {
         val projectile = if (renderedItems++ < honeyArrowsToRender) {
-            HoneyArrowEntity(target.level(), target.x, target.y, target.z)
+            HoneyArrow(target.level(), target.x, target.y, target.z)
         } else {
-            HoneyBoltEntity(target.level(), target.x, target.y, target.z)
+            HoneyArrow(target.level(), target.x, target.y, target.z)
         }
 
         val horizontal = Mth.sqrt(x * x + z * z)

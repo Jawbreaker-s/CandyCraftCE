@@ -913,7 +913,7 @@ public class BasicCandyZombieEntity extends PathfinderMob implements PlayerRidea
 			if (target != null && distanceToSqr(target) <= 245.0D && hasLineOfSight(target)) {
 				float attackStrength = Mth.clamp(distanceTo(target) / 15.0F, 0.1F, 1.0F);
 				rangedCooldown = Mth.floor(attackStrength * 10.0F + 20.0F);
-				HoneyArrowEntity ball = new HoneyArrowEntity(level, this);
+				HoneyArrow ball = new HoneyArrow(level, this);
 				double dx = target.getX() - getX();
 				double dy = target.getEyeY() - ball.getY();
 				double dz = target.getZ() - getZ();
@@ -1033,7 +1033,7 @@ public class BasicCandyZombieEntity extends PathfinderMob implements PlayerRidea
 	}
 
 	private void shootBossSuguardArrow(ServerLevel level, LivingEntity target, float attackStrength) {
-		HoneyArrowEntity arrow = new HoneyArrowEntity(level, this);
+		HoneyArrow arrow = new HoneyArrow(level, this);
 		arrow.markBossSuguardProjectile();
 		arrow.setPos(getX(), getEyeY() - 0.05D, getZ());
 		arrow.setBaseDamage(attackStrength * 3.0F + random.nextGaussian() * 0.25D + level.getDifficulty().getId() * 0.11F);

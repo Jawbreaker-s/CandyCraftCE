@@ -1,5 +1,7 @@
 package cn.jawbreakers.candycraftce.item
 
+import cn.jawbreakers.candycraftce.entity.DynamiteEntity
+import cn.jawbreakers.candycraftce.entity.GlueDynamiteEntity
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
@@ -14,10 +16,21 @@ import net.minecraft.world.item.UseAnim
 import net.minecraft.world.level.Level
 
 class DynamiteItem(properties: Properties, private val glue: Boolean) : Item(properties) {
+    companion object {
+        private const val HAND_EXPLOSION_TICKS = 80
+        private const val MIN_THROW_TICKS = HAND_EXPLOSION_TICKS / 10
+        fun modelStage(stack: ItemStack?, entity: LivingEntity?): Float {
+            if (entity == null || entity.getUseItem() != stack) {
+                return 0.0f
+            }
+            val usedTicks = stack.useDuration - entity.useItemRemainingTicks
+            return usedTicks.toFloat() / HAND_EXPLOSION_TICKS
+        }
+    }
+
     override fun use(level: Level, player: Player, hand: InteractionHand): InteractionResultHolder<ItemStack> {
-        val stack = player.getItemInHand(hand)
         player.startUsingItem(hand)
-        return InteractionResultHolder.success(stack)
+        return InteractionResultHolder.success(player.getItemInHand(hand))
     }
 
     override fun onUseTick(level: Level, entity: LivingEntity, stack: ItemStack, remainingUseDuration: Int) {
@@ -32,7 +45,7 @@ class DynamiteItem(properties: Properties, private val glue: Boolean) : Item(pro
             )
         }
 
-        if (usedTicks == HAND_EXPLOSION_TICKS && entity is Player) {
+        if (usedTicks >= HAND_EXPLOSION_TICKS && entity is Player) {
             if (!level.isClientSide) {
                 level.explode(
                     null, entity.x, entity.y, entity.z, 3.0f,
@@ -52,7 +65,7 @@ class DynamiteItem(properties: Properties, private val glue: Boolean) : Item(pro
         }
 
         val usedTicks = getUseDuration(stack) - timeLeft
-        if (usedTicks !in MIN_THROW_TICKS..HAND_EXPLOSION_TICKS) {
+        if (usedTicks < MIN_THROW_TICKS) {
             return
         }
 
@@ -63,13 +76,14 @@ class DynamiteItem(properties: Properties, private val glue: Boolean) : Item(pro
         )
 
         if (!level.isClientSide) {
-            //TODO DynamiteEntity
-//            val dynamite: DynamiteEntity =
-//                if (glue) GlueDynamiteEntity(level, entity) else DynamiteEntity(level, entity)
-//            dynamite.setItem(stack.copyWithCount(1))
-//            dynamite.setFuse(HAND_EXPLOSION_TICKS - usedTicks)
-//            dynamite.shootFromRotation(entity, entity.xRot, entity.yRot, 0.0f, 1.5f, 1.0f)
-//            level.addFreshEntity(dynamite)
+            val dynamite = when {
+                glue -> GlueDynamiteEntity(level, entity)
+                else -> DynamiteEntity(level, entity)
+            }
+            dynamite.item = stack.copyWithCount(1)
+            dynamite.fuse = HAND_EXPLOSION_TICKS - usedTicks
+            dynamite.shootFromRotation(entity, entity.xRot, entity.yRot, 0.0f, 1.5f, 1.0f)
+            level.addFreshEntity(dynamite)
         }
 
         if (!entity.abilities.instabuild) {
@@ -82,26 +96,5 @@ class DynamiteItem(properties: Properties, private val glue: Boolean) : Item(pro
         return 72000
     }
 
-    override fun getUseAnimation(stack: ItemStack): UseAnim {
-        return UseAnim.BOW
-    }
-
-    companion object {
-        private const val MIN_THROW_TICKS = 15
-        private const val HAND_EXPLOSION_TICKS = 80
-        const val MID_STAGE_TICKS: Int = 60
-        fun modelStage(stack: ItemStack?, entity: LivingEntity?): Float {
-            if (entity == null || entity.getUseItem() != stack) {
-                return 0.0f
-            }
-            val usedTicks = stack.useDuration - entity.useItemRemainingTicks
-            if (usedTicks >= MID_STAGE_TICKS) {
-                return 2.0f
-            }
-            if (usedTicks > MIN_THROW_TICKS) {
-                return 1.0f
-            }
-            return 0.0f
-        }
-    }
+    override fun getUseAnimation(stack: ItemStack): UseAnim = UseAnim.BOW
 }

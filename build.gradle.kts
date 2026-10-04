@@ -29,8 +29,4 @@ allprojects {
             }
         }
     }
-    tasks.withType<JavaCompile> {
-        sourceCompatibility = "17"
-        targetCompatibility = "17"
-    }
 }

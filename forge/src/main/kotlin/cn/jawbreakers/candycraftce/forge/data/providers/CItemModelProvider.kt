@@ -3,6 +3,7 @@ package cn.jawbreakers.candycraftce.forge.data.providers
 import cn.jawbreakers.candycraftce.CandyCraftCE
 import cn.jawbreakers.candycraftce.registry.CItems
 import cn.jawbreakers.candycraftce.utils.CUtils.key
+import cn.jawbreakers.candycraftce.utils.CUtils.mcLoc
 import cn.jawbreakers.candycraftce.utils.IEntrySet
 import cn.jawbreakers.candycraftce.utils.registry.Entry
 import net.minecraft.data.PackOutput
@@ -61,8 +62,6 @@ class CItemModelProvider(output: PackOutput, efHelper: ExistingFileHelper) :
                 pez_jelly_ball,
                 caramel_king_jelly_ball,
                 strawberry_queen_jelly_ball,
-                dynamite,
-                glue_dynamite,
                 cranberry_emblem,
                 gingerbread_emblem,
                 honey_emblem,
@@ -173,6 +172,9 @@ class CItemModelProvider(output: PackOutput, efHelper: ExistingFileHelper) :
                     is IEntrySet<*> -> it.entries().forEach { entry -> handheld(entry as Entry<Item>) }
                     else -> throw IllegalStateException("Unsupported type: $it")
                 }
+            }
+            CItems.spawn_eggs.values.forEach {
+                withExistingParent(it.id.toString(), "item/template_spawn_egg".mcLoc())
             }
         }
     }

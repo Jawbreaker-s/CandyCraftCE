@@ -9,19 +9,25 @@ import cn.jawbreakers.candycraftce.registry.CTabs.blocks
 import cn.jawbreakers.candycraftce.registry.CTabs.misc
 import cn.jawbreakers.candycraftce.registry.CTabs.toolsArmors
 import cn.jawbreakers.candycraftce.utils.CLogUtils
+import cn.jawbreakers.candycraftce.utils.CMixins.buildProperties
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils
+import cn.jawbreakers.candycraftce.utils.CPlatformUtils.ifClient
 import cn.jawbreakers.candycraftce.utils.CUtils.instance
 import cn.jawbreakers.candycraftce.utils.IEntrySet
+import cn.jawbreakers.candycraftce.utils.TickUnit.tick
 import cn.jawbreakers.candycraftce.utils.registry.Entry
-import cn.jawbreakers.candycraftce.utils.tick
 import net.minecraft.world.effect.MobEffectInstance
 import net.minecraft.world.effect.MobEffects
+import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.Mob
 import net.minecraft.world.food.FoodProperties
 import net.minecraft.world.item.*
 import net.minecraft.world.item.Item.Properties
 import net.minecraft.world.level.ItemLike
 import net.minecraft.world.level.block.Block
 import java.util.function.Supplier
+
 
 object CItems {
     init {
@@ -32,7 +38,6 @@ object CItems {
 
     private var contextTab: Entry<CreativeModeTab>? = misc
 
-    //TODO 模型override，详见贴图
     val dynamite = register("dynamite") { DynamiteItem(Properties(), false) }
     val glue_dynamite = register("glue_dynamite") { DynamiteItem(Properties(), true) }
 
@@ -191,9 +196,15 @@ object CItems {
     val dragibus: Entry<ItemNameBlockItem> =
         register("dragibus") { ItemNameBlockItem(CBlocks.dragibus_crops.get(), Properties().food(1, 0.3f)) }
 
-    //=====================
-    //=====================
-    //=====================
+    val spawn_eggs: Map<Entry<EntityType<out Mob>>, Entry<out SpawnEggItem>>
+
+    init {
+        spawn_eggs = CEntityTypes.eggs.mapValues { (entity, color) ->
+            registerSpawnEgg(entity, color.firstInt(), color.secondInt())
+        }
+    }
+
+    //==========Blocks===========
     init {
         contextTab = null
     }
@@ -270,6 +281,49 @@ object CItems {
         contextTab = null
     }
 
+    init {
+        ifClient {
+            fun isUsing(stack: ItemStack, entity: LivingEntity?): Boolean {
+                return entity != null && entity.isUsingItem && entity.getUseItem() == stack
+            }
+
+            fun usingTicks(stack: ItemStack, entity: LivingEntity?): Int =
+                if (entity == null) 0 else stack.useDuration - entity.useItemRemainingTicks
+            caramel_bow.buildProperties {
+                "pull" by { stack, level, entity, seed ->
+                    when {
+                        !isUsing(stack, entity) -> 0.0f
+                        else -> (usingTicks(stack, entity)) / 20.0f
+                    }
+                }
+                "pulling" by { stack, level, entity, seed ->
+                    if (isUsing(stack, entity)) 1.0f else 0.0f
+                }
+            }
+            caramel_crossbow.buildProperties {
+                "pull" by { stack, level, entity, seed ->
+                    when {
+                        !isUsing(stack, entity) -> 0.0f
+                        else -> (usingTicks(stack, entity)) / 20f
+                    }
+                }
+                "pulling" by { stack, level, entity, seed ->
+                    if (isUsing(stack, entity)) 1.0f else 0.0f
+                }
+                "charged" by { stack, level, entity, seed ->
+                    if (CrossbowItem.isCharged(stack)) 1.0f else 0.0f
+                }
+            }
+            listOf(dynamite, glue_dynamite).buildProperties {
+                "stage" by { stack, level, entity, seed ->
+                    DynamiteItem.modelStage(stack, entity)
+                }
+            }
+        }
+    }
+
+    //=====================================
+
     private fun register(name: String, properties: Properties = Properties()): Entry<Item> {
         return register(name) { Item(properties) }
     }
@@ -280,6 +334,18 @@ object CItems {
 
     private fun <B : Block, I : BlockItem> registerBlock(entry: Entry<B>, factory: (Entry<B>) -> I): Entry<I> {
         return register(entry.id.path) { factory(entry) }
+    }
+
+    private fun registerSpawnEgg(
+        entity: Entry<EntityType<out Mob>>,
+        backgroundColor: Int,
+        highlightColor: Int,
+        name: String = "${entity.id.path}_spawn_egg",
+        properties: Properties = Properties(),
+    ): Entry<SpawnEggItem> {
+        return register(name) {
+            CPlatformUtils.createSpawnEggItem(entity, backgroundColor, highlightColor, properties)
+        }
     }
 
     private fun registerBucketItem(

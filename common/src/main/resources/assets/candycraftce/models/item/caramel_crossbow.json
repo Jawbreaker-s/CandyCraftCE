@@ -1,14 +1,9 @@
 {
+  "_idea": "@formatter:off",
     "parent": "item/generated",
     "textures": {
-        "layer0": "candycraftmod:item/caramel_crossbow"
+        "layer0": "candycraftce:item/caramel_crossbow"
     },
-    "overrides": [
-        { "predicate": { "pulling": 1 }, "model": "candycraftmod:item/caramel_crossbow_1" },
-        { "predicate": { "pulling": 1, "pull": 0.58 }, "model": "candycraftmod:item/caramel_crossbow_2" },
-        { "predicate": { "pulling": 1, "pull": 1.0 }, "model": "candycraftmod:item/caramel_crossbow_3" },
-        { "predicate": { "charged": 1 }, "model": "candycraftmod:item/caramel_crossbow_3" }
-    ],
     "display": {
         "thirdperson_righthand": {
             "rotation": [ -90, 0, -60 ],
@@ -30,5 +25,23 @@
             "translation": [ 1.13, 3.2, 1.13 ],
             "scale": [ 0.68, 0.68, 0.68 ]
         }
-    }
+    },
+    "overrides": [
+        {
+            "predicate": { "pulling": 1 },
+            "model": "candycraftce:item/caramel_crossbow_1"
+        },
+        {
+            "predicate": { "pulling": 1, "pull": 0.58 },
+            "model": "candycraftce:item/caramel_crossbow_2"
+        },
+        {
+            "predicate": { "pulling": 1, "pull": 1.0 },
+            "model": "candycraftce:item/caramel_crossbow_3"
+        },
+        {
+            "predicate": { "charged": 1 },
+            "model": "candycraftce:item/caramel_crossbow_3"
+        }
+    ]
 }
