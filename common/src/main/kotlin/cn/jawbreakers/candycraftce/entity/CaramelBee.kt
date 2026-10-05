@@ -1,14 +1,14 @@
 package cn.jawbreakers.candycraftce.entity
 
 import cn.jawbreakers.candycraftce.registry.CMobEffects
+import cn.jawbreakers.candycraftce.utils.CUtils.defineId
 import cn.jawbreakers.candycraftce.utils.CUtils.instance
+import cn.jawbreakers.candycraftce.utils.CUtils.synched
 import cn.jawbreakers.candycraftce.utils.CandyTargeting
 import cn.jawbreakers.candycraftce.utils.TickUnit.second
 import net.minecraft.core.BlockPos
 import net.minecraft.nbt.CompoundTag
-import net.minecraft.network.syncher.EntityDataAccessor
 import net.minecraft.network.syncher.EntityDataSerializers
-import net.minecraft.network.syncher.SynchedEntityData.defineId
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.sounds.SoundEvents
@@ -38,8 +38,7 @@ class CaramelBee(type: EntityType<out CaramelBee?>, level: Level) : Monster(type
         private val natural_anger_duration_ticks = 30.second
         private const val SUGUARD_WITNESS_RANGE = 16.0
 
-        private val angryKey: EntityDataAccessor<Boolean> =
-            defineId(CaramelBee::class.java, EntityDataSerializers.BOOLEAN)
+        private val ANGRY = defineId(EntityDataSerializers.BOOLEAN)
 
         private const val TAG_ANGRY = "Angry"
         private const val TAG_ALWAYS_HOSTILE = "AlwaysHostile"
@@ -52,6 +51,7 @@ class CaramelBee(type: EntityType<out CaramelBee?>, level: Level) : Monster(type
                 .add(Attributes.ATTACK_DAMAGE, 2.0)
                 .add(Attributes.FOLLOW_RANGE, 16.0)
         }
+
 
         fun checkSpawnRules(
             type: EntityType<CaramelBee>,
@@ -93,7 +93,7 @@ class CaramelBee(type: EntityType<out CaramelBee?>, level: Level) : Monster(type
 
     override fun defineSynchedData() {
         super.defineSynchedData()
-        entityData.define(angryKey, false)
+        entityData.define(ANGRY, false)
     }
 
     override fun registerGoals() {
@@ -101,13 +101,7 @@ class CaramelBee(type: EntityType<out CaramelBee?>, level: Level) : Monster(type
         targetSelector.addGoal(2, AngryPlayerTargetGoal(this))
     }
 
-    var isAngry: Boolean
-        get() = entityData.get(angryKey)
-        set(value) {
-            entityData.set(angryKey, value)
-        }
-
-
+    var isAngry: Boolean by synched(ANGRY)
     fun setAlwaysHostile(alwaysHostile: Boolean) {
         this.alwaysHostile = alwaysHostile
         if (alwaysHostile) {

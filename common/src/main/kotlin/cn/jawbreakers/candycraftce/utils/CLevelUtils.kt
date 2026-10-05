@@ -12,6 +12,7 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.ChunkPos
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.Vec3
+import org.joml.Vector3fc
 import java.util.stream.Stream
 import kotlin.math.max
 import kotlin.math.min
@@ -31,6 +32,9 @@ object CLevelUtils {
     operator fun Vec3.component1() = x
     operator fun Vec3.component2() = y
     operator fun Vec3.component3() = z
+    operator fun Vector3fc.component1() = x()
+    operator fun Vector3fc.component2() = y()
+    operator fun Vector3fc.component3() = z()
 
     fun spawnItemEntity(level: Level, pos: Vec3i, stack: ItemStack): ItemEntity? {
         return spawnItemEntity(level, Vec3.atCenterOf(pos), stack)

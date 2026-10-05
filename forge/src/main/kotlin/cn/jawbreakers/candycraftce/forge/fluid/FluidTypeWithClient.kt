@@ -1,7 +1,7 @@
 package cn.jawbreakers.candycraftce.forge.fluid
 
 import cn.jawbreakers.candycraftce.fluid.CFluidPresets
-import cn.jawbreakers.candycraftce.utils.LinearGradient.Companion.vecColor
+import cn.jawbreakers.candycraftce.utils.LinearGradient.Companion.vecColorNormal
 import com.mojang.blaze3d.shaders.FogShape
 import com.mojang.blaze3d.systems.RenderSystem
 import net.minecraft.client.Camera
@@ -140,7 +140,7 @@ open class FluidTypeWithClient(
                     }
                 }
 
-                val fogColor by lazy { presets.fogColor?.vecColor }
+                val fogColor by lazy { presets.fogColor?.vecColorNormal }
                 override fun modifyFogColor(
                     camera: Camera,
                     partialTick: Float,

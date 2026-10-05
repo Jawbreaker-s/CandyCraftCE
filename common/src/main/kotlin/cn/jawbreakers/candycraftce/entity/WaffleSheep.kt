@@ -92,7 +92,7 @@ open class WaffleSheep(type: EntityType<out WaffleSheep?>, level: Level) : Sheep
         }
 
         override fun tick() {
-            val accessor = (this@WaffleSheep as EatBlockGoalAccessor)
+            val accessor = (this as EatBlockGoalAccessor)
             val mob = this@WaffleSheep
             val level = mob.level()
 

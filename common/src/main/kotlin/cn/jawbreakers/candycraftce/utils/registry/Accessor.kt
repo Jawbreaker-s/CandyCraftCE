@@ -9,6 +9,9 @@ import kotlin.reflect.KProperty
 interface Accessor<T> : Supplier<T>, ReadOnlyProperty<Any?, T> {
     companion object {
         fun <T> of(value: T): Accessor<T> = AccessorImpl(value)
+        fun <T> lambda(getter: () -> T) = object : Accessor<T> {
+            override val value: T = getter()
+        }
     }
 
     val value: T
@@ -19,6 +22,11 @@ interface Accessor<T> : Supplier<T>, ReadOnlyProperty<Any?, T> {
 interface MutableAccessor<T> : Accessor<T>, Consumer<T>, ReadWriteProperty<Any?, T> {
     companion object {
         fun <T> create(initialValue: T): MutableAccessor<T> = MutableAccessorImpl(initialValue)
+        fun <T> lambda(getter: () -> T, setter: (T) -> Unit) = object : MutableAccessor<T> {
+            override var value: T
+                get() = getter()
+                set(value) = setter(value)
+        }
     }
 
     override var value: T

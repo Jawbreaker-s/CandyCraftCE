@@ -28,14 +28,14 @@ class LinearGradient(vararg colors: LinearGradientColor) {
                 require(startsWith("#") || startsWith("0x")) { "Invalid color format" }
                 Color(Integer.decode(this))
             }
-        val Color.normal get() = Vec3(red / 255.0, green / 255.0, blue / 255.0)
-        val Int.vecColor: Vector3f
+
+        val Color.normal get() = Vector3f(red / 255.0f, green / 255.0f, blue / 255.0f)
+        val Int.vecColorNormal: Vector3f
             get() = Vector3f(
-                ((this shr 16) and 0xFF) / 255.0f,
-                ((this shr 8) and 0xFF) / 255.0f,
-                (this and 0xFF) / 255.0f
+                red / 255.0f,
+                green / 255.0f,
+                blue / 255.0f
             )
-        val Vec3.rgb get() = Color((x * 255).toInt(), (y * 255).toInt(), (z * 255).toInt())
 
         val Int.alpha get() = FastColor.ARGB32.alpha(this)
         val Int.red get() = FastColor.ARGB32.red(this)
@@ -93,10 +93,6 @@ class GradientScope internal constructor() {
     private val colors = LinkedList<LinearGradientColor>()
     operator fun Color.rem(ratio: Number) {
         colors.add(LinearGradientColor(this.rgb, ratio.toFloat()))
-    }
-
-    operator fun Vec3.rem(ratio: Number) {
-        colors.add(LinearGradientColor(this.rgb.rgb, ratio.toFloat()))
     }
 
     operator fun String.rem(ratio: Number) {

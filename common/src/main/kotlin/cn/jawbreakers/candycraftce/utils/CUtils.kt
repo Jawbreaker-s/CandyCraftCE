@@ -1,7 +1,9 @@
 package cn.jawbreakers.candycraftce.utils
 
 import cn.jawbreakers.candycraftce.CandyCraftCE.MOD_ID
+import cn.jawbreakers.candycraftce.utils.CPlatformUtils.ifDev
 import cn.jawbreakers.candycraftce.utils.TickUnit.tick
+import cn.jawbreakers.candycraftce.utils.registry.MutableAccessor
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Registry
@@ -10,12 +12,16 @@ import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.DoubleTag
 import net.minecraft.nbt.ListTag
 import net.minecraft.nbt.Tag
+import net.minecraft.network.syncher.EntityDataAccessor
+import net.minecraft.network.syncher.EntityDataSerializer
+import net.minecraft.network.syncher.SynchedEntityData
 import net.minecraft.resources.ResourceKey
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.RandomSource
 import net.minecraft.util.profiling.ProfilerFiller
 import net.minecraft.world.effect.MobEffect
 import net.minecraft.world.effect.MobEffectInstance
+import net.minecraft.world.entity.Entity
 import net.minecraft.world.item.Item
 import net.minecraft.world.level.GameRules
 import net.minecraft.world.level.Level
@@ -29,6 +35,33 @@ object CUtils {
     fun <E> RandomSource.choice(k: List<E>): E {
         require(k.isNotEmpty()) { "Collection must not be empty" }
         return k[nextInt(k.size)]
+    }
+
+    fun <T : Any> SynchedEntityData.synched(key: EntityDataAccessor<T>): MutableAccessor<T> {
+        return MutableAccessor.lambda({ get(key) }, { set(key, it) })
+    }
+
+    fun <T : Any> Entity.synched(key: EntityDataAccessor<T>): MutableAccessor<T> = entityData.synched(key)
+    fun <T : Any> defineId(type: EntityDataSerializer<T>): EntityDataAccessor<T> {
+        var caller = CLogUtils.walker.callerClass
+
+        val enclosing: Class<*>? = caller.enclosingClass
+        val meta: Metadata? = caller.getAnnotation(Metadata::class.java)
+        // 伴生对象（匿名或具名）被编译为 SYNTHETIC_CLASS (kind = 3)
+        if (enclosing != null && meta != null && meta.kind == 3) {
+            caller = enclosing
+        } else {
+            ifDev {
+                CLogUtils.debugLog.info("`defineId` auto-detected `$caller`")
+            }
+        }
+
+        if (!Entity::class.java.isAssignableFrom(caller)) {
+            throw IllegalArgumentException("Cannot define entity data for a non-entity class $caller")
+        }
+
+        @Suppress("UNCHECKED_CAST")// runtime-checked by isAssignableFrom
+        return SynchedEntityData.defineId(caller as Class<out Entity>, type)
     }
 
     fun String.modLoc(modId: String = MOD_ID) = ResourceLocation(modId, this)
