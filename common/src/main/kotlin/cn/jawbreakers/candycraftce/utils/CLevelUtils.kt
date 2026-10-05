@@ -28,6 +28,9 @@ object CLevelUtils {
     operator fun Vec3i.component1() = x
     operator fun Vec3i.component2() = y
     operator fun Vec3i.component3() = z
+    operator fun Vec3.component1() = x
+    operator fun Vec3.component2() = y
+    operator fun Vec3.component3() = z
 
     fun spawnItemEntity(level: Level, pos: Vec3i, stack: ItemStack): ItemEntity? {
         return spawnItemEntity(level, Vec3.atCenterOf(pos), stack)

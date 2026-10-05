@@ -3,9 +3,12 @@ package cn.jawbreakers.candycraftce.utils
 import cn.jawbreakers.candycraftce.CandyCraftCE.MOD_ID
 import cn.jawbreakers.candycraftce.utils.TickUnit.tick
 import com.mojang.blaze3d.vertex.PoseStack
+import net.minecraft.core.BlockPos
 import net.minecraft.core.Registry
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.DoubleTag
+import net.minecraft.nbt.ListTag
 import net.minecraft.nbt.Tag
 import net.minecraft.resources.ResourceKey
 import net.minecraft.resources.ResourceLocation
@@ -17,6 +20,7 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.level.GameRules
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.phys.Vec3
 
 object CUtils {
 
@@ -77,6 +81,38 @@ object CUtils {
         popPose()
     }
 
+    fun CompoundTag.putBlockPos(key: String, pos: BlockPos) = putIntArray(key, intArrayOf(pos.x, pos.y, pos.z))
+    fun CompoundTag.getBlockPos(key: String): BlockPos? {
+        return if (contains(key, Tag.TAG_INT_ARRAY.toInt())) {
+            val array = getIntArray(key)
+            BlockPos(array[0], array[1], array[2])
+        } else null
+    }
+
+    fun CompoundTag.putDoubleArray(key: String, numbers: DoubleArray) {
+        val list = ListTag()
+        for (d0 in numbers) {
+            list.add(DoubleTag.valueOf(d0))
+        }
+        put(key, list)
+    }
+
+    fun CompoundTag.getDoubleArray(key: String): DoubleArray? {
+        if (contains(key, Tag.TAG_LIST.toInt())) {
+            val list = getList(key, Tag.TAG_DOUBLE.toInt())
+            return DoubleArray(list.size, list::getDouble)
+        }
+        return null
+    }
+
+    fun CompoundTag.putVec3(key: String, vec3: Vec3) {
+        putDoubleArray(key, doubleArrayOf(vec3.x, vec3.y, vec3.z))
+    }
+
+    fun CompoundTag.getVec3(key: String): Vec3? {
+        return getDoubleArray(key)?.takeIf { size() == 3 }?.let { Vec3(it[0], it[1], it[2]) }
+    }
+
     //读取并自动写入复合nbt里面的数据
     fun <R> CompoundTag.useCompound(key: String, block: (CompoundTag) -> R): R {
         if (this.contains(key, Tag.TAG_COMPOUND.toInt())) {
@@ -84,7 +120,7 @@ object CUtils {
         } else {
             val tag = CompoundTag()
             val r = block(tag)
-            put(key, tag)
+            if (!tag.isEmpty) put(key, tag)
             return r
         }
     }
