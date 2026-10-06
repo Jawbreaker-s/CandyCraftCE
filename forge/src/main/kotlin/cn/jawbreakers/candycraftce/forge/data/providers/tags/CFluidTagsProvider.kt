@@ -23,8 +23,6 @@ class CFluidTagsProvider(
         CFluidTags.apply {
             tag(grenadine).addSet(CFluids.grenadine)
             tag(caramel).addSet(CFluids.caramel)
-            tag(liquid_chocolate).addSet(CFluids.liquid_chocolate)
-            tag(liquid_candy).addSet(CFluids.liquid_candy)
         }
     }
 }

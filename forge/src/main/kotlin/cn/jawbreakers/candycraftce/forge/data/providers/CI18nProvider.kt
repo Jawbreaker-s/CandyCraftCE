@@ -2,16 +2,16 @@ package cn.jawbreakers.candycraftce.forge.data.providers
 
 import cn.jawbreakers.candycraftce.CandyCraftCE.MOD_ID
 import cn.jawbreakers.candycraftce.item.EmblemItem
-import cn.jawbreakers.candycraftce.item.JumpWandItem
-import cn.jawbreakers.candycraftce.registry.CBlocks
-import cn.jawbreakers.candycraftce.registry.CItems
-import cn.jawbreakers.candycraftce.registry.CTabs
+import cn.jawbreakers.candycraftce.registry.*
+import cn.jawbreakers.candycraftce.utils.ILanguageProvider
 import cn.jawbreakers.candycraftce.utils.registry.Entry
 import net.minecraft.data.CachedOutput
 import net.minecraft.data.DataProvider
 import net.minecraft.data.PackOutput
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.contents.TranslatableContents
+import net.minecraft.world.effect.MobEffect
+import net.minecraft.world.entity.EntityType
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.Item
 import net.minecraft.world.level.block.Block
@@ -19,7 +19,7 @@ import net.minecraftforge.common.data.LanguageProvider
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
-class CI18nProvider(output: PackOutput) : DataProvider {
+class CI18nProvider(output: PackOutput) : DataProvider, ILanguageProvider {
     override fun getName(): String = "CandyCraftCE I18n"
     private val enUS: SubLanguageProvider = SubLanguageProvider(output, "en_us")
     private val zhCN: SubLanguageProvider = SubLanguageProvider(output, "zh_cn")
@@ -110,48 +110,16 @@ class CI18nProvider(output: PackOutput) : DataProvider {
             addItem(suguard_boss_key, "Suguard Boss Key", "糖卫国王钥匙")
 
             addItem(caramel_bucket, "Caramel Bucket", "焦糖桶")
-            addItem(grenadine_bucket, "Grenadine Bucket", "番石榴糖浆桶")
-            addItem(liquid_chocolate_bucket, "Liquid Chocolate Bucket", "液体巧克力桶")
-            addItem(liquid_candy_bucket, "Liquid Candy Bucket", "液体糖浆桶")
+            addItem(grenadine_bucket, "Grenadine Bucket", "红石榴糖浆桶")
 
-            addItem(white_hard_candy, "White Hard Candy", "白色硬糖")
-            addItem(red_hard_candy, "Red Hard Candy", "红色硬糖")
-            addItem(green_hard_candy, "Green Hard Candy", "绿色硬糖")
-            addItem(yellow_hard_candy, "Yellow Hard Candy", "黄色硬糖")
-            addItem(orange_hard_candy, "Orange Hard Candy", "橙色硬糖")
-            addItem(light_blue_hard_candy, "Light Blue Hard Candy", "浅蓝色硬糖")
-            addItem(pink_hard_candy, "Pink Hard Candy", "粉色硬糖")
-            addItem(purple_hard_candy, "Purple Hard Candy", "紫色硬糖")
-            addItem(white_red_hard_candy, "White-Red Hard Candy", "红白硬糖")
-            addItem(white_green_hard_candy, "White-Green Hard Candy", "绿白硬糖")
-            addItem(white_yellow_hard_candy, "White-Yellow Hard Candy", "黄白硬糖")
-            addItem(white_orange_hard_candy, "White-Orange Hard Candy", "橙白硬糖")
-            addItem(white_light_blue_hard_candy, "White-Light Blue Hard Candy", "浅蓝白硬糖")
-            addItem(white_pink_hard_candy, "White-Pink Hard Candy", "粉白硬糖")
-            addItem(white_purple_hard_candy, "White-Purple Hard Candy", "紫白硬糖")
-            addItem(red_green_hard_candy, "Red-Green Hard Candy", "红绿硬糖")
 
-            addItem(milk_brownie, "Milk Brownie", "牛奶布朗尼")
-            addItem(white_brownie, "White Brownie", "白色布朗尼")
-            addItem(dark_brownie, "Dark Brownie", "深色布朗尼")
-            addItem(milk_chocolate_bar, "Milk Chocolate Bar", "牛奶巧克力条")
-            addItem(white_chocolate_bar, "White Chocolate Bar", "白色巧克力条")
-            addItem(dark_chocolate_bar, "Dark Chocolate Bar", "深色巧克力条")
-            addItem(ruby_chocolate_bar, "Ruby Chocolate Bar", "红宝石巧克力条")
-            addItem(milk_chocolate_egg, "Milk Chocolate Egg", "牛奶巧克力蛋")
-            addItem(white_chocolate_egg, "White Chocolate Egg", "白色巧克力蛋")
-            addItem(dark_chocolate_egg, "Dark Chocolate Egg", "深色巧克力蛋")
-            addItem(magic_candy, "Magic Candy", "魔法糖果")
             addItem(licorice, "Licorice", "盐甘草糖")
-            addItem(butter, "Butter", "黄油")
-            addItem(wafer_stick, "Wafer Stick", "饼干棒")
-            addItem(rock_sugar, "Rock Sugar", "冰糖")
             addItem(honey_shard, "Honey Shard", "蜜蜡碎片")
             addItem(honeycomb, "Honeycomb", "蜜蜡")
             addItem(chocolate_coin, "Chocolate Coin", "巧克力币")
             addItem(pez, "PEZ", "皮礼士糖")
             addItem(cranberry_scale, "Cranberry Scale", "蔓越莓鱼鳞")
-            addItem(sugar_crystal, "Sugar Crystal", "超纯糖晶")
+            addItem(sugar_crystal, "Sugar Crystal", "冰糖")
             addItem(waffle_nugget, "Waffle Nugget", "华夫饼碎屑")
             addItem(marshmallow_stick, "Marshmallow Stick", "棉花软糖棒")
             addItem(lollipop_seeds, "Lollipop Seeds", "棒棒糖种子")
@@ -160,27 +128,13 @@ class CI18nProvider(output: PackOutput) : DataProvider {
             addItem(marshmallow_flower, "Marshmallow Flower", "棉花软糖花")
             addItem(candied_cherry, "Candied Cherry", "蜜饯樱桃")
             addItem(candy_cane, "Candy Cane", "拐杖糖")
-            addItem(white_green_candy_cane, "White-Green Candy Cane", "绿白拐杖糖")
-            addItem(red_green_candy_cane, "Red-Green Candy Cane", "红绿拐杖糖")
             addItem(chewing_gum, "Chewing Gum", "口香糖")
             addItem(cotton_candy, "Cotton Candy", "棉花糖")
-            addItem(raspberry_cotton_candy, "Raspberry Cotton Candy", "树莓棉花糖")
             addItem(cranberry_fish, "Cranberry Fish", "蔓越莓鱼")
             addItem(cranberry_fish_cooked, "Cooked Cranberry Fish", "熟蔓越莓鱼")
             addItem(dragibus_stick, "Dragibus Stick", "多味珍珠糖钓竿")
             addItem(gummy, "Gummy", "软糖")
             addItem(hot_gummy, "Hot Gummy", "熟软糖")
-            addItem(orange_gummy, "Orange Gummy", "橙色软糖")
-            addItem(yellow_gummy, "Yellow Gummy", "黄色软糖")
-            addItem(white_gummy, "White Gummy", "白色软糖")
-            addItem(green_gummy, "Green Gummy", "绿色软糖")
-            addItem(red_gummy_worm, "Red Gummy Worm", "红色软糖虫")
-            addItem(orange_gummy_worm, "Orange Gummy Worm", "橙色软糖虫")
-            addItem(yellow_gummy_worm, "Yellow Gummy Worm", "黄色软糖虫")
-            addItem(white_gummy_worm, "White Gummy Worm", "白色软糖虫")
-            addItem(green_gummy_worm, "Green Gummy Worm", "绿色软糖虫")
-            addItem(hot_gummy_worm, "Hot Gummy Worm", "熟软糖虫")
-
             addItem(sugar_pill, "Sugar Pill", "糖丸")
             addItem(waffle, "Waffle", "华夫饼")
             addItem(jump_wand, "Jump Wand", "跳跃权杖")
@@ -208,10 +162,6 @@ class CI18nProvider(output: PackOutput) : DataProvider {
             addItem(strawberry_jelly_slice, "Strawberry Jelly Slice", "草莓果冻切片")
             addItem(royal_rations_slice, "Royal Rations Slice", "皇家口粮切片")
             addToolSet(marshmallow_tools, "Marshmallow", "棉花软糖")
-            addToolSet(milk_chocolate_tools, "Milk Chocolate", "牛奶巧克力")
-            addToolSet(white_chocolate_tools, "White Chocolate", "白色巧克力")
-            addToolSet(dark_chocolate_tools, "Dark Chocolate", "深色巧克力")
-            addToolSet(cotton_candy_tools, "Cotton Candy", "棉花糖")
             addToolSet(honey_tools, "Honey", "蜜蜡")
             addToolSet(licorice_tools, "Licorice", "盐甘草糖")
             addToolSet(pez_tools, "PEZ", "皮礼士糖")
@@ -226,12 +176,15 @@ class CI18nProvider(output: PackOutput) : DataProvider {
             addItem(chocolate_leaf, "Chocolate Leaf", "巧克力叶片")
             addItem(caramel_leaf, "Caramel Leaf", "焦糖叶片")
             addItem(candied_cherry_leaf, "Candied Cherry Leaf", "蜜饯樱桃叶片")
+            addItem(chocolate_brick, "Chocolate Brick", "巧克力砖")
+            addItem(white_chocolate_brick, "White Chocolate Brick", "白巧克力砖")
+            addItem(caramel_chocolate_brick, "Caramel Chocolate Brick", "焦糖巧克力砖")
             addItem(pez_dust, "PEZ Dust", "皮礼士糖粉")
             addItem(nougat_powder, "Nougat Powder", "牛轧糖粉")
+            addItem(marshmallow_debugger, "Marshmallow Debugger", "棉花软糖调试器")
         }
         CBlocks.apply {
             addBlock(custard_pudding_block, "Custard Pudding", "奶皮布丁块")
-            addBlock(strawberry_filled_pudding, "Strawberry Filled Custard Pudding", "夹心草莓奶皮布丁块")
             addBlock(pudding_block, "Pudding Block", "布丁块")
             addBlock(pudding_farmland, "Pudding Farmland", "布丁耕地")
             addBlock(sugar_sand, "Sugar Sand", "糖砂")
@@ -257,11 +210,6 @@ class CI18nProvider(output: PackOutput) : DataProvider {
             addBlock(raspberry_cotton_candy_block, "Raspberry Cotton Candy Block", "树莓棉花糖块")
             addBlockFamily(cotton_candy_family, "Cotton Candy", "棉花糖")
             addBlockFamily(raspberry_cotton_candy_family, "Cotton Candy", "树莓棉花糖")
-            addBlock(crystallized_sugar, "Crystallized Sugar", "糖晶")
-            addBlock(pink_crystallized_sugar, "Pink Crystallized Sugar", "粉色糖晶")
-            addBlock(smooth_pink_sugar, "Smooth Pink Sugar", "光滑粉色糖晶")
-            addBlock(pink_sugar_brick, "Pink Sugar Brick", "粉色糖砖")
-            addBlockFamily(pink_sugar_brick_family, "Pink Sugar Brick", "粉色糖砖")
             addBlock(marshmallow_ladder, "Marshmallow Ladder", "棉花软糖梯子")
             addBlock(sweet_grass_pink, "Pink Sweet Grass", "粉色糖草")
             addBlock(sweet_grass_pale, "Pale Sweet Grass", "浅色糖草")
@@ -269,8 +217,8 @@ class CI18nProvider(output: PackOutput) : DataProvider {
             addBlock(sweet_grass_red, "Red Sweet Grass", "红色糖草")
             addBlock(caramel_block, "Caramel Block", "焦糖块")
             addBlockFamily(caramel_family, "Caramel", "焦糖")
-            addBlock(caramel_brick, "Caramel Brick", "焦糖砖")
-            addBlockFamily(caramel_brick_family, "Caramel Brick", "焦糖砖")
+            addBlock(caramel_bricks, "Caramel Brick", "焦糖砖")
+            addBlockFamily(caramel_bricks_family, "Caramel Brick", "焦糖砖")
             addBlockFamily(cookie_family, "Cookie", "曲奇")
             addBlock(cookie_block, "Cookie Block", "曲奇块")
             addBlock(licorice_block, "Licorice Block", "盐甘草糖块")
@@ -282,43 +230,6 @@ class CI18nProvider(output: PackOutput) : DataProvider {
             addBlock(square_pattern_nougat_block, "Square Pattern Nougat Block", "方纹牛轧糖块")
             addBlock(nougat_head, "Nougat Head", "牛轧糖头")
             addBlockFamily(nougat_family, "Nougat", "牛轧糖")
-            addBlock(milk_chocolate_block, "Milk Chocolate Block", "牛奶巧克力块")
-            addBlockFamily(milk_chocolate_family, "Milk Chocolate", "牛奶巧克力")
-            addBlock(milk_chocolate_brick, "Milk Chocolate Brick", "牛奶巧克力砖")
-            addBlockFamily(milk_chocolate_brick_family, "Milk Chocolate Brick", "牛奶巧克力砖")
-            addBlock(white_chocolate_block, "White Chocolate Block", "白巧克力块")
-            addBlockFamily(white_chocolate_family, "White Chocolate", "白巧克力")
-            addBlock(white_chocolate_brick, "White Chocolate Brick", "白巧克力砖")
-            addBlockFamily(white_chocolate_brick_family, "White Chocolate Brick", "白色巧克力砖")
-            addBlock(dark_chocolate_block, "Dark Chocolate Block", "黑巧克力块")
-            addBlockFamily(dark_chocolate_family, "Dark Chocolate", "黑巧克力")
-            addBlock(dark_chocolate_brick, "Dark Chocolate Brick", "黑巧克力砖")
-            addBlockFamily(dark_chocolate_brick_family, "Dark Chocolate Brick", "黑巧克力砖")
-            addBlock(wafer_stick_block, "Wafer Stick Block", "威化棒方块")
-            addBlock(milk_chocolate_bar_block, "Milk Chocolate Bar Block", "牛奶巧克力条方块")
-            addBlock(dark_chocolate_bar_block, "Dark Chocolate Bar Block", "黑巧克力条方块")
-            addBlock(white_chocolate_bar_block, "White Chocolate Bar Block", "白巧克力条方块")
-            addGummyFamily(red_gummy_family, "Red", "红")
-            addGummyFamily(orange_gummy_family, "Orange", "橙")
-            addGummyFamily(yellow_gummy_family, "Yellow", "黄")
-            addGummyFamily(white_gummy_family, "White", "白")
-            addGummyFamily(green_gummy_family, "Green", "绿")
-            addBlock(white_hard_candy_block, "White Hard Candy Block", "白色硬糖方块")
-            addBlock(red_hard_candy_block, "Red Hard Candy Block", "红色硬糖方块")
-            addBlock(green_hard_candy_block, "Green Hard Candy Block", "绿色硬糖方块")
-            addBlock(yellow_hard_candy_block, "Yellow Hard Candy Block", "黄色硬糖方块")
-            addBlock(orange_hard_candy_block, "Orange Hard Candy Block", "橙色硬糖方块")
-            addBlock(light_blue_hard_candy_block, "Light Blue Hard Candy Block", "浅蓝色硬糖方块")
-            addBlock(pink_hard_candy_block, "Pink Hard Candy Block", "粉色硬糖方块")
-            addBlock(purple_hard_candy_block, "Purple Hard Candy Block", "紫色硬糖方块")
-            addBlock(white_red_hard_candy_block, "White-Red Hard Candy Block", "红白硬糖方块")
-            addBlock(white_green_hard_candy_block, "White-Green Hard Candy Block", "绿白硬糖方块")
-            addBlock(white_yellow_hard_candy_block, "White-Yellow Hard Candy Block", "黄白硬糖方块")
-            addBlock(white_orange_hard_candy_block, "White-Orange Hard Candy Block", "橙白硬糖方块")
-            addBlock(white_light_blue_hard_candy_block, "White-Light Blue Hard Candy Block", "浅蓝白硬糖方块")
-            addBlock(white_pink_hard_candy_block, "White-Pink Hard Candy Block", "粉白硬糖方块")
-            addBlock(white_purple_hard_candy_block, "White-Purple Hard Candy Block", "紫白硬糖方块")
-            addBlock(red_green_hard_candy_block, "Red-Green Hard Candy Block", "红绿硬糖方块")
             //glass
             addBlock(caramel_glass, "Caramel Glass", "焦糖玻璃")
             addBlock(caramel_glass_round, "Round Caramel Glass", "圆形焦糖玻璃")
@@ -360,11 +271,11 @@ class CI18nProvider(output: PackOutput) : DataProvider {
             addBlock(chocolate_ice_cream, "Chocolate Ice Cream", "巧克力冰淇淋")
             addBlockFamily(chocolate_ice_cream_family, "Chocolate Ice Cream", "巧克力冰淇淋")
             addBlock(banana_ice_cream, "Banana Ice Cream", "香蕉冰淇淋")
-            addBlock(waffle_block, "Waffle Block", "华夫饼块")
-            addBlock(wafer_cone_block, "Wafer Cone Block", "甜筒块")
-            addBlock(solid_wafer_block, "Solid Wafer Block", "实心威化饼块")
+            addBlockFamily(banana_ice_cream_family, "Banana Ice Cream", "香蕉冰淇淋")
             addBlock(honey_lamp, "Honey Lamp", "蜜蜡灯")
-
+            addBlock(sugar_spikes, "Sugar Spikes", "糖刺")
+            addBlock(cranberry_spikes, "Cranberry Spikes", "蔓越莓刺")
+            addBlock(candied_cherry_sack, "Candied Cherry Sack", "蜜饯樱桃袋")
             addBlock(purple_trampojelly, "Purple TrampoJelly", "紫色弹跳果冻")
             addBlock(trampojelly, "TrampoJelly", "弹跳果冻")
             addBlock(red_trampojelly, "Red TrampoJelly", "红色弹跳果冻")
@@ -381,84 +292,94 @@ class CI18nProvider(output: PackOutput) : DataProvider {
             addBlock(jawbreaker_block, "Jawbreaker Block", "基岩硬糖块")
             addBlock(jawbreaker_light, "Jawbreaker Light", "基岩硬糖灯")
             addBlock(chocolate_stone, "Chocolate Stone", "巧克力石头")
+            addBlock(chocolate_bricks, "Chocolate Bricks", "巧克力砖")
             addBlock(chocolate_cobblestone, "Chocolate Cobblestone", "巧克力圆石")
             addBlockFamily(chocolate_stone_family, "Chocolate Stone", "巧克力石头")
             addBlockFamily(chocolate_cobblestone_family, "Chocolate Cobblestone", "巧克力圆石")
-            addBlockFamily(mint_family, "Mint", "薄荷")
+            addBlock(white_chocolate_stone, "White Chocolate Stone", "白巧克力石头")
+            addBlock(white_chocolate_bricks, "White Chocolate Bricks", "白巧克力砖")
+            addBlock(white_chocolate_cobblestone, "White Chocolate Cobblestone", "白巧克力圆石")
+            addBlockFamily(white_chocolate_stone_family, "White Chocolate Stone", "白巧克力石头")
+            addBlockFamily(white_chocolate_cobblestone_family, "White Chocolate Cobblestone", "白巧克力圆石")
 
-            addBlock(custard_white_brownie, "Custard White Brownie", "奶皮白布朗尼块")
-            addBlock(milk_brownie_block, "Milk Brownie Block", "牛奶布朗尼块")
-            addBlock(milk_chiffon_cake_block, "Milk Chiffon Cake Block", "牛奶巧克力风味千层蛋糕块")
-            addBlock(milk_brownie_cake_roll_block, "Milk Brownie Cake Roll Block", "牛奶巧克力布朗尼蛋糕卷")
-            addBlock(white_brownie_block, "White Brownie Block", "白布朗尼方块")
-            addBlock(white_brownie_cake_roll_block, "White Brownie Cake Roll Block", "白巧克力风味千层蛋糕块")
-            addBlock(white_chiffon_cake_block, "White Chiffon Cake Block", "白巧克力布朗尼蛋糕卷")
-            addBlock(dark_brownie_block, "Dark Brownie Block", "黑布朗尼方块")
-            addBlock(dark_chiffon_cake_block, "Dark Chiffon Cake Block", "黑巧克力风味千层蛋糕块")
-            addBlock(dark_brownie_cake_roll_block, "Dark Brownie Cake Roll Block", "黑巧克力布朗尼蛋糕卷")
-            addBlock(cake_block, "Cake Block", "蛋糕块")
-            addBlock(cotton_candy_grass_block, "Candy Grass Block", "棉花糖草方块")
+
+            addBlockFamily(mint_family, "Mint", "薄荷")
 
             addBlock(licorice_ore, "Licorice Ore", "盐甘草矿石")
             addBlock(jelly_ore, "Jelly Ore", "果冻矿石")
             addBlock(pez_ore, "PEZ Ore", "皮礼士糖矿石")
             addBlock(nougat_ore, "Nougat Ore", "牛轧糖矿石")
-            addBlock(crystallized_cookie_ore, "Crystallized Cookie Ore", "结晶饼干矿石")
-            addBlock(cookie_ore, "Cookie Ore", "饼干矿石")
-            addBlock(magic_candy_ore, "Magic Candy Ore", "魔法糖果矿石")
             addBlock(honey_ore, "Honey Ore", "蜜蜡矿石")
+            addBlock(white_licorice_ore, "Licorice Ore", "盐甘草矿石")
+            addBlock(white_jelly_ore, "Jelly Ore", "果冻矿石")
+            addBlock(white_pez_ore, "PEZ Ore", "皮礼士糖矿石")
+            addBlock(white_nougat_ore, "Nougat Ore", "牛轧糖矿石")
+            addBlock(white_honey_ore, "Honey Ore", "蜜蜡矿石")
 
             addBlock(chocolate_leaves, "Chocolate Leaves", "巧克力树叶")
             addBlock(ice_cream_leaves, "Ice Cream Leaves", "冰淇淋树叶")
             addBlock(candied_cherry_leaves, "Candied Cherry Leaves", "蜜饯樱桃树叶")
             addBlock(caramel_leaves, "Caramel Leaves", "焦糖树叶")
             addBlock(enchant_candy_leaves, "Enchant Candy Leaves", "附魔树叶")
-            addBlock(milk_chocolate_leaves, "Milk Chocolate Leaves", "牛奶巧克力树叶")
-            addBlock(white_chocolate_leaves, "White Chocolate Leaves", "白巧克力树叶")
-            addBlock(dark_chocolate_leaves, "Dark Chocolate Leaves", "黑巧克力树叶")
             addBlock(chocolate_sapling, "Chocolate Sapling", "巧克力树苗")
             addBlock(caramel_sapling, "Caramel Sapling", "焦糖树苗")
             addBlock(ice_cream_sapling, "Ice Cream Sapling", "冰淇淋树苗")
             addBlock(candied_cherry_sapling, "Candied Cherry Sapling", "蜜饯樱桃树苗")
-            addBlock(wafer_chocolate_sapling, "Wafer Chocolate Sapling", "威化巧克力树苗")
-            addBlock(cotton_candy_sapling, "Cotton Candy Sapling", "棉花糖树苗")
             addBlock(fraise_tagada_flower, "Fraise Tagada Flower", "果蜜花")
             addBlock(acid_mint_flower, "Acid Mint Flower", "酸薄荷花")
             addBlock(sugar_essence_flower, "Sugar Essence Flower", "金糖花")
             addBlock(chewing_gum_puddle, "Chewing Gum Puddle", "口香糖片")
             addBlock(marshmallow_slice, "Marshmallow Slice", "棉花糖片")
             addBlock(marshmallow_slice_flower, "Marshmallow Slice", "棉花糖片")
-            addBlock(milk_chocolate_mushroom, "Milk Chocolate Mushroom", "牛奶巧克力蘑菇")
-            addBlock(white_chocolate_mushroom, "White Chocolate Mushroom", "白巧克力蘑菇")
-            addBlock(dark_chocolate_mushroom, "Dark Chocolate Mushroom", "黑巧克力蘑菇")
             addBlock(rope_licorice, "Rope Licorice", "绳状盐甘草糖")
             addBlock(mint, "Mint", "水生薄荷")
             addBlock(banana_seaweed, "Banana Seaweed", "香蕉海草")
             addBlock(dragibus_crops, "Dragibus Crops", "多味珍珠糖作物")
             addBlock(lollipop_stem, "Lollipop Stem", "棒棒糖茎")
-            addBlock(lollipop_fruit, "Lollipop Fruit", "棒棒糖果")
+            addBlock(lollipop_fruit, "Lollipop Fruit", "棒棒糖果实")
             addBlock(caramel_portal, "Caramel Portal", "焦糖传送门")
-            addBlock(liquid_candy_portal, "Liquid Candy Portal", "液体糖浆传送门")
-            //CFluidTags
+            //Fluids
             addBlock(caramel, "Caramel", "焦糖")
-            addBlock(grenadine, "Grenadine", "番石榴糖浆")
-            addBlock(liquid_chocolate, "Liquid Chocolate", "液体巧克力")
-            addBlock(liquid_candy, "Liquid Candy", "液体糖浆")
+            addBlock(grenadine, "Grenadine", "红石榴糖浆")
         }
 
-        add(JumpWandItem.TOOLTIP_WAND_USED, "Uses: %s/%s", "剩余次数：%s/%s")
-        add(JumpWandItem.TOOLTIP_WAND_RESTORE, "Sneak use %s to restore %d durability.", "潜行使用%s回复%d点耐久")
+        CEntityTypes.apply {
+            addEntity(honey_arrow, "Honey Arrow", "蜜蜡箭")
+            addEntity(dynamite, "Nougat Dynamite", "牛轧糖炸药")
+            addEntity(glue_dynamite, "Chewing Gum Dynamite", "口香糖炸药")
+            addEntity(candy_pig, "Candy Cane Pig", "拐杖糖猪")
+            addEntity(waffle_sheep, "Waffle Sheep", "华夫饼羊")
+            addEntity(gummy_bunny, "Gummy Bunny", "果冻兔")
+            addEntity(cranfish, "Cranfish", "蔓越莓鱼")
+            addEntity(cookie_creeper, "Cookie Creeper", "饼干苦力怕")
+            addEntity(caramel_bee, "Caramel Bee", "焦糖蜂")
+
+        }
+        CMobEffects.apply {
+            addMobEffects(cloying, "Cloying", "腻滞")
+            addMobEffects(propolis, "Propolis", "蜂胶禁锢")
+        }
     }
 
-    fun add(key: String, en: String, zh: String) {
+    override fun add(key: String, en: String, zh: String) {
         zhCN.add { add(key, zh) }
         enUS.add { add(key, en) }
     }
 
-    fun add(key: Component, en: String, zh: String) {
+    override fun add(key: Component, en: String, zh: String) {
         val key = (key.contents as? TranslatableContents)?.key
             ?: throw IllegalArgumentException("Component is not translatable")
         add(key, en, zh)
+    }
+
+    fun addEntity(key: Entry<out EntityType<*>>, en: String, zh: String) {
+        zhCN.add(key.get(), zh)
+        enUS.add(key.get(), en)
+    }
+
+    fun addMobEffects(key: Entry<out MobEffect>, en: String, zh: String) {
+        zhCN.add(key.get(), zh)
+        enUS.add(key.get(), en)
     }
 
     fun addTab(key: Entry<CreativeModeTab>, en: String, zh: String) {
@@ -490,12 +411,6 @@ class CI18nProvider(output: PackOutput) : DataProvider {
         if (family.wall != null) {
             addBlock(family.wall!!, "$en Wall", "${zh}墙")
         }
-    }
-
-    fun addGummyFamily(gummy: CBlocks.GummyFamily, en: String, zh: String) {
-        addBlock(gummy.block, "$en Gummy Block", "${zh}软糖块")
-        addBlock(gummy.hardened, "$en Hardened Gummy Block", "${zh}硬化软糖块")
-        addBlock(gummy.worm, "$en Worm Gummy Block", "${zh}软糖虫方块")
     }
 
     fun addBlock(key: Entry<out Block>, en: String, zh: String) {

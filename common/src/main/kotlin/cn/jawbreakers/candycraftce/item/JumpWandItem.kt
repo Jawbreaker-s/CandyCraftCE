@@ -2,6 +2,7 @@ package cn.jawbreakers.candycraftce.item
 
 import cn.jawbreakers.candycraftce.CandyCraftCE.MOD_ID
 import cn.jawbreakers.candycraftce.registry.CItems
+import cn.jawbreakers.candycraftce.utils.CPlatformUtils.translate
 import net.minecraft.network.chat.Component
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
@@ -23,13 +24,16 @@ class JumpWandItem(properties: Properties) : Item(properties) {
     companion object {
         val barColor = Mth.hsvToRgb(0.58f, 0.7f, 1.0f)
         private const val USES_TAG = "JumpWandUses"
-        
+
         const val MAX_USES = 10 //最大耐久度
         const val RECHARGE_USES = 1 //每次充能
         const val CHARGE_TICKS = 30 //最大充能时间
 
-        const val TOOLTIP_WAND_USED = "tooltip.$MOD_ID.wand_uses"
-        const val TOOLTIP_WAND_RESTORE = "tooltip.$MOD_ID.wand_recharge"
+        val TOOLTIP_WAND_USED = "tooltip.$MOD_ID.wand_uses"
+            .translate("Uses: %s/%s", "剩余次数：%s/%s")
+
+        val TOOLTIP_WAND_RESTORE = "tooltip.$MOD_ID.wand_recharge"
+            .translate("Sneak use %s to restore %d durability.", "潜行使用%s回复%d点耐久")
     }
 
     fun getUses(stack: ItemStack): Int {

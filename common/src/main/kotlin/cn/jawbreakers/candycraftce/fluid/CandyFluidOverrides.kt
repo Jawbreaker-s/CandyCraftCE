@@ -29,7 +29,7 @@ object CandyFluidOverrides : IFluidBehaviourOverrides {
         entity: Entity,
     ) {
         if (!level.isClientSide) {
-            if (ref == CFluids.liquid_candy) {
+            if (ref == CFluids.caramel) {
                 if (entity is LivingEntity && entity.tickCount % 10 == 0) {
                     entity.hurt(level.damageSources().hotFloor(), 2f)
                     entity.setSecondsOnFire(15)
@@ -38,7 +38,9 @@ object CandyFluidOverrides : IFluidBehaviourOverrides {
         }
     }
 
-
+    /**
+     * 主动过去把neighbour变成固体
+     **/
     override fun FlowingFluid.overrideSpreadTo(
         ref: CFluidReferences,
         level: LevelAccessor,
@@ -49,12 +51,10 @@ object CandyFluidOverrides : IFluidBehaviourOverrides {
         doSpread: (LevelAccessor, BlockPos, BlockState, Direction, FluidState) -> Unit,
     ) {
         //冷液体，会让岩浆凝固
-        if (ref == CFluids.caramel || ref == CFluids.grenadine || ref == CFluids.liquid_chocolate) {
+        if (ref == CFluids.grenadine) {
             checkNeighbour(level, pos, ::isVanillaLava) { np, n ->
                 level.setBlock(np, (if (n.isSource) OBSIDIAN else COBBLESTONE).defaultBlockState(), 3)
             }
-        }
-        if (ref == CFluids.grenadine) {
             checkNeighbour(level, pos, ::isVanillaWater) { np, n ->
                 level.setBlock(
                     np,
@@ -68,6 +68,10 @@ object CandyFluidOverrides : IFluidBehaviourOverrides {
         doSpread(level, pos, state, direction, fluidState)
     }
 
+    /**
+     * 检测被变成固体
+     * 用于黑曜石、圆石等被动的检测
+     * */
     override fun LiquidBlock.overrideShouldSpreadLiquid(
         ref: CFluidReferences,
         level: LevelAccessor,
@@ -77,20 +81,12 @@ object CandyFluidOverrides : IFluidBehaviourOverrides {
         val fluidState = state.fluidState
         val isSource = fluidState.isSource
         return when (ref) {
-            CFluids.caramel -> !checkNeighbour(level, pos, ::isHotLiquid, ALL_DIRECTIONS) { _, _ ->
+            CFluids.caramel -> !checkNeighbour(level, pos, ::isColdLiquid, ALL_DIRECTIONS) { _, _ ->
                 if (isSource) level.setBlock(pos, CBlocks.caramel_block.defaultBlockState(), 3)
             }
 
             CFluids.grenadine -> !checkNeighbour(level, pos, ::isHotLiquid, ALL_DIRECTIONS) { _, _ ->
                 if (isSource) level.setBlock(pos, CBlocks.grenadine_ice.defaultBlockState(), 3)
-            }
-
-            CFluids.liquid_chocolate -> !checkNeighbour(level, pos, ::isHotLiquid, ALL_DIRECTIONS) { _, _ ->
-                if (isSource) level.setBlock(pos, CBlocks.milk_chocolate_block.defaultBlockState(), 3)
-            }
-
-            CFluids.liquid_candy -> !checkNeighbour(level, pos, ::isColdLiquid, ALL_DIRECTIONS) { _, _ ->
-                if (isSource) level.setBlock(pos, CBlocks.pink_crystallized_sugar.defaultBlockState(), 3)
             }
 
             else -> true
@@ -121,19 +117,11 @@ object CandyFluidOverrides : IFluidBehaviourOverrides {
 
 
     private fun isHotLiquid(state: FluidState): Boolean {
-        return !state.isEmpty && (
-                isVanillaLava(state)
-                        || state.`is`(CFluidTags.liquid_candy)
-                )
+        return !state.isEmpty && (isVanillaLava(state) || state.`is`(CFluidTags.caramel))
     }
 
     private fun isColdLiquid(state: FluidState): Boolean {
-        return !state.isEmpty && (
-                state.`is`(FluidTags.WATER)
-                        || state.`is`(CFluidTags.caramel)
-                        || state.`is`(CFluidTags.grenadine)
-                        || state.`is`(CFluidTags.liquid_chocolate)
-                )
+        return !state.isEmpty && (isVanillaWater(state) || state.`is`(CFluidTags.grenadine))
 
     }
 

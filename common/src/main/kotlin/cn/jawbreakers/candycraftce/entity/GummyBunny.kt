@@ -2,7 +2,6 @@ package cn.jawbreakers.candycraftce.entity
 
 import cn.jawbreakers.candycraftce.registry.CEntityTypes
 import cn.jawbreakers.candycraftce.registry.CItems
-import cn.jawbreakers.candycraftce.registry.worldgen.CBiomes
 import cn.jawbreakers.candycraftce.utils.CUtils.defineId
 import cn.jawbreakers.candycraftce.utils.CUtils.synched
 import cn.jawbreakers.candycraftce.utils.LinearGradient.Companion.rgb
@@ -27,7 +26,6 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.Ingredient
 import net.minecraft.world.level.Level
-import net.minecraft.world.level.LevelAccessor
 import net.minecraft.world.level.ServerLevelAccessor
 import net.minecraft.world.level.block.state.BlockState
 import kotlin.math.abs
@@ -35,17 +33,7 @@ import kotlin.math.abs
 class GummyBunny(type: EntityType<out GummyBunny>, level: Level) : Animal(type, level) {
     companion object {
         private val COLOR = defineId(EntityDataSerializers.INT)
-        private val SWAMP_GUMMY_VARIANT = defineId(EntityDataSerializers.BOOLEAN)
         const val TAG_COLOR = "Color"
-        const val TAG_SWAMP_GUMMY_VARIANT = "SwampGummyVariant"
-
-//        private val GUMMY_SWAMP_COLORS = arrayOf(
-//            intArrayOf(224, 52, 72),
-//            intArrayOf(244, 151, 42),
-//            intArrayOf(247, 228, 68),
-//            intArrayOf(230, 248, 221),
-//            intArrayOf(107, 221, 93)
-//        )
 
         fun createAttributes(): AttributeSupplier.Builder {
             return createMobAttributes()
@@ -63,7 +51,6 @@ class GummyBunny(type: EntityType<out GummyBunny>, level: Level) : Animal(type, 
     private var legacyJumping = false
 
     var color: Int by synched(COLOR)
-    var isSwampVariant: Boolean by synched(SWAMP_GUMMY_VARIANT)
 
     override fun registerGoals() {
         goalSelector.addGoal(0, FloatGoal(this))
@@ -79,7 +66,6 @@ class GummyBunny(type: EntityType<out GummyBunny>, level: Level) : Animal(type, 
     override fun defineSynchedData() {
         super.defineSynchedData()
         entityData.define(COLOR, 0xffffff)
-        entityData.define(SWAMP_GUMMY_VARIANT, false)
     }
 
     fun setColor(red: Int, green: Int, blue: Int) {
@@ -88,12 +74,6 @@ class GummyBunny(type: EntityType<out GummyBunny>, level: Level) : Animal(type, 
 
     fun randomizeColor() {
         setColor(random.nextInt(230) + 20, random.nextInt(230) + 20, random.nextInt(230) + 20)
-    }
-
-    fun randomizeSwampColor() {
-        randomizeColor()
-//        val color: IntArray = GUMMY_SWAMP_COLORS[random.nextInt(GUMMY_SWAMP_COLORS.size)]
-//        setColor(color[0], color[1], color[2])
     }
 
     override fun isFood(stack: ItemStack) = food.test(stack)
@@ -152,10 +132,7 @@ class GummyBunny(type: EntityType<out GummyBunny>, level: Level) : Animal(type, 
 
     override fun getBreedOffspring(level: ServerLevel, partner: AgeableMob): GummyBunny? {
         val bunny: GummyBunny? = CEntityTypes.gummy_bunny.get().create(level)
-        if (bunny != null) {
-            bunny.randomizeColor()
-            bunny.isSwampVariant = false
-        }
+        bunny?.randomizeColor()
         return bunny
     }
 
@@ -167,41 +144,29 @@ class GummyBunny(type: EntityType<out GummyBunny>, level: Level) : Animal(type, 
         tag: CompoundTag?,
     ): SpawnGroupData {
         val data: SpawnGroupData = super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData, tag)!!
-        val swamp = isGummySwamp(level)
-        isSwampVariant = swamp
-        if (swamp) {
-            randomizeSwampColor()
-        } else {
-            randomizeColor()
-        }
+        randomizeColor()
         return data
-    }
-
-    override fun addAdditionalSaveData(tag: CompoundTag) {
-        super.addAdditionalSaveData(tag)
-        tag.putInt("Color", color)
-        tag.putBoolean("SwampGummyVariant", entityData.get(SWAMP_GUMMY_VARIANT))
-    }
-
-    override fun readAdditionalSaveData(tag: CompoundTag) {
-        super.readAdditionalSaveData(tag)
-        if (tag.contains(TAG_COLOR, Tag.TAG_ANY_NUMERIC.toInt())) {
-            color = tag.getInt(TAG_COLOR)
-        }
-        isSwampVariant = tag.getBoolean(TAG_SWAMP_GUMMY_VARIANT)
     }
 
     private fun hasHorizontalMovement(): Boolean {
         return abs(deltaMovement.x) > 0.003 || abs(deltaMovement.z) > 0.003
     }
 
-    private fun isGummySwamp(level: LevelAccessor): Boolean {
-        return level.getBiome(blockPosition()).`is`(CBiomes.gummy_swamp)
-    }
-
     private fun setMovementSpeedIfChanged(speed: AttributeInstance?, value: Double) {
         if (speed != null && speed.baseValue != value) {
             speed.baseValue = value
+        }
+    }
+
+    override fun addAdditionalSaveData(tag: CompoundTag) {
+        super.addAdditionalSaveData(tag)
+        tag.putInt("Color", color)
+    }
+
+    override fun readAdditionalSaveData(tag: CompoundTag) {
+        super.readAdditionalSaveData(tag)
+        if (tag.contains(TAG_COLOR, Tag.TAG_ANY_NUMERIC.toInt())) {
+            color = tag.getInt(TAG_COLOR)
         }
     }
 }

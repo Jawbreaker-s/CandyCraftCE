@@ -19,6 +19,7 @@ import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricDefaultAttribute
 import net.fabricmc.loader.api.FabricLoader
 import net.minecraft.core.particles.ParticleType
 import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.effect.MobEffect
 import net.minecraft.world.entity.*
@@ -94,7 +95,10 @@ class CandyCraftCEFabric : ModInitializer, ICPlatForm {
         backgroundColor: Int,
         highlightColor: Int,
         properties: Item.Properties,
-    ) = SpawnEggItem(type.get(), backgroundColor, highlightColor, properties)
+    ) = object : SpawnEggItem(type.get(), backgroundColor, highlightColor, properties) {
+        val desc: Component by lazy { Component.translatable(ICPlatForm.SPAWN_EGG_DESC, type.get().description) }
+        override fun getDescription(): Component = desc
+    }
 
 
     override fun <E : Block> registerBlock(name: String, factory: Supplier<E>): Entry<E> =

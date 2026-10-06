@@ -31,15 +31,12 @@ class CBlockTagsProvider(
                 tag(candy_soil)
                     .add(pudding_block.get())
                     .add(custard_pudding_block.get())
-                    .add(strawberry_filled_pudding.get())
                     .add(pudding_farmland.get())
-                    .add(custard_white_brownie.get())
-                    .add(milk_brownie_block.get())
-                    .add(dark_brownie_block.get())
-                    .add(white_brownie_block.get())
+
 
                 tag(seaweed_soil)
                     .add(sugar_sand.get())
+                    .addTag(candy_soil)
 
                 tag(CBlockTags.ice_cream)
                     .add(ice_cream.get())
@@ -57,7 +54,7 @@ class CBlockTagsProvider(
                     .add(caramel_block.get())
                 tag(can_light_portal)
                     .add(Blocks.LAVA)
-                    .add(liquid_candy.get())
+                    .add(CBlocks.caramel.get())
 
                 tag(sweet_grass)
                     .add(sweet_grass_red.get())
@@ -65,49 +62,51 @@ class CBlockTagsProvider(
                     .add(sweet_grass_pink.get())
                     .add(sweet_grass_yellow.get())
 
-                tag(CBlockTags.candy_portal)
-                    .add(CBlocks.caramel_portal.get())
-                    .add(CBlocks.liquid_candy_portal.get())
+                tag(CBlockTags.candy_portal).add(CBlocks.caramel_portal.get())
 
                 tag(candy_animal_spawnable_on)
-                    .add(cotton_candy_grass_block.get())
                     .add(custard_pudding_block.get())
                     .add(pudding_block.get())
-                    .add(strawberry_filled_pudding.get())
 
-
-
-                tag(worm_blocks)
-                    .apply {
-                        gummy_families.forEach {
-                            add(it.worm.get())
-                        }
-                    }
-
-                tag(gummy_blocks)
-                    .apply {
-                        gummy_families.forEach {
-                            add(it.block.get())
-                        }
-                    }
 
                 tag(CBlockTags.marshmallow_logs)
                     .add(marshmallow_log.get())
                     .add(light_marshmallow_log.get())
                     .add(dark_marshmallow_log.get())
+                tag(CBlockTags.chocolate_block)
+                    .add(chocolate_stone.get())
+                    .add(white_chocolate_stone.get())
 
                 tag(BlockTags.LOGS)
                     .addTag(CBlockTags.marshmallow_logs)
 
-                tag(BlockTags.LEAVES)
+                tag(candy_leaves)
                     .add(chocolate_leaves.get())
                     .add(ice_cream_leaves.get())
                     .add(candied_cherry_leaves.get())
                     .add(caramel_leaves.get())
                     .add(enchant_candy_leaves.get())
-                    .add(milk_chocolate_leaves.get())
-                    .add(white_chocolate_leaves.get())
-                    .add(dark_chocolate_leaves.get())
+
+                tag(BlockTags.LEAVES)
+                    .addTag(candy_leaves)
+
+                CBlocks.families.forEach { f ->
+                    f.sign?.also {
+                        tag(BlockTags.SIGNS).add(it.get())
+                        tag(BlockTags.STANDING_SIGNS).add(it.get())
+                    }
+                    f.wallSign?.also {
+                        tag(BlockTags.SIGNS).add(it.get())
+                        tag(BlockTags.WALL_SIGNS).add(it.get())
+                    }
+                    f.stairs?.also { tag(BlockTags.STAIRS).add(it.get()) }
+                    f.slab?.also { tag(BlockTags.SLABS).add(it.get()) }
+                    f.wall?.also { tag(BlockTags.WALLS).add(it.get()) }
+                    f.fence?.also { tag(BlockTags.FENCES).add(it.get()) }
+                    f.fenceGate?.also { tag(BlockTags.FENCE_GATES).add(it.get()) }
+                    f.door?.also { tag(BlockTags.DOORS).add(it.get()) }
+                    f.trapdoor?.also { tag(BlockTags.TRAPDOORS).add(it.get()) }
+                }
             }
         }
     }

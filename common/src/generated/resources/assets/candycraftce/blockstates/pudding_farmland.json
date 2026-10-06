@@ -22,7 +22,7 @@
       "model": "candycraftce:block/pudding_farmland"
     },
     "moisture=7": {
-      "model": "candycraftce:block/pudding_farmland"
+      "model": "candycraftce:block/pudding_farmland_moist"
     }
   }
 }

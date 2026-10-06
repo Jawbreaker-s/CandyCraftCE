@@ -69,7 +69,7 @@ fun createCaramelForest(): TreeConfiguration {
         StraightTrunkPlacer(16, 0, 0),
         simple(caramel_leaves.get()),
         FancyCaramelFoliagePlacer(),
-        TwoLayersFeatureSize(1, 0, 4, OptionalInt.empty())
+        TwoLayersFeatureSize(1, 1, 5, OptionalInt.empty())
     )
         .candy()
         .build()
@@ -81,7 +81,7 @@ fun createEnchantTree(): TreeConfiguration {
         DarkOakTrunkPlacer(10, 2, 1),
         simple(CBlocks.enchant_candy_leaves.get()),
         EnchantFoliagePlacer(),
-        TwoLayersFeatureSize(5, 2, 7, OptionalInt.empty())
+        TwoLayersFeatureSize(4, 2, 7, OptionalInt.empty())
     )
         .candy()
         .build()
@@ -104,7 +104,7 @@ fun createWhiteChocolateTree(): TreeConfiguration {
     return TreeConfiguration.TreeConfigurationBuilder(
         simple(light_marshmallow_log.get()),
         StraightTrunkPlacer(5, 2, 1),
-        simple(CBlocks.white_chocolate_leaves.get()),
+        simple(CBlocks.ice_cream_leaves.get()),
         SpruceFoliagePlacer(UniformInt.of(2, 3), UniformInt.of(0, 2), UniformInt.of(1, 2)),
         TwoLayersFeatureSize(2, 0, 2)
     )

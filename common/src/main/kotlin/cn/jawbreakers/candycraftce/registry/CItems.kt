@@ -1,5 +1,6 @@
 package cn.jawbreakers.candycraftce.registry
 
+import cn.breadnicecat.candycraftce.core.item.items.debugger.MarshmallowDebuggerItem
 import cn.jawbreakers.candycraftce.fluid.CFluidReferences
 import cn.jawbreakers.candycraftce.item.*
 import cn.jawbreakers.candycraftce.misc.CArmorMaterials
@@ -67,48 +68,13 @@ object CItems {
     val suguard_boss_key = register("suguard_boss_key", Properties().rarity(Rarity.RARE))
 
     val candy_cane = registerFood("candy_cane", 4, 0.6F)
-    val white_green_candy_cane = registerFood("white_green_candy_cane", 4, 0.6F)
-    val red_green_candy_cane = registerFood("red_green_candy_cane", 4, 0.6F)
 
     val caramel_bucket = registerBucketItem("caramel_bucket", CFluids.caramel)
     val grenadine_bucket = registerBucketItem("grenadine_bucket", CFluids.grenadine)
-    val liquid_chocolate_bucket = registerBucketItem("liquid_chocolate_bucket", CFluids.liquid_chocolate)
-    val liquid_candy_bucket = registerBucketItem("liquid_candy_bucket", CFluids.liquid_candy)
 
-    val white_hard_candy = registerFood("white_hard_candy", 2, 0.6F)
-    val red_hard_candy = registerFood("red_hard_candy", 2, 0.6F)
-    val green_hard_candy = registerFood("green_hard_candy", 2, 0.6F)
-    val yellow_hard_candy = registerFood("yellow_hard_candy", 2, 0.6F)
-    val orange_hard_candy = registerFood("orange_hard_candy", 2, 0.6F)
-    val light_blue_hard_candy = registerFood("light_blue_hard_candy", 2, 0.6F)
-    val pink_hard_candy = registerFood("pink_hard_candy", 2, 0.6F)
-    val purple_hard_candy = registerFood("purple_hard_candy", 2, 0.6F)
-    val white_red_hard_candy = registerFood("white_red_hard_candy", 2, 0.6F)
-    val white_green_hard_candy = registerFood("white_green_hard_candy", 2, 0.6F)
-    val white_yellow_hard_candy = registerFood("white_yellow_hard_candy", 2, 0.6F)
-    val white_orange_hard_candy = registerFood("white_orange_hard_candy", 2, 0.6F)
-    val white_light_blue_hard_candy = registerFood("white_light_blue_hard_candy", 2, 0.6F)
-    val white_pink_hard_candy = registerFood("white_pink_hard_candy", 2, 0.6F)
-    val white_purple_hard_candy = registerFood("white_purple_hard_candy", 2, 0.6F)
-    val red_green_hard_candy = registerFood("red_green_hard_candy", 2, 0.6F)
     val waffle = registerFood("waffle", 10, 0.6F)
-    val milk_brownie = registerFood("milk_brownie", 4, 0.5F)
-    val white_brownie = registerFood("white_brownie", 4, 0.5F)
-    val dark_brownie = registerFood("dark_brownie", 4, 0.5F)
-    val milk_chocolate_bar = registerFood("milk_chocolate_bar", 5, 0.6F)
-    val white_chocolate_bar = registerFood("white_chocolate_bar", 5, 0.6F)
-    val dark_chocolate_bar = registerFood("dark_chocolate_bar", 5, 0.6F)
-    val ruby_chocolate_bar = registerFood("ruby_chocolate_bar", 5, 0.6F)
-    val milk_chocolate_egg = registerFood("milk_chocolate_egg", 7, 0.8F)
-    val white_chocolate_egg = registerFood("white_chocolate_egg", 7, 0.8F)
-    val dark_chocolate_egg = registerFood("dark_chocolate_egg", 7, 0.8F)
     val cotton_candy = registerFood("cotton_candy", 4, 0.5F)
-    val raspberry_cotton_candy = register(
-        "raspberry_cotton_candy",
-        Properties().food(3, 0.6f, true, MobEffects.DIG_SPEED.instance(30.tick) to 0.9f)
-    )
     val lollipop = register("lollipop") { LollipopItem(Properties().food(1, 0.6F)) }
-
     val cranberry_fish = register(
         "cranberry_fish",
         Properties().food(2, 0.6F, true, MobEffects.WATER_BREATHING.instance(30.tick) to 0.9F)
@@ -124,16 +90,6 @@ object CItems {
         "hot_gummy",
         Properties().food(7, 0.6f, true, MobEffects.JUMP.instance(60.tick, 1) to 0.9f)
     )
-    val orange_gummy = registerFood("orange_gummy", 4, 0.6F)
-    val yellow_gummy = registerFood("yellow_gummy", 4, 0.6F)
-    val white_gummy = registerFood("white_gummy", 4, 0.6F)
-    val green_gummy = registerFood("green_gummy", 4, 0.6F)
-    val red_gummy_worm = registerFood("red_gummy_worm", 4, 0.6F)
-    val orange_gummy_worm = registerFood("orange_gummy_worm", 6, 1.0F)
-    val yellow_gummy_worm = registerFood("yellow_gummy_worm", 6, 1.0F)
-    val white_gummy_worm = registerFood("white_gummy_worm", 6, 1.0F)
-    val green_gummy_worm = registerFood("green_gummy_worm", 6, 1.0F)
-    val hot_gummy_worm = registerFood("hot_gummy_worm", 6, 1.0F)
     val gummy_ball = register("gummy_ball") { GummyBallItem(Properties().stacksTo(16)) }
     val lemon_jelly_ball = register("lemon_jelly_ball")
     val raspberry_jelly_ball = register("raspberry_jelly_ball")
@@ -170,19 +126,15 @@ object CItems {
         "pez",
         Properties().food(10, 0.6f, true, MobEffects.DAMAGE_RESISTANCE.instance(60.tick) to 0.9f)
     )
-    val magic_candy = register("magic_candy") { MagicCandyItem(Properties().food(1, 1.0F, true)) }
     val licorice = registerFood("licorice", 6, 0.6F)
     val honey_shard = register("honey_shard")
     val chewing_gum = registerFood("chewing_gum", 1, 0.1F)
     val sugar_pill = register("sugar_pill") { SugarPillItem(Properties().food(0, 0f, true)) }
     val marshmallow_stick = register("marshmallow_stick")
-    val wafer_stick = registerFood("wafer_stick", 5, 0.6F)
     val waffle_nugget = registerFood("waffle_nugget", 1, 0.6F)
-    val butter = registerFood("butter", 1, 1.0F)
     val honeycomb = register("honeycomb")
     val cranberry_scale = register("cranberry_scale")
     val candied_cherry = register("candied_cherry") { CandiedCherryItem(Properties().food(3, 0.6F)) }
-    val rock_sugar = registerFood("rock_sugar", 4, 0.2F)
     val sugar_crystal = register("sugar_crystal", Properties().rarity(Rarity.RARE))
 
     val white_chocolate_leaf = register("white_chocolate_leaf")
@@ -190,6 +142,9 @@ object CItems {
     val chocolate_leaf = register("chocolate_leaf")
     val caramel_leaf = register("caramel_leaf")
     val candied_cherry_leaf = register("candied_cherry_leaf")
+    val caramel_chocolate_brick = register("caramel_brick")
+    val chocolate_brick = register("chocolate_brick")
+    val white_chocolate_brick = register("white_chocolate_brick")
 
     val lollipop_stem = register("lollipop_stem") { BlockItem(CBlocks.lollipop_stem.get(), Properties()) }
     val lollipop_seeds = register("lollipop_seeds") { ItemNameBlockItem(CBlocks.lollipop_stem.get(), Properties()) }
@@ -253,10 +208,6 @@ object CItems {
         ForkItem(CItemTiers.MARSHMALLOW, 4.5f, -2.9f, Properties().durability(326))
     }
     val marshmallow_tools = registerToolSet("marshmallow", CItemTiers.MARSHMALLOW)
-    val milk_chocolate_tools = registerToolSet("milk_chocolate", CItemTiers.CHOCOLATE)
-    val white_chocolate_tools = registerToolSet("white_chocolate", CItemTiers.CHOCOLATE)
-    val dark_chocolate_tools = registerToolSet("dark_chocolate", CItemTiers.CHOCOLATE)
-    val cotton_candy_tools = registerToolSet("cotton_candy", CItemTiers.COTTON_CANDY)
     val licorice_short_sword = register("licorice_short_sword") {
         SwordItem(CItemTiers.LICORICE, 2, -2.2F, Properties())
     }
@@ -279,6 +230,10 @@ object CItems {
 
     init {
         contextTab = null
+    }
+
+    val marshmallow_debugger = register("marshmallow_debugger") {
+        MarshmallowDebuggerItem(Properties().stacksTo(1).rarity(Rarity.EPIC))
     }
 
     init {
@@ -323,7 +278,7 @@ object CItems {
     }
 
     //=====================================
-
+    
     private fun register(name: String, properties: Properties = Properties()): Entry<Item> {
         return register(name) { Item(properties) }
     }

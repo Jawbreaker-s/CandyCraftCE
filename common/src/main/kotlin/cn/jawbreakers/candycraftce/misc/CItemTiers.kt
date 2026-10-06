@@ -1,7 +1,6 @@
 package cn.jawbreakers.candycraftce.misc
 
 import cn.jawbreakers.candycraftce.registry.CBlockTags
-import cn.jawbreakers.candycraftce.registry.CItemTags
 import cn.jawbreakers.candycraftce.registry.CItems
 import net.minecraft.world.item.Tier
 import net.minecraft.world.item.crafting.Ingredient
@@ -17,11 +16,8 @@ enum class CItemTiers(
     MARSHMALLOW(1, 131, 4.0f, 1.0f, 8, {
         Ingredient.of(CBlockTags.marshmallow_planks.item)
     }),
-    COTTON_CANDY(1, 5, 15.0f, 5.0f, 65, {
-        Ingredient.of(CItems.raspberry_cotton_candy.value)
-    }),
     CHOCOLATE(2, 750, 7.0f, 2.5f, 25, {
-        Ingredient.of(CItemTags.chocolate_bar)
+        Ingredient.of(CBlockTags.chocolate_block.item)
     }),
     LICORICE(2, 250, 6.0f, 2.0f, 12, {
         Ingredient.of(CItems.licorice.value)

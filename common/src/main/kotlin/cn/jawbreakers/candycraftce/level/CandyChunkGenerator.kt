@@ -6,14 +6,11 @@ import cn.jawbreakers.candycraftce.CandyCraftCE.MOD_NAME
 import cn.jawbreakers.candycraftce.level.noise.LegacyPerlinOctaveNoise
 import cn.jawbreakers.candycraftce.mixin.level.NoiseRouterDataAccessor
 import cn.jawbreakers.candycraftce.registry.CBlocks
-import cn.jawbreakers.candycraftce.registry.CBlocks.custard_pudding_block
 import cn.jawbreakers.candycraftce.registry.CBlocks.defaultBlockState
 import cn.jawbreakers.candycraftce.registry.CFluidTags
 import cn.jawbreakers.candycraftce.registry.worldgen.CBiomes.caramel_forest
 import cn.jawbreakers.candycraftce.registry.worldgen.CBiomes.chocolate_forest
-import cn.jawbreakers.candycraftce.registry.worldgen.CBiomes.cotton_candy_plains
 import cn.jawbreakers.candycraftce.registry.worldgen.CBiomes.enchanted_forest
-import cn.jawbreakers.candycraftce.registry.worldgen.CBiomes.gummy_swamp
 import cn.jawbreakers.candycraftce.registry.worldgen.CBiomes.ice_cream_plains
 import cn.jawbreakers.candycraftce.registry.worldgen.CBiomes.ice_cream_sky_mountains
 import cn.jawbreakers.candycraftce.registry.worldgen.CBiomes.pudding_hill
@@ -28,7 +25,6 @@ import com.google.common.cache.CacheBuilder
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.core.BlockPos
-import net.minecraft.core.Direction
 import net.minecraft.core.Holder
 import net.minecraft.core.registries.Registries
 import net.minecraft.data.worldgen.BootstapContext
@@ -83,18 +79,21 @@ class CandyChunkGenerator(
         private val air: BlockState = Blocks.AIR.defaultBlockState()
         private val water: BlockState = Blocks.WATER.defaultBlockState()
         private val flat_bottom: BlockState = CBlocks.jawbreaker_block.defaultBlockState()
-        private val base_stone: BlockState = CBlocks.crystallized_sugar.defaultBlockState()
-        private val pudding_block = CBlocks.pudding_block.defaultBlockState()
+        private val base_stone: BlockState = CBlocks.white_chocolate_stone.defaultBlockState()
+        private val deepslate_stone: BlockState = CBlocks.chocolate_stone.defaultBlockState()
+        private val custard_pudding = CBlocks.custard_pudding_block.defaultBlockState()
+        private val pudding = CBlocks.pudding_block.defaultBlockState()
         private val ice_cream = CBlocks.ice_cream.defaultBlockState()
+        private val sand = CBlocks.sugar_sand.defaultBlockState()
 
         //岩浆
-        private val liquid_candy: BlockState = CBlocks.liquid_candy.defaultBlockState()
+        private val hot_liquid: BlockState = CBlocks.caramel.defaultBlockState()
         fun bootstrap(context: BootstapContext<NoiseGeneratorSettings>) {
             context.register(
                 candyland_noise_settings, NoiseGeneratorSettings(
                     NoiseSettings(MIN_Y, HEIGHT, 1, 2),
                     base_stone,
-                    Blocks.WATER.defaultBlockState(),
+                    water,
                     NoiseRouterDataAccessor.getOverworld(
                         context.lookup(Registries.DENSITY_FUNCTION),
                         context.lookup(Registries.NOISE),
@@ -118,30 +117,6 @@ class CandyChunkGenerator(
 
     private fun worldSeed(randomState: RandomState): RandomSource {
         return randomState.getOrCreateRandomFactory(worldRandom).fromHashOf("world")
-    }
-
-
-    private fun blendSurfaceState(
-        selfState: BlockState,
-        defaultState: BlockState,
-        ratio: Double,
-        worldX: Int,
-        worldZ: Int,
-        depth: Int,
-    ): BlockState {
-        if (selfState == defaultState || ratio >= 0.999) return selfState
-
-        // 次表层及更深层，越深越偏向默认材质
-        var effective = ratio
-        if (depth > 0) {
-            effective *= 1.0 - (depth - 1) * 0.35
-            if (effective <= 0.0) return defaultState
-        }
-        if (effective >= 0.999) return selfState
-
-        // 用方块坐标哈希产生 0..1 的阈值，避免每格独立随机导致颗粒感过重
-        val threshold = (positiveHash(worldX, 0, worldZ, 0x5C0FFEE15EEDL) and 0xFFFFFF).toDouble() / 16777216.0
-        return if (effective > threshold) selfState else defaultState
     }
 
     private fun terrainNoiseSet(
@@ -240,8 +215,9 @@ class CandyChunkGenerator(
 
         density -= densityOffset
 
-        if (noiseY > 29.0) {
-            val topFade = (noiseY - 29.0) / 3.0
+        // 接近世界顶端时逐步压低开洞密度，避免地形顶到建筑上限
+        if (noiseY > TOP_FADE_Y) {
+            val topFade = (noiseY - TOP_FADE_Y) / 3.0
             density = Mth.lerp(topFade, density, -10.0)
         }
 
@@ -249,32 +225,25 @@ class CandyChunkGenerator(
     }
 
 
-    private fun isBaseStone(state: BlockState): Boolean {
-        return state.`is`(base_stone.block)
+    private fun isStone(state: BlockState): Boolean {
+        return state.`is`(base_stone.block) || state.`is`(deepslate_stone.block)
     }
 
+    /**
+     * 由插值密度与绝对世界 Y 决定方块类型（fillTerrain / buildColumn 共用，消除重复）：
+     * 密度 > 0 为实心石头（低于分界线用 deepslate_stone，否则 base_stone）；
+     * 否则海平面以下为水，以上为空气。
+     */
+    private fun stateFor(density: Double, worldY: Int): BlockState = when {
+        density > 0.0 -> if (worldY < DEEPSLATE_BOUNDARY) deepslate_stone else base_stone
+        worldY < SEA_LEVEL -> water
+        else -> air
+    }
+
+    val defaultSurfaceMaterials = SurfaceMaterials(custard_pudding, pudding)
     private val surfaceMaterials = mapOf(
-        cotton_candy_plains to
-                SurfaceMaterials(
-                    CBlocks.cotton_candy_grass_block.defaultBlockState(),
-                    CBlocks.milk_brownie_block.defaultBlockState()
-                ),
-        chocolate_forest to
-                SurfaceMaterials(
-                    CBlocks.custard_white_brownie.defaultBlockState(),
-                    CBlocks.white_brownie_block.defaultBlockState()
-                ),
-        ice_cream_sky_mountains to
-                SurfaceMaterials(
-                    ice_cream,
-                    pudding_block
-                )
+        ice_cream_sky_mountains to SurfaceMaterials(ice_cream, pudding)
     )
-    val defaultSurfaceMaterials =
-        SurfaceMaterials(
-            custard_pudding_block.defaultBlockState(),
-            pudding_block, pudding_block
-        )
 
     fun surfaceMaterials(
         biomeId: ResourceKey<Biome>,
@@ -284,40 +253,12 @@ class CandyChunkGenerator(
     ): SurfaceMaterials {
         return when (biomeId) {
             in surfaceMaterials -> surfaceMaterials[biomeId]!!
-            gummy_swamp -> gummySurfaceMaterials(worldX, worldZ, randomState)
             else -> defaultSurfaceMaterials
         }
     }
 
-    private fun gummySurfaceMaterials(worldX: Int, worldZ: Int, randomState: RandomState): SurfaceMaterials {
-        val noise: Double = octaveNoise2D(
-            worldX * 0.0075,
-            worldZ * 0.0075,
-            4,
-            worldSeed(randomState).nextLong()
-        ) * 12.0
-        var index = (noise * 1.6).toInt() % 10
-        if (index < 0) {
-            index += 10
-        }
-        return when (index) {
-            1, 8 -> CBlocks.orange_gummy_family
-            2, 5, 7 -> CBlocks.yellow_gummy_family
-            3, 4 -> CBlocks.green_gummy_family
-            6 -> CBlocks.white_gummy_family
-            else -> CBlocks.red_gummy_family
-        }.run {
-            SurfaceMaterials(
-                block.defaultBlockState(), hardened.defaultBlockState(), block.defaultBlockState()
-            )
-        }
-    }
-
     private fun underwaterMaterial(replaced: Int): BlockState {
-        return if (replaced == 0)
-            CBlocks.sugar_sand.defaultBlockState()
-        else
-            CBlocks.pudding_block.defaultBlockState()
+        return if (replaced == 0) sand else pudding
     }
 
 
@@ -347,12 +288,12 @@ class CandyChunkGenerator(
 
     private fun fillTerrain(chunk: ChunkAccess, randomState: RandomState) {
         val pos = chunk.pos
-        // 生成该区块的密度图（4×4 单元格对应 5×5 噪声采样点，Y 方向 33 个采样点）
+        // 生成该区块的密度图（4×4 单元格对应 5×5 噪声采样点，Y 方向 49 个采样点）
         val heightMap = generateHeightMap(terrainNoiseSet(randomState), pos.x * 4, pos.z * 4, randomState)
         val mutable = BlockPos.MutableBlockPos()
         val worldXs = IntArray(16) { pos.getBlockX(it) }
         val worldZs = IntArray(16) { pos.getBlockZ(it) }
-        // 遍历单元格（4×4 个，Y 方向 32 个单元格 = 256 格）
+        // 遍历单元格（4×4 个，Y 方向 48 个单元格 = 384 格）
         for (cellX in 0..3) {
             val x0: Int = cellX * NOISE_SIZE_XZ
             val x1: Int = (cellX + 1) * NOISE_SIZE_XZ
@@ -364,7 +305,7 @@ class CandyChunkGenerator(
                 val z2: Int = (x1 + cellZ) * NOISE_SIZE_Y
                 val z3: Int = (x1 + cellZ + 1) * NOISE_SIZE_Y
 
-                for (cellY in 0..31) {
+                for (cellY in 0 until CELLS_Y) {
                     // 读取单元格八个角点的密度值
                     var density000 = heightMap[z0 + cellY]
                     var density001 = heightMap[z1 + cellY]
@@ -393,16 +334,13 @@ class CandyChunkGenerator(
                                 val localZ: Int = cellZ * CELL_WIDTH + subZ
                                 val worldX = worldXs[localX]
                                 val worldZ = worldZs[localZ]
-                                val y: Int = cellY * CELL_HEIGHT + subY
+                                // 网格单元格换算为绝对世界 Y（世界底为 MIN_Y，这是旧版 0 起点遗留的修正点）
+                                val y: Int = MIN_Y + cellY * CELL_HEIGHT + subY
 
-                                // 密度 > 0 → 固体（结晶糖）；否则海平面以下为液体，以上为空气
-                                val state: BlockState = when {
-                                    density > 0.0 -> base_stone
-                                    y < SEA_LEVEL -> water
-                                    else -> air
-                                }
+                                val state: BlockState = stateFor(density, y)
+                                // 热路径：跳过空气写入；setBlockState 不持有 pos，无需 .immutable() 分配
                                 if (!state.isAir && y >= chunk.minBuildHeight && y < chunk.maxBuildHeight) {
-                                    chunk.setBlockState(mutable.set(worldX, y, worldZ).immutable(), state, false)
+                                    chunk.setBlockState(mutable.set(worldX, y, worldZ), state, false)
                                 }
                                 density += zStep
                             }
@@ -419,13 +357,14 @@ class CandyChunkGenerator(
                 }
             }
         }
-        // 生成底部平整层和洞穴
+        // 洞穴雕刻后处理深板岩交界与底部基岩
         carveCaves(chunk, randomState)
+        applyDeepslate(chunk, randomState)
         applyBedrock(chunk, randomState)
     }
 
     /**
-     * 生成 5×5×33 的密度图。
+     * 生成 5×5×49 的密度图。
      *
      * @param baseNoiseX 区块对应的噪声起始 X 坐标（区块 X × 4）
      * @param baseNoiseZ 区块对应的噪声起始 Z 坐标（区块 Z × 4）
@@ -451,7 +390,8 @@ class CandyChunkGenerator(
                     heightMap[index++] = sampleDensity(
                         noise,
                         (baseNoiseX + x).toDouble(),
-                        y.toDouble(),
+                        // 网格索引换算为绝对世界高度对应的噪声 Y，保证地形落在正确的海拔区间
+                        (y + NOISE_Y_OFFSET).toDouble(),
                         (baseNoiseZ + z).toDouble(),
                         heightConfig,
                         depthNoise
@@ -489,124 +429,23 @@ class CandyChunkGenerator(
                 val underwater = top < SEA_LEVEL - 1 || biomeId == sugar_oceans || biomeId == sugar_river
                 val depth: Int = 3 + abs(hash(worldX, 0, worldZ)) % 3
                 var replaced = 0
-                // 计算混合比例
-
-
-                val ratio = run {
-                    var self = 0.0
-                    for (dz in -2..2) {
-                        for (dx in -2..2) {
-                            val weight = PARABOLIC_FIELD[dx + 2 + (dz + 2) * 5].toDouble()
-                            val gx = localX + 2 + dx
-                            val gz = localZ + 2 + dz
-                            if (biomeGrid[gx][gz] == biomeId) {
-                                self += weight
-                            }
-                        }
-                    }
-                    self / PARABOLIC_FIELD_TOTAL
-                }
-
                 var y = top
                 while (y > MIN_Y && replaced <= depth) {
                     val state = chunk.getBlockState(mutable.set(worldX, y, worldZ))
-                    if (!isBaseStone(state)) {
+                    if (!isStone(state)) {
                         if (replaced > 0) break
                         --y
                         continue
                     }
-
-                    // 替换材质时使用混合函数
                     val replacement = when {
                         underwater -> underwaterMaterial(replaced)
-                        replaced > 0 -> blendSurfaceState(
-                            materials.under, pudding_block,
-                            ratio, worldX, worldZ, replaced
-                        )
-
-                        else -> blendSurfaceState(
-                            materials.top, custard_pudding_block.defaultBlockState(),
-                            ratio, worldX, worldZ, 0
-                        )
+                        replaced > 0 -> materials.under
+                        else -> materials.top
                     }
 
                     chunk.setBlockState(mutable, replacement, false)
                     replaced++
                     --y
-                }
-            }
-        }
-
-        decoratePinkCrystallizedSugar(region, chunk, randomState)
-    }
-
-    private fun decoratePinkCrystallizedSugar(
-        region: WorldGenRegion,
-        chunk: ChunkAccess,
-        randomState: RandomState,
-    ) {
-        val chunkPos = chunk.pos
-        val seed: Long = worldSeed(randomState).nextLong()
-        val maxY = min(chunk.maxBuildHeight - 1, HEIGHT - 1)
-        val liquidPos = BlockPos.MutableBlockPos()
-        val targetPos = BlockPos.MutableBlockPos()
-
-        for (localX in 0..15) {
-            val worldX = chunkPos.getBlockX(localX)
-            for (localZ in 0..15) {
-                val worldZ = chunkPos.getBlockZ(localZ)
-                // 稀疏扫描：仅处理哈希值低 3 位为 0 的列（概率 1/8）
-                if (positiveHash(worldX, 0, worldZ, seed) and 7L != 0L) {
-                    continue
-                }
-                for (worldY in MIN_Y + 1..maxY) {
-                    val liquid = chunk.getBlockState(liquidPos.set(worldX, worldY, worldZ)).fluidState
-                    // 找到液态糖果方块
-                    if (!liquid.`is`(CFluidTags.liquid_candy)) {
-                        continue
-                    }
-
-                    // 检查液态糖果的六个相邻方向
-                    for (direction in Direction.entries) {
-                        val targetX = worldX + direction.stepX
-                        val targetY = worldY + direction.stepY
-                        val targetZ = worldZ + direction.stepZ
-                        // 确保目标位置在区块范围内
-                        if (targetY !in 1..maxY || targetX < chunkPos.minBlockX || targetX > chunkPos.maxBlockX || targetZ < chunkPos.minBlockZ || targetZ > chunkPos.maxBlockZ) {
-                            continue
-                        }
-
-                        val target = chunk.getBlockState(targetPos.set(targetX, targetY, targetZ))
-                        // 跳过空气、液体、基岩和已存在的粉色结晶糖
-                        if (target.isAir || !target.fluidState.isEmpty
-                            || target.`is`(Blocks.BEDROCK)
-                            || target.`is`(
-                                CBlocks.pink_crystallized_sugar.get()
-                            )
-                        ) {
-                            continue
-                        }
-
-                        // 判断目标是否靠近地表（影响生成概率）
-                        val surface = targetY >= SEA_LEVEL - 4
-                        val validTarget = isBaseStone(target)
-                                || surface
-                                && target.isCollisionShapeFullBlock(region, targetPos)
-                        if (!validTarget) {
-                            continue
-                        }
-
-                        // 生成概率：朝下概率更高，地表概率更高
-                        val chance =
-                            if (direction == Direction.DOWN) (if (surface) 10 else 22) else if (surface) 18 else 32
-                        if (positiveHash(targetX, targetY, targetZ, seed) % chance == 0L) {
-                            chunk.setBlockState(
-                                targetPos.immutable(),
-                                CBlocks.pink_crystallized_sugar.defaultBlockState(),
-                                false
-                            )
-                        }
-                    }
                 }
             }
         }
@@ -681,14 +520,12 @@ class CandyChunkGenerator(
         val heightConfig = heightConfigAt(Mth.floor(noiseX).toDouble(), Mth.floor(noiseZ).toDouble(), randomState)
         val states: Array<BlockState> = Array(height) { i ->
             val y = minY + i
+            // 噪声 Y 基于绝对世界 Y（与 generateHeightMap 的 gy + NOISE_Y_OFFSET 等价），
+            // 这样地表才落在海平面之上；若改用相对索引会使地形整体下移 MIN_Y 而出现全图是水
             val noiseY = y / CELL_HEIGHT.toDouble()
             val density = sampleDensity(noise, noiseX, noiseY, noiseZ, heightConfig)
-            when {
-                y <= MIN_Y -> flat_bottom
-                density > 0.0 -> base_stone
-                y < SEA_LEVEL -> water
-                else -> air
-            }
+            // 最底一格为基岩，其余交由统一的 stateFor 判定（含 deepslate 分界）
+            if (i == 0) flat_bottom else stateFor(density, y)
         }
 
         return states
@@ -729,8 +566,21 @@ class CandyChunkGenerator(
         return HeightConfig(depth, scale)
     }
 
-    private fun applyBedrock(chunk: ChunkAccess, random: RandomState) {
-        val random = random.getOrCreateRandomFactory(caveRandom).at(chunk.pos.x, 0, chunk.pos.z)
+    /**
+     * 基岩式参差层：从 [startY] 起本列随机生成厚度 1~3 的一层。
+     * 首格（偏移 0）必出，其后每格 50% 概率继续，随机消耗顺序与原版保持一致。
+     * 具体放置交由 [place] 回调按绝对世界 Y 执行。
+     */
+    private inline fun jaggedLayer(random: RandomSource, startY: Int, place: (worldY: Int) -> Unit) {
+        val total = random.nextInt(3) + 1 // [1,3]
+        repeat(total) { i ->
+            if (i == 0 || random.nextBoolean()) place(startY + i)
+        }
+    }
+
+    /** 世界底部 1~3 格基岩（参差随机）。 */
+    private fun applyBedrock(chunk: ChunkAccess, randomState: RandomState) {
+        val random = randomState.getOrCreateRandomFactory(caveRandom).at(chunk.pos.x, 0, chunk.pos.z)
         val pos = chunk.pos
         val mutable = BlockPos.MutableBlockPos()
 
@@ -738,10 +588,31 @@ class CandyChunkGenerator(
             val worldX = pos.getBlockX(localX)
             for (localZ in 0..15) {
                 val worldZ = pos.getBlockZ(localZ)
-                val total = random.nextInt(3) + 1//[1,3]
-                repeat(total) { i ->
-                    if (i == 0 || random.nextBoolean()) {
-                        chunk.setBlockState(mutable.set(worldX, MIN_Y + i, worldZ).immutable(), flat_bottom, false)
+                jaggedLayer(random, MIN_Y) { y ->
+                    chunk.setBlockState(mutable.set(worldX, y, worldZ), flat_bottom, false)
+                }
+            }
+        }
+    }
+
+    /**
+     * 石头/深板岩交界处理：
+     * y < DEEPSLATE_BOUNDARY 的实心石头已在 fillTerrain 中直接写成 deepslate_stone；
+     * 此处用与基岩相同的随机把 DEEPSLATE_BOUNDARY 上方 1~3 格内仍为石头的位置并入深板岩，
+     * 使分界呈参差状而非平直一条线。仅替换实心石头，避免在洞穴/空气中凭空生成深板岩。
+     */
+    private fun applyDeepslate(chunk: ChunkAccess, randomState: RandomState) {
+        val random = randomState.getOrCreateRandomFactory(terrainRandom).at(chunk.pos.x, 0, chunk.pos.z)
+        val pos = chunk.pos
+        val mutable = BlockPos.MutableBlockPos()
+
+        for (localX in 0..15) {
+            val worldX = pos.getBlockX(localX)
+            for (localZ in 0..15) {
+                val worldZ = pos.getBlockZ(localZ)
+                jaggedLayer(random, DEEPSLATE_BOUNDARY) { y ->
+                    if (chunk.getBlockState(mutable.set(worldX, y, worldZ)).`is`(base_stone.block)) {
+                        chunk.setBlockState(mutable, deepslate_stone, false)
                     }
                 }
             }
@@ -767,7 +638,8 @@ class CandyChunkGenerator(
         }
         repeat(caveCount) {
             val x = (sourceChunkX * 16 + random.nextInt(16)).toDouble()
-            val y = random.nextInt(random.nextInt(120) + 8).toDouble()
+            // 洞穴起点纵向覆盖整段地下（MIN_Y 之上到海平面附近），使深层深板岩区也能生成洞穴
+            val y = (MIN_Y + 8 + random.nextInt(random.nextInt(150) + 8)).toDouble()
             val z = (sourceChunkZ * 16 + random.nextInt(16)).toDouble()
             var tunnelCount = 1
 
@@ -962,8 +834,8 @@ class CandyChunkGenerator(
 
         minX = Mth.clamp(minX, 0, 16)
         maxX = Mth.clamp(maxX, 0, 16)
-        minY = Mth.clamp(minY, MIN_Y + 1, HEIGHT - 8)
-        maxY = Mth.clamp(maxY, MIN_Y + 1, HEIGHT - 8)
+        minY = Mth.clamp(minY, MIN_Y + 1, MAX_Y - 8)
+        maxY = Mth.clamp(maxY, MIN_Y + 1, MAX_Y - 8)
         minZ = Mth.clamp(minZ, 0, 16)
         maxZ = Mth.clamp(maxZ, 0, 16)
 
@@ -983,8 +855,10 @@ class CandyChunkGenerator(
                 for (localY in maxY downTo minY + 1) {
                     val scaledY = (localY - 0.5 - y) / verticalScale
                     var shape = scaledX * scaledX + scaledZ * scaledZ
-                    if (verticalFactors != null && localY >= 0 && localY < verticalFactors.size) {
-                        shape *= verticalFactors[localY].toDouble()
+                    // verticalFactors 以相对世界底部的网格索引存放，故用 localY - MIN_Y 取值
+                    if (verticalFactors != null) {
+                        val fy = localY - MIN_Y
+                        if (fy in verticalFactors.indices) shape *= verticalFactors[fy].toDouble()
                     }
 
                     val verticalShape = if (verticalFactors == null) scaledY * scaledY else scaledY * scaledY / 6.0
@@ -995,8 +869,8 @@ class CandyChunkGenerator(
                     val worldX = chunkStartX + localX
                     val worldZ = chunkStartZ + localZ
                     val state = chunk.getBlockState(mutable.set(worldX, localY, worldZ))
-                    if (isBaseStone(state)) {
-                        chunk.setBlockState(mutable, if (localY <= LAVA_LEVEL) liquid_candy else air, false)
+                    if (isStone(state)) {
+                        chunk.setBlockState(mutable, if (localY <= LAVA_LEVEL) hot_liquid else air, false)
                     }
                 }
             }
@@ -1017,15 +891,15 @@ class CandyChunkGenerator(
                 val worldZ = pos.getBlockZ(localZ)
                 var y = maxY + 1
                 while (y >= minY - 1) {
-                    if (y !in MIN_Y..<HEIGHT) {
+                    // 有效世界高度区间为 [MIN_Y, MAX_Y)，HEIGHT 是总高度不能当作世界 Y 使用
+                    if (y !in MIN_Y..<MAX_Y) {
                         --y
                         continue
                     }
                     val state = chunk.getBlockState(mutable.set(worldX, y, worldZ)).fluidState
-                    if (y > LAVA_LEVEL && !state.isEmpty
-                        && (state.`is`(FluidTags.WATER)
-                                || state.`is`(CFluidTags.liquid_chocolate)
-                                || state.`is`(CFluidTags.liquid_candy))
+                    if (y > LAVA_LEVEL
+                        && !state.isEmpty
+                        && (state.`is`(FluidTags.WATER) || state.`is`(CFluidTags.caramel))
                     ) return true
 
                     if (y != minY - 1 && localX != minX && localX != maxX - 1 && localZ != minZ && localZ != maxZ - 1) {
@@ -1040,9 +914,10 @@ class CandyChunkGenerator(
 
     private fun findTopSolid(chunk: ChunkAccess, worldX: Int, worldZ: Int): Int {
         val mutable = BlockPos.MutableBlockPos()
-        for (y in min(chunk.maxBuildHeight - 1, HEIGHT - 1) downTo MIN_Y) {
+        // 从区块顶端向下扫描（chunk 边界已隐含 MAX_Y）
+        for (y in (chunk.maxBuildHeight - 1) downTo MIN_Y) {
             val state = chunk.getBlockState(mutable.set(worldX, y, worldZ))
-            if (isBaseStone(state)) {
+            if (isStone(state)) {
                 return y
             }
         }
@@ -1058,8 +933,6 @@ class CandyChunkGenerator(
         sugar_oceans to BiomeShape(-1.0f, 0.1f),
         enchanted_forest to BiomeShape(0.23f, 0.25f),
         caramel_forest to BiomeShape(0.05f, 0.1f),
-        cotton_candy_plains to BiomeShape(0.05f, 0.1f),
-        gummy_swamp to BiomeShape(0.05f, 0.1f),
         ice_cream_plains to BiomeShape(0.05f, 0.1f),
         pudding_hill to BiomeShape(1f, 1f),
         ice_cream_sky_mountains to BiomeShape(3.55f, 2.9f)

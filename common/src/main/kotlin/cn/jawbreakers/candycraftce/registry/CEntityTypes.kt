@@ -111,25 +111,7 @@ object CEntityTypes {
         .attributes(WaffleSheep::createAttributes)
         .renderer(::WaffleSheepRenderer)
         .placement(::checkCandyAnimalSpawnRules)
-
-    val cotton_sheep = register("cotton_sheep") {
-        of(::CottonCandySheep, MobCategory.CREATURE)
-            .sized(0.9f, 1.3f)
-            .clientTrackingRange(10)
-    }
-        .attributes(CottonCandySheep::createAttributes)
-        .renderer(::CottonSheepRenderer)
-        .placement(::checkCandyAnimalSpawnRules)
-
-    val raspberry_cotton_sheep = register("raspberry_cotton_sheep") {
-        of(::CottonCandySheep, MobCategory.CREATURE)
-            .sized(0.9f, 1.3f)
-            .clientTrackingRange(10)
-    }
-        .attributes(CottonCandySheep::createAttributes)
-        .renderer(::RaspberryCottonSheepRenderer)
-        .placement(::checkCandyAnimalSpawnRules)
-
+    
     val gummy_bunny = register("gummy_bunny") {
         of(::GummyBunny, MobCategory.CREATURE)
             .sized(0.5F, 0.4F)

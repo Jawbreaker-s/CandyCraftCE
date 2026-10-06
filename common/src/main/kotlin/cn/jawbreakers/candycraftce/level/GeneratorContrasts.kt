@@ -2,17 +2,14 @@ package cn.jawbreakers.candycraftce.level
 
 import net.minecraft.util.Mth
 
-/** 世界最小 Y 坐标（糖果世界从 Y=0 开始）。  */
-const val MIN_Y = 0
-
-/** 世界总高度（256 格）。  */
-const val HEIGHT = 256
-
-/** 海平面高度（Y=63）。  */
+const val MIN_Y = -64
+const val HEIGHT = 384
+const val MAX_Y = HEIGHT + MIN_Y // 320，世界顶端的绝对 Y（不含）
 const val SEA_LEVEL = 63
-
-/** 岩浆/液态糖果层高度（Y=10）。  */
 const val LAVA_LEVEL = 10
+
+/** 石头/深板岩分界线：绝对 Y 低于此值的实心石头使用 deepslate_stone。  */
+const val DEEPSLATE_BOUNDARY = 0
 
 /** 洞穴雕刻时检查的周围区块范围（±8 区块）。  */
 const val CARVER_RANGE = 8
@@ -20,14 +17,27 @@ const val CARVER_RANGE = 8
 /** 噪声采样网格尺寸（XZ 方向 5 个采样点）。  */
 const val NOISE_SIZE_XZ = 5
 
-/** 噪声采样网格尺寸（Y 方向 33 个采样点）。  */
-const val NOISE_SIZE_Y = 33
+/** 噪声采样网格尺寸（Y 方向 49 个采样点 = HEIGHT / CELL_HEIGHT + 1）。  */
+const val NOISE_SIZE_Y = 49
 
 /** 插值单元格宽度（XZ 方向，4 块）。  */
 const val CELL_WIDTH = 4
 
 /** 插值单元格高度（Y 方向，8 块）。  */
 const val CELL_HEIGHT = 8
+
+/** Y 方向单元格总数（= HEIGHT / CELL_HEIGHT，即 48）。  */
+const val CELLS_Y = HEIGHT / CELL_HEIGHT
+
+/**
+ * 密度采样 Y 坐标偏移：地形密度以「绝对世界 Y / CELL_HEIGHT」作为噪声 Y，
+ * 而网格索引 gy 对应的世界高度为 MIN_Y + gy*CELL_HEIGHT，故噪声 Y = gy + MIN_Y/CELL_HEIGHT。
+ * 缺少这个偏移会让整块地形相对海平面错位（旧版世界以 0 为底时无此问题）。
+ */
+const val NOISE_Y_OFFSET = MIN_Y / CELL_HEIGHT // -8
+
+/** 顶部衰减起始噪声 Y（基于绝对世界高度）：接近世界顶端 3 格起把密度压向 -10，避免地形顶到建筑上限。  */
+const val TOP_FADE_Y = (MAX_Y / CELL_HEIGHT - 3).toDouble()
 
 // 噪声缩放相关常量（与旧版 1.12 地形生成参数保持一致）
 const val COORDINATE_SCALE = 684.412

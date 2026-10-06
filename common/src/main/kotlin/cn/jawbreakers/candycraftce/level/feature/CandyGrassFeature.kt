@@ -2,7 +2,6 @@ package cn.jawbreakers.candycraftce.level.feature
 
 import cn.jawbreakers.candycraftce.registry.CBiomeTags
 import cn.jawbreakers.candycraftce.registry.CBlockTags
-import cn.jawbreakers.candycraftce.registry.CBlocks
 import cn.jawbreakers.candycraftce.registry.CBlocks.acid_mint_flower
 import cn.jawbreakers.candycraftce.registry.CBlocks.defaultBlockState
 import cn.jawbreakers.candycraftce.registry.CBlocks.fraise_tagada_flower
@@ -11,7 +10,6 @@ import cn.jawbreakers.candycraftce.registry.CBlocks.sweet_grass_pale
 import cn.jawbreakers.candycraftce.registry.CBlocks.sweet_grass_pink
 import cn.jawbreakers.candycraftce.registry.CBlocks.sweet_grass_red
 import cn.jawbreakers.candycraftce.registry.CBlocks.sweet_grass_yellow
-import cn.jawbreakers.candycraftce.registry.worldgen.CBiomes
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Holder
 import net.minecraft.util.RandomSource
@@ -67,7 +65,6 @@ class CandyGrassFeature : Feature<NoneFeatureConfiguration>(NoneFeatureConfigura
 
         val biome = level.getBiome(pos)
         val isColdBiome = biome.`is`(CBiomeTags.is_cold)
-        val isMushroom = biome.`is`(CBiomes.chocolate_forest)
 
         if (biome.`is`(CBiomeTags.has_essence_flower)) {
             if (isCandySoil || isIceSoil) {
@@ -86,15 +83,6 @@ class CandyGrassFeature : Feature<NoneFeatureConfiguration>(NoneFeatureConfigura
         if (isColdBiome) return null
         //以下都是基于#candy_soil生成
         if (!isCandySoil) return null
-
-        if (isMushroom) {
-            return when (random.nextInt(5)) {
-                0 -> CBlocks.dark_chocolate_mushroom.defaultBlockState()
-                1 -> CBlocks.white_chocolate_mushroom.defaultBlockState()
-                2 -> CBlocks.milk_chocolate_mushroom.defaultBlockState()
-                else -> null
-            }
-        }
 
         if (random.nextInt(32) == 0 && random.nextBoolean()) {
             return if (biome.`is`(CBiomeTags.has_mint_flower)) {

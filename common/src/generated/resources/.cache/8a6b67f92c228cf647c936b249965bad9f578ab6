@@ -1,6 +1,7 @@
-// 1.20.1	2026-10-02T20:28:30.2697915	Tags for minecraft:item mod id candycraftce
-2afbc11cf3cbfa378074bec981276f735e88ad6a data/candycraftce/tags/items/chocolate_bar.json
-b95f92977d45d0f7a4f5bae8313837b2d6e58a66 data/candycraftce/tags/items/gummy_blocks.json
+// 1.20.1	2026-10-06T13:28:14.8081254	Tags for minecraft:item mod id candycraftce
+60c743a7ed49e66dcd6c90a826bbebda85c98652 data/candycraftce/tags/items/candy_leaves.json
+2511ae3eaa76dbdf1916d92dc2b19381b3c1543b data/candycraftce/tags/items/chocolate_block.json
+86767b85a8fff61ad5e8b22ac21eb8a491db227d data/candycraftce/tags/items/ice_cream.json
+58a0307c49b5516c68a7d41c9b871136645b12a5 data/candycraftce/tags/items/marshmallow_logs.json
 627b2634040eefab245dcdef45a6417c3e7ea202 data/candycraftce/tags/items/marshmallow_planks.json
 d43a0669c974d511ad530c8d020d2ad1da145903 data/candycraftce/tags/items/sweet_grass.json
-043ddeeb764eb9833cd84a8d4ecbc55e2ce7859e data/candycraftce/tags/items/worm_blocks.json

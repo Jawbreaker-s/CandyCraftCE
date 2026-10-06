@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:block/cube_all",
-  "textures": {
-    "all": "candycraftce:block/white_brownie_block"
-  }
-}

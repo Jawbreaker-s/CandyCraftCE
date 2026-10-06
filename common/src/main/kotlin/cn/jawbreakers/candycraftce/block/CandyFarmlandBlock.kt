@@ -53,7 +53,8 @@ class CandyFarmlandBlock(properties: Properties) : FarmBlock(properties) {
     }
 
     private fun shouldMaintainFarmland(level: BlockGetter, pos: BlockPos): Boolean {
-        return level.getBlockState(pos.above()).`is`(BlockTags.MAINTAINS_FARMLAND)
+        return level.getBlockState(pos.above())
+            .let { it.block is CandyPlantBlock || it.`is`(BlockTags.MAINTAINS_FARMLAND) }
     }
 
     private fun isNearWater(level: LevelReader, pos: BlockPos): Boolean {

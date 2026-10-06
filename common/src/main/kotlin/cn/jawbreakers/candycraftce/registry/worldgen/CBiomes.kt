@@ -28,8 +28,6 @@ object CBiomes {
     //
     val caramel_forest = bind("caramel_forest")
     val chocolate_forest = bind("chocolate_forest")
-    val cotton_candy_plains = bind("cotton_candy_plains")
-    val gummy_swamp = bind("gummy_swamp")
     val ice_cream_plains = bind("ice_cream_plains")
     val ice_cream_sky_mountains = bind("ice_cream_sky_mountains")
     val white_chocolate_forest = bind("white_chocolate_forest")
@@ -41,7 +39,7 @@ object CBiomes {
     val sugar_river = bind("sugar_river")
 
     val allCandyBiomes = listOf(
-        caramel_forest, chocolate_forest, cotton_candy_plains, gummy_swamp, ice_cream_plains, ice_cream_sky_mountains,
+        caramel_forest, ice_cream_plains, ice_cream_sky_mountains, chocolate_forest,
         white_chocolate_forest, enchanted_forest, sugar_forest, pudding_hill, pudding_plains, sugar_oceans, sugar_river
     )
 
@@ -111,24 +109,6 @@ object CBiomes {
                     step(lookup, VEGETAL_DECORATION) {
                         +placed_tree_caramel_forest
                         +placed_candy_grass
-                    }
-                }
-            )
-            //gummy_swamp
-            registerBiome(
-                gummy_swamp, 0.9f, 0.8f,
-                {
-                    creatureGenerationProbability(3f / 17)
-                },
-                {
-                    skyColor(16776684)
-                    fogColor(16767130)
-                    waterColor(14608288)
-                    waterFogColor(8409728)
-                },
-                {
-                    step(lookup, VEGETAL_DECORATION) {
-                        +placed_gummy_worm
                     }
                 }
             )
@@ -321,25 +301,6 @@ object CBiomes {
                     }
                 }
             )
-            registerBiome(
-                cotton_candy_plains, 0.8f, 0.3f,
-                {
-                    creatureGenerationProbability(0.1f)
-                },
-                {
-                    skyColor(16774650)
-                    fogColor(16774650)
-                    waterColor(13473279)
-                    waterFogColor(13473279)
-                },
-                {
-                    step(lookup, VEGETAL_DECORATION) {
-                        //todo
-                    }
-                }
-            )
-
-
         }
     }
 }

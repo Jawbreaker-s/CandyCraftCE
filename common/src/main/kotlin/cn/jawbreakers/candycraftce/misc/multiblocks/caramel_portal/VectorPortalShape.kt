@@ -299,7 +299,11 @@ internal class PortalUnit(
     val axes: AxisSet = AxisSet(axis)
 
     //对应到[width,height]
-//    val pipe2: Array<Axis> = axis2pipe2(axis)
+    val pipe2: Array<Axis> = axis2pipe2(axis)
+
+    val topRight: BlockPos = bottomLeft
+        .relative(pipe2[0], width - 1)
+        .relative(pipe2[1], height - 1)
 
     override val allFrames: Iterable<BlockPos> = Sets.union<BlockPos>(required, optional)
     override val portals: Iterable<Pair<BlockPos, AxisSet>> = portals.map { it to axes }

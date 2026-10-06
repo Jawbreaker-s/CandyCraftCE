@@ -6,7 +6,6 @@ import cn.jawbreakers.candycraftce.misc.multiblocks.caramel_portal.axis2pipe2
 import cn.jawbreakers.candycraftce.registry.CBlockTags
 import cn.jawbreakers.candycraftce.registry.CBlockTags.candy_portal
 import cn.jawbreakers.candycraftce.registry.CBlocks
-import cn.jawbreakers.candycraftce.registry.CFluidTags
 import cn.jawbreakers.candycraftce.registry.CParticleTypes
 import cn.jawbreakers.candycraftce.registry.worldgen.CLevels
 import cn.jawbreakers.candycraftce.utils.AxisSet
@@ -231,14 +230,9 @@ class CaramelPortalBlock(properties: Properties) : Block(properties) {
             level.profiler.use("CheckCaramelPortal") {
                 //some mod will use lava tag
                 val lava = content.`is`(Fluids.LAVA) || content.`is`(Fluids.FLOWING_LAVA)
-                val candy = content.`is`(CFluidTags.liquid_candy)
-                if (lava || candy) {
+                if (lava) {
                     VectorPortalShape.findPortal(level, pos, config).ifPresent {
-                        val portal = when {
-                            candy -> CBlocks.liquid_candy_portal.get()
-                            else -> CBlocks.caramel_portal.get()
-                        }.defaultBlockState()
-
+                        val portal = CBlocks.caramel_portal.get().defaultBlockState()
                         it.build(level) { level, shape ->
                             shape.portals.forEach { (pos, axes) ->
                                 val origin = level.getBlockState(pos)

@@ -110,20 +110,6 @@ object CForgeFluids : ICPlatformFluids {
 
     override fun registerCaramel(presets: CFluidPresets): CFluidReferences {
         val type = fluidType.register(presets.name) {
-            waterLike(presets)
-        }
-        return registerFluid(type, presets)
-    }
-
-    override fun registerLiquidChocolate(presets: CFluidPresets): CFluidReferences {
-        val type = fluidType.register(presets.name) {
-            waterLike(presets)
-        }
-        return registerFluid(type, presets)
-    }
-
-    override fun registerLiquidCandy(presets: CFluidPresets): CFluidReferences {
-        val type = fluidType.register(presets.name) {
             lavaLike(presets)
         }
         return registerFluid(type, presets)

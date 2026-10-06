@@ -33,7 +33,7 @@ object CBlocks {
     private val cutouts: MutableList<Entry<out Block>> = mutableListOf()
     private val transparent: MutableList<Entry<out Block>> = mutableListOf()
     private val noItem: MutableSet<Entry<out Block>> = mutableSetOf()
-    internal val families: LinkedHashSet<BlockFamily> = LinkedHashSet()
+    val families: LinkedHashSet<BlockFamily> = LinkedHashSet()
 
 
     internal fun withItem(): Stream<Entry<out Block>> = blocks.values.stream().filter { it !in noItem }
@@ -42,13 +42,10 @@ object CBlocks {
         CustardPuddingBlock(pudding(MapColor.COLOR_PINK).randomTicks())
     }.cutout()
 
-    val strawberry_filled_pudding = register("strawberry_filled_pudding", pudding(MapColor.COLOR_PINK))
-        .cutout()
-
     val pudding_block = register("pudding_block", pudding(MapColor.SAND))
 
     val pudding_farmland = register("pudding_farmland") {
-        CandyFarmlandBlock(pudding(MapColor.SAND))
+        CandyFarmlandBlock(pudding(MapColor.SAND).randomTicks())
     }.cutout()
     val sugar_sand = register("sugar_sand") {
         SugarSandBlock(properties(Blocks.SAND).mapColor(MapColor.SAND).strength(0.5F))
@@ -180,26 +177,6 @@ object CBlocks {
     )
 
 
-    val crystallized_sugar = register("crystallized_sugar", stone(MapColor.TERRACOTTA_WHITE))
-    val pink_crystallized_sugar = register("pink_crystallized_sugar", stone(MapColor.COLOR_PINK))
-
-    val smooth_pink_sugar = register("smooth_pink_sugar", stone(MapColor.COLOR_PINK))
-    val smooth_pink_sugar_family = registerFamily(
-        "smooth_pink_sugar",
-        smooth_pink_sugar,
-        stairs = { properties(smooth_pink_sugar.get()) },
-        slab = { properties(smooth_pink_sugar.get()) },
-        mapColor = MapColor.COLOR_PINK
-    )
-    val pink_sugar_brick = register("pink_sugar_brick", stone(MapColor.COLOR_PINK))
-    val pink_sugar_brick_family = registerFamily(
-        "pink_sugar_brick",
-        pink_sugar_brick,
-        stairs = { properties(pink_sugar_brick.get()) },
-        slab = { properties(pink_sugar_brick.get()) },
-        mapColor = MapColor.COLOR_PINK
-    )
-
     val caramel_block = register("caramel_block", stone(MapColor.COLOR_ORANGE))
     val caramel_family = registerFamily(
         "caramel",
@@ -208,12 +185,12 @@ object CBlocks {
         slab = { properties(caramel_block.get()) },
         mapColor = MapColor.COLOR_ORANGE
     )
-    val caramel_brick = register("caramel_brick", stone(MapColor.COLOR_ORANGE))
-    val caramel_brick_family = registerFamily(
-        "caramel_brick",
-        caramel_brick,
-        stairs = { properties(caramel_brick.get()) },
-        slab = { properties(caramel_brick.get()) },
+    val caramel_bricks = register("caramel_bricks", stone(MapColor.COLOR_ORANGE))
+    val caramel_bricks_family = registerFamily(
+        "caramel_bricks",
+        caramel_bricks,
+        stairs = { properties(caramel_bricks.get()) },
+        slab = { properties(caramel_bricks.get()) },
         mapColor = MapColor.COLOR_ORANGE
     )
 
@@ -225,9 +202,6 @@ object CBlocks {
         slab = { properties(cookie_block.get()) },
         mapColor = MapColor.TERRACOTTA_ORANGE
     )
-    val waffle_block = register("waffle_block", cookie())
-    val wafer_cone_block = register("wafer_cone_block", cookie())
-    val solid_wafer_block = register("solid_wafer_block", cookie(MapColor.TERRACOTTA_ORANGE))
 
     val licorice_block = register("licorice_block", stone(MapColor.COLOR_BLACK))
     val licorice_family = registerFamily(
@@ -256,138 +230,6 @@ object CBlocks {
         slab = { properties(nougat_block.get()) },
         mapColor = MapColor.COLOR_BROWN
     )
-    val wafer_stick_block = register("wafer_stick_block") {
-        WaferStickBlock(marshmallow(MapColor.TERRACOTTA_ORANGE).noOcclusion())
-    }
-    val milk_chocolate_block = register("milk_chocolate_block", pudding(MapColor.COLOR_BROWN))
-    val milk_chocolate_family = registerFamily(
-        "milk_chocolate",
-        milk_chocolate_block,
-        stairs = { properties(milk_chocolate_block.get()) },
-        slab = { properties(milk_chocolate_block.get()) },
-        sign = { properties(milk_chocolate_block.get()) },
-        door = { properties(milk_chocolate_block.get()) },
-        trapdoor = { properties(milk_chocolate_block.get()) },
-        mapColor = MapColor.COLOR_BROWN,
-        woodType = WoodType.OAK
-    )
-    val milk_chocolate_brick = register("milk_chocolate_brick", pudding(MapColor.COLOR_BROWN))
-    val milk_chocolate_brick_family = registerFamily(
-        "milk_chocolate_brick",
-        milk_chocolate_brick,
-        stairs = { properties(milk_chocolate_brick.get()) },
-        slab = { properties(milk_chocolate_brick.get()) },
-        mapColor = MapColor.COLOR_BROWN,
-    )
-    val milk_chocolate_bar_block = register("milk_chocolate_bar_block") {
-        ChocolateBarBlock(chocolate(MapColor.COLOR_BROWN).strength(0.7F).noOcclusion())
-    }
-    val white_chocolate_block = register("white_chocolate_block", pudding(MapColor.TERRACOTTA_WHITE))
-    val white_chocolate_family = registerFamily(
-        "white_chocolate",
-        white_chocolate_block,
-        stairs = { properties(white_chocolate_block.get()) },
-        slab = { properties(white_chocolate_block.get()) },
-        sign = { properties(white_chocolate_block.get()) },
-        door = { properties(white_chocolate_block.get()) },
-        trapdoor = { properties(white_chocolate_block.get()) },
-        mapColor = MapColor.TERRACOTTA_WHITE,
-        woodType = WoodType.BIRCH,
-    )
-    val white_chocolate_brick = register("white_chocolate_brick", pudding(MapColor.TERRACOTTA_WHITE))
-    val white_chocolate_brick_family = registerFamily(
-        "white_chocolate_brick",
-        white_chocolate_brick,
-        stairs = { properties(white_chocolate_brick.get()) },
-        slab = { properties(white_chocolate_brick.get()) },
-        mapColor = MapColor.TERRACOTTA_WHITE,
-    )
-    val white_chocolate_bar_block = register("white_chocolate_bar_block") {
-        ChocolateBarBlock(properties(milk_chocolate_bar_block.get()).mapColor(MapColor.TERRACOTTA_WHITE))
-    }
-    val dark_chocolate_block = register("dark_chocolate_block", pudding(MapColor.COLOR_BLACK))
-    val dark_chocolate_family = registerFamily(
-        "dark_chocolate",
-        dark_chocolate_block,
-        stairs = { properties(dark_chocolate_block.get()) },
-        slab = { properties(dark_chocolate_block.get()) },
-        sign = { properties(dark_chocolate_block.get()) },
-        door = { properties(dark_chocolate_block.get()) },
-        trapdoor = { properties(dark_chocolate_block.get()) },
-        mapColor = MapColor.COLOR_BLACK,
-        woodType = WoodType.JUNGLE
-    )
-    val dark_chocolate_brick = register("dark_chocolate_brick", pudding(MapColor.COLOR_BLACK))
-    val dark_chocolate_brick_family = registerFamily(
-        "dark_chocolate_brick",
-        dark_chocolate_brick,
-        stairs = { properties(dark_chocolate_brick.get()) },
-        slab = { properties(dark_chocolate_brick.get()) },
-        mapColor = MapColor.COLOR_BLACK,
-    )
-    val dark_chocolate_bar_block = register("dark_chocolate_bar_block") {
-        ChocolateBarBlock(properties(milk_chocolate_bar_block.get()).mapColor(MapColor.COLOR_BLACK))
-    }
-
-    //gummy
-    val red_gummy_family = registerGummyFamily("red", MapColor.COLOR_RED)
-    val orange_gummy_family = registerGummyFamily("orange", MapColor.COLOR_ORANGE)
-    val yellow_gummy_family = registerGummyFamily("yellow", MapColor.COLOR_YELLOW)
-    val white_gummy_family = registerGummyFamily("white", MapColor.TERRACOTTA_WHITE)
-    val green_gummy_family = registerGummyFamily("green", MapColor.COLOR_GREEN)
-    val gummy_families =
-        listOf(red_gummy_family, orange_gummy_family, yellow_gummy_family, white_gummy_family, green_gummy_family)
-
-    //hard_candy
-    val white_hard_candy_block = register("white_hard_candy_block") {
-        RotatedPillarBlock(hardCandy(MapColor.TERRACOTTA_WHITE))
-    }
-    val red_hard_candy_block = register("red_hard_candy_block") {
-        RotatedPillarBlock(hardCandy(MapColor.COLOR_RED))
-    }
-    val green_hard_candy_block = register("green_hard_candy_block") {
-        RotatedPillarBlock(hardCandy(MapColor.COLOR_GREEN))
-    }
-    val yellow_hard_candy_block = register("yellow_hard_candy_block") {
-        RotatedPillarBlock(hardCandy(MapColor.COLOR_YELLOW))
-    }
-    val orange_hard_candy_block = register("orange_hard_candy_block") {
-        RotatedPillarBlock(hardCandy(MapColor.COLOR_ORANGE))
-    }
-    val light_blue_hard_candy_block = register("light_blue_hard_candy_block") {
-        RotatedPillarBlock(hardCandy(MapColor.COLOR_LIGHT_BLUE))
-    }
-    val pink_hard_candy_block = register("pink_hard_candy_block") {
-        RotatedPillarBlock(hardCandy(MapColor.COLOR_PINK))
-    }
-    val purple_hard_candy_block = register("purple_hard_candy_block") {
-        RotatedPillarBlock(hardCandy(MapColor.COLOR_PURPLE))
-    }
-    val white_red_hard_candy_block = register("white_red_hard_candy_block") {
-        RotatedPillarBlock(hardCandy(MapColor.COLOR_RED))
-    }
-    val white_green_hard_candy_block = register("white_green_hard_candy_block") {
-        RotatedPillarBlock(hardCandy(MapColor.COLOR_GREEN))
-    }
-    val white_yellow_hard_candy_block = register("white_yellow_hard_candy_block") {
-        RotatedPillarBlock(hardCandy(MapColor.COLOR_YELLOW))
-    }
-    val white_orange_hard_candy_block = register("white_orange_hard_candy_block") {
-        RotatedPillarBlock(hardCandy(MapColor.COLOR_ORANGE))
-    }
-    val white_light_blue_hard_candy_block = register("white_light_blue_hard_candy_block") {
-        RotatedPillarBlock(hardCandy(MapColor.COLOR_LIGHT_BLUE))
-    }
-    val white_pink_hard_candy_block = register("white_pink_hard_candy_block") {
-        RotatedPillarBlock(hardCandy(MapColor.COLOR_PINK))
-    }
-    val white_purple_hard_candy_block = register("white_purple_hard_candy_block") {
-        RotatedPillarBlock(hardCandy(MapColor.COLOR_PURPLE))
-    }
-    val red_green_hard_candy_block = register("red_green_hard_candy_block") {
-        RotatedPillarBlock(hardCandy(MapColor.COLOR_RED))
-    }
-
 
     //glass
     val caramel_glass = register("caramel_glass") {
@@ -524,7 +366,12 @@ object CBlocks {
         slab = { properties(banana_ice_cream.get()) },
         mapColor = MapColor.COLOR_YELLOW,
     )
-
+    val sugar_spikes = register("sugar_spikes") {
+        SpikesBlock(properties().mapColor(MapColor.TERRACOTTA_WHITE).noCollission(), 4)
+    }.cutout()
+    val cranberry_spikes = register("cranberry_spikes") {
+        SpikesBlock(properties(sugar_spikes.get()).mapColor(MapColor.TERRACOTTA_RED), 2, true)
+    }.cutout()
     val purple_trampojelly = register("purple_trampojelly") {
         JellyBlock(JellyType.PURPLE, jelly(MapColor.COLOR_PURPLE).lightLevel { _ -> 13 })
     }.transparent()
@@ -549,6 +396,8 @@ object CBlocks {
     val chewing_gum_block = register("chewing_gum_block") {
         ChewingGumBlock(jelly(MapColor.COLOR_PINK))
     }
+    val candied_cherry_sack = register("candied_cherry_sack", hay(MapColor.COLOR_RED))
+
     val mint_block = register("mint_block", hay(MapColor.COLOR_LIGHT_GREEN))
     val mint_family = registerFamily(
         "mint", mint_block,
@@ -572,6 +421,7 @@ object CBlocks {
         slab = { properties(chocolate_stone.get()) },
         mapColor = MapColor.COLOR_BROWN,
     )
+    val chocolate_bricks = register("chocolate_bricks", stone(MapColor.COLOR_BROWN))
     val chocolate_cobblestone = register("chocolate_cobblestone", stone(MapColor.COLOR_BROWN))
     val chocolate_cobblestone_family = registerFamily(
         "chocolate_cobblestone",
@@ -581,49 +431,37 @@ object CBlocks {
         wall = { properties(chocolate_cobblestone.get()) },
         mapColor = MapColor.COLOR_BROWN,
     )
+    val white_chocolate_stone = register("white_chocolate_stone", stone(MapColor.TERRACOTTA_WHITE))
+    val white_chocolate_bricks = register("white_chocolate_bricks", stone(MapColor.COLOR_BROWN))
+    val white_chocolate_stone_family = registerFamily(
+        "white_chocolate_stone",
+        white_chocolate_stone,
+        stairs = { properties(white_chocolate_stone.get()) },
+        slab = { properties(white_chocolate_stone.get()) },
+        mapColor = MapColor.TERRACOTTA_WHITE,
+    )
+    val white_chocolate_cobblestone = register("white_chocolate_cobblestone", stone(MapColor.COLOR_BROWN))
+    val white_chocolate_cobblestone_family = registerFamily(
+        "white_chocolate_cobblestone",
+        white_chocolate_cobblestone,
+        stairs = { properties(white_chocolate_cobblestone.get()) },
+        slab = { properties(white_chocolate_cobblestone.get()) },
+        wall = { properties(white_chocolate_cobblestone.get()) },
+        mapColor = MapColor.TERRACOTTA_WHITE,
+    )
 
-    val custard_white_brownie =
-        register("custard_white_brownie", properties(Blocks.DIRT).mapColor(MapColor.SAND))
-            .cutout()
 
-    val milk_brownie_block = register("milk_brownie_block", cake(MapColor.DIRT))
-    val milk_chiffon_cake_block = register("milk_chiffon_cake_block") {
-        RotatedPillarBlock(properties(milk_brownie_block.get()))
-    }
-    val milk_brownie_cake_roll_block = register("milk_brownie_cake_roll_block") {
-        RotatedPillarBlock(properties(milk_brownie_block.get()))
-    }
+    val licorice_ore = register("licorice_ore", stone(MapColor.TERRACOTTA_BROWN))
+    val honey_ore = register("honey_ore", stone(MapColor.TERRACOTTA_BROWN).strength(3.0F, 5.0F))
+    val pez_ore = register("pez_ore", stone(MapColor.TERRACOTTA_BROWN).strength(3.0F, 5.0F))
+    val jelly_ore = register("jelly_ore", stone(MapColor.TERRACOTTA_BROWN))
+    val nougat_ore = register("nougat_ore", stone(MapColor.TERRACOTTA_BROWN).strength(3.0F, 5.0F))
 
-    val white_brownie_block = register("white_brownie_block", cake(MapColor.SAND))
-    val white_chiffon_cake_block = register("white_chiffon_cake_block") {
-        RotatedPillarBlock(properties(white_brownie_block.get()))
-    }
-    val white_brownie_cake_roll_block = register("white_brownie_cake_roll_block") {
-        RotatedPillarBlock(properties(white_brownie_block.get()))
-    }
-
-    val dark_brownie_block = register("dark_brownie_block", cake(MapColor.TERRACOTTA_BROWN))
-    val dark_chiffon_cake_block = register("dark_chiffon_cake_block") {
-        RotatedPillarBlock(properties(dark_brownie_block.get()))
-    }
-    val dark_brownie_cake_roll_block = register("dark_brownie_cake_roll_block") {
-        RotatedPillarBlock(properties(dark_brownie_block.get()))
-    }
-
-    val cake_block = register("cake_block", cake(MapColor.TERRACOTTA_BROWN))
-    val cotton_candy_grass_block =
-        register("cotton_candy_grass_block", properties(Blocks.GRASS_BLOCK).mapColor(MapColor.COLOR_PINK))
-            .cutout()
-
-    val licorice_ore = register("licorice_ore", stone(MapColor.TERRACOTTA_WHITE))
-    val honey_ore = register("honey_ore", stone(MapColor.TERRACOTTA_WHITE).strength(3.0F, 5.0F))
-    val pez_ore = register("pez_ore", stone(MapColor.TERRACOTTA_WHITE).strength(3.0F, 5.0F))
-    val jelly_ore = register("jelly_ore", stone(MapColor.TERRACOTTA_WHITE))
-    val nougat_ore = register("nougat_ore", stone(MapColor.TERRACOTTA_WHITE).strength(3.0F, 5.0F))
-    val cookie_ore = register("cookie_ore", stone(MapColor.TERRACOTTA_WHITE))
-    val crystallized_cookie_ore = register("crystallized_cookie_ore", stone(MapColor.TERRACOTTA_WHITE))
-    val magic_candy_ore = register("magic_candy_ore", stone(MapColor.TERRACOTTA_WHITE))
-
+    val white_licorice_ore = register("white_licorice_ore", stone(MapColor.TERRACOTTA_WHITE))
+    val white_honey_ore = register("white_honey_ore", stone(MapColor.TERRACOTTA_WHITE).strength(3.0F, 5.0F))
+    val white_pez_ore = register("white_pez_ore", stone(MapColor.TERRACOTTA_WHITE).strength(3.0F, 5.0F))
+    val white_jelly_ore = register("white_jelly_ore", stone(MapColor.TERRACOTTA_WHITE))
+    val white_nougat_ore = register("white_nougat_ore", stone(MapColor.TERRACOTTA_WHITE).strength(3.0F, 5.0F))
     //plants
 
     val sweet_grass_pink = register("sweet_grass_pink") { CandyPlantBlock(plant(MapColor.COLOR_PINK)) }
@@ -645,13 +483,6 @@ object CBlocks {
         .cutout()
     val enchant_candy_leaves = register("enchant_candy_leaves") { CandyLeavesBlock(leaves(MapColor.COLOR_PURPLE)) }
         .cutout()
-    val milk_chocolate_leaves = register("milk_chocolate_leaves") { CandyLeavesBlock(leaves(MapColor.COLOR_BROWN)) }
-        .cutout()
-    val white_chocolate_leaves = register("white_chocolate_leaves") { CandyLeavesBlock(leaves(MapColor.SAND)) }
-        .cutout()
-    val dark_chocolate_leaves = register("dark_chocolate_leaves") {
-        CandyLeavesBlock(leaves(MapColor.TERRACOTTA_BROWN))
-    }.cutout()
 
     val chocolate_sapling = register("chocolate_sapling") {
         CandySaplingBlock(null, plant(MapColor.COLOR_BROWN))
@@ -665,12 +496,7 @@ object CBlocks {
     val candied_cherry_sapling = register("candied_cherry_sapling") {
         CandySaplingBlock(null, plant(MapColor.COLOR_RED))
     }.cutout()
-    val wafer_chocolate_sapling = register("wafer_chocolate_sapling") {
-        CandySaplingBlock(null, plant(MapColor.COLOR_BROWN))
-    }.cutout()
-    val cotton_candy_sapling = register("cotton_candy_sapling") {
-        CandySaplingBlock(null, plant(MapColor.COLOR_PINK))
-    }.cutout()
+
     val fraise_tagada_flower = register("fraise_tagada_flower") { CandyPlantBlock(plant(MapColor.COLOR_PINK)) }
         .cutout()
     val acid_mint_flower = register("acid_mint_flower") {
@@ -688,13 +514,6 @@ object CBlocks {
     val marshmallow_slice_flower = register("marshmallow_slice_flower") {
         CandyWaterlilyBlock(true, properties(marshmallow_slice.get()))
     }.cutout()
-    val milk_chocolate_mushroom =
-        register("milk_chocolate_mushroom") { CandyPlantBlock(plant(MapColor.COLOR_BROWN)) }.cutout()
-    val white_chocolate_mushroom =
-        register("white_chocolate_mushroom") { CandyPlantBlock(plant(MapColor.SAND)) }.cutout()
-    val dark_chocolate_mushroom =
-        register("dark_chocolate_mushroom") { CandyPlantBlock(plant(MapColor.TERRACOTTA_BROWN)) }.cutout()
-
     val rope_licorice = register("rope_licorice") { SeaweedBlock(true, plant(MapColor.TERRACOTTA_RED)) }
         .cutout()
     val mint = register("mint") { SeaweedBlock(false, plant(MapColor.COLOR_GREEN)) }
@@ -716,14 +535,9 @@ object CBlocks {
         CaramelPortalBlock(properties(Blocks.NETHER_PORTAL).mapColor(MapColor.COLOR_ORANGE))
     }.transparent().noSimpleItem()
 
-    val liquid_candy_portal = register("liquid_candy_portal") {
-        CaramelPortalBlock(properties(Blocks.NETHER_PORTAL).mapColor(MapColor.COLOR_PINK))
-    }.transparent().noSimpleItem()
 
     val caramel = CFluids.caramel.block
     val grenadine = CFluids.grenadine.block
-    val liquid_chocolate = CFluids.liquid_chocolate.block
-    val liquid_candy = CFluids.liquid_candy.block
     //======================
 
     init {
@@ -750,7 +564,6 @@ object CBlocks {
         .sound(SoundType.CALCITE)
 
     private fun leaves(color: MapColor) = properties(Blocks.OAK_LEAVES).mapColor(color)
-    private fun cake(color: MapColor) = properties().sound(SoundType.WOOL).strength(0.5f).mapColor(color)
     private fun jelly(color: MapColor) = properties(Blocks.SLIME_BLOCK).mapColor(color)
         .strength(3.0F, 2000.0F)/*todo sound .sound(CCSoundTypes.JELLY)*/.noOcclusion()
 
@@ -762,6 +575,9 @@ object CBlocks {
     //=================================
     fun register(name: String, properties: Properties = properties()): Entry<Block> =
         register(name) { Block(properties) }
+
+    fun register(name: String, propertiesProvider: Entry<out Block>): Entry<Block> =
+        register(name) { Block(properties(propertiesProvider.get())) }
 
     private fun <B : Block> register(name: String, factory: Supplier<B>): Entry<B> {
         val block = CPlatformUtils.registerBlock(name, factory)
@@ -840,17 +656,6 @@ object CBlocks {
         ).also { families.add(it) }
     }
 
-    private fun registerGummyFamily(color: String, mapColor: MapColor): GummyFamily {
-        return GummyFamily(
-            register("${color}_gummy_block") {
-                JellyBlock(JellyType.NONE, gummy(mapColor).noOcclusion())
-            }.transparent(),
-            register("${color}_hardened_gummy_block", gummy(mapColor)),
-            register("${color}_worm_gummy_block") {
-                RotatedPillarBlock(gummy(mapColor))
-            },
-        )
-    }
 
     //===============Render Types==================
     private fun <B : Block> Entry<B>.cutout() = apply { ifClient { cutouts.add(this@cutout) } }

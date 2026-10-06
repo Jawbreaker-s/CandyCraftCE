@@ -16,6 +16,7 @@ import com.mojang.datafixers.types.Type
 import kotlinx.coroutines.Runnable
 import net.minecraft.core.particles.ParticleType
 import net.minecraft.core.registries.Registries
+import net.minecraft.network.chat.Component
 import net.minecraft.world.effect.MobEffect
 import net.minecraft.world.entity.*
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier
@@ -99,7 +100,11 @@ class CandyCraftCEForge : ICPlatForm {
         backgroundColor: Int,
         highlightColor: Int,
         properties: Item.Properties,
-    ) = ForgeSpawnEggItem(type, backgroundColor, highlightColor, properties)
+    ) = object : ForgeSpawnEggItem(type, backgroundColor, highlightColor, properties) {
+        val desc: Component by lazy { Component.translatable(ICPlatForm.SPAWN_EGG_DESC, type.get().description) }
+        override fun getDescription(): Component = desc
+
+    }
 
     override fun <I : Item> registerItem(name: String, factory: Supplier<I>): Entry<I> =
         register(items, name, factory)

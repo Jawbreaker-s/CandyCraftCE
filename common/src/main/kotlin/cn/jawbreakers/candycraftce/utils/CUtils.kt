@@ -153,7 +153,7 @@ object CUtils {
         } else {
             val tag = CompoundTag()
             val r = block(tag)
-            if (!tag.isEmpty) put(key, tag)
+            put(key, tag)
             return r
         }
     }

@@ -95,32 +95,17 @@ class CandyBiomeSource(
             ),
             CBiomes.pudding_plains
         )
-
-        transfer(
-            listOf(
-                Biomes.FLOWER_FOREST,
-                Biomes.BIRCH_FOREST,
-            ),
-            CBiomes.cotton_candy_plains
-        )
-        transfer(
-            listOf(
-                Biomes.SWAMP,//沼泽
-                Biomes.MANGROVE_SWAMP,
-                Biomes.MUSHROOM_FIELDS,//蘑菇
-            ),
-            CBiomes.gummy_swamp
-        )
-
         // 森林
         transfer(
             listOf(
+                Biomes.FLOWER_FOREST,
                 Biomes.FOREST,
             ),
             CBiomes.sugar_forest
         )
         transfer(
             listOf(
+                Biomes.BIRCH_FOREST,
                 Biomes.DARK_FOREST,
                 Biomes.OLD_GROWTH_BIRCH_FOREST
             ),
@@ -186,7 +171,10 @@ class CandyBiomeSource(
             listOf(
                 Biomes.DRIPSTONE_CAVES,
                 Biomes.LUSH_CAVES,
-                Biomes.DEEP_DARK
+                Biomes.DEEP_DARK,
+                Biomes.SWAMP,//沼泽
+                Biomes.MANGROVE_SWAMP,
+                Biomes.MUSHROOM_FIELDS,//蘑菇
             ),
             CBiomes.pudding_plains
         )

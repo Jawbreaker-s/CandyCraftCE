@@ -32,14 +32,10 @@ class CBlockStateProvider(output: PackOutput, val efHelper: ExistingFileHelper) 
                 sugar_block,
                 sugar_brick,
                 sugar_sand,
-                caramel_brick,
+                caramel_bricks,
                 marshmallow_planks,
                 light_marshmallow_planks,
                 dark_marshmallow_planks,
-                crystallized_sugar,
-                pink_crystallized_sugar,
-                smooth_pink_sugar,
-                pink_sugar_brick,
                 caramel_block,
                 cotton_candy_block,
                 raspberry_cotton_candy_block,
@@ -49,21 +45,12 @@ class CBlockStateProvider(output: PackOutput, val efHelper: ExistingFileHelper) 
                 square_pattern_nougat_block,
                 licorice_block,
                 licorice_brick,
-                milk_chocolate_block,
-                milk_chocolate_brick,
-                white_chocolate_block,
-                white_chocolate_brick,
-                dark_chocolate_block,
-                dark_chocolate_brick,
                 strawberry_ice_cream,
                 mint_ice_cream,
                 blueberry_ice_cream,
                 chocolate_ice_cream,
                 banana_ice_cream,
                 ice_cream,
-                waffle_block,
-                wafer_cone_block,
-                solid_wafer_block,
                 honey_lamp,
                 purple_trampojelly,
                 trampojelly,
@@ -78,74 +65,41 @@ class CBlockStateProvider(output: PackOutput, val efHelper: ExistingFileHelper) 
                 honeycomb_block,
                 pez_block,
                 jawbreaker_block,
-                chocolate_stone,
-                chocolate_cobblestone,
-                white_brownie_block,
-                milk_brownie_block,
-                cake_block,
-                licorice_ore,
-                jelly_ore,
-                pez_ore,
-                nougat_ore,
-                crystallized_cookie_ore,
-                cookie_ore,
-                magic_candy_ore,
-                honey_ore,
+                chocolate_stone, white_chocolate_stone,
+                chocolate_cobblestone, white_chocolate_cobblestone,
+                chocolate_bricks, white_chocolate_bricks,
+                licorice_ore, white_licorice_ore,
+                jelly_ore, white_jelly_ore,
+                pez_ore, white_pez_ore,
+                nougat_ore, white_nougat_ore,
+                honey_ore, white_honey_ore,
                 chocolate_leaves,
                 ice_cream_leaves,
                 candied_cherry_leaves,
                 caramel_leaves,
-                milk_chocolate_leaves,
-                white_chocolate_leaves,
-                dark_chocolate_leaves,
             ).forEach { simpleBlockWithItem(it.get(), cubeAll(it.get())) }
             //side end
-            listOf(candy_cane_block, dark_brownie_block).forEach {
+            listOf(candy_cane_block).forEach {
                 val model = models().cubeColumn(it.id.path, it.getBlockTexture("_side"), it.getBlockTexture("_end"))
                 simpleBlockWithItem(it.get(), model)
             }
             //side end +axis
-            listOf(
-                white_hard_candy_block,
-                red_hard_candy_block,
-                green_hard_candy_block,
-                yellow_hard_candy_block,
-                orange_hard_candy_block,
-                light_blue_hard_candy_block,
-                pink_hard_candy_block,
-                purple_hard_candy_block,
-                white_red_hard_candy_block,
-                white_green_hard_candy_block,
-                white_yellow_hard_candy_block,
-                white_orange_hard_candy_block,
-                white_light_blue_hard_candy_block,
-                white_pink_hard_candy_block,
-                white_purple_hard_candy_block,
-                red_green_hard_candy_block,
-                dark_brownie_cake_roll_block,
-                milk_brownie_cake_roll_block,
-                white_brownie_cake_roll_block,
-            ).forEach {
-                val model = models().cubeColumn(it.id.path, it.getBlockTexture("_side"), it.getBlockTexture("_end"))
-                axisBlock(it.get(), model, model)
-                simpleExistedItem(it.get())
-            }
-            simpleBlock(fragile_grenadine_ice.get(), existModelFile(grenadine_ice.get()))
-            //chiffon_cake
-            listOf(
-                dark_chiffon_cake_block to dark_brownie_block,
-                milk_chiffon_cake_block to milk_brownie_block,
-                white_chiffon_cake_block to white_brownie_block,
-            ).forEach { (it, soil) ->
+//            listOf(
+//            ).forEach {
+//                val model = models().cubeColumn(it.id.path, it.getBlockTexture("_side"), it.getBlockTexture("_end"))
+//                axisBlock(it.get(), model, model)
+//                simpleExistedItem(it.get())
+//            }
+            listOf(candied_cherry_sack).forEach {
                 val model = models().cubeBottomTop(
-                    it.id.path,
+                    it.id.toString(),
                     it.getBlockTexture("_side"),
-                    soil.getBlockTexture(if (soil == dark_brownie_block) "_end" else ""),
+                    it.getBlockTexture("_bottom"),
                     it.getBlockTexture("_top")
                 )
-                axisBlock(it.get(), model, model)
-                simpleExistedItem(it.get())
+                simpleBlockWithItem(it.get(), model)
             }
+            simpleBlock(fragile_grenadine_ice.get(), existModelFile(grenadine_ice.get()))
             //nougat_head
             nougat_head.also {
                 val texture = nougat_block.getBlockTexture()
@@ -169,15 +123,14 @@ class CBlockStateProvider(output: PackOutput, val efHelper: ExistingFileHelper) 
                 caramel_sapling,
                 ice_cream_sapling,
                 candied_cherry_sapling,
-                wafer_chocolate_sapling,
-                cotton_candy_sapling,
                 fraise_tagada_flower,
                 acid_mint_flower,
                 sugar_essence_flower,
                 rope_licorice,
                 mint,
                 banana_seaweed,
-                lollipop_fruit
+                lollipop_fruit,
+                sugar_spikes, cranberry_spikes
             ).forEach {
                 val texture = it.getBlockTexture()
                 simpleBlock(it.get(), models().cross(it.id.path, texture))
@@ -208,14 +161,6 @@ class CBlockStateProvider(output: PackOutput, val efHelper: ExistingFileHelper) 
                 builder.partialState().addModels(*Array(4) { i -> model.configured(rotY = i * 90) })
                 simpleBlockItem(it.get(), model)
 
-            }
-            listOf(dark_chocolate_mushroom, white_chocolate_mushroom, milk_chocolate_mushroom).forEach {
-                val models = (0..1)
-                    .map { i -> models().cross("${it.id.path}_$i", it.getBlockTexture("_$i")).configured() }
-                    .toTypedArray()
-                getVariantBuilder(it.get())
-                    .partialState().addModels(*models)
-                itemModels().generated(it.asItemEntry(), it.getBlockTexture("_0"))
             }
 
             //ladder
@@ -252,52 +197,19 @@ class CBlockStateProvider(output: PackOutput, val efHelper: ExistingFileHelper) 
                 grenadine_glass to grenadine_pane,
                 grenadine_glass_grid to grenadine_pane_grid
             )
+            families.forEach { f ->
+                when (f) {
+                    candy_cane_family -> family(
+                        candy_cane_family,
+                        candy_cane_family.original.getBlockTexture("_side"),
+                        candy_cane_family.original.getBlockTexture("_end")
+                    )
 
-            //family
-            family(
-                candy_cane_family,
-                candy_cane_family.original.getBlockTexture("_side"),
-                candy_cane_family.original.getBlockTexture("_end")
-            )
-            //simple_family
-            listOf(
-                marshmallow_family,
-                dark_marshmallow_family,
-                light_marshmallow_family,
-                sugar_family,
-                sugar_brick_family,
-                cotton_candy_family,
-                raspberry_cotton_candy_family,
-                ice_cream_family,
-                pink_sugar_brick_family,
-                smooth_pink_sugar_family,
-                caramel_family,
-                caramel_brick_family,
-                cookie_family,
-                nougat_family,
-                licorice_family,
-                licorice_brick_family,
-                milk_chocolate_brick_family,
-                milk_chocolate_family,
-                white_chocolate_brick_family,
-                white_chocolate_family,
-                dark_chocolate_brick_family,
-                dark_chocolate_family,
-                strawberry_ice_cream_family,
-                mint_ice_cream_family,
-                blueberry_ice_cream_family,
-                chocolate_ice_cream_family,
-                banana_ice_cream_family,
-                chocolate_cobblestone_family,
-                chocolate_stone_family,
-                mint_family
-            ).forEach(::family)
+                    else -> family(f)
+                }
 
-            gummyFamily(red_gummy_family)
-            gummyFamily(orange_gummy_family)
-            gummyFamily(yellow_gummy_family)
-            gummyFamily(white_gummy_family)
-            gummyFamily(green_gummy_family)
+            }
+
             //log
             listOf(
                 marshmallow_log, dark_marshmallow_log, light_marshmallow_log,
@@ -307,30 +219,7 @@ class CBlockStateProvider(output: PackOutput, val efHelper: ExistingFileHelper) 
                 simpleBlockItem(it.get(), existModelFile(it.get()))
             }
 
-            listOf(milk_chocolate_bar_block, white_chocolate_bar_block, dark_chocolate_bar_block).forEach {
-                val model = models().withExistingParent(it.id.toString(), "block/chocolate_bar_block".modLoc())
-                    .texture("front", it.getBlockTexture("_front"))
-                    .texture("back", it.getBlockTexture("_back"))
-                horizontalBlock(it.get(), model)
-                simpleBlockItem(it.get(), model)
-            }
-            wafer_stick_block.also {
-                val model = existModelFile(it.get())
-                axisBlock(it.get(), model, model)
-                simpleBlockItem(it.get(), model)
-            }
-            cotton_candy_grass_block.also {
-                val top = cotton_candy_block.getBlockTexture()
-                val bottom = milk_brownie_block.getBlockTexture()
-                val side = cotton_candy_grass_block.getBlockTexture("_side")
-                val model = models().cubeBottomTop(it.id.path, side, bottom, top)
-                simpleBlockWithItem(it.get(), model)
-            }
-            listOf(
-                strawberry_filled_pudding to pudding_block,
-                custard_pudding_block to pudding_block,
-                custard_white_brownie to white_brownie_block,
-            ).forEach { (it, base) ->
+            listOf(custard_pudding_block to pudding_block).forEach { (it, base) ->
                 val base = base.getBlockTexture()
                 val top = custard_pudding_block.getBlockTexture("_top_overlay")
                 val model = models().withExistingParent(it.id.toString(), "block/grass_block")
@@ -347,7 +236,7 @@ class CBlockStateProvider(output: PackOutput, val efHelper: ExistingFileHelper) 
                     .texture("dirt", pudding_block.getBlockTexture())
                     .texture("particle", pudding_block.getBlockTexture())
                     .texture("top", pudding_farmland.getBlockTexture("_top"))
-                val modelMoist = models().withExistingParent(it.id.toString(), "block/farmland")
+                val modelMoist = models().withExistingParent(it.id.toString() + "_moist", "block/farmland")
                     .texture("dirt", pudding_block.getBlockTexture())
                     .texture("particle", pudding_block.getBlockTexture())
                     .texture("top", pudding_farmland.getBlockTexture("_top_moist"))
@@ -358,7 +247,7 @@ class CBlockStateProvider(output: PackOutput, val efHelper: ExistingFileHelper) 
                 simpleBlockItem(it.get(), model)
             }
             //portal
-            listOf(caramel_portal, liquid_candy_portal).forEach {
+            listOf(caramel_portal).forEach {
                 val name = it.id.path
                 val block = it.get()
                 val tex = it.getBlockTexture()
@@ -378,8 +267,6 @@ class CBlockStateProvider(output: PackOutput, val efHelper: ExistingFileHelper) 
             //fluids
             particle(grenadine, grenadine.getBlockTexture("_static"))
             particle(caramel, caramel.getBlockTexture("_static"))
-            particle(liquid_chocolate, liquid_chocolate.getBlockTexture("_still"))
-            particle(liquid_candy, liquid_candy.getBlockTexture("_still"))
 
         }
     }
@@ -438,22 +325,6 @@ class CBlockStateProvider(output: PackOutput, val efHelper: ExistingFileHelper) 
             signBlock(it.get(), family.wallSign!!.get(), baseTexture)
             itemModels().basicItem(it.asItem())
         }
-    }
-
-    private fun gummyFamily(family: CBlocks.GummyFamily) {
-        val gummySolid = "block/gummy_block_solid".modLoc()
-//        val wormSide = "block/gummy_worm_block_side".modLoc()
-        val gummyTransluscent = "block/gummy_block_transluscent".modLoc()
-
-        val modelTransluscent = models().leaves(family.block.id.toString(), gummyTransluscent)
-        simpleBlockWithItem(family.block.get(), modelTransluscent)
-
-        val modelSolid = models().leaves(family.hardened.id.toString(), gummySolid)
-        simpleBlockWithItem(family.hardened.get(), modelSolid)
-
-        val wormModel = existModelFile("block/gummy_worm_block".modLoc())
-        axisBlock(family.worm.get(), wormModel, wormModel)
-        simpleBlockItem(family.worm.get(), wormModel)
     }
 
     private fun BlockModelBuilder.configured(rotX: Int = 0, rotY: Int = 0, uvlock: Boolean = false) =

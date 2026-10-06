@@ -22,11 +22,6 @@ class CItemTagsProvider(
 
         CItemTags.apply {
             CItems.apply {
-                tag(chocolate_bar)
-                    .add(dark_chocolate_bar.get())
-                    .add(milk_chocolate_bar.get())
-                    .add(ruby_chocolate_bar.get())
-                    .add(white_chocolate_bar.get())
             }
         }
         CBlockTags.apply {

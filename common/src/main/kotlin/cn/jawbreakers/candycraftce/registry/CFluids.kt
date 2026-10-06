@@ -38,27 +38,5 @@ object CFluids {
             tickRate = 10
         )
     )
-    val liquid_chocolate: CFluidReferences = fluids.registerLiquidChocolate(
-        CFluidPresets(
-            "liquid_chocolate",
-            stillTexture = "block/liquid_chocolate_still".modLoc(),
-            flowingTexture = "block/liquid_chocolate_flow".modLoc(),
-            fogColor = 0x482B17,
-            bucket = { CItems.liquid_chocolate_bucket },
-            mapColor = MapColor.COLOR_BROWN,
-            tickRate = 10
-        )
-    )
-    val liquid_candy: CFluidReferences = fluids.registerLiquidCandy(
-        CFluidPresets(
-            "liquid_candy",
-            stillTexture = "block/liquid_candy_still".modLoc(),
-            flowingTexture = "block/liquid_candy_flow".modLoc(),
-            fogColor = 0xE674CA,
-            bucket = { CItems.liquid_candy_bucket },
-            mapColor = MapColor.COLOR_PINK,
-            tickRate = 20
-        )
-    )
 
 }

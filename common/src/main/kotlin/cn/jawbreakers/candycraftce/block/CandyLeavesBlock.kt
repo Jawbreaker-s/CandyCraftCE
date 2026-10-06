@@ -61,7 +61,7 @@ class CandyLeavesBlock(properties: Properties) : LeavesBlock(properties) {
     }
 
     fun getDistanceAt(state: BlockState): Int {
-        if (state.`is`(CBlockTags.marshmallow_logs)) {
+        if (state.`is`(CBlockTags.marshmallow_logs.block)) {
             return 0
         }
         if (state.hasProperty(DISTANCE)) {

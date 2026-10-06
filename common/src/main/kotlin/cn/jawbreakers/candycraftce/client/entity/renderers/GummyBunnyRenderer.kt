@@ -1,7 +1,6 @@
 package cn.jawbreakers.candycraftce.client.entity.renderers
 
 import cn.jawbreakers.candycraftce.client.entity.models.GummyBunnyModel
-import cn.jawbreakers.candycraftce.client.entity.models.GummyBunnyOuterModel
 import cn.jawbreakers.candycraftce.entity.GummyBunny
 import cn.jawbreakers.candycraftce.utils.CLevelUtils.component1
 import cn.jawbreakers.candycraftce.utils.CLevelUtils.component2
@@ -30,8 +29,7 @@ class GummyBunnyRenderer(context: EntityRendererProvider.Context) :
     }
 
     init {
-        addLayer(FurLayer(this, context))
-        addLayer(GummyShellLayer(this, context))
+        addLayer(BodyLayer(this, context))
     }
 
     override fun scale(entity: GummyBunny, poseStack: PoseStack, partialTickTime: Float) {
@@ -41,9 +39,9 @@ class GummyBunnyRenderer(context: EntityRendererProvider.Context) :
     }
 
     override fun getTextureLocation(entity: GummyBunny): ResourceLocation = face
-    
 
-    private class FurLayer(renderer: GummyBunnyRenderer, context: EntityRendererProvider.Context) :
+
+    private class BodyLayer(renderer: GummyBunnyRenderer, context: EntityRendererProvider.Context) :
         RenderLayer<GummyBunny, GummyBunnyModel<GummyBunny>>(renderer) {
 
         private val model: GummyBunnyModel<GummyBunny> = GummyBunnyModel(context.bakeLayer(GummyBunnyModel.LAYER))
@@ -59,9 +57,7 @@ class GummyBunnyRenderer(context: EntityRendererProvider.Context) :
             netHeadYaw: Float,
             headPitch: Float,
         ) {
-            if (bunny.isInvisible || bunny.isSwampVariant) {
-                return
-            }
+            if (bunny.isInvisible) return
 
             parentModel.copyPropertiesTo(model)
             model.prepareMobModel(bunny, limbSwing, limbSwingAmount, partialTick)
@@ -77,53 +73,6 @@ class GummyBunnyRenderer(context: EntityRendererProvider.Context) :
                 green,
                 blue,
                 0.58f
-            )
-        }
-    }
-
-    /**
-     * Swamp variant uses the gummy mouse style: a tinted body underneath and
-     * an inflated translucent shell on top, instead of the coplanar fur pass.
-     */
-    private class GummyShellLayer(renderer: GummyBunnyRenderer, context: EntityRendererProvider.Context) :
-        RenderLayer<GummyBunny, GummyBunnyModel<GummyBunny>>(renderer) {
-        private val bodyModel: GummyBunnyModel<GummyBunny> = GummyBunnyModel(context.bakeLayer(GummyBunnyModel.LAYER))
-
-        private val shellModel: GummyBunnyOuterModel<GummyBunny> =
-            GummyBunnyOuterModel(context.bakeLayer(GummyBunnyOuterModel.LAYER))
-
-        override fun render(
-            poseStack: PoseStack,
-            buffer: MultiBufferSource,
-            packedLight: Int,
-            bunny: GummyBunny,
-            limbSwing: Float,
-            limbSwingAmount: Float,
-            partialTick: Float,
-            ageInTicks: Float,
-            netHeadYaw: Float,
-            headPitch: Float,
-        ) {
-            if (bunny.isInvisible || !bunny.isSwampVariant) {
-                return
-            }
-            val (red, green, blue) = bunny.color.vecColorNormal
-
-            val overlay = getOverlayCoords(bunny, 0.0f)
-
-            parentModel.copyPropertiesTo(bodyModel)
-            bodyModel.prepareMobModel(bunny, limbSwing, limbSwingAmount, partialTick)
-            bodyModel.setupAnim(bunny, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch)
-            bodyModel.renderToBuffer(
-                poseStack, buffer.getBuffer(RenderType.entityTranslucent(face)),
-                packedLight, overlay, red, green, blue, 1.0f
-            )
-
-            shellModel.prepareMobModel(bunny, limbSwing, limbSwingAmount, partialTick)
-            shellModel.setupAnim(bunny, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch)
-            shellModel.renderToBuffer(
-                poseStack, buffer.getBuffer(RenderType.entityTranslucent(body)),
-                packedLight, overlay, red, green, blue, 0.6f
             )
         }
     }

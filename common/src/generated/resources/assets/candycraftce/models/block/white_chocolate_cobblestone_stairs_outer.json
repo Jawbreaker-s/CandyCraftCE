@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/outer_stairs",
+  "textures": {
+    "bottom": "candycraftce:block/white_chocolate_cobblestone",
+    "side": "candycraftce:block/white_chocolate_cobblestone",
+    "top": "candycraftce:block/white_chocolate_cobblestone"
+  }
+}

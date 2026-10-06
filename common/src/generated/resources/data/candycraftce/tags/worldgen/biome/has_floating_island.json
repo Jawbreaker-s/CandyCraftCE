@@ -1,7 +1,12 @@
 {
   "values": [
+    "candycraftce:caramel_forest",
     "candycraftce:ice_cream_plains",
     "candycraftce:ice_cream_sky_mountains",
+    "candycraftce:chocolate_forest",
+    "candycraftce:white_chocolate_forest",
+    "candycraftce:enchanted_forest",
+    "candycraftce:sugar_forest",
     "candycraftce:pudding_hill",
     "candycraftce:pudding_plains"
   ]

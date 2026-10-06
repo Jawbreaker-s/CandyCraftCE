@@ -302,7 +302,7 @@ class FloatingIslandStructure(settings: StructureSettings) : SinglePieceStructur
                 0 -> CBlocks.caramel_pane.defaultBlockState()
                 1 -> CBlocks.caramel_pane_round.defaultBlockState()
                 else -> CBlocks.caramel_pane_diamond.defaultBlockState()
-            }
+            }.setValue(PipeBlock.NORTH, true).setValue(PipeBlock.SOUTH, true)
             placeBlock(level, glass, x + 4, y + 2, z + 1 + random.nextInt(3), box)
             run {
                 val y = y + 1

@@ -12,7 +12,6 @@ import net.minecraft.world.level.material.Fluid
  * @see [cn.jawbreakers.candycraftce.forge.data.providers.tags]
  * */
 object CItemTags {
-    val chocolate_bar = bind("chocolate_bar")
     internal fun bind(name: String): TagKey<Item> {
         return TagKey.create(Registries.ITEM, name.modLoc())
     }
@@ -33,11 +32,11 @@ object CBlockTags {
     val ice_soil = bind("ice_soil")
     val candy_soil = bind("candy_soil")
     val seaweed_soil = bind("seaweed_soil")
+    val chocolate_block = withItem("chocolate_block")
     val marshmallow_planks = withItem("marshmallow_planks")
-    val ice_cream = bind("ice_cream")
-    val worm_blocks = withItem("worm_blocks")
-    val gummy_blocks = withItem("gummy_blocks")
-    val marshmallow_logs = bind("marshmallow_logs")
+    val ice_cream = withItem("ice_cream")
+    val marshmallow_logs = withItem("marshmallow_logs")
+    val candy_leaves = withItem("candy_leaves")
     private fun bind(name: String): TagKey<Block> {
         return TagKey.create(Registries.BLOCK, name.modLoc())
     }
@@ -51,8 +50,6 @@ object CBlockTags {
 object CFluidTags {
     val caramel = bind("caramel")
     val grenadine = bind("grenadine")
-    val liquid_chocolate = bind("liquid_chocolate")
-    val liquid_candy = bind("liquid_candy")
     private fun bind(name: String): TagKey<Fluid> {
         return TagKey.create(Registries.FLUID, name.modLoc())
     }

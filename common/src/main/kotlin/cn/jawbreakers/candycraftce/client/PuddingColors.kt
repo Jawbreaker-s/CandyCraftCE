@@ -2,15 +2,10 @@ package cn.jawbreakers.candycraftce.client
 
 import cn.jawbreakers.candycraftce.registry.CBlocks
 import cn.jawbreakers.candycraftce.registry.CBlocks.asItemEntry
-import cn.jawbreakers.candycraftce.registry.CBlocks.cotton_candy_grass_block
 import cn.jawbreakers.candycraftce.registry.CBlocks.custard_pudding_block
-import cn.jawbreakers.candycraftce.registry.CBlocks.custard_white_brownie
-import cn.jawbreakers.candycraftce.registry.CBlocks.strawberry_filled_pudding
 import cn.jawbreakers.candycraftce.registry.worldgen.CBiomes.caramel_forest
 import cn.jawbreakers.candycraftce.registry.worldgen.CBiomes.chocolate_forest
-import cn.jawbreakers.candycraftce.registry.worldgen.CBiomes.cotton_candy_plains
 import cn.jawbreakers.candycraftce.registry.worldgen.CBiomes.enchanted_forest
-import cn.jawbreakers.candycraftce.registry.worldgen.CBiomes.gummy_swamp
 import cn.jawbreakers.candycraftce.registry.worldgen.CBiomes.ice_cream_plains
 import cn.jawbreakers.candycraftce.registry.worldgen.CBiomes.ice_cream_sky_mountains
 import cn.jawbreakers.candycraftce.registry.worldgen.CBiomes.pudding_hill
@@ -21,7 +16,6 @@ import cn.jawbreakers.candycraftce.registry.worldgen.CBiomes.sugar_river
 import cn.jawbreakers.candycraftce.registry.worldgen.CBiomes.white_chocolate_forest
 import cn.jawbreakers.candycraftce.utils.CLogUtils.clog
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils.ifClient
-import cn.jawbreakers.candycraftce.utils.CPlatformUtils.registerBlockAndItemColor
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils.registerItemColor
 import cn.jawbreakers.candycraftce.utils.ClientOnly
 import cn.jawbreakers.candycraftce.utils.LinearGradient
@@ -64,7 +58,6 @@ object PuddingColor {
      */
     const val DEFAULT_PUDDING_COLOR = 0xdd99aa//0xdd99aa
     const val DEFAULT_ENCHANT_COLOR = 0x8f8ac8//0xb0ecff
-    const val DEFAULT_COTTON_COLOR = 0xFFC4DF
     const val DEFAULT_CHOCOLATE_BROWNIE_COLOR = 0x754424
 
     //    val radius: Int get() = Minecraft.getInstance().options.biomeBlendRadius().get()
@@ -101,8 +94,6 @@ object PuddingColor {
             ice_cream_plains, ice_cream_sky_mountains -> 0xFFFFFF
             sugar_oceans -> 0xB35EFF
             caramel_forest -> 0xB05C28
-            cotton_candy_plains -> DEFAULT_COTTON_COLOR
-            gummy_swamp -> 0xFFFEB0
             chocolate_forest -> DEFAULT_CHOCOLATE_BROWNIE_COLOR
             sugar_river -> 0xFFBBCC
             else -> DEFAULT_PUDDING_COLOR
@@ -157,12 +148,7 @@ object PuddingColor {
     fun initColor() {
         clog.info("Initializing Dynamic Colors...")
         ifClient {
-            registerBlockColor(
-                custard_pudding_block,
-                strawberry_filled_pudding,
-                cotton_candy_grass_block,
-                custard_white_brownie
-            ) { _, level, pos, _ ->
+            registerBlockColor(custard_pudding_block) { _, level, pos, _ ->
                 if (level != null && pos != null) {
                     val biome = level.getBiome(pos)
                     if (biome != null) {
@@ -173,25 +159,13 @@ object PuddingColor {
             }
             registerItemColor(
                 custard_pudding_block.asItemEntry(),
-                strawberry_filled_pudding.asItemEntry(),
                 color = DEFAULT_PUDDING_COLOR
-            )
-            registerItemColor(cotton_candy_grass_block.asItemEntry(), color = DEFAULT_COTTON_COLOR)
-            registerItemColor(
-                custard_white_brownie.asItemEntry(),
-                color = DEFAULT_CHOCOLATE_BROWNIE_COLOR
             )
 
             registerBlockColor(CBlocks.enchant_candy_leaves) { _, _, pos, _ ->
                 if (pos != null) getEnchantColor(pos) else DEFAULT_ENCHANT_COLOR
             }
             registerItemColor(CBlocks.enchant_candy_leaves.asItemEntry(), color = DEFAULT_ENCHANT_COLOR)
-
-            registerBlockAndItemColor(*CBlocks.red_gummy_family.toTypedArray(), color = 0xff4530)
-            registerBlockAndItemColor(*CBlocks.orange_gummy_family.toTypedArray(), color = 0xff9b4f)
-            registerBlockAndItemColor(*CBlocks.yellow_gummy_family.toTypedArray(), color = 0xffe563)
-            registerBlockAndItemColor(*CBlocks.white_gummy_family.toTypedArray(), color = 0xfffeb0)
-            registerBlockAndItemColor(*CBlocks.green_gummy_family.toTypedArray(), color = 0x80e22b)
         }
     }
 

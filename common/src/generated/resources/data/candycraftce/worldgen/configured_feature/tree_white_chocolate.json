@@ -35,7 +35,7 @@
     "foliage_provider": {
       "type": "minecraft:simple_state_provider",
       "state": {
-        "Name": "candycraftce:white_chocolate_leaves",
+        "Name": "candycraftce:ice_cream_leaves",
         "Properties": {
           "distance": "7",
           "distance_extra": "6",

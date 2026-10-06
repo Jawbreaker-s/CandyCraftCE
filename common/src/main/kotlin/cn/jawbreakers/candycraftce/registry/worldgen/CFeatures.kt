@@ -1,8 +1,7 @@
 package cn.jawbreakers.candycraftce.registry.worldgen
 
 import cn.jawbreakers.candycraftce.level.feature.*
-import cn.jawbreakers.candycraftce.level.feature.CandyLiquidLakeFeature.FluidMode.CHOCOLATE
-import cn.jawbreakers.candycraftce.level.feature.CandyLiquidLakeFeature.FluidMode.WATER_OR_GRENADINE
+import cn.jawbreakers.candycraftce.level.feature.CandyUnderLakeFeature.FluidMode.Companion.WATER_OR_GRENADINE
 import cn.jawbreakers.candycraftce.registry.CBlockTags
 import cn.jawbreakers.candycraftce.utils.CLogUtils
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils
@@ -41,10 +40,8 @@ object CFeatures {
 
     val candy_grass = register("candy_grass", ::CandyGrassFeature)
     val candy_seaweed = register("candy_seaweed", ::CandySeaweedFeature)
-    val groundwater = register("candy_liquid_lake") { CandyLiquidLakeFeature(WATER_OR_GRENADINE) }
-    val chocolate_groundwater = register("candy_chocolate_lake") { CandyLiquidLakeFeature(CHOCOLATE) }
+    val groundwater = register("candy_liquid_lake") { CandyUnderLakeFeature(WATER_OR_GRENADINE) }
     val marshmallow_waterlily = register("marshmallow_waterlily", ::MarshmallowSliceFeature)
-    val gummy_worm = register("gummy_worm", ::GummyWormFeature)
 
 
 //    val candy_plant_house =
@@ -90,10 +87,8 @@ object CFeatures {
 ////    val white_chocolate_tree = register("white_chocolate_tree") { LegacyCandyTreeFeature(LegacyCandyTreeFeature.Kind.WHITE_CHOCOLATE) }
     val configured_candy_grass = configured(candy_grass)
     val configured_candy_seaweed = configured(candy_seaweed)
-    val configured_chocolate_groundwater = configured(chocolate_groundwater)
     val configured_groundwater = configured(groundwater)
     val configured_marshmallow_waterlily = configured(marshmallow_waterlily)
-    val configured_gummy_worm = configured(gummy_worm)
 
     val configured_tree_chocolate = configured("tree_chocolate")
     val configured_tree_chocolate_fancy = configured("tree_chocolate_fancy")
@@ -129,10 +124,8 @@ object CFeatures {
         }
         builtin(configured_candy_grass, candy_grass.get())
         builtin(configured_candy_seaweed, candy_seaweed.get())
-        builtin(configured_chocolate_groundwater, chocolate_groundwater.get())
         builtin(configured_groundwater, groundwater.get())
         builtin(configured_marshmallow_waterlily, marshmallow_waterlily.get())
-        builtin(configured_gummy_worm, gummy_worm.get())
         ctx.register(configured_tree_chocolate, createChocolateTree().configure())
         ctx.register(configured_tree_caramel, createCaramelWild().configure())
         ctx.register(configured_tree_chocolate_fancy, createChocolateFancy().configure())
@@ -157,11 +150,9 @@ object CFeatures {
     //===============================Placed Features===============================
     val placed_candy_grass = placed(configured_candy_grass)
     val placed_candy_seaweed = placed(configured_candy_seaweed)
-    val placed_chocolate_groundwater = placed(configured_chocolate_groundwater)
     val placed_groundwater = placed(configured_groundwater)
     val placed_marshmallow_waterlily = placed(configured_marshmallow_waterlily)
     val placed_marshmallow_waterlily_dense = placed(configured_marshmallow_waterlily, "_dense")
-    val placed_gummy_worm = placed(configured_gummy_worm)
 
     val checked_tree_chocolate = placed(configured_tree_chocolate, "_checked")
     val checked_tree_chocolate_fancy = placed(configured_tree_chocolate_fancy, "_checked")
@@ -201,10 +192,6 @@ object CFeatures {
             listOf(count(8), in_square, heightIn(0..128), biome)
         )
         register(
-            placed_chocolate_groundwater, configured_chocolate_groundwater,
-            listOf(rarity(20), in_square, heightIn(0..62), biome)
-        )
-        register(
             placed_groundwater, configured_groundwater,
             listOf(rarity(8), in_square, heightIn(5..60), biome)
         )
@@ -215,10 +202,6 @@ object CFeatures {
         register(
             placed_marshmallow_waterlily_dense, configured_marshmallow_waterlily,
             listOf(count(3), in_square, on_surface, biome)
-        )
-        register(
-            placed_gummy_worm, configured_gummy_worm,
-            listOf(in_square, on_surface, biome)
         )
         //trees
         checked(checked_tree_chocolate, configured_tree_chocolate)

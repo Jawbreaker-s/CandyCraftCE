@@ -4,10 +4,13 @@ import cn.jawbreakers.candycraftce.CandyCraftCE
 import cn.jawbreakers.candycraftce.fluid.CFluidPresets
 import cn.jawbreakers.candycraftce.fluid.CFluidReferences
 import cn.jawbreakers.candycraftce.registry.CBlocks.asItemEntry
+import cn.jawbreakers.candycraftce.utils.CPlatformUtils.translate
+import cn.jawbreakers.candycraftce.utils.CUtils.modLoc
 import cn.jawbreakers.candycraftce.utils.registry.Accessor
 import cn.jawbreakers.candycraftce.utils.registry.Entry
 import com.mojang.datafixers.types.Type
 import com.mojang.serialization.Codec
+import net.minecraft.Util
 import net.minecraft.client.color.block.BlockColor
 import net.minecraft.client.color.item.ItemColor
 import net.minecraft.client.model.geom.ModelLayerLocation
@@ -19,6 +22,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider
 import net.minecraft.core.RegistrySetBuilder
 import net.minecraft.core.particles.ParticleOptions
 import net.minecraft.core.particles.ParticleType
+import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.effect.MobEffect
 import net.minecraft.world.entity.*
@@ -65,9 +69,25 @@ object CPlatformUtils : ICPlatForm by CandyCraftCE.platform {
         registerItemColor(*entries.map { it.asItemEntry() }.toTypedArray(), color = color)
     }
 
+    fun String.translate(en: String, zh: String): String = apply {
+        datagen?.onGatherLanguage {
+            add(this@translate, en, zh)
+        }
+    }
+
+    fun <T : Component> T.translate(en: String, zh: String): T = apply {
+        datagen?.onGatherLanguage {
+            add(this@translate, en, zh)
+        }
+    }
+
 }
 
 interface ICPlatForm {
+    companion object {
+        val SPAWN_EGG_DESC: String = Util.makeDescriptionId("item", "spawn_egg".modLoc())
+            .translate("%s Spawn Egg", "%s刷怪蛋")
+    }
 
     val isDev: Boolean
     val isClient: Boolean
@@ -122,8 +142,6 @@ interface ICPlatformFluids {
     fun createBucketItem(ref: CFluidReferences, properties: Item.Properties): BucketItem
     fun registerGrenadine(presets: CFluidPresets): CFluidReferences
     fun registerCaramel(presets: CFluidPresets): CFluidReferences
-    fun registerLiquidChocolate(presets: CFluidPresets): CFluidReferences
-    fun registerLiquidCandy(presets: CFluidPresets): CFluidReferences
 
 }
 
@@ -138,6 +156,7 @@ interface ICPlatformLevels {
 
 interface ICPlatformDatagen {
     fun onBootstrap(action: RegistrySetBuilder.() -> Unit)
+    fun onGatherLanguage(action: ILanguageProvider.() -> Unit)
 }
 
 @ClientOnly
@@ -152,4 +171,9 @@ interface ICPlatFormClients {
 
     fun registerRenderLayers(layer: ModelLayerLocation, provider: Supplier<LayerDefinition>)
     fun <E : Entity, SE : E> registerEntityRenderer(entry: Entry<EntityType<SE>>, renderer: EntityRendererProvider<E>)
+}
+
+interface ILanguageProvider {
+    fun add(key: String, en: String, zh: String)
+    fun add(key: Component, en: String, zh: String)
 }

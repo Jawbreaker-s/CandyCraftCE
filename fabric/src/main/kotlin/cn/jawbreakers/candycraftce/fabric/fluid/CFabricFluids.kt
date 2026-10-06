@@ -100,24 +100,6 @@ object CFabricFluids : ICPlatformFluids {
     override fun registerCaramel(presets: CFluidPresets): CFluidReferences {
         return registerSimple(
             presets,
-            FluidSettings.waterLike()
-                .isInfinite(false)
-                .apply(presets)
-        ).wrap(presets)
-    }
-
-    override fun registerLiquidChocolate(presets: CFluidPresets): CFluidReferences {
-        return registerSimple(
-            presets,
-            FluidSettings.waterLike()
-                .isInfinite(false)
-                .apply(presets)
-        ).wrap(presets)
-    }
-
-    override fun registerLiquidCandy(presets: CFluidPresets): CFluidReferences {
-        return registerSimple(
-            presets,
             FluidSettings.lavaLike()
                 .isInfinite(false)
                 .apply(presets)

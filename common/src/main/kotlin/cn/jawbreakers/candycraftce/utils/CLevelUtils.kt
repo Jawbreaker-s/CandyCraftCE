@@ -5,6 +5,7 @@ import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.core.Vec3i
 import net.minecraft.core.particles.ParticleOptions
+import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.entity.item.ItemEntity
 import net.minecraft.world.entity.player.Player
@@ -35,6 +36,13 @@ object CLevelUtils {
     operator fun Vector3fc.component1() = x()
     operator fun Vector3fc.component2() = y()
     operator fun Vector3fc.component3() = z()
+    inline fun Level.ifClient(action: (ClientLevel) -> Unit) {
+        if (this is ClientLevel) action(this)
+    }
+
+    inline fun Level.ifServer(action: (ServerLevel) -> Unit) {
+        if (this is ServerLevel) action(this)
+    }
 
     fun spawnItemEntity(level: Level, pos: Vec3i, stack: ItemStack): ItemEntity? {
         return spawnItemEntity(level, Vec3.atCenterOf(pos), stack)

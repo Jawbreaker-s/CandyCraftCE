@@ -26,7 +26,6 @@ class CBiomeTagsProvider(
 
                 tag(candy_plains)
                     .add(ice_cream_plains)
-                    .add(cotton_candy_plains)
                     .add(pudding_plains)
 
                 tag(is_cold)
@@ -45,10 +44,7 @@ class CBiomeTagsProvider(
                 tag(candy_biomes)
                     .add(*allCandyBiomes.toTypedArray())
 
-                tag(has_floating_island)
-                    .add(*allCandyBiomes.filter {
-                        it !in water && it !in forest && it != gummy_swamp && it != cotton_candy_plains
-                    }.toTypedArray())
+                tag(has_floating_island).add(*allCandyBiomes.filter { it !in water }.toTypedArray())
             }
         }
     }

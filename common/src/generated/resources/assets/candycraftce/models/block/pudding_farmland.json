@@ -3,6 +3,6 @@
   "textures": {
     "dirt": "candycraftce:block/pudding_block",
     "particle": "candycraftce:block/pudding_block",
-    "top": "candycraftce:block/pudding_farmland_top_moist"
+    "top": "candycraftce:block/pudding_farmland_top"
   }
 }
