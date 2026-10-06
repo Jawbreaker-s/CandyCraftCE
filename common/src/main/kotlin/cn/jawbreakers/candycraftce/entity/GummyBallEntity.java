@@ -1,5 +1,6 @@
 package cn.jawbreakers.candycraftce.entity;
 
+import cn.jawbreakers.candycraftce.entity.jelly.BasicJelly;
 import com.valentin4311.candycraftmod.registry.CCEntityTypes;
 import com.valentin4311.candycraftmod.registry.CCItems;
 import net.minecraft.core.particles.ItemParticleOption;
@@ -275,7 +276,7 @@ public class GummyBallEntity extends ThrowableItemProjectile {
 		int power = getPower();
 		boolean bossBeetleProjectile = isBossBeetleProjectile();
 		float damage = getBonusDamage() > 0.0F ? getBonusDamage() : getSourceDamage(power, bossBeetleProjectile);
-		if (entity instanceof BasicCandySlimeEntity candy && (candy.isPezJelly() || candy.isKingSlime() || candy.isJellyQueen())) {
+		if (entity instanceof BasicJelly candy && (candy.isPezJelly() || candy.isKingSlime() || candy.isJellyQueen())) {
 			entity.hurt(damageSources().thrown(this, getOwner()), damage);
 			return false;
 		}

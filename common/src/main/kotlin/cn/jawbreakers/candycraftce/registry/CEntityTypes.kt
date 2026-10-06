@@ -6,7 +6,11 @@ import cn.jawbreakers.candycraftce.client.entity.models.CranfishModel
 import cn.jawbreakers.candycraftce.client.entity.models.GummyBunnyModel
 import cn.jawbreakers.candycraftce.client.entity.models.GummyBunnyOuterModel
 import cn.jawbreakers.candycraftce.client.entity.renderers.*
+import cn.jawbreakers.candycraftce.client.entity.renderers.jelly.LemonJellyRenderer
+import cn.jawbreakers.candycraftce.client.entity.renderers.jelly.MintJellyRenderer
+import cn.jawbreakers.candycraftce.client.entity.renderers.jelly.RaspberryJellyRenderer
 import cn.jawbreakers.candycraftce.entity.*
+import cn.jawbreakers.candycraftce.entity.jelly.*
 import cn.jawbreakers.candycraftce.utils.CLogUtils
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils.ifClient
@@ -111,7 +115,7 @@ object CEntityTypes {
         .attributes(WaffleSheep::createAttributes)
         .renderer(::WaffleSheepRenderer)
         .placement(::checkCandyAnimalSpawnRules)
-    
+
     val gummy_bunny = register("gummy_bunny") {
         of(::GummyBunny, MobCategory.CREATURE)
             .sized(0.5F, 0.4F)
@@ -158,6 +162,19 @@ object CEntityTypes {
         }
         .placement(SpawnPlacements.Type.NO_RESTRICTIONS, MOTION_BLOCKING_NO_LEAVES, CaramelBee::checkSpawnRules)
 
+    //================JELLIES================
+    val lemon_jelly = registerSlime("lemon_jelly", ::LemonJelly)
+        .attributes(TinyJelly::createTinyAttribute)
+        .renderer(::LemonJellyRenderer)
+
+    val raspberry_jelly = registerSlime("raspberry_jelly", ::RaspberryJelly)
+        .attributes(TinyJelly::createTinyAttribute)
+        .renderer(::RaspberryJellyRenderer)
+
+    val mint_jelly = registerSlime("mint_jelly", ::MintJelly)
+        .attributes(TinyJelly::createTinyAttribute)
+        .renderer(::MintJellyRenderer)
+
     //=================================
     private fun <E : Entity> register(name: String, type: Supplier<EntityType.Builder<E>>) =
         CPlatformUtils.registerEntityType(name) { type.get().build("$MOD_ID:$name") }
@@ -175,12 +192,12 @@ object CEntityTypes {
         CPlatformUtils.registerEntityAttribute(this) { factory.get().also { modifier(it) } }
     }
 
-    private fun registerSlime(
-        name: String, width: Float, height: Float,
+    private fun <T : BasicJelly> registerSlime(
+        name: String, factory: EntityType.EntityFactory<T>,
     ) =
         register(name) {
-            of(::BasicCandySlimeEntity, MobCategory.MONSTER)
-                .sized(width, height)
+            of(factory, MobCategory.MONSTER)
+                .sized(EntityType.SLIME.width, EntityType.SLIME.height)
                 .clientTrackingRange(8)
         }
 
