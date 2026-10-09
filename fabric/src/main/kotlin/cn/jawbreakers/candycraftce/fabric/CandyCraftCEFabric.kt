@@ -165,8 +165,8 @@ class CandyCraftCEFabric : ModInitializer, ICPlatForm {
 
             clog.info("Running `whenInitialized`")
             lateUsage!!.also {
-                lateUsage = null
                 it.forEach(Runnable::run)
+                lateUsage = null
             }
         }
     }

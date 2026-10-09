@@ -468,9 +468,11 @@ public class BasicCandySlimeEntity extends Slime {
 
 	/**
 	 * 生成时收尾。主要目的是应用旧版（1.12 以前）的固定尺寸规则。
+	 *
 	 */
 	@Override
 	@Nullable
+	//
 	public SpawnGroupData finalizeSpawn(ServerLevelAccessor level, DifficultyInstance difficulty, MobSpawnType spawnType, @Nullable SpawnGroupData spawnData, @Nullable CompoundTag tag) {
 		SpawnGroupData data = super.finalizeSpawn(level, difficulty, spawnType, spawnData, tag);
 		applyLegacySpawnSize();
@@ -504,16 +506,16 @@ public class BasicCandySlimeEntity extends Slime {
 		if (!clientSide && inheritedBossTargetUuid != null) {
 			tickInheritedBossTarget();
 		}
-		if (candyBoss && !clientSide) {
-			updateBossBar();
-		}
+//		if (candyBoss && !clientSide) {
+//			updateBossBar();
+//		}
 		if (specialAttackCooldown > 0) {
 			specialAttackCooldown--;
 		}
-		// 龙卷风果冻在空中时喷云，纯客户端表现。
-		if (isTornadoJelly() && !onGround() && clientSide && tickCount % 4 == 0) {
-			level().addParticle(ParticleTypes.CLOUD, getRandomX(0.8D), getRandomY(), getRandomZ(0.8D), 0.0D, 0.02D, 0.0D);
-		}
+//		// 龙卷风果冻在空中时喷云，纯客户端表现。
+//		if (isTornadoJelly() && !onGround() && clientSide && tickCount % 4 == 0) {
+//			level().addParticle(ParticleTypes.CLOUD, getRandomX(0.8D), getRandomY(), getRandomZ(0.8D), 0.0D, 0.02D, 0.0D);
+//		}
 		if (candyBoss && !clientSide) {
 			tickServerBossBehavior();
 		}

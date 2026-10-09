@@ -27,9 +27,9 @@ class CandyProjectileStuckLayer(
      */
     override fun numStuck(player: AbstractClientPlayer): Int {
         val carrier = player as ICandyStuckProjectileCarrier
-        honeyArrowsToRender = carrier.`candycraftce$getHoneyArrowCount`()
+        honeyArrowsToRender = carrier.candycraftce_honeyArrowCount
         renderedItems = 0
-        return honeyArrowsToRender + carrier.`candycraftce$getHoneyBoltCount`()
+        return honeyArrowsToRender + carrier.candycraftce_honeyBoltCount
     }
 
     override fun renderStuckItem(

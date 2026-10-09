@@ -1,11 +1,13 @@
 package cn.jawbreakers.candycraftce.registry
 
 import cn.jawbreakers.candycraftce.CandyCraftCE.MOD_ID
+import cn.jawbreakers.candycraftce.CandyCraftCE.onPostWork
 import cn.jawbreakers.candycraftce.client.entity.models.CaramelBeeModel
 import cn.jawbreakers.candycraftce.client.entity.models.CranfishModel
 import cn.jawbreakers.candycraftce.client.entity.models.GummyBunnyModel
 import cn.jawbreakers.candycraftce.client.entity.models.GummyBunnyOuterModel
 import cn.jawbreakers.candycraftce.client.entity.renderers.*
+import cn.jawbreakers.candycraftce.client.entity.renderers.jelly.JellyQueenRenderer
 import cn.jawbreakers.candycraftce.client.entity.renderers.jelly.LemonJellyRenderer
 import cn.jawbreakers.candycraftce.client.entity.renderers.jelly.MintJellyRenderer
 import cn.jawbreakers.candycraftce.client.entity.renderers.jelly.RaspberryJellyRenderer
@@ -14,7 +16,6 @@ import cn.jawbreakers.candycraftce.entity.jelly.*
 import cn.jawbreakers.candycraftce.utils.CLogUtils
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils.ifClient
-import cn.jawbreakers.candycraftce.utils.CPlatformUtils.whenInitialized
 import cn.jawbreakers.candycraftce.utils.ClientOnly
 import cn.jawbreakers.candycraftce.utils.ServerSafe
 import cn.jawbreakers.candycraftce.utils.registry.Entry
@@ -163,17 +164,17 @@ object CEntityTypes {
         .placement(SpawnPlacements.Type.NO_RESTRICTIONS, MOTION_BLOCKING_NO_LEAVES, CaramelBee::checkSpawnRules)
 
     //================JELLIES================
-    val lemon_jelly = registerSlime("lemon_jelly", ::LemonJelly)
-        .attributes(TinyJelly::createTinyAttribute)
+    val lemon_jelly = registerJelly("lemon_jelly", ::LemonJelly)
         .renderer(::LemonJellyRenderer)
 
-    val raspberry_jelly = registerSlime("raspberry_jelly", ::RaspberryJelly)
-        .attributes(TinyJelly::createTinyAttribute)
+    val raspberry_jelly = registerJelly("raspberry_jelly", ::RaspberryJelly)
         .renderer(::RaspberryJellyRenderer)
 
-    val mint_jelly = registerSlime("mint_jelly", ::MintJelly)
-        .attributes(TinyJelly::createTinyAttribute)
+    val mint_jelly = registerJelly("mint_jelly", ::MintJelly)
         .renderer(::MintJellyRenderer)
+
+    val jelly_queen = registerJelly("jelly_queen", ::JellyQueen)
+        .renderer(::JellyQueenRenderer)
 
     //=================================
     private fun <E : Entity> register(name: String, type: Supplier<EntityType.Builder<E>>) =
@@ -192,7 +193,7 @@ object CEntityTypes {
         CPlatformUtils.registerEntityAttribute(this) { factory.get().also { modifier(it) } }
     }
 
-    private fun <T : BasicJelly> registerSlime(
+    private fun <T : BasicJelly> registerJelly(
         name: String, factory: EntityType.EntityFactory<T>,
     ) =
         register(name) {
@@ -200,17 +201,18 @@ object CEntityTypes {
                 .sized(EntityType.SLIME.width, EntityType.SLIME.height)
                 .clientTrackingRange(8)
         }
+            .attributes(BasicJelly::createJellyAttribute)
 
     @Suppress("UNCHECKED_CAST")
     @ServerSafe
     private inline fun <T : Entity, ST : T> Entry<EntityType<ST>>.renderer(
         crossinline provider: (EntityRendererProvider.Context) -> EntityRenderer<T>,
-        crossinline layers: LayerRegister.() -> Unit = {},//这里的lambda使用whenInitialized修饰过，可以安全使用该文件的Entry对象
+        crossinline layers: LayerRegister.() -> Unit = {},//这里的lambda可以安全使用该文件的Entry对象
     ) =
         apply {
             ifClient {
                 registerEntityRenderer(this@renderer) { provider(it) }
-                whenInitialized {
+                onPostWork {
                     layers(::registerRenderLayers)
                 }
             }

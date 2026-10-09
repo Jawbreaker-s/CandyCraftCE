@@ -104,7 +104,7 @@ object CandyEffects : DimensionSpecialEffects(128.0f, true, SkyType.NORMAL, fals
     }
 
     override fun isFoggyAt(x: Int, z: Int): Boolean = false
-    override fun `candycraftce$renderSnowAndRain`(
+    override fun candycraftce_renderSnowAndRain(
         level: ClientLevel,
         ticks: Int,
         partialTick: Float,
@@ -117,13 +117,13 @@ object CandyEffects : DimensionSpecialEffects(128.0f, true, SkyType.NORMAL, fals
         return true
     }
 
-    override fun `candycraftce$tickRain`(level: ClientLevel, ticks: Int, camera: Camera): Boolean {
+    override fun candycraftce_tickRain(level: ClientLevel, ticks: Int, camera: Camera): Boolean {
         MilkRainRenderer.tick(level, ticks, camera)
         return true
     }
 
     @Suppress("DEPRECATION")
-    override fun `candycraftce$renderSky`(
+    override fun candycraftce_renderSky(
         level: ClientLevel,
         ticks: Int,
         partialTick: Float,

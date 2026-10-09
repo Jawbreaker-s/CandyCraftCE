@@ -79,9 +79,9 @@ class HoneyArrow : AbstractArrow {
         if (!level().isClientSide && pierceLevel <= 0 && living is ICandyStuckProjectileCarrier) {
             living.arrowCount = max(0, living.arrowCount - 1)
             if (shotFromCrossbow()) {
-                living.`candycraftce$setHoneyBoltCount`(living.`candycraftce$getHoneyBoltCount`() + 1)
+                living.candycraftce_honeyBoltCount++
             } else {
-                living.`candycraftce$setHoneyArrowCount`(living.`candycraftce$getHoneyArrowCount`() + 1)
+                living.arrowCount++
             }
         }
     }

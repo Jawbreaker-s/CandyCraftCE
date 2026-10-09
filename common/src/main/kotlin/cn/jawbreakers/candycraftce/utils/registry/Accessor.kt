@@ -17,6 +17,9 @@ interface Accessor<T> : Supplier<T>, ReadOnlyProperty<Any?, T> {
     val value: T
     override fun getValue(thisRef: Any?, property: KProperty<*>): T = value
     override fun get(): T = value
+    fun <R> xmap(mapping: (T) -> R): Accessor<R> {
+        return lambda { mapping(value) }
+    }
 }
 
 interface MutableAccessor<T> : Accessor<T>, Consumer<T>, ReadWriteProperty<Any?, T> {
@@ -33,6 +36,11 @@ interface MutableAccessor<T> : Accessor<T>, Consumer<T>, ReadWriteProperty<Any?,
 
     fun set(value: T) {
         this.value = value
+    }
+
+    fun strict(condition: (T) -> T) = xmap(condition, condition)
+    fun <R> xmap(mapping: (T) -> R, remapping: (R) -> T): MutableAccessor<R> {
+        return lambda({ mapping(value) }, { set(remapping(it)) })
     }
 
     @Deprecated("Use set(value) instead", replaceWith = ReplaceWith("set(value)"))

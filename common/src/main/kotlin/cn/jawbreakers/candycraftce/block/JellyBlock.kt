@@ -31,7 +31,7 @@ class JellyBlock(val type: JellyType, properties: Properties) : SameBlockCullBlo
             if (entity is LivingEntity) {
                 entity.resetFallDistance()
                 if (type.stuckIn) {
-                    (entity as IPurpleJellyStuckEntity).`candycraftce$setPurpleJellyStuck`(true)
+                    (entity as IPurpleJellyStuckEntity).candycraftce_purpleJellyStuck = true
                 }
                 return
             }

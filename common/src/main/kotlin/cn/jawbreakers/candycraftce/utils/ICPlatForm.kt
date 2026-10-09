@@ -1,6 +1,7 @@
 package cn.jawbreakers.candycraftce.utils
 
 import cn.jawbreakers.candycraftce.CandyCraftCE
+import cn.jawbreakers.candycraftce.client.hud.CandyBossBarHud
 import cn.jawbreakers.candycraftce.fluid.CFluidPresets
 import cn.jawbreakers.candycraftce.fluid.CFluidReferences
 import cn.jawbreakers.candycraftce.registry.CBlocks.asItemEntry
@@ -161,6 +162,7 @@ interface ICPlatformDatagen {
 
 @ClientOnly
 interface ICPlatFormClients {
+    val hudBossBar: CandyBossBarHud
     fun setRenderLayer(block: Entry<out Block>, layer: RenderType)
     fun registerBlockColor(vararg blocks: Entry<out Block>, color: BlockColor)
     fun registerItemColor(vararg items: Entry<out Item>, color: ItemColor)

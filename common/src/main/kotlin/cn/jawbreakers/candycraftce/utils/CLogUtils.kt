@@ -1,6 +1,7 @@
 package cn.jawbreakers.candycraftce.utils
 
 import cn.jawbreakers.candycraftce.CandyCraftCE.MOD_NAME
+import cn.jawbreakers.candycraftce.utils.CPlatformUtils.ifDev
 import net.minecraft.resources.ResourceLocation
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -44,7 +45,11 @@ object CLogUtils {
 //            mainLog.error("The main class is not initialized. Accessing this class($clazz) too early may cause errors!")
             throw IllegalStateException("The main class is not initialized. Accessing this class($clazz) too early may cause errors!")
         }
-        require(signed.add(clazz)) { "Class ${clazz.simpleName} is already signed" }
+        if (!signed.add(clazz)) {
+            val msg = "Class ${clazz.simpleName} is already signed"
+            mainLog.warn(msg)
+            ifDev { error(msg) }
+        }
         mainLog.info("${clazz.simpleName} loaded")
         if (late) {
 //            mainLog.error("This class($clazz) is late for sign! It is a bug, please report it!")

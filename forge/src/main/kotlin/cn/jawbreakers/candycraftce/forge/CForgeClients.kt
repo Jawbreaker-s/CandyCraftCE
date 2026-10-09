@@ -1,9 +1,11 @@
 package cn.jawbreakers.candycraftce.forge
 
+import cn.jawbreakers.candycraftce.client.hud.CandyBossBarHud
 import cn.jawbreakers.candycraftce.utils.CLogUtils.clog
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils.whenInitialized
 import cn.jawbreakers.candycraftce.utils.ICPlatFormClients
 import cn.jawbreakers.candycraftce.utils.registry.Entry
+import net.minecraft.client.Minecraft
 import net.minecraft.client.color.block.BlockColor
 import net.minecraft.client.color.item.ItemColor
 import net.minecraft.client.model.geom.ModelLayerLocation
@@ -23,7 +25,11 @@ import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.api.distmarker.OnlyIn
 import net.minecraftforge.client.event.EntityRenderersEvent
 import net.minecraftforge.client.event.RegisterColorHandlersEvent
+import net.minecraftforge.client.event.RegisterGuiOverlaysEvent
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent
+import net.minecraftforge.event.TickEvent
+import net.minecraftforge.eventbus.api.SubscribeEvent
+import thedarkcolour.kotlinforforge.forge.FORGE_BUS
 import thedarkcolour.kotlinforforge.forge.MOD_BUS
 import java.util.function.Supplier
 
@@ -40,8 +46,29 @@ object CForgeClients : ICPlatFormClients {
             addListener(::onRegisterParticleProviders)
             addListener(::onRegisterEntityRenderers)
             addListener(::onRegisterLayerDefinitions)
+            addListener(::onRegisterGuiOverlays)
+        }
+        with(FORGE_BUS) {
+            addListener(::onClientTick)
         }
     }
+
+
+    fun onRegisterGuiOverlays(event: RegisterGuiOverlaysEvent) {
+        event.registerAboveAll("candy_bossbar_hud") { gui, graphics, partialTick, screenWidth, screenHeight ->
+            hudBossBar.render(graphics, partialTick)
+        }
+    }
+
+    @SubscribeEvent
+    fun onClientTick(event: TickEvent.ClientTickEvent) {
+        if (event.phase == TickEvent.Phase.START) {
+            hudBossBar.tick()
+        }
+    }
+
+
+    override val hudBossBar by lazy { CandyBossBarHud(Minecraft.getInstance()) }
 
     //=================================
     override fun setRenderLayer(block: Entry<out Block>, layer: RenderType) {

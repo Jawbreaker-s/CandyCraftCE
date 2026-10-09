@@ -112,7 +112,7 @@ class CaramelBee(type: EntityType<out CaramelBee?>, level: Level) : Monster(type
     }
 
     fun provoke(player: Player) {
-        if (alwaysHostile || !CandyTargeting.canAttackPlayer(player)) {
+        if (alwaysHostile || !CandyTargeting.canAttackPlayer(player, this)) {
             return
         }
         angerTarget = player.getUUID()
@@ -126,7 +126,7 @@ class CaramelBee(type: EntityType<out CaramelBee?>, level: Level) : Monster(type
 
         if (!level().isClientSide) {
             tickAnger()
-            if (target != null && !CandyTargeting.canAttackEntity(target!!)) target = null
+            if (target != null && !CandyTargeting.canAttackEntity(target!!, this)) target = null
             tickFlight()
         }
         super.aiStep()
@@ -215,7 +215,10 @@ class CaramelBee(type: EntityType<out CaramelBee?>, level: Level) : Monster(type
     }
 
     private fun canTargetPlayer(player: Player): Boolean {
-        return CandyTargeting.canAttackPlayer(player) && (alwaysHostile || angerTicks > 0 && angerTarget != null && angerTarget == player.getUUID())
+        return CandyTargeting.canAttackPlayer(
+            player,
+            this
+        ) && (alwaysHostile || angerTicks > 0 && angerTarget != null && angerTarget == player.getUUID())
     }
 
     private fun tickAnger() {
@@ -243,7 +246,7 @@ class CaramelBee(type: EntityType<out CaramelBee?>, level: Level) : Monster(type
     }
 
     override fun doHurtTarget(target: Entity): Boolean {
-        if (!CandyTargeting.canAttackEntity(target)) {
+        if (!CandyTargeting.canAttackEntity(target, this)) {
             setTarget(null)
             return false
         }

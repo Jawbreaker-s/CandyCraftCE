@@ -25,11 +25,12 @@ open class RaspberryJelly(entityType: EntityType<out RaspberryJelly>, level: Lev
 
     }
 
-    override fun doSpecialAttack(player: Player): Int {
+    override fun playerTouch(entity: Player) {
         level().explode(this, x, y, z, 1.0F, Level.ExplosionInteraction.MOB)
         discard()
-        return 20
     }
+
+    override fun getSize(): Int = 2
 
     override fun getParticleType() = particle
 }

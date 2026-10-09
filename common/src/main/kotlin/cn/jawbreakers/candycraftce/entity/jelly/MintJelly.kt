@@ -16,5 +16,13 @@ class MintJelly(entityType: EntityType<out MintJelly>, level: Level) : Raspberry
         private val particle by lazy { ItemParticleOption(ParticleTypes.ITEM, CItems.mint_jelly_ball.defaultInstance) }
     }
 
+    override fun getSize(): Int = 1
     override fun getParticleType(): ItemParticleOption = particle
+
+    override fun aiStep() {
+        super.aiStep()
+        if (level().isClientSide && !onGround() && tickCount % 4 == 0) {
+            level().addParticle(ParticleTypes.CLOUD, getRandomX(0.8), getRandomY(), getRandomZ(0.8), 0.0, 0.02, 0.0)
+        }
+    }
 }

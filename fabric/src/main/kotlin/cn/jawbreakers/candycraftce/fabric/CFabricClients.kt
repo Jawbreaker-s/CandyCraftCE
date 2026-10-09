@@ -1,15 +1,19 @@
 package cn.jawbreakers.candycraftce.fabric
 
+import cn.jawbreakers.candycraftce.client.hud.CandyBossBarHud
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils.whenInitialized
 import cn.jawbreakers.candycraftce.utils.ICPlatFormClients
 import cn.jawbreakers.candycraftce.utils.registry.Entry
 import net.fabricmc.api.EnvType
 import net.fabricmc.api.Environment
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback
+import net.minecraft.client.Minecraft
 import net.minecraft.client.color.block.BlockColor
 import net.minecraft.client.color.item.ItemColor
 import net.minecraft.client.model.geom.ModelLayerLocation
@@ -31,6 +35,17 @@ import java.util.function.Supplier
  */
 @Environment(EnvType.CLIENT)
 object CFabricClients : ICPlatFormClients {
+    override val hudBossBar: CandyBossBarHud by lazy {
+        CandyBossBarHud(Minecraft.getInstance()).apply {
+            HudRenderCallback.EVENT.register { graphics, partialTick ->
+                render(graphics, partialTick)
+            }
+            ClientTickEvents.START_CLIENT_TICK.register { _ ->
+                tick()
+            }
+        }
+    }
+
     override fun setRenderLayer(block: Entry<out Block>, layer: RenderType) {
         whenInitialized {
             BlockRenderLayerMap.INSTANCE.putBlock(block.get(), layer)

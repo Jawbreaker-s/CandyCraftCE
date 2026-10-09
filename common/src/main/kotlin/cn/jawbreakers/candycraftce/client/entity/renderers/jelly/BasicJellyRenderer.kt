@@ -1,6 +1,8 @@
 package cn.jawbreakers.candycraftce.client.entity.renderers.jelly
 
 import cn.jawbreakers.candycraftce.entity.jelly.BasicJelly
+import cn.jawbreakers.candycraftce.utils.CUtils.entityTex
+import cn.jawbreakers.candycraftce.utils.CUtils.modLoc
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.model.SlimeModel
 import net.minecraft.client.model.geom.ModelLayers
@@ -13,6 +15,11 @@ import net.minecraft.util.Mth
 //copy from SlimeRenderer
 abstract class BasicJellyRenderer<T : BasicJelly>(context: EntityRendererProvider.Context) :
     MobRenderer<T, SlimeModel<T>>(context, SlimeModel<T>(context.bakeLayer(ModelLayers.SLIME)), 0.25f) {
+    companion object {
+        val texture_sleeping = "jelly/sleeping".modLoc().entityTex()
+
+    }
+
     init {
         this.addLayer(SlimeOuterLayer(this, context.modelSet))
     }

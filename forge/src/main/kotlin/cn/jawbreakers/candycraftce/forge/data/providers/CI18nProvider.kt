@@ -1,6 +1,8 @@
 package cn.jawbreakers.candycraftce.forge.data.providers
 
 import cn.jawbreakers.candycraftce.CandyCraftCE.MOD_ID
+import cn.jawbreakers.candycraftce.entity.CandyBossType
+import cn.jawbreakers.candycraftce.entity.CandyBossType.*
 import cn.jawbreakers.candycraftce.item.EmblemItem
 import cn.jawbreakers.candycraftce.registry.*
 import cn.jawbreakers.candycraftce.utils.ILanguageProvider
@@ -353,12 +355,18 @@ class CI18nProvider(output: PackOutput) : DataProvider, ILanguageProvider {
             addEntity(cranfish, "Cranfish", "蔓越莓鱼")
             addEntity(cookie_creeper, "Cookie Creeper", "饼干苦力怕")
             addEntity(caramel_bee, "Caramel Bee", "焦糖蜂")
-
+            addEntity(jelly_queen, "Jelly Queen", "果冻皇后")
+            addEntity(lemon_jelly, "Lemon Jelly", "柠檬果冻")
+            addEntity(raspberry_jelly, "Raspberry Jelly", "树莓果冻")
+            addEntity(mint_jelly, "Mint Jelly", "薄荷果冻")
         }
         CMobEffects.apply {
             addMobEffects(cloying, "Cloying", "腻滞")
             addMobEffects(propolis, "Propolis", "蜂胶禁锢")
         }
+        addBossType(Sentry, "Sentry", "守卫")
+        addBossType(MiniBoss, "MiniBoss", "精英")
+        addBossType(Boss, "Boss", "首领")
     }
 
     override fun add(key: String, en: String, zh: String) {
@@ -370,6 +378,10 @@ class CI18nProvider(output: PackOutput) : DataProvider, ILanguageProvider {
         val key = (key.contents as? TranslatableContents)?.key
             ?: throw IllegalArgumentException("Component is not translatable")
         add(key, en, zh)
+    }
+
+    fun addBossType(type: CandyBossType, en: String, zh: String) {
+        add(type.description, en, zh)
     }
 
     fun addEntity(key: Entry<out EntityType<*>>, en: String, zh: String) {

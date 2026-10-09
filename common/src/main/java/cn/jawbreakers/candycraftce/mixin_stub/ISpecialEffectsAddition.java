@@ -4,11 +4,11 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.LightTexture;
-import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 
 public interface ISpecialEffectsAddition {
-	default boolean candycraftce$renderClouds(@NotNull ClientLevel level, int ticks, float partialTick, @NotNull PoseStack poseStack, double camX, double camY, double camZ, @NotNull Matrix4f projectionMatrix) {
+
+	default boolean candycraftce_renderClouds(ClientLevel level, int ticks, float partialTick, PoseStack poseStack, double camX, double camY, double camZ, Matrix4f projectionMatrix) {
 		return false;
 	}
 
@@ -17,7 +17,7 @@ public interface ISpecialEffectsAddition {
 	 *
 	 * @return true to prevent vanilla sky rendering
 	 */
-	default boolean candycraftce$renderSky(@NotNull ClientLevel level, int ticks, float partialTick, @NotNull PoseStack poseStack, @NotNull Camera camera, @NotNull Matrix4f projectionMatrix, boolean isFoggy, @NotNull Runnable setupFog) {
+	default boolean candycraftce_renderSky(ClientLevel level, int ticks, float partialTick, PoseStack poseStack, Camera camera, Matrix4f projectionMatrix, boolean isFoggy, Runnable setupFog) {
 		return false;
 	}
 
@@ -26,7 +26,7 @@ public interface ISpecialEffectsAddition {
 	 *
 	 * @return true to prevent vanilla snow and rain rendering
 	 */
-	default boolean candycraftce$renderSnowAndRain(@NotNull ClientLevel level, int ticks, float partialTick, @NotNull LightTexture lightTexture, double camX, double camY, double camZ) {
+	default boolean candycraftce_renderSnowAndRain(ClientLevel level, int ticks, float partialTick, LightTexture lightTexture, double camX, double camY, double camZ) {
 		return false;
 	}
 
@@ -35,8 +35,7 @@ public interface ISpecialEffectsAddition {
 	 *
 	 * @return true to prevent vanilla rain ticking
 	 */
-	default boolean candycraftce$tickRain(@NotNull ClientLevel level, int ticks, @NotNull Camera camera) {
+	default boolean candycraftce_tickRain(ClientLevel level, int ticks, Camera camera) {
 		return false;
 	}
-
 }

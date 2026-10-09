@@ -24,7 +24,7 @@ object DungeonEffects : DimensionSpecialEffects(0.0f, true, SkyType.NONE, false,
 
     override fun isFoggyAt(x: Int, z: Int): Boolean = false
 
-    override fun `candycraftce$renderClouds`(
+    override fun candycraftce_renderClouds(
         level: ClientLevel,
         ticks: Int,
         partialTick: Float,
@@ -35,7 +35,7 @@ object DungeonEffects : DimensionSpecialEffects(0.0f, true, SkyType.NONE, false,
         projectionMatrix: Matrix4f,
     ): Boolean = true
 
-    override fun `candycraftce$renderSky`(
+    override fun candycraftce_renderSky(
         level: ClientLevel,
         ticks: Int,
         partialTick: Float,

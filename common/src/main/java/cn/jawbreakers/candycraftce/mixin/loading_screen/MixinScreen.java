@@ -23,7 +23,7 @@ public abstract class MixinScreen implements ICandyLoadingScreen {
 	private ClientLevel candycraftce$targetLevel = null;
 
 	@Override
-	public void candycraftce$setTargetLevel(ClientLevel level) {
+	public void candycraftce_setTargetLevel(ClientLevel level) {
 		candycraftce$targetLevel = level;
 	}
 

@@ -43,28 +43,31 @@ public abstract class EntityMixin implements IPurpleJellyStuckEntity, ICandyStuc
 			argsOnly = true
 	)
 	private Vec3 applyPurpleJellyStuckMovement(Vec3 movement) {
-		if (!candycraftce$getPurpleJellyStuck()) {
+		if (!getCandycraftce_purpleJellyStuck()) {
 			return movement;
 		}
-		candycraftce$setPurpleJellyStuck(false);
+		setCandycraftce_purpleJellyStuck(false);
 		Entity entity = (Entity) (Object) this;
 		entity.setDeltaMovement(Vec3.ZERO);
 		return movement.multiply(0.25D, 0.05D, 0.25D);
 	}
 
 	@Inject(method = "saveWithoutId",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;addAdditionalSaveData(Lnet/minecraft/nbt/CompoundTag;)V"))
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;addAdditionalSaveData(Lnet/minecraft/nbt/CompoundTag;)V")
+	)
 	private void saveCandy(CompoundTag compound, CallbackInfoReturnable<CompoundTag> cir) {
-		compound.putInt(candycraftce$honeyBoltCountKey, candycraftce$getHoneyBoltCount());
-		compound.putInt(candycraftce$honeyArrowCountKey, candycraftce$getHoneyArrowCount());
-		compound.putBoolean(candycraftce$purpleJellyStuckKey, candycraftce$getPurpleJellyStuck());
+		compound.putInt(candycraftce$honeyBoltCountKey, getCandycraftce_honeyBoltCount());
+		compound.putInt(candycraftce$honeyArrowCountKey, getCandycraftce_honeyArrowCount());
+		compound.putBoolean(candycraftce$purpleJellyStuckKey, getCandycraftce_purpleJellyStuck());
 	}
 
-	@Inject(method = "load", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;readAdditionalSaveData(Lnet/minecraft/nbt/CompoundTag;)V"))
+	@Inject(method = "load",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;readAdditionalSaveData(Lnet/minecraft/nbt/CompoundTag;)V")
+	)
 	private void loadCandy(CompoundTag compound, CallbackInfo ci) {
-		candycraftce$setHoneyBoltCount(compound.getInt(candycraftce$honeyBoltCountKey));
-		candycraftce$setHoneyArrowCount(compound.getInt(candycraftce$honeyArrowCountKey));
-		candycraftce$setPurpleJellyStuck(compound.getBoolean(candycraftce$purpleJellyStuckKey));
+		setCandycraftce_honeyBoltCount(compound.getInt(candycraftce$honeyBoltCountKey));
+		setCandycraftce_honeyArrowCount(compound.getInt(candycraftce$honeyArrowCountKey));
+		setCandycraftce_purpleJellyStuck(compound.getBoolean(candycraftce$purpleJellyStuckKey));
 	}
 
 	@Inject(method = "<init>", at = @At("TAIL"))
@@ -75,32 +78,33 @@ public abstract class EntityMixin implements IPurpleJellyStuckEntity, ICandyStuc
 	}
 
 	@Override
-	public int candycraftce$getHoneyArrowCount() {
+	public int getCandycraftce_honeyArrowCount() {
 		return entityData.get(candycraftce$honeyArrowCount);
 	}
 
 	@Override
-	public void candycraftce$setHoneyArrowCount(int count) {
-		entityData.set(candycraftce$honeyArrowCount, count);
+	public void setCandycraftce_honeyArrowCount(int i) {
+		entityData.set(candycraftce$honeyArrowCount, i);
 	}
 
 	@Override
-	public int candycraftce$getHoneyBoltCount() {
+	public int getCandycraftce_honeyBoltCount() {
 		return entityData.get(candycraftce$honeyBoltCount);
 	}
 
 	@Override
-	public void candycraftce$setHoneyBoltCount(int count) {
-		entityData.set(candycraftce$honeyBoltCount, count);
+	public void setCandycraftce_honeyBoltCount(int i) {
+		entityData.set(candycraftce$honeyBoltCount, i);
 	}
 
+
 	@Override
-	public boolean candycraftce$getPurpleJellyStuck() {
+	public boolean getCandycraftce_purpleJellyStuck() {
 		return entityData.get(candycraftce$purpleJellyStuck);
 	}
 
 	@Override
-	public void candycraftce$setPurpleJellyStuck(boolean flag) {
+	public void setCandycraftce_purpleJellyStuck(boolean flag) {
 		entityData.set(candycraftce$purpleJellyStuck, flag);
 	}
 }

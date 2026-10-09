@@ -22,9 +22,8 @@ class LemonJelly(entityType: EntityType<out LemonJelly>, level: Level) : TinyJel
 
     override fun getJumpDelay(): Int = 4
     override fun isDealsDamage(): Boolean = this.isEffectiveAi
-    override fun doSpecialAttack(player: Player): Int {
-        dealDamage(player)
-        return 10
+    override fun playerTouch(entity: Player) {
+        dealDamage(entity)
     }
 
     override fun dealDamage(livingEntity: LivingEntity) {

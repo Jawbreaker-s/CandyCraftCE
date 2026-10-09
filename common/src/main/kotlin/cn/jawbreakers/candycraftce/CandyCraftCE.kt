@@ -7,6 +7,10 @@ import cn.jawbreakers.candycraftce.utils.CLogUtils
 import cn.jawbreakers.candycraftce.utils.CLogUtils.mainLog
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils.ifClient
 import cn.jawbreakers.candycraftce.utils.ICPlatForm
+import cn.jawbreakers.candycraftce.utils.registry.Accessor
+import cn.jawbreakers.candycraftce.utils.registry.LateInitAccessor
+import java.util.*
+import java.util.function.Supplier
 import kotlin.time.measureTime
 
 object CandyCraftCE {
@@ -19,7 +23,12 @@ object CandyCraftCE {
 
     lateinit var platform: ICPlatForm
         private set
-
+    private var postWorks: LinkedList<Runnable>? = LinkedList()
+    fun <R> onPostWork(actions: Supplier<R>): Accessor<R> {
+        val acc = LateInitAccessor<R>()
+        postWorks?.add { acc.set(actions.get()) } ?: acc.set(actions.get())
+        return acc
+    }
 
     @Suppress("UnusedExpression")
     fun init(platform: ICPlatForm, preWorks: () -> Unit = {}, postWorks: () -> Unit = {}) {
@@ -39,6 +48,10 @@ object CandyCraftCE {
             CLevels
             ifClient {
                 PuddingColor.initColor()
+            }
+            this.postWorks!!.also {
+                it.forEach(Runnable::run)
+                this.postWorks = null
             }
             postWorks()
         }.also {

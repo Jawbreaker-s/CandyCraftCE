@@ -42,7 +42,7 @@ public abstract class MixinMinecraft {
 			at = @At(value = "STORE", ordinal = 0)
 	)
 	ProgressScreen modifyScreen(ProgressScreen progressscreen) {
-		((ICandyLoadingScreen) progressscreen).candycraftce$setTargetLevel(candycraftce$nextLevelClient);
+		((ICandyLoadingScreen) progressscreen).candycraftce_setTargetLevel(candycraftce$nextLevelClient);
 		return progressscreen;
 	}
 

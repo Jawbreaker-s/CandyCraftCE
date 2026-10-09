@@ -77,8 +77,8 @@ class CandyCraftCEForge : ICPlatForm {
     fun onMinecraftSetup(event: FMLCommonSetupEvent) {
         clog.info("Running `whenInitialized`")
         lateUsage!!.also {
-            lateUsage = null
             it.forEach(Runnable::run)
+            lateUsage = null
         }
     }
 
