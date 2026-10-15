@@ -166,16 +166,6 @@ object CBlocks {
         mapColor = MapColor.COLOR_PINK
     )
 
-    val raspberry_cotton_candy_block =
-        register("raspberry_cotton_candy_block", properties(Blocks.HAY_BLOCK).mapColor(MapColor.TERRACOTTA_PINK))
-    val raspberry_cotton_candy_family = registerFamily(
-        "raspberry_cotton_candy",
-        raspberry_cotton_candy_block,
-        stairs = { properties(raspberry_cotton_candy_block.get()) },
-        slab = { properties(raspberry_cotton_candy_block.get()) },
-        mapColor = MapColor.COLOR_PINK
-    )
-
 
     val caramel_block = register("caramel_block", stone(MapColor.COLOR_ORANGE))
     val caramel_family = registerFamily(
@@ -192,15 +182,6 @@ object CBlocks {
         stairs = { properties(caramel_bricks.get()) },
         slab = { properties(caramel_bricks.get()) },
         mapColor = MapColor.COLOR_ORANGE
-    )
-
-    val cookie_block = register("cookie_block", cookie())
-    val cookie_family = registerFamily(
-        "cookie",
-        cookie_block,
-        stairs = { properties(cookie_block.get()) },
-        slab = { properties(cookie_block.get()) },
-        mapColor = MapColor.TERRACOTTA_ORANGE
     )
 
     val licorice_block = register("licorice_block", stone(MapColor.COLOR_BLACK))
@@ -514,7 +495,7 @@ object CBlocks {
     val marshmallow_slice_flower = register("marshmallow_slice_flower") {
         CandyWaterlilyBlock(true, properties(marshmallow_slice.get()))
     }.cutout()
-    val rope_licorice = register("rope_licorice") { SeaweedBlock(true, plant(MapColor.TERRACOTTA_RED)) }
+    val rope_raspberry = register("rope_raspberry") { SeaweedBlock(true, plant(MapColor.TERRACOTTA_RED)) }
         .cutout()
     val mint = register("mint") { SeaweedBlock(false, plant(MapColor.COLOR_GREEN)) }
         .cutout()

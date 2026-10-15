@@ -1,4 +1,10 @@
+import groovy.xml.dom.DOMCategory.attributes
 import org.gradle.internal.extensions.stdlib.capitalized
+import org.gradle.kotlin.dsl.ext
+import org.gradle.kotlin.dsl.jar
+import org.gradle.kotlin.dsl.libs
+import org.gradle.kotlin.dsl.neoForge
+import org.gradle.kotlin.dsl.sourceSets
 
 plugins {
     id("multiloader-loader")
@@ -41,9 +47,10 @@ neoForge {
         configureEach {
             systemProperty("forge.enabledGameTestNamespaces", modId)
             systemProperty("mixin.debug.export", "true")
-            if (jetOption) {
-                jvmArgument("-XX:+AllowEnhancedClassRedefinition")
-            }
+            //forge cannot debug with such option with jbr
+//            if (jetOption) {
+//                jvmArgument("-XX:+AllowEnhancedClassRedefinition")
+//            }
             ideName = "Forge ${name.capitalized()} (${project.path})" // Unify the run config names with fabric
         }
         register("client") {
@@ -74,5 +81,7 @@ neoForge {
 
 dependencies {
     modImplementation(libs.kff)
+//    modRuntimeOnly(libs.jeiForge)
+//    modCompileOnly(libs.jeiForgeApi)
     annotationProcessor(variantOf(libs.mixin) { classifier("processor") })
 }

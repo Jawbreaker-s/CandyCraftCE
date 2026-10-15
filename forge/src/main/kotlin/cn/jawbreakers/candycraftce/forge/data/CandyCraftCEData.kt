@@ -4,6 +4,7 @@ import cn.jawbreakers.candycraftce.CandyCraftCE.MOD_ID
 import cn.jawbreakers.candycraftce.forge.data.providers.CBlockStateProvider
 import cn.jawbreakers.candycraftce.forge.data.providers.CI18nProvider
 import cn.jawbreakers.candycraftce.forge.data.providers.CItemModelProvider
+import cn.jawbreakers.candycraftce.forge.data.providers.CRecipeProvider
 import cn.jawbreakers.candycraftce.forge.data.providers.tags.CBiomeTagsProvider
 import cn.jawbreakers.candycraftce.forge.data.providers.tags.CBlockTagsProvider
 import cn.jawbreakers.candycraftce.forge.data.providers.tags.CFluidTagsProvider
@@ -51,6 +52,9 @@ object CandyCraftCEData : ICPlatformDatagen {
         )
         generator.addProvider(event.includeServer(), CFluidTagsProvider(output, lookup, efHelper))
         generator.addProvider(event.includeServer(), CBiomeTagsProvider(output, lookup, efHelper))
+//        generator.addProvider(event.includeServer(), CLootProvider(output))
+        generator.addProvider(event.includeServer(), CRecipeProvider(output))
+        //Check redundant resources
         Runtime.getRuntime().addShutdownHook(thread(start = false) {
             try {
                 CRedundantResourcesChecker.run()

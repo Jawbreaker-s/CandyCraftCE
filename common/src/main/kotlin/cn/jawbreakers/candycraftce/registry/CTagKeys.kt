@@ -12,6 +12,7 @@ import net.minecraft.world.level.material.Fluid
  * @see [cn.jawbreakers.candycraftce.forge.data.providers.tags]
  * */
 object CItemTags {
+    val candy_leaf = bind("candy_leaves")
     internal fun bind(name: String): TagKey<Item> {
         return TagKey.create(Registries.ITEM, name.modLoc())
     }

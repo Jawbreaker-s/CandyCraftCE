@@ -173,7 +173,7 @@ object CEntityTypes {
     val mint_jelly = registerJelly("mint_jelly", ::MintJelly)
         .renderer(::MintJellyRenderer)
 
-    val jelly_queen = registerJelly("jelly_queen", ::JellyQueen)
+    val jelly_queen = registerJelly("jelly_queen", ::JellyQueen, isBoss = true)
         .renderer(::JellyQueenRenderer)
 
     //=================================
@@ -194,14 +194,21 @@ object CEntityTypes {
     }
 
     private fun <T : BasicJelly> registerJelly(
-        name: String, factory: EntityType.EntityFactory<T>,
+        name: String, factory: EntityType.EntityFactory<T>, isBoss: Boolean = false,
     ) =
         register(name) {
             of(factory, MobCategory.MONSTER)
                 .sized(EntityType.SLIME.width, EntityType.SLIME.height)
                 .clientTrackingRange(8)
         }
-            .attributes(BasicJelly::createJellyAttribute)
+            .apply {
+                if (isBoss) {
+                    attributes(BossJelly::createBossJellyAttribute)
+                } else {
+                    attributes(BasicJelly::createJellyAttribute)
+                }
+            }
+
 
     @Suppress("UNCHECKED_CAST")
     @ServerSafe

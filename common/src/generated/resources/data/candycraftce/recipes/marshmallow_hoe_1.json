@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "M": {
+      "tag": "candycraftce:marshmallow_planks"
+    },
+    "S": {
+      "item": "candycraftce:marshmallow_stick"
+    }
+  },
+  "pattern": [
+    "MM",
+    " S",
+    " S"
+  ],
+  "result": {
+    "item": "candycraftce:marshmallow_hoe"
+  },
+  "show_notification": true
+}

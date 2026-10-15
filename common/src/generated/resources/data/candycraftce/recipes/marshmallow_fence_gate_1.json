@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "#": {
+      "item": "candycraftce:marshmallow_stick"
+    },
+    "W": {
+      "item": "candycraftce:marshmallow_planks"
+    }
+  },
+  "pattern": [
+    "#W#",
+    "#W#"
+  ],
+  "result": {
+    "item": "candycraftce:marshmallow_fence_gate"
+  },
+  "show_notification": true
+}

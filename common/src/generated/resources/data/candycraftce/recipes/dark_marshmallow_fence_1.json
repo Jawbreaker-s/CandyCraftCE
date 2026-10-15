@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "#": {
+      "item": "candycraftce:marshmallow_stick"
+    },
+    "W": {
+      "item": "candycraftce:dark_marshmallow_planks"
+    }
+  },
+  "pattern": [
+    "W#W",
+    "W#W"
+  ],
+  "result": {
+    "count": 3,
+    "item": "candycraftce:dark_marshmallow_fence"
+  },
+  "show_notification": true
+}

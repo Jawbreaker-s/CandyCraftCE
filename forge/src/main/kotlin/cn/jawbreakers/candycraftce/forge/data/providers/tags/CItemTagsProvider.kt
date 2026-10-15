@@ -22,6 +22,12 @@ class CItemTagsProvider(
 
         CItemTags.apply {
             CItems.apply {
+                tag(candy_leaf)
+                    .add(caramel_leaf.get())
+                    .add(magical_leaf.get())
+                    .add(chocolate_leaf.get())
+                    .add(candied_cherry_leaf.get())
+                    .add(white_chocolate_leaf.get())
             }
         }
         CBlockTags.apply {

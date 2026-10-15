@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_dark_caramel_glass_diamond": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "candycraftce:dark_caramel_glass_diamond"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "candycraftce:dark_caramel_pane_diamond_1"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_dark_caramel_glass_diamond",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "candycraftce:dark_caramel_pane_diamond_1"
+    ]
+  },
+  "sends_telemetry_event": false
+}

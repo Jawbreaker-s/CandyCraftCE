@@ -35,7 +35,7 @@ import java.util.function.Supplier
  */
 @Environment(EnvType.CLIENT)
 object CFabricClients : ICPlatFormClients {
-    override val hudBossBar: CandyBossBarHud by lazy {
+    override val hudBossBar: CandyBossBarHud by whenInitialized {
         CandyBossBarHud(Minecraft.getInstance()).apply {
             HudRenderCallback.EVENT.register { graphics, partialTick ->
                 render(graphics, partialTick)

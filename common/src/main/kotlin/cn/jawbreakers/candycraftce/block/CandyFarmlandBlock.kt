@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.FarmBlock
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.properties.BlockStateProperties
 import net.minecraft.world.level.block.state.properties.IntegerProperty
+import net.minecraft.world.level.gameevent.GameEvent
 
 class CandyFarmlandBlock(properties: Properties) : FarmBlock(properties) {
     companion object {
@@ -28,14 +29,14 @@ class CandyFarmlandBlock(properties: Properties) : FarmBlock(properties) {
             && (entity is Player || level.gameRules.getBoolean(GameRules.RULE_MOBGRIEFING))
             && entity.bbWidth * entity.bbWidth * entity.bbHeight > 0.512f
         ) {
-            turnToFlour(level, pos)
+            turnToFlour(state, entity, level, pos)
         }
         entity.causeFallDamage(distance, 1.0f, level.damageSources().fall())
     }
 
     override fun tick(state: BlockState, level: ServerLevel, pos: BlockPos, random: RandomSource) {
-        if (!state.canSurvive(level, pos)) {
-            turnToFlour(level, pos)
+        if (!canSurvive(state, level, pos)) {
+            turnToFlour(state, null, level, pos)
         }
     }
 
@@ -45,7 +46,7 @@ class CandyFarmlandBlock(properties: Properties) : FarmBlock(properties) {
             if (moisture > 0) {
                 level.setBlock(pos, state.setValue(MOISTURE, moisture - 1), 2)
             } else if (!shouldMaintainFarmland(level, pos)) {
-                turnToFlour(level, pos)
+                turnToFlour(state, null, level, pos)
             }
         } else if (moisture < 7) {
             level.setBlock(pos, state.setValue(MOISTURE, 7), 2)
@@ -62,8 +63,11 @@ class CandyFarmlandBlock(properties: Properties) : FarmBlock(properties) {
             .any { level.getFluidState(it).`is`(FluidTags.WATER) }
     }
 
-    private fun turnToFlour(level: Level, pos: BlockPos) {
-        level.setBlockAndUpdate(pos, pudding_block.get().defaultBlockState())
+    private fun turnToFlour(oldState: BlockState, entity: Entity?, level: Level, pos: BlockPos) {
+        val s = pushEntitiesUp(level.getBlockState(pos), pudding_block.get().defaultBlockState(), level, pos)
+        level.setBlockAndUpdate(pos, s)
+        level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(entity, oldState));
+
     }
 
 }

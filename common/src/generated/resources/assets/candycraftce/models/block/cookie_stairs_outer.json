@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/outer_stairs",
-  "textures": {
-    "bottom": "candycraftce:block/cookie_block",
-    "side": "candycraftce:block/cookie_block",
-    "top": "candycraftce:block/cookie_block"
-  }
-}

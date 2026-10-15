@@ -99,6 +99,7 @@ interface ICPlatForm {
     val clients: ICPlatFormClients?
 
     //当所有对象注册完毕后
+    //相当于一个lazy对象在启动后立刻被访问
     fun <T> whenInitialized(action: () -> T): Accessor<T>
 
     fun <E : Item> registerItem(name: String, factory: Supplier<E>): Entry<E>

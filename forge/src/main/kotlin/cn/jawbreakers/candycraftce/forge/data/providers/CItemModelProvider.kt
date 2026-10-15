@@ -49,7 +49,6 @@ class CItemModelProvider(output: PackOutput, efHelper: ExistingFileHelper) :
                 record_3,
                 record_4,
                 honey_arrow,
-                honey_bolt,
                 gummy_ball,
                 lemon_jelly_ball,
                 raspberry_jelly_ball,

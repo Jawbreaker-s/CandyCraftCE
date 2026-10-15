@@ -1,7 +1,7 @@
-// 1.20.1	2026-10-06T14:07:21.5967783	Tags for minecraft:block mod id candycraftce
+// 1.20.1	2026-10-14T13:23:31.4645373	Tags for minecraft:block mod id candycraftce
 16cf551a654629af4afa9b39f84d8efe1a755864 data/candycraftce/tags/blocks/candy_animal_spawnable_on.json
 60c743a7ed49e66dcd6c90a826bbebda85c98652 data/candycraftce/tags/blocks/candy_leaves.json
-cf5d266c009eeebfd376771338c175ff87a5c270 data/candycraftce/tags/blocks/candy_portal_frame.json
+995ce92b7c885df1b1053501bc4dc8e265cb4fa7 data/candycraftce/tags/blocks/candy_portal_frame.json
 7e3e2fcb59ce30b1bc3d22e580bdd90e9f665b5e data/candycraftce/tags/blocks/candy_soil.json
 95d05fa7aa07e774ea5f1423203d5f0e2b8e0e4d data/candycraftce/tags/blocks/can_light_portal.json
 47f5b6a1c72b6e8aa97d5cd3fa0068e55b368e17 data/candycraftce/tags/blocks/caramel_portal.json
@@ -18,8 +18,8 @@ f1ea29394f80fdfe6aaad1d94766b86382e2a6d3 data/minecraft/tags/blocks/doors.json
 e239bb19a4c06de63f1b5f4ce5bafed1857bfc57 data/minecraft/tags/blocks/leaves.json
 d86902757e0f08ca392972d59c12da7849134b1a data/minecraft/tags/blocks/logs.json
 05a780ab57dd57e87f9c14d0d0a3ebf130bc1f15 data/minecraft/tags/blocks/signs.json
-b59b10fb592d672e2a750dfa0c3c382fc6930d7f data/minecraft/tags/blocks/slabs.json
-5696394e7ebb3170e7c1423d59e2c85c4c336e7a data/minecraft/tags/blocks/stairs.json
+4e39189fde009470daff5715bc22abe44591dc53 data/minecraft/tags/blocks/slabs.json
+9448005fa72e17702f61bc46aa555f00cdb0bd9b data/minecraft/tags/blocks/stairs.json
 f5ab4698cba812c0144b8bea85259e327702bbc3 data/minecraft/tags/blocks/standing_signs.json
 1a06c53f07fbc4dfd1b4052135a05a75360ec156 data/minecraft/tags/blocks/trapdoors.json
 272080eb151faf9fa733a1a3e03917a00a66439d data/minecraft/tags/blocks/walls.json

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "M": {
+      "item": "candycraftce:banana_seaweed"
+    }
+  },
+  "pattern": [
+    "MM ",
+    "MM "
+  ],
+  "result": {
+    "item": "candycraftce:banana_block"
+  },
+  "show_notification": true
+}

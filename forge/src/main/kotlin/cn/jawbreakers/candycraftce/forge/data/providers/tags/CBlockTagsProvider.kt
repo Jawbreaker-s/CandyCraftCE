@@ -50,8 +50,10 @@ class CBlockTagsProvider(
                     .addTag(CBlockTags.ice_cream)
 
                 tag(candy_portal_frame)
+                    .add(sugar_sand.get())
                     .add(sugar_block.get())
                     .add(caramel_block.get())
+
                 tag(can_light_portal)
                     .add(Blocks.LAVA)
                     .add(CBlocks.caramel.get())
@@ -111,4 +113,5 @@ class CBlockTagsProvider(
         }
     }
 }
+
 

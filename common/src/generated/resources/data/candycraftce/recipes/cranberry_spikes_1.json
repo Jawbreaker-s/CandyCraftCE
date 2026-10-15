@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "#": {
+      "item": "candycraftce:cranberry_scale"
+    },
+    "*": {
+      "item": "candycraftce:sugar_crystal"
+    }
+  },
+  "pattern": [
+    " # ",
+    "#*#"
+  ],
+  "result": {
+    "count": 8,
+    "item": "candycraftce:cranberry_spikes"
+  },
+  "show_notification": true
+}

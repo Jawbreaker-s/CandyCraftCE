@@ -16,9 +16,12 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.util.Mth.approach
 import net.minecraft.util.Mth.lerp
+import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.ai.targeting.TargetingConditions
 import net.minecraft.world.entity.player.Player
+import kotlin.math.abs
+import kotlin.math.roundToInt
 
 /**
  * Created in 2026/10/7 22:46 by [Bread_NiceCat](https://github.com/Bread-NiceCat)
@@ -30,7 +33,7 @@ open class CandyBossBarHud(private val minecraft: Minecraft) {
         const val SENSE_RANGE = 32.0
         val isCandyBoss: TargetingConditions = TargetingConditions
             .forCombat()
-            .selector { it is ICandyBoss && it.isBarActive() }
+            .selector { isActiveBoss(it) }
         val BOSS_BAR_TEXTURE = "boss_bar".modLoc().guiTex()
         const val BAR_WIDTH = 256
         const val BAR_HEIGHT = 14
@@ -44,6 +47,9 @@ open class CandyBossBarHud(private val minecraft: Minecraft) {
         const val EYE_WIDTH = 64
         const val EYE_HEIGHT = 56
         const val EYE_OFFSET_V = 200
+        private fun isActiveBoss(entity: Entity?) =
+            entity is LivingEntity && entity is ICandyBoss && entity.isBarActive()
+
 
     }
 
@@ -62,6 +68,9 @@ open class CandyBossBarHud(private val minecraft: Minecraft) {
             val player = minecraft.player ?: run {
                 setBoss(null)
                 return
+            }
+            if (!((boss as? ICandyBoss)?.isBarActive() ?: false)) {
+                setBoss(null)
             }
             val boss = findBoss(player)
             if (boss !is ICandyBoss) {
@@ -97,7 +106,7 @@ open class CandyBossBarHud(private val minecraft: Minecraft) {
             TexturedBar.STILL.drawBar(graphics, barY, lerp(partialTick, stillPrev, still))
             bar.getBar().drawBar(graphics, barY, health)
             //eye
-            val eyeOrd = 0
+            val eyeOrd = mapTriangle(boss.getFaintProgress(), 3)
             graphics.blit(
                 BOSS_BAR_TEXTURE,
                 eyeX, eyeY,
@@ -120,22 +129,30 @@ open class CandyBossBarHud(private val minecraft: Minecraft) {
                 eyeY + EYE_HEIGHT - textYo - font.lineHeight / 2,
                 0xFFFFFF
             )
-            0
         }
     }
 
+    fun mapTriangle(input: Float, max: Int): Int {
+        if (input <= 0f) return 0
+        if (input >= 1f) return max
+        val value = max - 2f * max * abs(input - 0.5f)
+        return value.roundToInt().coerceIn(0, max)
+    }
+
     fun findBoss(player: Player): LivingEntity? {
+        //看向的目标
+        val targetEntity = minecraft.crosshairPickEntity
+        if (isActiveBoss(targetEntity)) return targetEntity as LivingEntity
+        //玩家被Boss锁定
         val bossSource = (player as ICandyBossTarget).candycraftce_bossSource
         if (bossSource != null) {
             if (bossSource == boss?.uuid) return boss
-            else {
-                val source = (player.level() as LevelMixinAccessor).callGetEntities().get(bossSource)
-                if (source is LivingEntity && source is ICandyBoss && source.isBarActive()) {
-                    return source
-                }
-            }
+            val source = (player.level() as LevelMixinAccessor).callGetEntities().get(bossSource)
+            if (isActiveBoss(source)) return source as LivingEntity
         }
-        if (player.lastHurtMob is ICandyBoss) return player.lastHurtMob
+        //最近的伤害Boss
+        if (isActiveBoss(player.lastHurtMob)) return player.lastHurtMob
+        //附近的Boss
         return player.level().getNearestEntity(
             LivingEntity::class.java,
             isCandyBoss,
@@ -172,7 +189,7 @@ class ColorBar(rgb: Int) : IBossBar {
         graphics.setColor(normal.x, normal.y, normal.z, 1f)
         RenderSystem.enableBlend()
         RenderSystem.defaultBlendFunc()
-        TexturedBar.STILL.drawBar(graphics, y, progress)
+        TexturedBar.GREY.drawBar(graphics, y, progress)
         graphics.setColor(1f, 1f, 1f, 1f)
         RenderSystem.disableBlend()
     }

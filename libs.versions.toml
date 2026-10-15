@@ -24,7 +24,7 @@ kffRange = "[4, )"
 fabricLoader = "0.16.9"
 fabricApi = "0.92.2+1.20.1"
 flk = "1.12.3+kotlin.2.0.21"
-
+jei = "15.2.0.25"
 mixin = "0.8.5"
 fabricClothConfig = "11.1.136"
 
@@ -36,6 +36,15 @@ flk = { group = "net.fabricmc", name = "fabric-language-kotlin", version.ref = "
 kff = { group = "thedarkcolour", name = "kotlinforforge", version.ref = "kff" }
 mixin = { group = "org.spongepowered", name = "mixin", version.ref = "mixin" }
 fabricClothConfig = { group = "me.shedaniel.cloth", name = "cloth-config-fabric", version.ref = "fabricClothConfig" }
+
+#jei
+jeiCommonApi = { group = "mezz.jei", name = "jei-1.20.1-common-api", version.ref = "jei" }
+jeiCommon = { group = "mezz.jei", name = "jei-1.20.1-common", version.ref = "jei" }
+jeiFabricApi = { group = "mezz.jei", name = "jei-1.20.1-fabric-api", version.ref = "jei" }
+jeiFabric = { group = "mezz.jei", name = "jei-1.20.1-fabric", version.ref = "jei" }
+jeiForgeApi = { group = "mezz.jei", name = "jei-1.20.1-forge-api", version.ref = "jei" }
+jeiForge = { group = "mezz.jei", name = "jei-1.20.1-forge", version.ref = "jei" }
+
 
 [plugins]
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

@@ -31,7 +31,7 @@ abstract class BasicJelly(entityType: EntityType<out BasicJelly>, level: Level) 
     override fun registerGoals() {
         super.registerGoals()
         targetSelector.removeAllGoals(::always)
-        this.targetSelector.addGoal(1, NearestAttackableTargetGoal(this, Player::class.java, true, ::mayAttack))
+        this.targetSelector.addGoal(1, NearestAttackableTargetGoal(this, Player::class.java, false, ::mayAttack))
     }
 
     fun mayAttack(entity: Entity) = CandyTargeting.canAttackEntity(entity, this)

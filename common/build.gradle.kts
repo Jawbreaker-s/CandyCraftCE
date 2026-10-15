@@ -18,6 +18,8 @@ neoForge {
 
 dependencies {
     compileOnly(libs.mixin)
+    compileOnly(libs.jeiCommonApi)
+    runtimeOnly(libs.jeiCommon)
 }
 
 configurations {

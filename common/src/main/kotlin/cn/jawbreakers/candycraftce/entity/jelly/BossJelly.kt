@@ -13,7 +13,10 @@ import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.ai.attributes.AttributeModifier
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier
 import net.minecraft.world.entity.ai.attributes.Attributes
+import net.minecraft.world.entity.ai.attributes.Attributes.FOLLOW_RANGE
+import net.minecraft.world.entity.monster.Monster
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.entity.projectile.Projectile
 import net.minecraft.world.level.Level
@@ -26,18 +29,28 @@ import kotlin.math.min
  */
 abstract class BossJelly(type: EntityType<out BossJelly>, level: Level) : BasicJelly(type, level), ICandyBoss {
     companion object {
+        fun createBossJellyAttribute(): AttributeSupplier.Builder {
+            return Monster.createMonsterAttributes().add(FOLLOW_RANGE, 32.0)
+        }
+
         val BOSS_AWAKE = defineId(EntityDataSerializers.BOOLEAN)
+        val BOSS_FAINT_TICKS = defineId(EntityDataSerializers.INT)
         private val FROZEN_MODIFIER: AttributeModifier = AttributeModifier(
             "Sleeping Modifier",
             0.0,
             AttributeModifier.Operation.MULTIPLY_TOTAL
         )
+        const val FAINT_TICKS = 1 * 20
+        const val MAX_LOST_TARGET_TICKS = 5 * 20
     }
 
+    private var lostTargetTicks = 0
     var awake: Boolean by synched(BOSS_AWAKE)
+    var faint: Int by synched(BOSS_FAINT_TICKS)
     override fun defineSynchedData() {
         super.defineSynchedData()
         entityData.define(BOSS_AWAKE, false)
+        entityData.define(BOSS_FAINT_TICKS, 0)
     }
 
     private var dormantYRot: Float? = null
@@ -52,12 +65,9 @@ abstract class BossJelly(type: EntityType<out BossJelly>, level: Level) : BasicJ
 
     override fun customServerAiStep() {
         super.customServerAiStep()
+        if (faint > 0) faint--
         if (awake) onServerAwakeTick() else onServerSleepingTick()
 
-        //防止跳的太高导致脱战
-        if (awake && onGround() && target.let { target -> target == null || !mayAttack(target) }) {
-            awake = false
-        }
         val speed = getAttribute(Attributes.MOVEMENT_SPEED)
         if (!awake) {
             if (dormantYRot == null) dormantYRot = yRot else yRot = dormantYRot!!
@@ -80,16 +90,17 @@ abstract class BossJelly(type: EntityType<out BossJelly>, level: Level) : BasicJ
         }
     }
 
+
     override fun isBarActive(): Boolean = isAlive
     override fun getHealthBarProgress(): Float {
         return health / maxHealth
     }
 
     open fun onServerAwakeTick() {
-    }
-
-    override fun getJumpPower(): Float {
-        return if (awake) 1.5f else 0f
+        //防止跳的太高导致脱战
+        if (awake && ++lostTargetTicks > MAX_LOST_TARGET_TICKS && target.let { it == null || !mayAttack(it) }) {
+            awake = false
+        }
     }
 
     open fun onServerSleepingTick() {
@@ -99,26 +110,47 @@ abstract class BossJelly(type: EntityType<out BossJelly>, level: Level) : BasicJ
         }
     }
 
+    override fun getJumpPower(): Float {
+        return if (awake) 1.5f else 0f
+    }
+
     override fun setTarget(target: LivingEntity?) {
-        super.setTarget(target)
-        if (!level().isClientSide && target is ICandyBossTarget) {
-            target.candycraftce_bossSource = this.uuid
+        if (!level().isClientSide) {
+            val targetPrev = this.target
+            if (targetPrev is ICandyBossTarget) {
+                targetPrev.candycraftce_bossSource = null
+            }
+            if (target is ICandyBossTarget) {
+                target.candycraftce_bossSource = this.uuid
+            }
         }
+        super.setTarget(target)
     }
 
 
-    fun awaken(entity: Entity?) {
+    open fun awaken(entity: Entity?) {
         setDeltaMovement(deltaMovement.x, 2.0, deltaMovement.z)
         val t = if (entity is Projectile) entity.owner else entity
         if (t is LivingEntity && mayAttack(t)) {
             target = t
         }
+        lostTargetTicks = 0
         awake = true
     }
+
+    override fun jumpFromGround() {
+        if (isActive()) super.jumpFromGround()
+        postJumpFromGround()
+    }
+
+    open fun postJumpFromGround() {}
 
     override fun causeFallDamage(fallDistance: Float, multiplier: Float, source: DamageSource): Boolean = false
     override fun hurt(source: DamageSource, amount: Float): Boolean {
         if (source.`is`(DamageTypes.FALL)) return false
+        if (amount > 1 && random.nextInt(20) == 0) {
+            faint = FAINT_TICKS / 2
+        }
         val entity = source.entity
         level().ifServer {
             if (!awake) {
@@ -131,7 +163,7 @@ abstract class BossJelly(type: EntityType<out BossJelly>, level: Level) : BasicJ
                         dx = (random.nextDouble() - random.nextDouble()) * 0.01
                         dz = (random.nextDouble() - random.nextDouble()) * 0.01
                     }
-                    entity.knockback(2.0, -dx, -dz)
+                    entity.knockback(1.5, -dx, -dz)
                 }
             }
         }
@@ -151,9 +183,19 @@ abstract class BossJelly(type: EntityType<out BossJelly>, level: Level) : BasicJ
         }
     }
 
+    fun setFaint(flag: Boolean = true) {
+        faint = if (flag) FAINT_TICKS else 0
+    }
+
+    override fun getFaintProgress(): Float {
+        return if (awake) faint.toFloat() / FAINT_TICKS else 0.5f
+    }
+    
+    //是否激活状态
+    fun isActive() = faint == 0 && awake
     override fun isPushable(): Boolean = false
 
-    override fun isDealsDamage(): Boolean = awake
+    override fun isDealsDamage(): Boolean = isActive()
 
     //不能溺水死
     override fun canBreatheUnderwater(): Boolean = true
@@ -165,21 +207,21 @@ abstract class BossJelly(type: EntityType<out BossJelly>, level: Level) : BasicJ
     override fun removeWhenFarAway(distanceToClosestPlayer: Double) = false
     inner class BossAttackGoal : SlimeAttackGoal(this) {
         override fun canUse(): Boolean {
-            return awake && super.canUse()
+            return isActive() && super.canUse()
         }
 
         override fun canContinueToUse(): Boolean {
-            return awake && super.canContinueToUse()
+            return isActive() && super.canContinueToUse()
         }
     }
 
     inner class BossKeepJumpingGoal : SlimeKeepOnJumpingGoal(this) {
         override fun canUse(): Boolean {
-            return awake && super.canUse()
+            return isActive() && target != null && super.canUse()
         }
 
         override fun canContinueToUse(): Boolean {
-            return awake && super.canContinueToUse()
+            return isActive() && target != null && super.canContinueToUse()
         }
     }
 

@@ -195,7 +195,8 @@ object CItems {
 
     val dragibus_stick = register("dragibus_stick") { DragibusStickItem(Properties().stacksTo(1).durability(25)) }
     val honey_arrow = register("honey_arrow") { HoneyArrowItem(Properties()) }
-    val honey_bolt = register("honey_bolt") { HoneyBoltItem(Properties()) }
+
+    //    val honey_bolt = register("honey_bolt") { HoneyBoltItem(Properties()) }
     val caramel_bow = register("caramel_bow") { CaramelBowItem(Properties().durability(384)) }
     val caramel_crossbow = register("caramel_crossbow") { CaramelCrossbowItem(Properties().durability(465)) }
 
@@ -278,7 +279,7 @@ object CItems {
     }
 
     //=====================================
-    
+
     private fun register(name: String, properties: Properties = Properties()): Entry<Item> {
         return register(name) { Item(properties) }
     }
@@ -353,7 +354,9 @@ object CItems {
             register(name + "_pickaxe") { PickaxeItem(tier, 1, -2.8F, Properties()) },
             register(name + "_axe") { AxeItem(tier, 5.0F, -3.1F, Properties()) },
             register(name + "_hoe") { HoeItem(tier, -2, -1.0F, Properties()) },
-        )
+        ).also {
+            toolsArmors
+        }
     }
 
     private fun registerArmorSet(name: String, material: ArmorMaterial): ArmorSet {

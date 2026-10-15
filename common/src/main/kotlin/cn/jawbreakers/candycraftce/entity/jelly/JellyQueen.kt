@@ -55,16 +55,20 @@ class JellyQueen(type: EntityType<out JellyQueen>, level: Level) : BossJelly(typ
     override fun onServerAwakeTick() {
         //更新状态
         val s = health / maxHealth
-        state = when {
+        val newState = when {
             s >= NORMAL_PROGRESS -> STATE_NORMAL
             s >= ANGRY_PROGRESS -> STATE_ANGRY
             else -> STATE_FRENZIED
         }
+        if (newState > state) {
+            setFaint()
+        }
+        state = newState
         super.onServerAwakeTick()
     }
 
     override fun onServerSleepingTick() {
-        state = 0
+        state = STATE_SLEEPING
         super.onServerSleepingTick()
     }
 
@@ -75,12 +79,11 @@ class JellyQueen(type: EntityType<out JellyQueen>, level: Level) : BossJelly(typ
         }
     }
 
-    override fun jumpFromGround() {
+    override fun postJumpFromGround() {
         if (state == STATE_FRENZIED) {
             level().explode(this, x, y, z, 3.0f, Level.ExplosionInteraction.MOB)
             level().explode(this, x, y + 2, z, 3.0f, Level.ExplosionInteraction.MOB)
         }
-        super.jumpFromGround()
     }
 
     override fun getParticleType(): ParticleOptions = particle
@@ -101,10 +104,19 @@ class JellyQueen(type: EntityType<out JellyQueen>, level: Level) : BossJelly(typ
     }
 
 
-    private val bars by lazy { arrayOf(TexturedBar.GREY, ColorBar(0xFF99CC), ColorBar(0x3399FF), ColorBar(0xEBA699)) }
+    private val bars by lazy {
+        arrayOf(
+            TexturedBar.GREY,
+            ColorBar(0xFF99CC),
+            ColorBar(0x3399FF),
+            ColorBar(0xEBA699)
+        )
+    }
+
     override fun getBar(): IBossBar {
         return bars[state.coerceIn(bars.indices)]
     }
+
 
     override val bossType: CandyBossType = CandyBossType.Boss
 

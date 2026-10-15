@@ -1,4 +1,4 @@
-// 1.20.1	2026-10-06T19:19:40.1611783	Item Models: candycraftce
+// 1.20.1	2026-10-15T22:55:30.3133948	Item Models: candycraftce
 b69597e7c0247f206126a171c16f29a35d95fc6a assets/candycraftce/models/item/beetle_dungeon_key.json
 60b8ce2c2fdcb069d6f5914177b36d6016006a2b assets/candycraftce/models/item/candied_cherry.json
 1db7252b22afc34130202c06fec63a7e983ff1a9 assets/candycraftce/models/item/candied_cherry_leaf.json
@@ -30,7 +30,6 @@ b7222751392e54c4fbd6ecc8b67bcdf534331d12 assets/candycraftce/models/item/grenadi
 22aca8f17c76fbae8b29dddc4c9aec8ee13ae521 assets/candycraftce/models/item/honeycomb.json
 4e65a39825ada7f4e5e0ae495468308520d4fb7a assets/candycraftce/models/item/honey_arrow.json
 ee477aa999189322ad11b432c2512c3c1d543344 assets/candycraftce/models/item/honey_axe.json
-780b7fefcf646b4ce8036b64a2d47cae8b998c8e assets/candycraftce/models/item/honey_bolt.json
 49a5bd04fa1e4b498789239520b8fa8ecb38df7a assets/candycraftce/models/item/honey_boots.json
 e9b018413a6551c3e45435fe72c50111db47528c assets/candycraftce/models/item/honey_chestplate.json
 ab066ba0e861a6e07bb626abc73b2eac8fa6db34 assets/candycraftce/models/item/honey_emblem.json

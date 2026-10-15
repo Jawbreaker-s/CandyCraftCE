@@ -13,6 +13,9 @@ interface ICandyBoss {
     fun isBarActive(): Boolean
     fun getHealthBarProgress(): Float
     fun getBar(): IBossBar = TexturedBar.RED
+
+    //0f全开，0.5f全闭，1f全开
+    fun getFaintProgress(): Float = 0f
     val bossType: CandyBossType
 
 }

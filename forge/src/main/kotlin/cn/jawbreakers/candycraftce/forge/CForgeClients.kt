@@ -68,7 +68,7 @@ object CForgeClients : ICPlatFormClients {
     }
 
 
-    override val hudBossBar by lazy { CandyBossBarHud(Minecraft.getInstance()) }
+    override val hudBossBar by whenInitialized { CandyBossBarHud(Minecraft.getInstance()) }
 
     //=================================
     override fun setRenderLayer(block: Entry<out Block>, layer: RenderType) {

@@ -3,7 +3,7 @@ package cn.jawbreakers.candycraftce.level.feature
 import cn.jawbreakers.candycraftce.registry.CBlocks.banana_seaweed
 import cn.jawbreakers.candycraftce.registry.CBlocks.defaultBlockState
 import cn.jawbreakers.candycraftce.registry.CBlocks.mint
-import cn.jawbreakers.candycraftce.registry.CBlocks.rope_licorice
+import cn.jawbreakers.candycraftce.registry.CBlocks.rope_raspberry
 import net.minecraft.core.BlockPos
 import net.minecraft.tags.FluidTags
 import net.minecraft.world.level.WorldGenLevel
@@ -33,7 +33,7 @@ class CandySeaweedFeature : Feature<NoneFeatureConfiguration>(NoneFeatureConfigu
                 val height = random.nextInt(4) + 1
                 for (y in 0..<height) {
                     placed =
-                        placed or tryPlace(level, target.above(y), rope_licorice.defaultBlockState())
+                        placed or tryPlace(level, target.above(y), rope_raspberry.defaultBlockState())
                 }
             }
         }

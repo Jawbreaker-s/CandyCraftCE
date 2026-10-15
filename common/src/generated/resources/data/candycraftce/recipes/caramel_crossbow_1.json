@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "B": {
+      "item": "candycraftce:caramel_bow"
+    },
+    "C": {
+      "item": "candycraftce:caramel_block"
+    }
+  },
+  "pattern": [
+    "B  ",
+    " C ",
+    "  C"
+  ],
+  "result": {
+    "item": "candycraftce:caramel_crossbow"
+  },
+  "show_notification": true
+}
