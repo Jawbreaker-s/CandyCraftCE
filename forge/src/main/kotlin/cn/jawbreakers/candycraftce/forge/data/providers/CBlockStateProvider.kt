@@ -3,6 +3,7 @@ package cn.jawbreakers.candycraftce.forge.data.providers
 import cn.jawbreakers.candycraftce.CandyCraftCE
 import cn.jawbreakers.candycraftce.block.CandyFarmlandBlock
 import cn.jawbreakers.candycraftce.block.CaramelPortalBlock
+import cn.jawbreakers.candycraftce.block.PlacedCutableJellyBlock
 import cn.jawbreakers.candycraftce.forge.data.providers.CItemModelProvider.Companion.generated
 import cn.jawbreakers.candycraftce.registry.CBlocks
 import cn.jawbreakers.candycraftce.registry.CBlocks.asItemEntry
@@ -257,20 +258,45 @@ class CBlockStateProvider(output: PackOutput, val efHelper: ExistingFileHelper) 
                     .texture("portal", tex)
                     .texture("particle", tex)
 
-                getMultipartBuilder(block).part().modelFile(x).addModel()
-                    .condition(CaramelPortalBlock.X, true).end()
+                getMultipartBuilder(block)
+                    .part().modelFile(x).addModel().condition(CaramelPortalBlock.X, true).end()
                     .part().modelFile(x).rotationY(90).addModel().condition(CaramelPortalBlock.Z, true).end()
                     .part().modelFile(y).addModel().condition(CaramelPortalBlock.Y, true).end()
             }
             //fluids
             particle(grenadine, grenadine.getBlockTexture("_static"))
             particle(caramel, caramel.getBlockTexture("_static"))
+            particle(static_water, "block/water_still".mcLoc())
 
+            listOf(caramel_jelly_block, strawberry_jelly_block, royal_rations_block).forEach {
+                val inner = it.getBlockTexture("_inner", "placed_jelly/")
+                val outer = it.getBlockTexture(prefix = "placed_jelly/")
+                val models = Array(4) { i ->
+                    val suffix = if (i > 0) "_cut_$i" else ""
+                    models().withExistingParent(
+                        it.id.withSuffix(suffix).toString(),
+                        "placed_cutable_jelly${suffix}_template".modLoc()
+                    )
+                        .texture("inner", inner)
+                        .texture("outer", outer)
+                }
+                getVariantBuilder(it.get()).forAllStates { state ->
+                    models[state.getValue(PlacedCutableJellyBlock.CUTS)].configuredArray()
+                }
+            }
+            listOf(lemon_jelly_block, raspberry_jelly_block, mint_jelly_block).forEach {
+                val inner = it.getBlockTexture("_inner", "placed_jelly/")
+                val outer = it.getBlockTexture(prefix = "placed_jelly/")
+                val model = models().withExistingParent(it.id.toString(), "placed_jelly_template".modLoc())
+                    .texture("inner", inner)
+                    .texture("outer", outer)
+                simpleBlock(it.get(), model)
+            }
         }
     }
 
     private fun glassFamily(
-        original: Pair<Entry<out GlassBlock>, Entry<out IronBarsBlock>>,
+        original: Pair<Entry<out GlassBlock>, Entry<out IronBarsBlock>>,//edge取自original
         vararg variants: Pair<Entry<out GlassBlock>, Entry<out IronBarsBlock>>,
         edge: ResourceLocation = original.first.getBlockTexture("_edge"),
     ) {
@@ -329,9 +355,8 @@ class CBlockStateProvider(output: PackOutput, val efHelper: ExistingFileHelper) 
         ConfiguredModel(this, rotX, rotY, uvlock)
 
     private fun BlockModelBuilder.configuredArray() = arrayOf(configured())
-    private fun Entry<out Block>.getBlockTexture(suffix: String = ""): ResourceLocation {
-        return this.id.withPrefix("block/")
-            .let { if (suffix.isEmpty()) it else it.withSuffix(suffix) }
+    private fun Entry<out Block>.getBlockTexture(suffix: String = "", prefix: String = ""): ResourceLocation {
+        return this.id.withPath { "block/$prefix$it$suffix" }
     }
 
     fun particle(block: Entry<out Block>, texture: ResourceLocation = block.getBlockTexture()) {

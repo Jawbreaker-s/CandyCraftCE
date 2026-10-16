@@ -1,0 +1,7 @@
+{
+  "parent": "candycraftce:block/placed_jelly_template",
+  "textures": {
+    "inner": "candycraftce:block/placed_jelly/raspberry_jelly_block_inner",
+    "outer": "candycraftce:block/placed_jelly/raspberry_jelly_block"
+  }
+}

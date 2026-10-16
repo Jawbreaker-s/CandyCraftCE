@@ -145,6 +145,9 @@ public final class CCBlocks {
 	// Not wrapped in translucent(): the composite models declare per-child render
 	// types (cutout core + translucent shell), and a block-wide translucent layer
 	// override would flatten them into a single pass like the big jelly blocks.
+	//未包裹在半透明（）中：复合模型声明每个子渲染
+	//类型（镂空芯+半透明外壳）和块宽半透明层
+	//超控会像大果冻块一样把它们压扁成一次传球。
 	public static final RegistryObject<Block> LEMON_JELLY_FOOD = registerNoItem("lemon_jelly_food", () ->
 			new PlaceableJellyFoodBlock(BlockBehaviour.Properties.copy(Blocks.SLIME_BLOCK)
 					.mapColor(MapColor.COLOR_YELLOW).strength(0.3F).sound(SoundType.SLIME_BLOCK).noOcclusion(),

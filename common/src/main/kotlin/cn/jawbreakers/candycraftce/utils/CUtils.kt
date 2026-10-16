@@ -166,4 +166,20 @@ object CUtils {
             pop()
         }
     }
+
+    /**
+     * 将字符串映射为确定的 Int salt 值。
+     * 算法：FNV-1a 32 位，输入按 UTF-8 字节处理。
+     * 与 JRE 版本、JVM 实现、平台无关。
+     */
+    fun String.salt(): Int {
+        val bytes = toByteArray(Charsets.UTF_8)
+        // FNV-1a 32 位：offset basis = 2166136261 (0x811C9DC5)，prime = 16777619 (0x01000193)
+        var hash: Long = 0x811C9DC5L
+        for (b in bytes) {
+            hash = hash xor (b.toLong() and 0xFFL)
+            hash = (hash * 0x01000193L) and 0xFFFFFFFFL
+        }
+        return hash.toInt()
+    }
 }

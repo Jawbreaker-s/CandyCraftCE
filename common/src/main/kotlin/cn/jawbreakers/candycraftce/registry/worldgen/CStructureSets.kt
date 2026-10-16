@@ -4,6 +4,7 @@ import cn.jawbreakers.candycraftce.registry.worldgen.CStructureTypes.floating_is
 import cn.jawbreakers.candycraftce.registry.worldgen.CStructures.floating_island
 import cn.jawbreakers.candycraftce.utils.CLogUtils
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils.ifDatagen
+import cn.jawbreakers.candycraftce.utils.CUtils.salt
 import cn.jawbreakers.candycraftce.utils.registry.Entry
 import net.minecraft.core.registries.Registries
 import net.minecraft.data.worldgen.BootstapContext
@@ -40,7 +41,7 @@ object CStructureSets {
             floating_island_set,
             StructureSet(
                 structures.getOrThrow(floating_island),
-                RandomSpreadStructurePlacement(8, 1, RandomSpreadType.LINEAR, floating_island.hashCode())
+                RandomSpreadStructurePlacement(8, 1, RandomSpreadType.LINEAR, "floating_island".salt())
             )
         )
 

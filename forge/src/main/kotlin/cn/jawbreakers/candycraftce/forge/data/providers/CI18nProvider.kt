@@ -335,6 +335,13 @@ class CI18nProvider(output: PackOutput) : DataProvider, ILanguageProvider {
             addBlock(lollipop_stem, "Lollipop Stem", "棒棒糖茎")
             addBlock(lollipop_fruit, "Lollipop Fruit", "棒棒糖果实")
             addBlock(caramel_portal, "Caramel Portal", "焦糖传送门")
+            addBlock(caramel_jelly_block, "Caramel Jelly Block", "焦糖果冻块")
+            addBlock(strawberry_jelly_block, "Strawberry Jelly Block", "草莓果冻块")
+            addBlock(royal_rations_block, "Royal Rations Block", "皇家口粮块")
+            addBlock(lemon_jelly_block, "Lemon Jelly Block", "柠檬果冻块")
+            addBlock(raspberry_jelly_block, "Raspberry Jelly Block", "树莓果冻块")
+            addBlock(mint_jelly_block, "Mint Jelly Block", "薄荷果冻块")
+
             //Fluids
             addBlock(caramel, "Caramel", "焦糖")
             addBlock(grenadine, "Grenadine", "红石榴糖浆")

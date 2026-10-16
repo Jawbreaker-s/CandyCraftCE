@@ -516,9 +516,31 @@ object CBlocks {
         CaramelPortalBlock(properties(Blocks.NETHER_PORTAL).mapColor(MapColor.COLOR_ORANGE))
     }.transparent().noSimpleItem()
 
+    val caramel_jelly_block = register("caramel_jelly_block") {
+        PlacedCutableJellyBlock(jelly(MapColor.COLOR_ORANGE), CItems.caramel_jelly_slice)
+    }.transparent().noSimpleItem()
+    val strawberry_jelly_block = register("strawberry_jelly_block") {
+        PlacedCutableJellyBlock(jelly(MapColor.COLOR_ORANGE), CItems.strawberry_jelly_slice)
+    }.transparent().noSimpleItem()
+    val royal_rations_block = register("royal_rations_block") {
+        PlacedCutableJellyBlock(jelly(MapColor.SNOW), CItems.royal_rations_slice)
+    }.transparent().noSimpleItem()
+    val lemon_jelly_block = register("lemon_jelly_block") {
+        PlacedJellyBlock(jelly(MapColor.COLOR_YELLOW))
+    }.transparent().noSimpleItem()
+    val raspberry_jelly_block = register("raspberry_jelly_block") {
+        PlacedJellyBlock(jelly(MapColor.COLOR_RED))
+    }.transparent().noSimpleItem()
+    val mint_jelly_block = register("mint_jelly_block") {
+        PlacedJellyBlock(jelly(MapColor.COLOR_GREEN))
+    }.transparent().noSimpleItem()
 
     val caramel = CFluids.caramel.block
     val grenadine = CFluids.grenadine.block
+    val static_water = register("static_water") {
+        StaticWaterBlock(properties(Blocks.WATER))
+    }.noSimpleItem()
+
     //======================
 
     init {

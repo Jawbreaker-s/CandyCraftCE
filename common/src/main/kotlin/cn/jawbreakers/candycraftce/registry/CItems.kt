@@ -97,21 +97,25 @@ object CItems {
     val pez_jelly_ball = register("pez_jelly_ball")
     val caramel_king_jelly_ball = register("caramel_king_jelly_ball")
     val strawberry_queen_jelly_ball = register("strawberry_queen_jelly_ball")
-
-    //TODO BLOCK CAKE!!!
-    val lemon_jelly =
-        register("lemon_jelly")//, () ->new PlaceableJellyFoodItem(CCBlocks.LEMON_JELLY_FOOD.get(), foodProperties(7, 0.4F)));
-    val raspberry_jelly =
-        register("raspberry_jelly")//, () ->new PlaceableJellyFoodItem(CCBlocks.RASPBERRY_JELLY_FOOD.get(), foodProperties(7, 0.4F)));
-    val mint_jelly =
-        register("mint_jelly")//, () ->new PlaceableJellyFoodItem(CCBlocks.MINT_JELLY_FOOD.get(), foodProperties(7, 0.4F)));
-
-    val caramel_jelly =
-        register("caramel_jelly")//, () ->new StrawberryJellyItem(CCBlocks.CARAMEL_JELLY_BLOCK.get(), new CItemTags.Properties()));
-    val strawberry_jelly =
-        register("strawberry_jelly")//, () ->new StrawberryJellyItem(CCBlocks.STRAWBERRY_JELLY_BLOCK.get(), new CItemTags.Properties()));
-    val royal_rations =
-        register("royal_rations")//, () ->new StrawberryJellyItem(CCBlocks.ROYAL_RATIONS_BLOCK.get(), new CItemTags.Properties()));
+    
+    val lemon_jelly = register("lemon_jelly") {
+        ItemNameBlockItem(CBlocks.lemon_jelly_block.get(), Properties().food(7, 0.4f))
+    }
+    val raspberry_jelly = register("raspberry_jelly") {
+        ItemNameBlockItem(CBlocks.raspberry_jelly_block.get(), Properties().food(7, 0.4f))
+    }
+    val mint_jelly = register("mint_jelly") {
+        ItemNameBlockItem(CBlocks.mint_jelly_block.get(), Properties().food(7, 0.4f))
+    }
+    val caramel_jelly = register("caramel_jelly") {
+        ItemNameBlockItem(CBlocks.caramel_jelly_block.get(), Properties())
+    }
+    val strawberry_jelly = register("strawberry_jelly") {
+        ItemNameBlockItem(CBlocks.strawberry_jelly_block.get(), Properties())
+    }
+    val royal_rations = register("royal_rations") {
+        ItemNameBlockItem(CBlocks.royal_rations_block.get(), Properties())
+    }
 
     val caramel_jelly_slice = registerFood("caramel_jelly_slice", 12, 0.6F)
     val strawberry_jelly_slice = registerFood("strawberry_jelly_slice", 12, 0.6F)
