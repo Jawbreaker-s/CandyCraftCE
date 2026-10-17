@@ -1,6 +1,9 @@
 package cn.jawbreakers.candycraftce.registry
 
-import cn.jawbreakers.candycraftce.client.particles.*
+import cn.jawbreakers.candycraftce.client.particles.CaramelPortalParticle
+import cn.jawbreakers.candycraftce.client.particles.ChocolateSplashParticle
+import cn.jawbreakers.candycraftce.client.particles.MilkRainDropParticle
+import cn.jawbreakers.candycraftce.client.particles.MilkRainSplashParticle
 import cn.jawbreakers.candycraftce.utils.CLogUtils
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils.ifClient
@@ -23,22 +26,13 @@ object CParticleTypes {
         CLogUtils.sign()
     }
 
-    val caramel_portal_particle_type = register("caramel_portal_particle", ::SimpleLimited)
-    val milk_rain_splash = register("milk_rain_splash", ::SimpleLimited)
-    val milk_rain_drop = register("milk_rain_drop", ::SimpleLimited)
-    val chocolate_splash = register("chocolate_splash", ::SimpleLimited)
-    val alchemy_splash = register("alchemy_splash", ::SimpleLimited)
-    val liquid_candy_flame = register("liquid_candy_flame", ::SimpleLimited)
-
-    //jelly
-    val strawberry_jelly_fragment = register("strawberry_jelly_fragment", ::SimpleLimited)
-    val caramel_jelly_fragment = register("caramel_jelly_fragment", ::SimpleLimited)
-    val royal_rations_fragment = register("royal_rations_fragment", ::SimpleLimited)
-    val lemon_jelly_fragment = register("lemon_jelly_fragment", ::SimpleLimited)
-    val raspberry_jelly_fragment = register("raspberry_jelly_fragment", ::SimpleLimited)
-    val mint_jelly_fragment = register("mint_jelly_fragment", ::SimpleLimited)
-
-    class SimpleLimited internal constructor() : SimpleParticleType(false)
+    val caramel_portal_particle_type = register("caramel_portal_particle", ::simple)
+    val milk_rain_splash = register("milk_rain_splash", ::simple)
+    val milk_rain_drop = register("milk_rain_drop", ::simple)
+    val chocolate_splash = register("chocolate_splash", ::simple)
+    val alchemy_splash = register("alchemy_splash", ::simple)
+    val liquid_candy_flame = register("liquid_candy_flame", ::simple)
+    fun simple() = object : SimpleParticleType(false) {}
 
     private fun <P : ParticleType<*>> register(id: String, type: Supplier<P>): Entry<P> {
         return CPlatformUtils.registerParticleType(id, type)
@@ -54,25 +48,6 @@ object CParticleTypes {
             //TODO
             registerParticleFactory(alchemy_splash, CaramelPortalParticle::Provider)
             registerParticleFactory(liquid_candy_flame, FlameParticle::Provider);
-
-            registerParticleFactory(strawberry_jelly_fragment) {
-                JellyFragmentParticle.Provider(it, 1.0F, 0.47F, 0.63F)
-            }
-            registerParticleFactory(caramel_jelly_fragment) {
-                JellyFragmentParticle.Provider(it, 0.93F, 0.43F, 0.08F)
-            }
-            registerParticleFactory(royal_rations_fragment) {
-                JellyFragmentParticle.Provider(it, 0.72F, 0.77F, 0.84F)
-            }
-            registerParticleFactory(lemon_jelly_fragment) {
-                JellyFragmentParticle.Provider(it, 0.85F, 0.86F, 0.40F)
-            }
-            registerParticleFactory(raspberry_jelly_fragment) {
-                JellyFragmentParticle.Provider(it, 0.92F, 0.37F, 0.30F)
-            }
-            registerParticleFactory(mint_jelly_fragment) {
-                JellyFragmentParticle.Provider(it, 0.54F, 0.90F, 0.80F)
-            }
         }
     }
 

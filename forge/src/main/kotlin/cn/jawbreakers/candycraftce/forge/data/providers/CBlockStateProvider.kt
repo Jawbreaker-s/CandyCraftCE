@@ -292,6 +292,10 @@ class CBlockStateProvider(output: PackOutput, val efHelper: ExistingFileHelper) 
                     .texture("outer", outer)
                 simpleBlock(it.get(), model)
             }
+            listOf(jelly_boss_key_hole, jelly_sentry_key_hole).forEach {
+                val model = models().cubeAll(it.id.path, "block/jelly_key_hole".modLoc())
+                simpleBlockWithItem(it.get(), model)
+            }
         }
     }
 

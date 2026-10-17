@@ -14,6 +14,7 @@ import cn.jawbreakers.candycraftce.utils.registry.LazyEntry
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.world.level.ItemLike
 import net.minecraft.world.level.block.*
+import net.minecraft.world.level.block.Blocks.BEDROCK
 import net.minecraft.world.level.block.state.BlockBehaviour
 import net.minecraft.world.level.block.state.BlockBehaviour.Properties
 import net.minecraft.world.level.block.state.BlockState
@@ -391,8 +392,14 @@ object CBlocks {
         register("honey_lamp", iron(MapColor.COLOR_YELLOW).strength(1.0F).sound(SoundType.GLASS).lightLevel { 15 })
     val honeycomb_block = register("honeycomb_block", stone(MapColor.COLOR_YELLOW))
     val pez_block = register("pez_block", iron(MapColor.COLOR_RED).strength(5.0F, 10.0F))
-    val jawbreaker_block = register("jawbreaker_block", properties(Blocks.BEDROCK))
-    val jawbreaker_light = register("jawbreaker_light", properties(Blocks.BEDROCK).lightLevel { 15 })
+    val jawbreaker_block = register("jawbreaker_block", properties(BEDROCK))
+    val jawbreaker_light = register("jawbreaker_light", properties(BEDROCK).lightLevel { 15 })
+    val jelly_sentry_key_hole = register("jelly_sentry_key_hole") {
+        DungeonLockBlock(CItems.jelly_sentry_key, properties(BEDROCK))
+    }
+    val jelly_boss_key_hole = register("jelly_boss_key_hole") {
+        DungeonLockBlock(CItems.jelly_boss_key, properties(BEDROCK))
+    }
 
     val chocolate_stone = register("chocolate_stone", stone(MapColor.COLOR_BROWN))
     val chocolate_stone_family = registerFamily(

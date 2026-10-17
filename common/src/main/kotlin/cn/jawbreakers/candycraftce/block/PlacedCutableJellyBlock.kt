@@ -59,7 +59,7 @@ class PlacedCutableJellyBlock(
     override fun getShape(state: BlockState, level: BlockGetter, pos: BlockPos, context: CollisionContext): VoxelShape {
         return SHAPES[state.getValue(CUTS)]
     }
-    
+
 
     @Deprecated("Deprecated in Java")
     override fun use(
@@ -90,6 +90,8 @@ class PlacedCutableJellyBlock(
         return InteractionResult.sidedSuccess(level.isClientSide)
     }
 
+    @Deprecated("Deprecated in Java")
+    @Suppress("DEPRECATION")
     override fun getDrops(state: BlockState, params: LootParams.Builder): List<ItemStack?> {
         //TODO may use loottable
         val cuts = state.getValue(CUTS)

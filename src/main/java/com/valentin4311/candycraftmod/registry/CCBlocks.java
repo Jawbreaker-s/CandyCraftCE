@@ -148,18 +148,18 @@ public final class CCBlocks {
 	//未包裹在半透明（）中：复合模型声明每个子渲染
 	//类型（镂空芯+半透明外壳）和块宽半透明层
 	//超控会像大果冻块一样把它们压扁成一次传球。
-	public static final RegistryObject<Block> LEMON_JELLY_FOOD = registerNoItem("lemon_jelly_food", () ->
-			new PlaceableJellyFoodBlock(BlockBehaviour.Properties.copy(Blocks.SLIME_BLOCK)
-					.mapColor(MapColor.COLOR_YELLOW).strength(0.3F).sound(SoundType.SLIME_BLOCK).noOcclusion(),
-					() -> CCItems.LEMON_JELLY_SLICE.get(), () -> CCParticleTypes.LEMON_JELLY_FRAGMENT.get()));
-	public static final RegistryObject<Block> RASPBERRY_JELLY_FOOD = registerNoItem("raspberry_jelly_food", () ->
-			new PlaceableJellyFoodBlock(BlockBehaviour.Properties.copy(Blocks.SLIME_BLOCK)
-					.mapColor(MapColor.COLOR_RED).strength(0.3F).sound(SoundType.SLIME_BLOCK).noOcclusion(),
-					() -> CCItems.RASPBERRY_JELLY_SLICE.get(), () -> CCParticleTypes.RASPBERRY_JELLY_FRAGMENT.get()));
-	public static final RegistryObject<Block> MINT_JELLY_FOOD = registerNoItem("mint_jelly_food", () ->
-			new PlaceableJellyFoodBlock(BlockBehaviour.Properties.copy(Blocks.SLIME_BLOCK)
-					.mapColor(MapColor.COLOR_LIGHT_GREEN).strength(0.3F).sound(SoundType.SLIME_BLOCK).noOcclusion(),
-					() -> CCItems.MINT_JELLY_SLICE.get(), () -> CCParticleTypes.MINT_JELLY_FRAGMENT.get()));
+//	public static final RegistryObject<Block> LEMON_JELLY_FOOD = registerNoItem("lemon_jelly_food", () ->
+//			new PlaceableJellyFoodBlock(BlockBehaviour.Properties.copy(Blocks.SLIME_BLOCK)
+//					.mapColor(MapColor.COLOR_YELLOW).strength(0.3F).sound(SoundType.SLIME_BLOCK).noOcclusion(),
+//					() -> CCItems.LEMON_JELLY_SLICE.get(), () -> CCParticleTypes.LEMON_JELLY_FRAGMENT.get()));
+//	public static final RegistryObject<Block> RASPBERRY_JELLY_FOOD = registerNoItem("raspberry_jelly_food", () ->
+//			new PlaceableJellyFoodBlock(BlockBehaviour.Properties.copy(Blocks.SLIME_BLOCK)
+//					.mapColor(MapColor.COLOR_RED).strength(0.3F).sound(SoundType.SLIME_BLOCK).noOcclusion(),
+//					() -> CCItems.RASPBERRY_JELLY_SLICE.get(), () -> CCParticleTypes.RASPBERRY_JELLY_FRAGMENT.get()));
+//	public static final RegistryObject<Block> MINT_JELLY_FOOD = registerNoItem("mint_jelly_food", () ->
+//			new PlaceableJellyFoodBlock(BlockBehaviour.Properties.copy(Blocks.SLIME_BLOCK)
+//					.mapColor(MapColor.COLOR_LIGHT_GREEN).strength(0.3F).sound(SoundType.SLIME_BLOCK).noOcclusion(),
+//					() -> CCItems.MINT_JELLY_SLICE.get(), () -> CCParticleTypes.MINT_JELLY_FRAGMENT.get()));
 	//	public static final RegistryObject<Block> TRAMPOJELLY = translucent(register("trampojelly", () -> new JellyBlock(2.0D, jelly())));
 //	public static final RegistryObject<Block> RED_TRAMPOJELLY = translucent(register("red_trampojelly", () -> new JellyBlock(4.0D, jelly())));
 //	public static final RegistryObject<Block> JELLY_SHOCK_ABSORBER = translucent(register("jelly_shock_absorber", () -> new JellyBlock(-1.0D, jelly())));
@@ -223,14 +223,14 @@ public final class CCBlocks {
 			new MilkCauldronBlock(BlockBehaviour.Properties.copy(Blocks.CAULDRON).mapColor(MapColor.SNOW).noOcclusion()));
 	//	public static final RegistryObject<Block> PEZ_ORE = register("pez_ore", () -> new Block(stone().strength(3.0F, 5.0F).requiresCorrectToolForDrops()));
 	//	public static final RegistryObject<Block> PEZ_BLOCK = register("pez_block", () -> new Block(metal(MapColor.COLOR_RED).strength(5.0F, 10.0F)));
-	public static final RegistryObject<LiquidBlock> CARAMEL = translucent(registerNoItem("caramel", () -> new CandyLiquidBlock(CCFluids.SOURCE_CARAMEL, liquid(MapColor.COLOR_ORANGE), CandyLiquidBlock.Kind.CARAMEL)));
-	public static final RegistryObject<LiquidBlock> GRENADINE = translucent(registerNoItem("grenadine", () -> new CandyLiquidBlock(CCFluids.SOURCE_GRENADINE, liquid(MapColor.COLOR_RED), CandyLiquidBlock.Kind.GRENADINE)));
-	public static final RegistryObject<Block> STATIC_WATER = translucent(registerNoItem("static_water", () -> new StaticWaterBlock(BlockBehaviour.Properties.copy(Blocks.WATER).noLootTable())));
+//	public static final RegistryObject<LiquidBlock> CARAMEL = translucent(registerNoItem("caramel", () -> new CandyLiquidBlock(CCFluids.SOURCE_CARAMEL, liquid(MapColor.COLOR_ORANGE), CandyLiquidBlock.Kind.CARAMEL)));
+//	public static final RegistryObject<LiquidBlock> GRENADINE = translucent(registerNoItem("grenadine", () -> new CandyLiquidBlock(CCFluids.SOURCE_GRENADINE, liquid(MapColor.COLOR_RED), CandyLiquidBlock.Kind.GRENADINE)));
+//	public static final RegistryObject<Block> STATIC_WATER = translucent(registerNoItem("static_water", () -> new StaticWaterBlock(BlockBehaviour.Properties.copy(Blocks.WATER).noLootTable())));
 	//	public static final RegistryObject<Block> JAW_BREAKER_BLOCK = register("jaw_breaker_block", () -> new Block(stone().strength(-1.0F, 6000000.0F)));
 	//	public static final RegistryObject<Block> PURPLE_TRAMPOJELLY = translucent(register("purple_trampojelly", () -> new JellyBlock(2.1D, jelly().lightLevel(state -> 13))));
 //	public static final RegistryObject<Block> RASPBERRY_COTTON_CANDY_BLOCK = register("raspberry_cotton_candy_block", () -> new Block(wool(MapColor.COLOR_PINK).strength(0.6F)));
 //	public static final RegistryObject<Block> JAW_BREAKER_LIGHT = register("jaw_breaker_light", () -> new Block(stone().strength(-1.0F, 6000000.0F).lightLevel(state -> 11)));
-	public static final RegistryObject<Block> CRANBERRY_SPIKES = cutout(register("cranberry_spikes", () -> new SpikesBlock(2, true, spikes())));
+//	public static final RegistryObject<Block> CRANBERRY_SPIKES = cutout(register("cranberry_spikes", () -> new SpikesBlock(2, true, spikes())));
 	//	public static final RegistryObject<Block> RASPBERRY_COTTON_CANDY_STAIRS = register("raspberry_cotton_candy_stairs", () -> stairs(Blocks.WHITE_WOOL.defaultBlockState(), wool(MapColor.COLOR_PINK).strength(0.6F)));
 //	public static final RegistryObject<Block> RASPBERRY_COTTON_CANDY_SLAB = register("raspberry_cotton_candy_slab", () -> new SlabBlock(wool(MapColor.COLOR_PINK).strength(3.0F, 5.0F)));
 	public static final RegistryObject<Block> COTTON_CANDY_BED_BLOCK = cutout(register("cotton_candy_bed_block", () -> new CandyBedBlock(DyeColor.PINK, Blocks.PINK_BED)));
@@ -241,7 +241,7 @@ public final class CCBlocks {
 //	public static final RegistryObject<Block> RASPBERRY_BLOCK = register("raspberry_block", () -> new Block(wool(MapColor.COLOR_RED).strength(1.0F).sound(SoundType.GRASS)));
 	public static final RegistryObject<Block> JELLY_SENTRY_KEY_HOLE = register("jelly_sentry_key_hole", () -> new DungeonLockBlock(DungeonLockBlock.Kind.JELLY_SENTRY, stone().strength(-1.0F, 6000000.0F)));
 	public static final RegistryObject<Block> JELLY_BOSS_KEY_HOLE = register("jelly_boss_key_hole", () -> new DungeonLockBlock(DungeonLockBlock.Kind.JELLY_BOSS, stone().strength(-1.0F, 6000000.0F)));
-	public static final RegistryObject<Block> SUGAR_SPIKES = cutout(register("sugar_spikes", () -> new SpikesBlock(4, spikes())));
+	//	public static final RegistryObject<Block> SUGAR_SPIKES = cutout(register("sugar_spikes", () -> new SpikesBlock(4, spikes())));
 	public static final RegistryObject<Block> BLOCK_TELEPORTER = registerNoItem("block_teleporter", () -> new DungeonTeleporterBlock(stone().strength(3.0F, 2000.0F).lightLevel(state -> 15).noOcclusion()));
 	public static final RegistryObject<Block> COTTON_CANDY_WEB = cutout(register("cotton_candy_web", () -> new CandyWebBlock(BlockBehaviour.Properties.copy(Blocks.COBWEB).mapColor(MapColor.COLOR_PINK))));
 	public static final RegistryObject<Block> CHERRY_BLOCK = cutout(registerNoItem("cherry_block", () -> new CherryBlock(wood(MapColor.COLOR_RED).strength(0.2F).noOcclusion())));

@@ -288,6 +288,8 @@ class CI18nProvider(output: PackOutput) : DataProvider, ILanguageProvider {
             addBlock(pez_block, "PEZ Block", "皮礼士糖块")
             addBlock(jawbreaker_block, "Jawbreaker Block", "基岩硬糖块")
             addBlock(jawbreaker_light, "Jawbreaker Light", "基岩硬糖灯")
+            addBlock(jelly_boss_key_hole, "Jelly Boss Key Hole", "果冻国王锁孔")
+            addBlock(jelly_sentry_key_hole, "Jelly Sentry Key Hole", "果冻守卫锁孔")
             addBlock(chocolate_stone, "Chocolate Stone", "巧克力石头")
             addBlock(chocolate_bricks, "Chocolate Bricks", "巧克力砖")
             addBlock(chocolate_cobblestone, "Chocolate Cobblestone", "巧克力圆石")
