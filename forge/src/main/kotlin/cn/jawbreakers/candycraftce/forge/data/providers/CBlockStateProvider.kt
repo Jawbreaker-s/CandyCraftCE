@@ -73,7 +73,7 @@ class CBlockStateProvider(output: PackOutput, val efHelper: ExistingFileHelper) 
                 nougat_ore, white_nougat_ore,
                 honey_ore, white_honey_ore,
                 chocolate_leaves,
-                ice_cream_leaves,
+                white_chocolate_leaves,
                 candied_cherry_leaves,
                 caramel_leaves,
             ).forEach { simpleBlockWithItem(it.get(), cubeAll(it.get())) }
@@ -120,7 +120,7 @@ class CBlockStateProvider(output: PackOutput, val efHelper: ExistingFileHelper) 
                 sweet_grass_pink, sweet_grass_pale, sweet_grass_yellow, sweet_grass_red,
                 chocolate_sapling,
                 caramel_sapling,
-                ice_cream_sapling,
+                white_chocolate_sapling,
                 candied_cherry_sapling,
                 fraise_tagada_flower,
                 acid_mint_flower,

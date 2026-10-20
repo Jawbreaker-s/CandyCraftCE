@@ -60,7 +60,8 @@ class JellyQueen(type: EntityType<out JellyQueen>, level: Level) : BossJelly(typ
             s >= ANGRY_PROGRESS -> STATE_ANGRY
             else -> STATE_FRENZIED
         }
-        if (newState > state) {
+        if (state != STATE_SLEEPING && newState > state) {
+            //苏醒的faint在#awaken中定义
             setFaint()
         }
         state = newState

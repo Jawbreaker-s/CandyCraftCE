@@ -1,0 +1,155 @@
+{
+  "type": "minecraft:block",
+  "functions": [
+    {
+      "function": "minecraft:explosion_decay"
+    }
+  ],
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:alternatives",
+          "children": [
+            {
+              "type": "minecraft:item",
+              "conditions": [
+                {
+                  "condition": "minecraft:match_tool",
+                  "predicate": {
+                    "enchantments": [
+                      {
+                        "enchantment": "minecraft:silk_touch",
+                        "levels": {
+                          "min": 1
+                        }
+                      }
+                    ]
+                  }
+                }
+              ],
+              "name": "candycraftce:strawberry_jelly"
+            },
+            {
+              "type": "minecraft:item",
+              "conditions": [
+                {
+                  "block": "candycraftce:strawberry_jelly_block",
+                  "condition": "minecraft:block_state_property",
+                  "properties": {
+                    "cuts": "0"
+                  }
+                }
+              ],
+              "name": "candycraftce:strawberry_jelly"
+            }
+          ]
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:any_of",
+          "terms": [
+            {
+              "condition": "minecraft:inverted",
+              "term": {
+                "condition": "minecraft:match_tool",
+                "predicate": {
+                  "enchantments": [
+                    {
+                      "enchantment": "minecraft:silk_touch",
+                      "levels": {
+                        "min": 1
+                      }
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "condition": "minecraft:inverted",
+              "term": {
+                "block": "candycraftce:strawberry_jelly_block",
+                "condition": "minecraft:block_state_property",
+                "properties": {
+                  "cuts": "0"
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "candycraftce:strawberry_jelly_slice"
+        }
+      ],
+      "functions": [
+        {
+          "add": false,
+          "conditions": [
+            {
+              "block": "candycraftce:strawberry_jelly_block",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "cuts": "0"
+              }
+            }
+          ],
+          "count": 4.0,
+          "function": "minecraft:set_count"
+        },
+        {
+          "add": false,
+          "conditions": [
+            {
+              "block": "candycraftce:strawberry_jelly_block",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "cuts": "1"
+              }
+            }
+          ],
+          "count": 3.0,
+          "function": "minecraft:set_count"
+        },
+        {
+          "add": false,
+          "conditions": [
+            {
+              "block": "candycraftce:strawberry_jelly_block",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "cuts": "2"
+              }
+            }
+          ],
+          "count": 2.0,
+          "function": "minecraft:set_count"
+        },
+        {
+          "add": false,
+          "conditions": [
+            {
+              "block": "candycraftce:strawberry_jelly_block",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "cuts": "3"
+              }
+            }
+          ],
+          "count": 1.0,
+          "function": "minecraft:set_count"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "candycraftce:blocks/strawberry_jelly_block"
+}

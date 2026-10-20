@@ -7,6 +7,8 @@ import cn.jawbreakers.candycraftce.fluid.CFluidReferences
 import cn.jawbreakers.candycraftce.registry.CBlocks.asItemEntry
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils.translate
 import cn.jawbreakers.candycraftce.utils.CUtils.modLoc
+import cn.jawbreakers.candycraftce.utils.ICPlatformDatagen.MinableLevel
+import cn.jawbreakers.candycraftce.utils.ICPlatformDatagen.MinableType
 import cn.jawbreakers.candycraftce.utils.registry.Accessor
 import cn.jawbreakers.candycraftce.utils.registry.Entry
 import com.mojang.datafixers.types.Type
@@ -25,6 +27,8 @@ import net.minecraft.core.particles.ParticleOptions
 import net.minecraft.core.particles.ParticleType
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.tags.BlockTags
+import net.minecraft.tags.TagKey
 import net.minecraft.world.effect.MobEffect
 import net.minecraft.world.entity.*
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier
@@ -81,6 +85,11 @@ object CPlatformUtils : ICPlatForm by CandyCraftCE.platform {
             add(this@translate, en, zh)
         }
     }
+
+    fun <T : Block> Entry<T>.minable(
+        type: MinableType,
+        level: MinableLevel? = null,
+    ) = apply { datagen?.minable(this, type, level) }
 
 }
 
@@ -157,8 +166,22 @@ interface ICPlatformLevels {
 }
 
 interface ICPlatformDatagen {
+    enum class MinableType(val tag: TagKey<Block>) {
+        PICKAXE(BlockTags.MINEABLE_WITH_PICKAXE),
+        SHOVEL(BlockTags.MINEABLE_WITH_SHOVEL),
+        AXE(BlockTags.MINEABLE_WITH_AXE),
+        HOE(BlockTags.MINEABLE_WITH_HOE);
+    }
+
+    enum class MinableLevel(val tag: TagKey<Block>) {
+        STONE(BlockTags.NEEDS_STONE_TOOL),
+        IRON(BlockTags.NEEDS_IRON_TOOL),
+        DIAMOND(BlockTags.NEEDS_DIAMOND_TOOL);
+    }
+
     fun onBootstrap(action: RegistrySetBuilder.() -> Unit)
     fun onGatherLanguage(action: ILanguageProvider.() -> Unit)
+    fun minable(block: Entry<out Block>, type: MinableType, level: MinableLevel? = null)
 }
 
 @ClientOnly

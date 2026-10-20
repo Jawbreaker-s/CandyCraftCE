@@ -55,7 +55,7 @@ class DungeonLockBlock(val key: Supplier<out Item>, properties: Properties) : Bl
     }
 
     fun unlock(state: BlockState, level: ServerLevel, pos: BlockPos) {
-        level.setBlock(pos, state.setValue(FADE, true), 1 or 2 or 8)
+        level.setBlock(pos, state.setValue(FADE, true), UPDATE_ALL_IMMEDIATE)
         level.scheduleTick(pos, this, 7)
     }
 

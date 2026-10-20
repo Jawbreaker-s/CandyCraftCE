@@ -28,18 +28,15 @@ import kotlin.math.roundToInt
  * Project: CandyCraftCE
  */
 @ClientOnly
-open class CandyBossBarHud(private val minecraft: Minecraft) {
+class CandyBossBarHud(private val minecraft: Minecraft) {
     companion object {
-        const val SENSE_RANGE = 32.0
+        const val SENSE_RANGE = ICandyBoss.BOSS_FOLLOW_RANGE
         val isCandyBoss: TargetingConditions = TargetingConditions
             .forCombat()
             .selector { isActiveBoss(it) }
         val BOSS_BAR_TEXTURE = "boss_bar".modLoc().guiTex()
         const val BAR_WIDTH = 256
         const val BAR_HEIGHT = 14
-
-        //still 同步的时间间隔
-        const val STILL_INTERVAL_TICKS = 40
 
         //每 tick 向目标靠拢的比例
         const val STILL_LERP = 0.08f
@@ -81,11 +78,7 @@ open class CandyBossBarHud(private val minecraft: Minecraft) {
             //把当前值存为 prev，本 tick 结束后作为插值起点
             stillPrev = still
             health = boss.getHealthBarProgress()
-
-            //受伤后一段时间内白条保持不动，之后才追向当前血量
-            if (boss.tickCount - boss.lastHurtByMobTimestamp > STILL_INTERVAL_TICKS) {
-                stillTarget = health
-            }
+            stillTarget = health
             //平滑推进（tick 恒为 20Hz，与渲染帧率无关）
             still = approach(still, stillTarget, STILL_LERP)
         }
@@ -206,7 +199,7 @@ enum class TexturedBar(val offset: Int) : IBossBar {
 
     override fun drawBar(graphics: GuiGraphics, y: Int, progress: Float) {
         val width = graphics.guiWidth()
-        val xo = (width - BAR_WIDTH) / 2;
+        val xo = (width - BAR_WIDTH) / 2
         if (xo > 0) {
             graphics.blit(
                 BOSS_BAR_TEXTURE,

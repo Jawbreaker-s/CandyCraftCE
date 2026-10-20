@@ -104,7 +104,7 @@ fun createWhiteChocolateTree(): TreeConfiguration {
     return TreeConfiguration.TreeConfigurationBuilder(
         simple(light_marshmallow_log.get()),
         StraightTrunkPlacer(5, 2, 1),
-        simple(CBlocks.ice_cream_leaves.get()),
+        simple(CBlocks.white_chocolate_leaves.get()),
         SpruceFoliagePlacer(UniformInt.of(2, 3), UniformInt.of(0, 2), UniformInt.of(1, 2)),
         TwoLayersFeatureSize(2, 0, 2)
     )

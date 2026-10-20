@@ -1,7 +1,7 @@
 package cn.jawbreakers.candycraftce.fluid
 
 import cn.jawbreakers.candycraftce.CandyCraftCE.MOD_ID
-import cn.jawbreakers.candycraftce.utils.IEntrySet
+import cn.jawbreakers.candycraftce.utils.EntrySet
 import cn.jawbreakers.candycraftce.utils.registry.Entry
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.Item
@@ -20,9 +20,8 @@ data class CFluidReferences(
     val source: Entry<out FlowingFluid>,
     val flowing: Entry<out FlowingFluid>,
     val block: Entry<out LiquidBlock>,
-) : IEntrySet<FlowingFluid> {
+) : EntrySet<FlowingFluid>(setOf(source, flowing)) {
     fun getBucket(): Item = presets.bucket?.invoke()?.get() ?: Items.AIR
-    override fun entries(): List<Entry<out FlowingFluid>> = listOf(source, flowing)
 
     init {
         require(presets.refInternal == null) { "References already initialized" }

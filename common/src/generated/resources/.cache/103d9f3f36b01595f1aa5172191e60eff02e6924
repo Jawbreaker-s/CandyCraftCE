@@ -1,4 +1,4 @@
-// 1.20.1	2026-10-16T23:42:26.4766221	Registries
+// 1.20.1	2026-10-18T15:58:50.2229724	Registries
 65e566499f992d29d9fd2c28209ac6a1b832114d data/candycraftce/worldgen/biome/caramel_forest.json
 705cac0d39bb8f7035375e01abc3a46322f948f6 data/candycraftce/worldgen/biome/chocolate_forest.json
 0aa78b4c15ad1c5297d6498356a912a2cb8f6d02 data/candycraftce/worldgen/biome/dungeon.json
@@ -23,7 +23,7 @@ c7816a4b4661d4d3f2391cbd5acde8fc3b08e992 data/candycraftce/worldgen/configured_f
 969c4c62e33f13271dc67bcd316ca03c44861a89 data/candycraftce/worldgen/configured_feature/tree_chocolate.json
 78d980512e4cd75002096b94f37a06f72e8dd769 data/candycraftce/worldgen/configured_feature/tree_chocolate_fancy.json
 14470405285383cd82ea3a5f186fedaff291282b data/candycraftce/worldgen/configured_feature/tree_enchanted.json
-d1fa67a6f3385b08a5412f8bce683e827d3d3ae5 data/candycraftce/worldgen/configured_feature/tree_white_chocolate.json
+630b9da8cfecdc121f7da2d0a7bc066236cabe96 data/candycraftce/worldgen/configured_feature/tree_white_chocolate.json
 b6e575c4a00daf360e8a70c15b02161c723a1ab5 data/candycraftce/worldgen/noise_settings/candyland_noise_settings.json
 da165100a4e79a9c7f313343b3d56d9047322652 data/candycraftce/worldgen/placed_feature/candy_grass.json
 b6566f1a27e0f27ab9c5029d515582bfdac75c5f data/candycraftce/worldgen/placed_feature/candy_liquid_lake.json

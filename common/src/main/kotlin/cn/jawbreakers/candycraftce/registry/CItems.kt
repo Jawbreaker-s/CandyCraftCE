@@ -14,7 +14,7 @@ import cn.jawbreakers.candycraftce.utils.CMixins.buildProperties
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils.ifClient
 import cn.jawbreakers.candycraftce.utils.CUtils.instance
-import cn.jawbreakers.candycraftce.utils.IEntrySet
+import cn.jawbreakers.candycraftce.utils.EntrySet
 import cn.jawbreakers.candycraftce.utils.TickUnit.tick
 import cn.jawbreakers.candycraftce.utils.registry.Entry
 import net.minecraft.world.effect.MobEffectInstance
@@ -97,7 +97,7 @@ object CItems {
     val pez_jelly_ball = register("pez_jelly_ball")
     val caramel_king_jelly_ball = register("caramel_king_jelly_ball")
     val strawberry_queen_jelly_ball = register("strawberry_queen_jelly_ball")
-    
+
     val lemon_jelly = register("lemon_jelly") {
         ItemNameBlockItem(CBlocks.lemon_jelly_block.get(), Properties().food(7, 0.4f))
     }
@@ -378,18 +378,18 @@ object CItems {
         val pickaxe: Entry<out PickaxeItem>,
         val axe: Entry<out AxeItem>,
         val hoe: Entry<out HoeItem>,
-    ) : IEntrySet<Item> {
-        override fun entries(): List<Entry<out Item>> = listOf(sword, shovel, pickaxe, axe, hoe)
-    }
+    ) : EntrySet<Item>(
+        setOf(sword, shovel, pickaxe, axe, hoe)
+    )
 
     data class ArmorSet(
         val helmet: Entry<out ArmorItem>,
         val plate: Entry<out ArmorItem>,
         val leggings: Entry<out ArmorItem>,
         val boots: Entry<out ArmorItem>,
-    ) : IEntrySet<Item> {
-        override fun entries(): List<Entry<out Item>> = listOf(helmet, plate, leggings, boots)
-    }
+    ) : EntrySet<Item>(
+        setOf(helmet, plate, leggings, boots)
+    )
 
 }
 

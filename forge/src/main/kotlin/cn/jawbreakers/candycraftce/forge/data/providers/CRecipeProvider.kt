@@ -87,32 +87,6 @@ class CRecipeProvider(output: PackOutput) : RecipeProvider(output) {
                         cube(BUILDING_BLOCKS, 1, 3, nougat_powder.setUnlockBy())
                             .save()
                     }
-                    val glassTypes = listOf(
-                        listOf(
-                            caramel_glass to caramel_pane,
-                            caramel_glass_round to caramel_pane_round,
-                            caramel_glass_diamond to caramel_pane_diamond,
-                        ),
-                        listOf(
-                            honey_glass to honey_pane,
-                            honey_glass_round to honey_pane_round,
-                            honey_glass_diamond to honey_pane_diamond,
-                        ),
-                        listOf(
-                            sugar_glass to sugar_pane,
-                            sugar_glass_round to sugar_pane_round,
-                            sugar_glass_diamond to sugar_pane_diamond,
-                        ),
-                        listOf(
-                            dark_caramel_glass to dark_caramel_pane,
-                            dark_caramel_glass_round to dark_caramel_pane_round,
-                            dark_caramel_glass_diamond to dark_caramel_pane_diamond,
-                        ),
-                        listOf(
-                            grenadine_glass to grenadine_pane,
-                            grenadine_glass_grid to grenadine_pane_grid,
-                        )
-                    )
                     glassTypes.flatten().forEach { (glass, pane) ->
                         pane.madeWith {
                             shaped(DECORATIONS, 16)
@@ -162,10 +136,7 @@ class CRecipeProvider(output: PackOutput) : RecipeProvider(output) {
                         cube(BUILDING_BLOCKS, 1, 3, CItems.pez.setUnlockBy())
                             .save()
                     }
-                }
-            }
-            CBlocks.apply {
-                CItems.apply {
+                    //Items
                     dragibus_stick.madeWith {
                         shaped(TOOLS, 1)
                             .pattern("/ ")
@@ -237,6 +208,22 @@ class CRecipeProvider(output: PackOutput) : RecipeProvider(output) {
                     }
                     pez.madeWith {
 
+                    }
+                    listOf(
+                        royal_rations_block to royal_rations,
+                        caramel_jelly_block to caramel_jelly_block,
+                        strawberry_jelly_block to strawberry_queen_jelly_ball,
+                        lemon_jelly_block to lemon_jelly_ball,
+                        raspberry_jelly_block to raspberry_jelly_ball,
+                        mint_jelly_block to mint_jelly_ball,
+                    ).forEach { (placed, ball) ->
+                        placed.madeWith {
+                            shaped(FOOD)
+                                .pattern("###")
+                                .pattern("###")
+                                .define('#', ball.setUnlockBy())
+                                .save()
+                        }
                     }
                 }
             }

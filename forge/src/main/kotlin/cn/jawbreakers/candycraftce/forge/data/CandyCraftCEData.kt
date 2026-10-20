@@ -5,13 +5,22 @@ import cn.jawbreakers.candycraftce.forge.data.providers.CBlockStateProvider
 import cn.jawbreakers.candycraftce.forge.data.providers.CI18nProvider
 import cn.jawbreakers.candycraftce.forge.data.providers.CItemModelProvider
 import cn.jawbreakers.candycraftce.forge.data.providers.CRecipeProvider
+import cn.jawbreakers.candycraftce.forge.data.providers.loots.CBlockLoots
 import cn.jawbreakers.candycraftce.forge.data.providers.tags.CBiomeTagsProvider
 import cn.jawbreakers.candycraftce.forge.data.providers.tags.CBlockTagsProvider
 import cn.jawbreakers.candycraftce.forge.data.providers.tags.CFluidTagsProvider
 import cn.jawbreakers.candycraftce.forge.data.providers.tags.CItemTagsProvider
 import cn.jawbreakers.candycraftce.utils.ICPlatformDatagen
+import cn.jawbreakers.candycraftce.utils.ICPlatformDatagen.MinableLevel
+import cn.jawbreakers.candycraftce.utils.ICPlatformDatagen.MinableType
 import cn.jawbreakers.candycraftce.utils.ILanguageProvider
+import cn.jawbreakers.candycraftce.utils.registry.Entry
 import net.minecraft.core.RegistrySetBuilder
+import net.minecraft.data.loot.LootTableProvider
+import net.minecraft.data.loot.LootTableProvider.SubProviderEntry
+import net.minecraft.tags.TagKey
+import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets
 import net.minecraftforge.common.data.DatapackBuiltinEntriesProvider
 import net.minecraftforge.data.event.GatherDataEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
@@ -25,6 +34,7 @@ object CandyCraftCEData : ICPlatformDatagen {
     private var status: Boolean = true
     private val bootstraps: LinkedList<Consumer<RegistrySetBuilder>> = LinkedList()
     private val i18nExtra: LinkedList<Consumer<ILanguageProvider>> = LinkedList()
+    private val tagsExtra: HashMap<TagKey<Block>, MutableList<Entry<out Block>>> = HashMap()
 
     @SubscribeEvent
     fun initialize(event: GatherDataEvent) {
@@ -34,7 +44,8 @@ object CandyCraftCEData : ICPlatformDatagen {
         val output = generator.packOutput
         //Client
         generator.addProvider(
-            event.includeClient(), CI18nProvider(output).also { i18nExtra.forEach { consumer -> consumer.accept(it) } })
+            event.includeClient(),
+            CI18nProvider(output).also { i18nExtra.forEach { consumer -> consumer.accept(it) } })
         generator.addProvider(event.includeClient(), CBlockStateProvider(output, efHelper))
         generator.addProvider(event.includeClient(), CItemModelProvider(output, efHelper))
         //Server
@@ -45,14 +56,24 @@ object CandyCraftCEData : ICPlatformDatagen {
             DatapackBuiltinEntriesProvider(output, event.lookupProvider, registries, setOf(MOD_ID))
         ).registryProvider
 
-        val blocktag = generator.addProvider(event.includeServer(), CBlockTagsProvider(output, lookup, efHelper))
+        val blocktag = generator.addProvider(
+            event.includeServer(),
+            CBlockTagsProvider(output, lookup, efHelper, tagsExtra)
+        )
         generator.addProvider(
             event.includeServer(),
             CItemTagsProvider(output, lookup, blocktag.contentsGetter(), efHelper)
         )
         generator.addProvider(event.includeServer(), CFluidTagsProvider(output, lookup, efHelper))
         generator.addProvider(event.includeServer(), CBiomeTagsProvider(output, lookup, efHelper))
-//        generator.addProvider(event.includeServer(), CLootProvider(output))
+        generator.addProvider(
+            event.includeServer(),
+            LootTableProvider(
+                output, setOf(), listOf(
+                    SubProviderEntry(::CBlockLoots, LootContextParamSets.BLOCK)
+                )
+            )
+        )
         generator.addProvider(event.includeServer(), CRecipeProvider(output))
         //Check redundant resources
         Runtime.getRuntime().addShutdownHook(thread(start = false) {
@@ -64,6 +85,7 @@ object CandyCraftCEData : ICPlatformDatagen {
         })
     }
 
+
     fun checkStatus() = require(status) { "Too late" }
     override fun onBootstrap(action: RegistrySetBuilder.() -> Unit) {
         checkStatus()
@@ -73,5 +95,22 @@ object CandyCraftCEData : ICPlatformDatagen {
     override fun onGatherLanguage(action: ILanguageProvider.() -> Unit) {
         checkStatus()
         i18nExtra.add(action)
+    }
+
+    override fun minable(
+        block: Entry<out Block>,
+        type: MinableType,
+        level: MinableLevel?,
+    ) {
+        checkStatus()
+        fun append(tk: TagKey<Block>, v: Entry<out Block>) {
+            require(tagsExtra.computeIfAbsent(tk) { mutableListOf() }.add(v)) {
+                "Block $v already exists in tag $tk"
+            }
+        }
+        append(type.tag, block)
+        level?.tag?.also {
+            append(it, block)
+        }
     }
 }

@@ -4,19 +4,25 @@ import cn.jawbreakers.candycraftce.CandyCraftCE.MOD_ID
 import cn.jawbreakers.candycraftce.registry.CBlockTags
 import cn.jawbreakers.candycraftce.registry.CBlocks
 import cn.jawbreakers.candycraftce.registry.ItemBlockTagkey
+import cn.jawbreakers.candycraftce.utils.registry.Entry
 import net.minecraft.core.HolderLookup
+import net.minecraft.data.CachedOutput
 import net.minecraft.data.PackOutput
+import net.minecraft.data.tags.IntrinsicHolderTagsProvider
 import net.minecraft.tags.BlockTags
+import net.minecraft.tags.TagKey
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
 import net.minecraftforge.common.data.BlockTagsProvider
 import net.minecraftforge.common.data.ExistingFileHelper
 import java.util.concurrent.CompletableFuture
+import java.util.function.Supplier
 
 class CBlockTagsProvider(
     output: PackOutput,
     lookup: CompletableFuture<HolderLookup.Provider>,
     efHelper: ExistingFileHelper,
+    private val tagsExtra: Map<TagKey<Block>, List<Entry<out Block>>>,
 ) : BlockTagsProvider(output, lookup, MOD_ID, efHelper) {
     override fun addTags(provider: HolderLookup.Provider) {
         fun tag(biTag: ItemBlockTagkey) = tag(biTag.block)
@@ -84,7 +90,7 @@ class CBlockTagsProvider(
 
                 tag(candy_leaves)
                     .add(chocolate_leaves.get())
-                    .add(ice_cream_leaves.get())
+                    .add(white_chocolate_leaves.get())
                     .add(candied_cherry_leaves.get())
                     .add(caramel_leaves.get())
                     .add(enchant_candy_leaves.get())
@@ -109,9 +115,18 @@ class CBlockTagsProvider(
                     f.door?.also { tag(BlockTags.DOORS).add(it.get()) }
                     f.trapdoor?.also { tag(BlockTags.TRAPDOORS).add(it.get()) }
                 }
+                tagsExtra.forEach { (tagKey, entries) ->
+                    tag(tagKey).add(*entries.toTypedArray())
+                }
             }
         }
     }
+
+    override fun run(output: CachedOutput): CompletableFuture<*> {
+        return super.run(output)
+    }
 }
 
-
+fun <T : Any> IntrinsicHolderTagsProvider.IntrinsicTagAppender<T>.add(vararg entry: Supplier<out T>) {
+    entry.forEach { add(it.get()) }
+}

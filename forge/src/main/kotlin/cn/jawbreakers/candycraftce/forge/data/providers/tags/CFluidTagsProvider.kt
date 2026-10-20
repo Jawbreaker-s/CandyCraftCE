@@ -3,7 +3,7 @@ package cn.jawbreakers.candycraftce.forge.data.providers.tags
 import cn.jawbreakers.candycraftce.CandyCraftCE.MOD_ID
 import cn.jawbreakers.candycraftce.registry.CFluidTags
 import cn.jawbreakers.candycraftce.registry.CFluids
-import cn.jawbreakers.candycraftce.utils.IEntrySet
+import cn.jawbreakers.candycraftce.utils.EntrySet
 import net.minecraft.core.HolderLookup
 import net.minecraft.data.PackOutput
 import net.minecraft.data.tags.FluidTagsProvider
@@ -27,6 +27,6 @@ class CFluidTagsProvider(
     }
 }
 
-fun <T : Any> IntrinsicHolderTagsProvider.IntrinsicTagAppender<T>.addSet(set: IEntrySet<out T>) {
-    set.forEach { add(it.get()) }
+fun <T : Any> IntrinsicHolderTagsProvider.IntrinsicTagAppender<T>.addSet(set: EntrySet<out T>) {
+    set.forEach { add(it) }
 }

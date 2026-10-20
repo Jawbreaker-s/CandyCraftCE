@@ -4,7 +4,7 @@ import cn.jawbreakers.candycraftce.CandyCraftCE
 import cn.jawbreakers.candycraftce.registry.CItems
 import cn.jawbreakers.candycraftce.utils.CUtils.key
 import cn.jawbreakers.candycraftce.utils.CUtils.mcLoc
-import cn.jawbreakers.candycraftce.utils.IEntrySet
+import cn.jawbreakers.candycraftce.utils.EntrySet
 import cn.jawbreakers.candycraftce.utils.registry.Entry
 import net.minecraft.data.PackOutput
 import net.minecraft.resources.ResourceLocation
@@ -102,7 +102,7 @@ class CItemModelProvider(output: PackOutput, efHelper: ExistingFileHelper) :
             ).forEach {
                 when (it) {
                     is Entry<*> -> basicItem(it.get() as Item)
-                    is IEntrySet<*> -> it.entries().forEach { entry -> basicItem(entry.get() as Item) }
+                    is EntrySet<*> -> it.forEach { item -> basicItem(item as Item) }
                     else -> throw IllegalStateException("Unsupported type: $it")
                 }
             }
@@ -126,7 +126,7 @@ class CItemModelProvider(output: PackOutput, efHelper: ExistingFileHelper) :
             ).forEach {
                 when (it) {
                     is Entry<*> -> handheld(it as Entry<Item>)
-                    is IEntrySet<*> -> it.entries().forEach { entry -> handheld(entry as Entry<Item>) }
+                    is EntrySet<*> -> it.entries.forEach { entry -> handheld(entry as Entry<Item>) }
                     else -> throw IllegalStateException("Unsupported type: $it")
                 }
             }

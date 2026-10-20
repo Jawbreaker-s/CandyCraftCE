@@ -31,7 +31,8 @@ class PlacedCutableJellyBlock(
     private val sliceItem: Supplier<out Item?>,
 ) : PlacedJellyBlock(properties) {
     companion object {
-        val CUTS: IntegerProperty = IntegerProperty.create("cuts", 0, 3)
+        const val MAX_CUTS = 3
+        val CUTS: IntegerProperty = IntegerProperty.create("cuts", 0, MAX_CUTS)
         private val SHAPES = arrayOf<VoxelShape>(
             box(2.0, 0.0, 2.0, 14.0, 6.0, 14.0),
             Shapes.or(

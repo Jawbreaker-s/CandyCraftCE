@@ -30,7 +30,8 @@ import kotlin.math.min
 abstract class BossJelly(type: EntityType<out BossJelly>, level: Level) : BasicJelly(type, level), ICandyBoss {
     companion object {
         fun createBossJellyAttribute(): AttributeSupplier.Builder {
-            return Monster.createMonsterAttributes().add(FOLLOW_RANGE, 32.0)
+            return Monster.createMonsterAttributes()
+                .add(FOLLOW_RANGE, ICandyBoss.BOSS_FOLLOW_RANGE)
         }
 
         val BOSS_AWAKE = defineId(EntityDataSerializers.BOOLEAN)
@@ -40,7 +41,8 @@ abstract class BossJelly(type: EntityType<out BossJelly>, level: Level) : BasicJ
             0.0,
             AttributeModifier.Operation.MULTIPLY_TOTAL
         )
-        const val FAINT_TICKS = 1 * 20
+        const val MAX_FAINT_TICKS = 1 * 20
+        const val HALF_FAINT_TICKS = MAX_FAINT_TICKS / 2
         const val MAX_LOST_TARGET_TICKS = 5 * 20
     }
 
@@ -98,15 +100,23 @@ abstract class BossJelly(type: EntityType<out BossJelly>, level: Level) : BasicJ
 
     open fun onServerAwakeTick() {
         //防止跳的太高导致脱战
-        if (awake && ++lostTargetTicks > MAX_LOST_TARGET_TICKS && target.let { it == null || !mayAttack(it) }) {
-            awake = false
+        if (target.let { it == null || !mayAttack(it) }) {
+            lostTargetTicks--
+            val remainLostTicks = MAX_LOST_TARGET_TICKS - lostTargetTicks  //d越来越小
+            //最后一段时间，让Boss逐渐进入昏迷状态
+            if (remainLostTicks <= HALF_FAINT_TICKS) {
+                faint = HALF_FAINT_TICKS - remainLostTicks
+            }
+            if (lostTargetTicks >= MAX_LOST_TARGET_TICKS) {
+                awake = false
+            }
         }
     }
 
     open fun onServerSleepingTick() {
         //每秒恢复5点生命
         if (!level().isClientSide && tickCount % 20 == 0) {
-            heal(5f);
+            heal(5f)
         }
     }
 
@@ -136,6 +146,7 @@ abstract class BossJelly(type: EntityType<out BossJelly>, level: Level) : BasicJ
         }
         lostTargetTicks = 0
         awake = true
+        faint = HALF_FAINT_TICKS //0.5f
     }
 
     override fun jumpFromGround() {
@@ -148,8 +159,8 @@ abstract class BossJelly(type: EntityType<out BossJelly>, level: Level) : BasicJ
     override fun causeFallDamage(fallDistance: Float, multiplier: Float, source: DamageSource): Boolean = false
     override fun hurt(source: DamageSource, amount: Float): Boolean {
         if (source.`is`(DamageTypes.FALL)) return false
-        if (amount > 1 && random.nextInt(20) == 0) {
-            faint = FAINT_TICKS / 2
+        if (amount > 1 && random.nextInt(10) == 0) {
+            setFaint()//受伤有10%概率让Boss进入昏迷状态
         }
         val entity = source.entity
         level().ifServer {
@@ -167,8 +178,6 @@ abstract class BossJelly(type: EntityType<out BossJelly>, level: Level) : BasicJ
                 }
             }
         }
-
-
         return super.hurt(source, amount)
     }
 
@@ -184,13 +193,13 @@ abstract class BossJelly(type: EntityType<out BossJelly>, level: Level) : BasicJ
     }
 
     fun setFaint(flag: Boolean = true) {
-        faint = if (flag) FAINT_TICKS else 0
+        faint = if (flag) MAX_FAINT_TICKS else 0
     }
 
     override fun getFaintProgress(): Float {
-        return if (awake) faint.toFloat() / FAINT_TICKS else 0.5f
+        return if (awake) faint.toFloat() / MAX_FAINT_TICKS else 0.5f
     }
-    
+
     //是否激活状态
     fun isActive() = faint == 0 && awake
     override fun isPushable(): Boolean = false

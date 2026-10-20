@@ -180,4 +180,9 @@ object CUtils {
         }
         return hash.toInt()
     }
+
+    fun <T, V : Any> T.applyIfNotNull(value: V?, action: T.(V) -> Unit): T {
+        if (value != null) action(value)
+        return this
+    }
 }
