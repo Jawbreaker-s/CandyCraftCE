@@ -27,7 +27,8 @@ flk = "1.12.3+kotlin.2.0.21"
 jei = "15.2.0.25"
 mixin = "0.8.5"
 fabricClothConfig = "11.1.136"
-
+jadeForge = "11.13.3+forge"
+jadeFabric = "11.13.3+fabric"
 [libraries]
 minecraft = { group = "com.mojang", name = "minecraft", version.ref = "minecraft" }
 fabricLoader = { group = "net.fabricmc", name = "fabric-loader", version.ref = "fabricLoader" }
@@ -44,7 +45,9 @@ jeiFabricApi = { group = "mezz.jei", name = "jei-1.20.1-fabric-api", version.ref
 jeiFabric = { group = "mezz.jei", name = "jei-1.20.1-fabric", version.ref = "jei" }
 jeiForgeApi = { group = "mezz.jei", name = "jei-1.20.1-forge-api", version.ref = "jei" }
 jeiForge = { group = "mezz.jei", name = "jei-1.20.1-forge", version.ref = "jei" }
-
+#jade maven.modrinth:jade:${project.jade_version}
+jadeForge = { group = "maven.modrinth", name = "jade", version.ref = "jadeForge" }
+jadeFabric = { group = "maven.modrinth", name = "jade", version.ref = "jadeFabric" }
 
 [plugins]
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

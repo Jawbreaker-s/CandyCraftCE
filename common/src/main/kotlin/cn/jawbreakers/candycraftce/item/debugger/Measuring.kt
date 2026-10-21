@@ -26,19 +26,19 @@ import net.minecraft.world.level.Level
  */
 object Measuring : DebugFunc("measuring") {
 
-    override val displayName: Component = translatable(description)
+    override val displayName: Component = translatable(descriptionId)
         .withStyle(ChatFormatting.AQUA)
         .translate("Measuring", "测距")
-    val set_tip: Component = translatable("$description.set")
+    val set_tip: Component = translatable("$descriptionId.set")
         .withStyle(YELLOW)
         .translate("Left Click to set zero", "左键 设置调零")
-    val reset_tip: Component = translatable("$description.reset")
+    val reset_tip: Component = translatable("$descriptionId.reset")
         .withStyle(YELLOW)
         .translate("Press Shift+Left Click to reset", "SHIFT+左键 清除调零")
-    val get_tip: Component = translatable("$description.get")
+    val get_tip: Component = translatable("$descriptionId.get")
         .withStyle(YELLOW)
         .translate("Right Click to measure coords", "右键 获取坐标")
-    val zero_tip_pre: Component = translatable("$description.zero_pre")
+    val zero_tip_pre: Component = translatable("$descriptionId.zero_pre")
         .withStyle(GREEN)
         .translate("Zero Pos: ", "当前零点: ")
 

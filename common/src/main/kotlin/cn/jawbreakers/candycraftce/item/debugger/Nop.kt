@@ -18,7 +18,7 @@ import net.minecraft.world.level.Level
  *
  */
 object Nop : DebugFunc("nop") {
-    override val displayName: Component = Component.translatable(description)
+    override val displayName: Component = Component.translatable(descriptionId)
         .withStyle(ChatFormatting.GRAY)
         .translate("Nop", "无操作")
 

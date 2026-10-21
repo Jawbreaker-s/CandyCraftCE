@@ -29,16 +29,16 @@ import kotlin.time.measureTime
  *
  */
 object PortalTest : DebugFunc("portal_test") {
-    override val displayName: Component = Component.translatable(description)
+    override val displayName: Component = Component.translatable(descriptionId)
         .withStyle(ChatFormatting.LIGHT_PURPLE)
         .translate("Portal Test", "传送门测试")
-    val test_tip: Component = Component.translatable("$description.test")
+    val test_tip: Component = Component.translatable("$descriptionId.test")
         .withStyle(ChatFormatting.YELLOW)
         .translate("Right Click to Find Portal", "右键点击寻找传送门")
-    val notfound_tip: Component = Component.translatable("$description.notfound")
+    val notfound_tip: Component = Component.translatable("$descriptionId.notfound")
         .withStyle(ChatFormatting.RED)
         .translate("Portal Frame not found", "未找到传送门框架")
-    val found_tip: Component = Component.translatable("$description.found")
+    val found_tip: Component = Component.translatable("$descriptionId.found")
         .withStyle(ChatFormatting.GREEN)
         .translate("Portal Frame found", "传送门框架已找到")
 

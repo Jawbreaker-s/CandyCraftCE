@@ -101,7 +101,7 @@ abstract class BossJelly(type: EntityType<out BossJelly>, level: Level) : BasicJ
     open fun onServerAwakeTick() {
         //防止跳的太高导致脱战
         if (target.let { it == null || !mayAttack(it) }) {
-            lostTargetTicks--
+            lostTargetTicks++
             val remainLostTicks = MAX_LOST_TARGET_TICKS - lostTargetTicks  //d越来越小
             //最后一段时间，让Boss逐渐进入昏迷状态
             if (remainLostTicks <= HALF_FAINT_TICKS) {
@@ -110,6 +110,8 @@ abstract class BossJelly(type: EntityType<out BossJelly>, level: Level) : BasicJ
             if (lostTargetTicks >= MAX_LOST_TARGET_TICKS) {
                 awake = false
             }
+        } else {
+            lostTargetTicks = 0
         }
     }
 

@@ -1,10 +1,4 @@
-import groovy.xml.dom.DOMCategory.attributes
 import org.gradle.internal.extensions.stdlib.capitalized
-import org.gradle.kotlin.dsl.ext
-import org.gradle.kotlin.dsl.jar
-import org.gradle.kotlin.dsl.libs
-import org.gradle.kotlin.dsl.neoForge
-import org.gradle.kotlin.dsl.sourceSets
 
 plugins {
     id("multiloader-loader")
@@ -81,7 +75,8 @@ neoForge {
 
 dependencies {
     modImplementation(libs.kff)
-//    modRuntimeOnly(libs.jeiForge)
-//    modCompileOnly(libs.jeiForgeApi)
+    modRuntimeOnly(libs.jeiForge)
+    modCompileOnly(libs.jeiForgeApi)
+    modImplementation(libs.jadeForge)
     annotationProcessor(variantOf(libs.mixin) { classifier("processor") })
 }

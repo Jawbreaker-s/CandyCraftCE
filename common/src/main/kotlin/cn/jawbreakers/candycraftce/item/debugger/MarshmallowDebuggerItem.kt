@@ -1,6 +1,7 @@
 package cn.breadnicecat.candycraftce.core.item.items.debugger
 
 import cn.breadnicecat.candycraftce.core.item.items.debugger.DebugFunc.Companion.DEBUG_TRANS_PREFIX
+import cn.jawbreakers.candycraftce.item.debugger.ListBlocks
 import cn.jawbreakers.candycraftce.item.debugger.SliceChunk
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils.translate
 import cn.jawbreakers.candycraftce.utils.CUtils.useCompound
@@ -43,6 +44,7 @@ class MarshmallowDebuggerItem(properties: Properties) : Item(properties) {
             add(Measuring)
             add(PortalTest)
             add(SliceChunk)
+            add(ListBlocks)
         }
 
     }

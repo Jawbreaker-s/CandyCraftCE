@@ -24,13 +24,13 @@ import kotlin.time.measureTime
  * Project: CandyCraftCE
  */
 object SliceChunk : DebugFunc("slice_chunk") {
-    override val displayName = Component.translatable(description)
+    override val displayName = Component.translatable(descriptionId)
         .withStyle(ChatFormatting.RED, ChatFormatting.BOLD)
         .translate("Slice Chunk", "区块切片")
-    val confirm_tip: Component = Component.translatable("$description.confirm")
+    val confirm_tip: Component = Component.translatable("$descriptionId.confirm")
         .withStyle(ChatFormatting.GOLD)
         .translate("Right-click the block again to confirm", "再次右键该方块确认操作")
-    val radius_tip: Component = Component.translatable("$description.radius")
+    val radius_tip: Component = Component.translatable("$descriptionId.radius")
         .withStyle(ChatFormatting.GREEN)
         .translate("Chunk Radius: ", "区块半径: ")
     const val MAX_RADIUS = 2

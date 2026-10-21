@@ -215,6 +215,7 @@
   "fluid.candycraftce.caramel": "焦糖",
   "fluid.candycraftce.grenadine": "红石榴糖浆",
   "idebugger.candycraftce.current_func": "当前模式: ",
+  "idebugger.candycraftce.fun.list_blocks": "枚举方块",
   "idebugger.candycraftce.fun.measuring": "测距",
   "idebugger.candycraftce.fun.measuring.get": "右键 获取坐标",
   "idebugger.candycraftce.fun.measuring.reset": "SHIFT+左键 清除调零",

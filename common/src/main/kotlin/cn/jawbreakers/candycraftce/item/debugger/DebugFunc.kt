@@ -27,7 +27,7 @@ abstract class DebugFunc(val id: String) {
             .translate("Taking: ", "耗时: ")
     }
 
-    protected val description by lazy { "$DEBUG_TRANS_PREFIX.fun.${id}" }
+    protected val descriptionId by lazy { "$DEBUG_TRANS_PREFIX.fun.${id}" }
     abstract val displayName: Component
 
     /**

@@ -24,6 +24,8 @@ dependencies {
     modRuntimeOnly(libs.jeiFabric)
     modCompileOnly(libs.jeiFabricApi)
 
+    modImplementation(libs.jadeFabric)
+
     modImplementation("libs:ReservoirAPI:1.0-beta3")
     modRuntimeOnly("libs:BetterTags-1.20.1-Fabric:1.3")
 

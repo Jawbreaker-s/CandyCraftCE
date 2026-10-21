@@ -20,6 +20,7 @@ dependencies {
     compileOnly(libs.mixin)
     compileOnly(libs.jeiCommonApi)
     runtimeOnly(libs.jeiCommon)
+    compileOnly(libs.jadeForge)
 }
 
 configurations {

@@ -407,19 +407,19 @@ object CBlocks {
         SpikesBlock(properties(sugar_spikes.get()).mapColor(MapColor.TERRACOTTA_RED), 2, true)
     }.cutout().minable(PICKAXE)
     val trampojelly = register("trampojelly") {
-        JellyBlock(JellyType.GREEN, jelly(MapColor.COLOR_GREEN))
+        JellyBlock(JellyType.GREEN, hardJelly(MapColor.COLOR_GREEN))
     }.transparent()
     val purple_trampojelly = register("purple_trampojelly") {
-        JellyBlock(JellyType.PURPLE, jelly(MapColor.COLOR_PURPLE).lightLevel { _ -> 13 })
+        JellyBlock(JellyType.PURPLE, hardJelly(MapColor.COLOR_PURPLE).lightLevel { _ -> 13 })
     }.transparent()
     val red_trampojelly = register("red_trampojelly") {
-        JellyBlock(JellyType.RED, jelly(MapColor.COLOR_RED))
+        JellyBlock(JellyType.RED, hardJelly(MapColor.COLOR_RED))
     }.transparent()
     val yellow_trampojelly = register("yellow_trampojelly") {
-        JellyBlock(JellyType.YELLOW, jelly(MapColor.COLOR_YELLOW))
+        JellyBlock(JellyType.YELLOW, hardJelly(MapColor.COLOR_YELLOW))
     }.transparent()
     val jelly_shock_absorber = register("jelly_shock_absorber") {
-        JellyBlock(JellyType.BLUE, jelly(MapColor.COLOR_LIGHT_BLUE))
+        JellyBlock(JellyType.BLUE, hardJelly(MapColor.COLOR_LIGHT_BLUE))
     }.transparent()
     val grenadine_ice = register("grenadine_ice") {
         IceBlock(properties(Blocks.ICE).mapColor(MapColor.COLOR_RED))
@@ -431,7 +431,7 @@ object CBlocks {
     val banana_block = register("banana_block", hay(MapColor.COLOR_YELLOW))
         .minable(HOE)
     val chewing_gum_block = register("chewing_gum_block") {
-        ChewingGumBlock(jelly(MapColor.COLOR_PINK))
+        ChewingGumBlock(jelly(MapColor.COLOR_PINK).strength(1f))
     }.minable(HOE)
     val candied_cherry_sack = register("candied_cherry_sack", hay(MapColor.COLOR_RED))
         .minable(HOE)
@@ -595,10 +595,10 @@ object CBlocks {
 
     val lollipop_fruit = register("lollipop_fruit") {
         LollipopBlock(plant(MapColor.COLOR_PINK))
-    }
+    }.cutout()
     val lollipop_stem = register("lollipop_stem") {
         LollipopStemBlock(plant(MapColor.COLOR_PINK).randomTicks())
-    }.noSimpleItem()
+    }.noSimpleItem().cutout()
     val dragibus_crops = register("dragibus_crops") {
         DragibusCropsBlock(plant(MapColor.COLOR_RED).randomTicks())
     }.cutout().noSimpleItem()
@@ -645,8 +645,11 @@ object CBlocks {
     private fun iron(color: MapColor) = properties(Blocks.IRON_BLOCK).mapColor(color)
     private fun iceCream(color: MapColor) = properties(Blocks.SNOW_BLOCK).mapColor(color)
     private fun leaves(color: MapColor) = properties(Blocks.OAK_LEAVES).mapColor(color)
-    private fun jelly(color: MapColor) = properties(Blocks.SLIME_BLOCK).mapColor(color)
-        .strength(3.0F, 2000.0F)/*todo sound .sound(CCSoundTypes.JELLY)*/.noOcclusion()
+    private fun jelly(color: MapColor) =
+        properties(Blocks.SLIME_BLOCK).mapColor(color).strength(0.5f)/*todo sound .sound(CCSoundTypes.JELLY)*/
+            .noOcclusion()
+
+    private fun hardJelly(color: MapColor) = jelly(color).strength(2.5F, 1000.0F)
 
     //=================================
     fun register(name: String, properties: Properties = properties()): Entry<Block> =

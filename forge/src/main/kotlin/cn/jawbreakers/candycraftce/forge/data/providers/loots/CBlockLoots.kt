@@ -178,21 +178,25 @@ class CBlockLoots : BlockLootSubProvider(setOf(), FeatureFlags.REGISTRY.allFlags
                         )
 
                     val full = ifCut(0)
+                    val condition = HAS_SILK_TOUCH.and(full)
                     add(
                         block,
                         applyExplosionDecay(
                             block,
-                            createSilkTouchDispatchTable(
-                                block,
-                                LootItem.lootTableItem(block).`when`(full)
-                            ).withPool(
-                                LootPool.lootPool().`when`(HAS_NO_SILK_TOUCH.or(full.invert())).setRolls(exactly(1f))
-                                    .add(LootItem.lootTableItem(slice))
-                                    .apply(PlacedCutableJellyBlock.CUTS.possibleValues) { cuts ->
-                                        setCount(exactly(PlacedCutableJellyBlock.MAX_CUTS - cuts + 1f))
-                                            .`when`(ifCut(cuts))
-                                    }
-                            )
+                            LootTable.lootTable()
+                                .withPool(
+                                    LootPool.lootPool().`when`(condition)
+                                        .add(LootItem.lootTableItem(block))
+                                )
+                                .withPool(
+                                    LootPool.lootPool().`when`(condition.invert())
+                                        .setRolls(exactly(1f))
+                                        .add(LootItem.lootTableItem(slice))
+                                        .apply(PlacedCutableJellyBlock.CUTS.possibleValues) { cuts ->
+                                            setCount(exactly(PlacedCutableJellyBlock.MAX_CUTS - cuts + 1f))
+                                                .`when`(ifCut(cuts))
+                                        }
+                                )
                         )
                     )
                 }

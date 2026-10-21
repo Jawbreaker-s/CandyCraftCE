@@ -215,6 +215,7 @@
   "fluid.candycraftce.caramel": "Caramel",
   "fluid.candycraftce.grenadine": "Grenadine",
   "idebugger.candycraftce.current_func": "Current Mode: ",
+  "idebugger.candycraftce.fun.list_blocks": "List Blocks",
   "idebugger.candycraftce.fun.measuring": "Measuring",
   "idebugger.candycraftce.fun.measuring.get": "Right Click to measure coords",
   "idebugger.candycraftce.fun.measuring.reset": "Press Shift+Left Click to reset",

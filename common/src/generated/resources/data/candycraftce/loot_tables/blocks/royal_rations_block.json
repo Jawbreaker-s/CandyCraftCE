@@ -8,43 +8,37 @@
   "pools": [
     {
       "bonus_rolls": 0.0,
-      "entries": [
+      "conditions": [
         {
-          "type": "minecraft:alternatives",
-          "children": [
+          "condition": "minecraft:all_of",
+          "terms": [
             {
-              "type": "minecraft:item",
-              "conditions": [
-                {
-                  "condition": "minecraft:match_tool",
-                  "predicate": {
-                    "enchantments": [
-                      {
-                        "enchantment": "minecraft:silk_touch",
-                        "levels": {
-                          "min": 1
-                        }
-                      }
-                    ]
+              "condition": "minecraft:match_tool",
+              "predicate": {
+                "enchantments": [
+                  {
+                    "enchantment": "minecraft:silk_touch",
+                    "levels": {
+                      "min": 1
+                    }
                   }
-                }
-              ],
-              "name": "candycraftce:royal_rations"
+                ]
+              }
             },
             {
-              "type": "minecraft:item",
-              "conditions": [
-                {
-                  "block": "candycraftce:royal_rations_block",
-                  "condition": "minecraft:block_state_property",
-                  "properties": {
-                    "cuts": "0"
-                  }
-                }
-              ],
-              "name": "candycraftce:royal_rations"
+              "block": "candycraftce:royal_rations_block",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "cuts": "0"
+              }
             }
           ]
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "candycraftce:royal_rations"
         }
       ],
       "rolls": 1.0
@@ -53,11 +47,11 @@
       "bonus_rolls": 0.0,
       "conditions": [
         {
-          "condition": "minecraft:any_of",
-          "terms": [
-            {
-              "condition": "minecraft:inverted",
-              "term": {
+          "condition": "minecraft:inverted",
+          "term": {
+            "condition": "minecraft:all_of",
+            "terms": [
+              {
                 "condition": "minecraft:match_tool",
                 "predicate": {
                   "enchantments": [
@@ -69,19 +63,16 @@
                     }
                   ]
                 }
-              }
-            },
-            {
-              "condition": "minecraft:inverted",
-              "term": {
+              },
+              {
                 "block": "candycraftce:royal_rations_block",
                 "condition": "minecraft:block_state_property",
                 "properties": {
                   "cuts": "0"
                 }
               }
-            }
-          ]
+            ]
+          }
         }
       ],
       "entries": [
