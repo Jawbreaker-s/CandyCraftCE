@@ -13,6 +13,7 @@ import net.minecraft.world.level.material.Fluid
  * */
 object CItemTags {
     val candy_leaf = bind("candy_leaves")
+    val sugary = bind("sugary")
     internal fun bind(name: String): TagKey<Item> {
         return TagKey.create(Registries.ITEM, name.modLoc())
     }

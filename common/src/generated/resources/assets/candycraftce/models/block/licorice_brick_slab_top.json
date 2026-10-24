@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/slab_top",
-  "textures": {
-    "bottom": "candycraftce:block/licorice_brick",
-    "side": "candycraftce:block/licorice_brick",
-    "top": "candycraftce:block/licorice_brick"
-  }
-}

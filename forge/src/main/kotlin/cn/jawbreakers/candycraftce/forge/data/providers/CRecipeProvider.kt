@@ -79,7 +79,7 @@ class CRecipeProvider(output: PackOutput) : RecipeProvider(output) {
                         cube(BUILDING_BLOCKS, 1, 3, licorice.setUnlockBy())
                             .save()
                     }
-                    licorice_brick.madeWith {
+                    licorice_bricks.madeWith {
                         cube(BUILDING_BLOCKS, 4, 2, licorice_block.setUnlockBy())
                             .save()
                     }
@@ -109,6 +109,34 @@ class CRecipeProvider(output: PackOutput) : RecipeProvider(output) {
                             .pattern("#*#")
                             .define('#', CItems.cranberry_scale.get())
                             .define('*', CItems.sugar_crystal.setUnlockBy())
+                            .save()
+                    }
+                    marshmallow_rope.madeWith {
+                        shaped(DECORATIONS, 2)
+                            .pattern(" #")
+                            .pattern(" #")
+                            .pattern(" #")
+                            .define('#', CBlockTags.marshmallow_planks.item.setUnlockBy())
+                            .save()
+                    }
+                    sugar_factory.madeWith {
+                        shaped(DECORATIONS)
+                            .pattern("*/*")
+                            .pattern("/o/")
+                            .pattern("*/*")
+                            .define('*', licorice.setUnlockBy())
+                            .define('/', marshmallow_stick.get())
+                            .define('o', candy_cane_family.wall!!.get())
+                            .save()
+                    }
+                    advanced_sugar_factory.madeWith {
+                        shaped(DECORATIONS)
+                            .pattern("*/*")
+                            .pattern("/o/")
+                            .pattern("*/*")
+                            .define('*', red_trampojelly.get())
+                            .define('/', candied_cherry.get())
+                            .define('o', sugar_factory.setUnlockBy())
                             .save()
                     }
 

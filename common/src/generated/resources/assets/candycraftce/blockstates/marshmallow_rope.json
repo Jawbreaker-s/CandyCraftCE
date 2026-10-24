@@ -1,0 +1,87 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "candycraftce:block/marshmallow_rope",
+        "x": 90,
+        "y": 90
+      },
+      "when": {
+        "axis": "x"
+      }
+    },
+    {
+      "apply": {
+        "model": "candycraftce:block/marshmallow_rope"
+      },
+      "when": {
+        "axis": "y"
+      }
+    },
+    {
+      "apply": {
+        "model": "candycraftce:block/marshmallow_rope",
+        "x": 90
+      },
+      "when": {
+        "axis": "z"
+      }
+    },
+    {
+      "apply": {
+        "model": "candycraftce:block/marshmallow_rope_connector"
+      },
+      "when": {
+        "up": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "candycraftce:block/marshmallow_rope_connector",
+        "x": 180
+      },
+      "when": {
+        "down": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "candycraftce:block/marshmallow_rope_connector",
+        "x": 90
+      },
+      "when": {
+        "north": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "candycraftce:block/marshmallow_rope_connector",
+        "x": 90,
+        "y": 180
+      },
+      "when": {
+        "south": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "candycraftce:block/marshmallow_rope_connector",
+        "x": 90,
+        "y": 90
+      },
+      "when": {
+        "east": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "candycraftce:block/marshmallow_rope_connector",
+        "x": 90,
+        "y": 270
+      },
+      "when": {
+        "west": "true"
+      }
+    }
+  ]
+}

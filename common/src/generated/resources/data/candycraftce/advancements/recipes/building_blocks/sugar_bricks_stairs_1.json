@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_sugar_bricks": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "candycraftce:sugar_bricks"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "candycraftce:sugar_bricks_stairs_1"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_sugar_bricks",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "candycraftce:sugar_bricks_stairs_1"
+    ]
+  },
+  "sends_telemetry_event": false
+}

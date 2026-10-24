@@ -7,6 +7,7 @@ import cn.jawbreakers.candycraftce.registry.CBlocks
 import cn.jawbreakers.candycraftce.registry.CItems
 import cn.jawbreakers.candycraftce.utils.CUtils.applyIfNotNull
 import cn.jawbreakers.candycraftce.utils.EntrySet
+import cn.jawbreakers.candycraftce.utils.entrySetOf
 import cn.jawbreakers.candycraftce.utils.registry.Entry
 import net.minecraft.advancements.critereon.StatePropertiesPredicate
 import net.minecraft.data.loot.BlockLootSubProvider
@@ -241,7 +242,7 @@ class CBlockLoots : BlockLootSubProvider(setOf(), FeatureFlags.REGISTRY.allFlags
                     candy_cane_family,
                     sugar_block,
                     sugar_family,
-                    sugar_brick,
+                    sugar_bricks,
                     sugar_brick_family,
                     cotton_candy_block,
                     cotton_candy_family,
@@ -251,7 +252,7 @@ class CBlockLoots : BlockLootSubProvider(setOf(), FeatureFlags.REGISTRY.allFlags
                     caramel_bricks_family,
                     licorice_block,
                     licorice_family,
-                    licorice_brick,
+                    licorice_bricks,
                     licorice_brick_family,
                     nougat_block,
                     chiseled_nougat_block,
@@ -272,6 +273,12 @@ class CBlockLoots : BlockLootSubProvider(setOf(), FeatureFlags.REGISTRY.allFlags
                     strawberry_ice_cream_family,
                     sugar_spikes,
                     cranberry_spikes,
+                    marshmallow_rope,
+                    chocolate_furnace,
+                    licorice_furnace,
+                    white_chocolate_furnace,
+                    sugar_factory,
+                    advanced_sugar_factory,
                     trampojelly,
                     red_trampojelly,
                     purple_trampojelly,
@@ -308,6 +315,9 @@ class CBlockLoots : BlockLootSubProvider(setOf(), FeatureFlags.REGISTRY.allFlags
                         is EntrySet<*> -> it.forEach { b -> dropSelf(b as Block) }
                         else -> error("Unsupported type: $it")
                     }
+                }
+                entrySetOf(cotton_candy_web).forEach {
+                    add(it, noDrop())
                 }
             }
         }

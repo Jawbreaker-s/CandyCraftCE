@@ -1,4 +1,4 @@
-// 1.20.1	2026-10-20T22:27:46.1832348	Tags for minecraft:block mod id candycraftce
+// 1.20.1	2026-10-24T21:10:12.844151	Tags for minecraft:block mod id candycraftce
 16cf551a654629af4afa9b39f84d8efe1a755864 data/candycraftce/tags/blocks/candy_animal_spawnable_on.json
 02382e15a9f7e25129cbee2ce449ef98b95f5079 data/candycraftce/tags/blocks/candy_leaves.json
 995ce92b7c885df1b1053501bc4dc8e265cb4fa7 data/candycraftce/tags/blocks/candy_portal_frame.json
@@ -12,6 +12,7 @@
 627b2634040eefab245dcdef45a6417c3e7ea202 data/candycraftce/tags/blocks/marshmallow_planks.json
 bfd5357fc50d18b8b35513ae01fa1f3735c4cb6a data/candycraftce/tags/blocks/seaweed_soil.json
 d43a0669c974d511ad530c8d020d2ad1da145903 data/candycraftce/tags/blocks/sweet_grass.json
+b9769096a68419aa474b706a1888cc4ed69de98f data/minecraft/tags/blocks/climbable.json
 f1ea29394f80fdfe6aaad1d94766b86382e2a6d3 data/minecraft/tags/blocks/doors.json
 83f95e33f0c036613527e759c32710536d33fd3e data/minecraft/tags/blocks/fences.json
 93ad824785dbd6e365a118e8fa4940d4b91a2141 data/minecraft/tags/blocks/fence_gates.json
@@ -19,15 +20,15 @@ e239bb19a4c06de63f1b5f4ce5bafed1857bfc57 data/minecraft/tags/blocks/leaves.json
 d86902757e0f08ca392972d59c12da7849134b1a data/minecraft/tags/blocks/logs.json
 48d6a7920492c87e0695c0ef96ec05e849a263a9 data/minecraft/tags/blocks/mineable/axe.json
 0ced9689fba917eb37500e16fce0ad012e08451f data/minecraft/tags/blocks/mineable/hoe.json
-90b76b75ed8eee72a086da940eb37ff6ffeb6a75 data/minecraft/tags/blocks/mineable/pickaxe.json
+eb939f6e7119494f6098ee3833710aecbd2b4061 data/minecraft/tags/blocks/mineable/pickaxe.json
 2052137c8b44e685bfc59c8ed59690590bd35134 data/minecraft/tags/blocks/mineable/shovel.json
 be6f9612730e4a2fba1fd5e3cce83b44a9e240a2 data/minecraft/tags/blocks/needs_diamond_tool.json
 45168ae1787fa92f800ee20de314ddcb5154836c data/minecraft/tags/blocks/needs_iron_tool.json
-10378ea70c2e2827705dba2defc526bf560b7b05 data/minecraft/tags/blocks/needs_stone_tool.json
+02bd8290cfbb66f8ef940076ee73d15de2e47ed3 data/minecraft/tags/blocks/needs_stone_tool.json
 05a780ab57dd57e87f9c14d0d0a3ebf130bc1f15 data/minecraft/tags/blocks/signs.json
-4e39189fde009470daff5715bc22abe44591dc53 data/minecraft/tags/blocks/slabs.json
-9448005fa72e17702f61bc46aa555f00cdb0bd9b data/minecraft/tags/blocks/stairs.json
+4af789e3f59264e038d3943f4710a0bcffbfd9db data/minecraft/tags/blocks/slabs.json
+8e283e58f3b61560a81de27a0bfb16318a678c10 data/minecraft/tags/blocks/stairs.json
 f5ab4698cba812c0144b8bea85259e327702bbc3 data/minecraft/tags/blocks/standing_signs.json
 1a06c53f07fbc4dfd1b4052135a05a75360ec156 data/minecraft/tags/blocks/trapdoors.json
-272080eb151faf9fa733a1a3e03917a00a66439d data/minecraft/tags/blocks/walls.json
+cd79ea4aec0c84927967dd3cc82856a7c715ec1a data/minecraft/tags/blocks/walls.json
 be6bd9b8228efc1bd255b09b062cd23b2195d00d data/minecraft/tags/blocks/wall_signs.json

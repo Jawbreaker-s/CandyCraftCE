@@ -1,0 +1,28 @@
+{
+  "variants": {
+    "facing=east,lit=false": {
+      "model": "candycraftce:block/chocolate_furnace"
+    },
+    "facing=east,lit=true": {
+      "model": "candycraftce:block/chocolate_furnace_on"
+    },
+    "facing=north,lit=false": {
+      "model": "candycraftce:block/chocolate_furnace"
+    },
+    "facing=north,lit=true": {
+      "model": "candycraftce:block/chocolate_furnace_on"
+    },
+    "facing=south,lit=false": {
+      "model": "candycraftce:block/chocolate_furnace"
+    },
+    "facing=south,lit=true": {
+      "model": "candycraftce:block/chocolate_furnace_on"
+    },
+    "facing=west,lit=false": {
+      "model": "candycraftce:block/chocolate_furnace"
+    },
+    "facing=west,lit=true": {
+      "model": "candycraftce:block/chocolate_furnace_on"
+    }
+  }
+}

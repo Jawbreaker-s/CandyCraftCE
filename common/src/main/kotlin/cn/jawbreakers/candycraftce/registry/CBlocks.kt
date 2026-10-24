@@ -13,6 +13,7 @@ import cn.jawbreakers.candycraftce.utils.registry.Entry
 import cn.jawbreakers.candycraftce.utils.registry.LazyEntry
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.util.valueproviders.UniformInt
+import net.minecraft.world.item.Items
 import net.minecraft.world.level.ItemLike
 import net.minecraft.world.level.block.*
 import net.minecraft.world.level.block.Blocks.BEDROCK
@@ -156,11 +157,11 @@ object CBlocks {
         wall = { properties(Blocks.SANDSTONE) },
         mapColor = MapColor.SNOW
     ).minable(PICKAXE)
-    val sugar_brick = register("sugar_brick", properties(Blocks.SANDSTONE).mapColor(MapColor.SNOW))
+    val sugar_bricks = register("sugar_bricks", properties(Blocks.SANDSTONE).mapColor(MapColor.SNOW))
         .minable(PICKAXE)
     val sugar_brick_family = registerFamily(
-        "sugar_brick",
-        sugar_brick,
+        "sugar_bricks",
+        sugar_bricks,
         stairs = { properties(Blocks.SANDSTONE_STAIRS) },
         slab = { properties(Blocks.SANDSTONE_SLAB) },
         wall = { properties(Blocks.SANDSTONE) },
@@ -206,13 +207,13 @@ object CBlocks {
         slab = { properties(licorice_block.get()) },
         mapColor = MapColor.COLOR_BLACK
     ).minable(PICKAXE, STONE)
-    val licorice_brick = register("licorice_brick", stone(MapColor.COLOR_BLACK))
+    val licorice_bricks = register("licorice_bricks", stone(MapColor.COLOR_BLACK))
         .minable(PICKAXE, STONE)
     val licorice_brick_family = registerFamily(
-        "licorice_brick",
-        licorice_brick,
-        stairs = { properties(licorice_brick.get()) },
-        slab = { properties(licorice_brick.get()) },
+        "licorice_bricks",
+        licorice_bricks,
+        stairs = { properties(licorice_bricks.get()) },
+        slab = { properties(licorice_bricks.get()) },
         mapColor = MapColor.COLOR_BLACK
     ).minable(PICKAXE, STONE)
 
@@ -406,6 +407,12 @@ object CBlocks {
     val cranberry_spikes = register("cranberry_spikes") {
         SpikesBlock(properties(sugar_spikes.get()).mapColor(MapColor.TERRACOTTA_RED), 2, true)
     }.cutout().minable(PICKAXE)
+    val cotton_candy_web = register("cotton_candy_web") {
+        WebBlock(properties(Blocks.COBWEB))
+    }.cutout()
+    val marshmallow_rope = register("marshmallow_rope") {
+        MarshmallowRopeBlock(properties(marshmallow_ladder.get()))
+    }.cutout()
     val trampojelly = register("trampojelly") {
         JellyBlock(JellyType.GREEN, hardJelly(MapColor.COLOR_GREEN))
     }.transparent()
@@ -531,8 +538,24 @@ object CBlocks {
     val white_nougat_ore = register("white_nougat_ore") {
         DropExperienceBlock(stone(MapColor.TERRACOTTA_WHITE).strength(3.0F, 5.0F), UniformInt.of(1, 2))
     }.minable(PICKAXE, IRON)
-    //plants
+    val sugar_factory = register("sugar_factory") {
+        SugarFactoryBlock(properties(candy_cane_block.get()))
+    }.minable(PICKAXE)
+    val advanced_sugar_factory = register("advanced_sugar_factory") {
+        AdvancedSugarFactoryBlock(properties(sugar_factory.get()))
+    }.minable(PICKAXE)
 
+    val chocolate_furnace = register("chocolate_furnace") {
+        LicoriceFurnaceBlock(properties(chocolate_stone.get()))
+    }
+    val white_chocolate_furnace = register("white_chocolate_furnace") {
+        LicoriceFurnaceBlock(properties(white_chocolate_stone.get()))
+    }
+    val licorice_furnace = register("licorice_furnace") {
+        LicoriceFurnaceBlock(properties(licorice_block.get()))
+    }
+
+    //plants
     val sweet_grass_pink = register("sweet_grass_pink") { CandyPlantBlock(plant(MapColor.COLOR_PINK)) }
         .cutout()
     val sweet_grass_pale = register("sweet_grass_pale") { CandyPlantBlock(plant(MapColor.COLOR_LIGHT_GRAY)) }
@@ -753,7 +776,7 @@ object CBlocks {
 
     //=================================
     fun Entry<out ItemLike>.asItemEntry() =
-        LazyEntry(id) { get().asItem() ?: error("Item not found for $id") }
+        LazyEntry(id) { get().asItem().takeIf { it != Items.AIR } ?: error("Item not found for $id") }
 
     fun Entry<out Block>.defaultBlockState(): BlockState = get().defaultBlockState()
     fun <T : EntrySet<Block>> T.minable(

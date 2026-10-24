@@ -12,8 +12,9 @@
   ],
   "client": [
     "item.ItemPropertiesAccessor", "loading_screen.MixinMinecraft", "loading_screen.MixinScreen",
-    "render.DimensionSpecialEffectsInjector", "render.LivingEntityRendererAccessor",
-    "render.MixinEntityRenderDispatcher", "render.MixinLevelRenderer", "render.RenderTypeAccessor"
+    "render.DimensionSpecialEffectsInjector", "render.LivingEntityRendererAccessor", "render.MenuScreensAccessor",
+    "render.MixinAbstractContainerScreen", "render.MixinEntityRenderDispatcher", "render.MixinLevelRenderer",
+    "render.RenderTypeAccessor"
   ],
   "server": [],
   "injectors": {

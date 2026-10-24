@@ -10,6 +10,7 @@ import net.minecraft.data.PackOutput
 import net.minecraft.data.tags.ItemTagsProvider
 import net.minecraft.world.level.block.Block
 import net.minecraftforge.common.data.ExistingFileHelper
+import net.minecraftforge.registries.ForgeRegistries
 import java.util.concurrent.CompletableFuture
 
 class CItemTagsProvider(
@@ -28,6 +29,14 @@ class CItemTagsProvider(
                     .add(chocolate_leaf.get())
                     .add(candied_cherry_leaf.get())
                     .add(white_chocolate_leaf.get())
+
+                tag(sugary)
+                    .add(
+                        *ForgeRegistries.ITEMS.entries
+                        .filter { it.key.location().namespace == MOD_ID }
+                        .map { it.value }
+                        .toTypedArray()
+                    )
             }
         }
         CBlockTags.apply {

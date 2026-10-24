@@ -4,6 +4,7 @@ import net.minecraft.resources.ResourceLocation
 import java.util.function.Supplier
 
 abstract class Entry<T>(val id: ResourceLocation) : Supplier<T> {
+    val name: String = id.path
     abstract val value: T
     override fun get(): T = value
     override fun equals(other: Any?): Boolean {
@@ -18,6 +19,10 @@ abstract class Entry<T>(val id: ResourceLocation) : Supplier<T> {
     override fun hashCode(): Int = id.hashCode()
     override fun toString(): String = id.toString()
 
+}
+
+abstract class DelegateEntry<T>(protected val entry: Entry<T>) : Entry<T>(entry.id) {
+    override val value: T get() = entry.get()
 }
 
 class EntryWrapper<T>(id: ResourceLocation, override val value: T) : Entry<T>(id) {

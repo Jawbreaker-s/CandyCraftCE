@@ -4,7 +4,9 @@ typealias Ticks = Int
 typealias Seconds = Float
 
 object TickUnit {
-    val Int.second: Ticks get() = this * 20
-    val Float.second: Ticks get() = (this * 20).toInt()
+    const val SEC2TICK = 20
+    const val TICK2SEC = 1f / 20f
+    val Int.second: Ticks get() = this * SEC2TICK
+    val Float.second: Ticks get() = (this * SEC2TICK).toInt()
     val Int.tick: Ticks get() = this
 }

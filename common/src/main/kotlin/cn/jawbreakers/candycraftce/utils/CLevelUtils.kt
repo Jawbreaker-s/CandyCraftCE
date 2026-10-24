@@ -36,12 +36,12 @@ object CLevelUtils {
     operator fun Vector3fc.component1() = x()
     operator fun Vector3fc.component2() = y()
     operator fun Vector3fc.component3() = z()
-    inline fun Level.ifClient(action: (ClientLevel) -> Unit) {
-        if (this is ClientLevel) action(this)
+    inline fun <R> Level.ifClient(action: (ClientLevel) -> R): R? {
+        return if (this is ClientLevel) action(this) else null
     }
 
-    inline fun Level.ifServer(action: (ServerLevel) -> Unit) {
-        if (this is ServerLevel) action(this)
+    inline fun <R> Level.ifServer(action: (ServerLevel) -> R): R? {
+        return if (this is ServerLevel) action(this) else null
     }
 
     fun spawnItemEntity(level: Level, pos: Vec3i, stack: ItemStack): ItemEntity? {

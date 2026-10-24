@@ -24,10 +24,14 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.effect.MobEffect
 import net.minecraft.world.entity.*
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier
+import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.SpawnEggItem
+import net.minecraft.world.item.crafting.Recipe
+import net.minecraft.world.item.crafting.RecipeSerializer
+import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityType
@@ -98,6 +102,26 @@ class CandyCraftCEFabric : ModInitializer, ICPlatForm {
     ) = object : SpawnEggItem(type.get(), backgroundColor, highlightColor, properties) {
         val desc: Component by lazy { Component.translatable(ICPlatForm.SPAWN_EGG_DESC, type.get().description) }
         override fun getDescription(): Component = desc
+    }
+
+    override fun <M : MenuType<*>> registerMenu(name: String, factory: Supplier<M>): Entry<M> {
+        return register("MenuType", name, factory::get) { id, it ->
+            BuiltInRegistries.MENU.register(id, it)
+        }
+    }
+
+    override fun <R : Recipe<*>, S : RecipeSerializer<R>> registerRecipe(
+        name: String,
+        type: RecipeType<R>,
+        serializer: Supplier<S>,
+    ): Pair<RecipeType<R>, Entry<S>> {
+        register("RecipeType", name, { type }) { id, it ->
+            BuiltInRegistries.RECIPE_TYPE.register(id, it)
+        }
+        val serializer = register("RecipeSerializer", name, serializer::get) { id, it ->
+            BuiltInRegistries.RECIPE_SERIALIZER.register(id, it)
+        }
+        return type to serializer
     }
 
 

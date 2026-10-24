@@ -98,6 +98,10 @@ class CBlockTagsProvider(
                 tag(BlockTags.LEAVES)
                     .addTag(candy_leaves)
 
+                tag(BlockTags.CLIMBABLE)
+                    .add(marshmallow_rope.get())
+                    .add(marshmallow_ladder.get())
+
                 CBlocks.families.forEach { f ->
                     f.sign?.also {
                         tag(BlockTags.SIGNS).add(it.get())
@@ -127,6 +131,6 @@ class CBlockTagsProvider(
     }
 }
 
-fun <T : Any> IntrinsicHolderTagsProvider.IntrinsicTagAppender<T>.add(vararg entry: Supplier<out T>) {
+fun <T : Any> IntrinsicHolderTagsProvider.IntrinsicTagAppender<T>.add(vararg entry: Supplier<out T>) = apply {
     entry.forEach { add(it.get()) }
 }

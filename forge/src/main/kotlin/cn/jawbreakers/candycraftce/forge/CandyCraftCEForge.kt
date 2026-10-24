@@ -1,6 +1,7 @@
 package cn.jawbreakers.candycraftce.forge
 
 import cn.jawbreakers.candycraftce.CandyCraftCE
+import cn.jawbreakers.candycraftce.CandyCraftCE.MOD_ID
 import cn.jawbreakers.candycraftce.forge.ForgeEntry.Companion.asEntry
 import cn.jawbreakers.candycraftce.forge.data.CandyCraftCEData
 import cn.jawbreakers.candycraftce.forge.fluid.CForgeFluids
@@ -20,8 +21,12 @@ import net.minecraft.network.chat.Component
 import net.minecraft.world.effect.MobEffect
 import net.minecraft.world.entity.*
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier
+import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.Item
+import net.minecraft.world.item.crafting.Recipe
+import net.minecraft.world.item.crafting.RecipeSerializer
+import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityType
@@ -42,7 +47,7 @@ import java.util.function.Consumer
 import java.util.function.Supplier
 
 
-@Mod(CandyCraftCE.MOD_ID)
+@Mod(MOD_ID)
 class CandyCraftCEForge : ICPlatForm {
     companion object {
         lateinit var instance: CandyCraftCEForge
@@ -61,13 +66,16 @@ class CandyCraftCEForge : ICPlatForm {
     override val datagen: ICPlatformDatagen? get() = if (DatagenModLoader.isRunningDataGen()) CandyCraftCEData else null
     override val clients: ICPlatFormClients? get() = if (isClient) CForgeClients else null
 
-    val items: DeferredRegister<Item> = create(ForgeRegistries.ITEMS, CandyCraftCE.MOD_ID)
-    val blocks: DeferredRegister<Block> = create(ForgeRegistries.BLOCKS, CandyCraftCE.MOD_ID)
-    val entities: DeferredRegister<EntityType<*>> = create(ForgeRegistries.ENTITY_TYPES, CandyCraftCE.MOD_ID)
-    val be: DeferredRegister<BlockEntityType<*>> = create(ForgeRegistries.BLOCK_ENTITY_TYPES, CandyCraftCE.MOD_ID)
-    val tabs: DeferredRegister<CreativeModeTab> = create(Registries.CREATIVE_MODE_TAB, CandyCraftCE.MOD_ID)
-    val particles: DeferredRegister<ParticleType<*>> = create(Registries.PARTICLE_TYPE, CandyCraftCE.MOD_ID)
-    val mobEffects: DeferredRegister<MobEffect> = create(ForgeRegistries.MOB_EFFECTS, CandyCraftCE.MOD_ID)
+    val items: DeferredRegister<Item> = create(ForgeRegistries.ITEMS, MOD_ID)
+    val blocks: DeferredRegister<Block> = create(ForgeRegistries.BLOCKS, MOD_ID)
+    val entities: DeferredRegister<EntityType<*>> = create(ForgeRegistries.ENTITY_TYPES, MOD_ID)
+    val be: DeferredRegister<BlockEntityType<*>> = create(ForgeRegistries.BLOCK_ENTITY_TYPES, MOD_ID)
+    val tabs: DeferredRegister<CreativeModeTab> = create(Registries.CREATIVE_MODE_TAB, MOD_ID)
+    val particles: DeferredRegister<ParticleType<*>> = create(Registries.PARTICLE_TYPE, MOD_ID)
+    val mobEffects: DeferredRegister<MobEffect> = create(ForgeRegistries.MOB_EFFECTS, MOD_ID)
+    val recipeTypes: DeferredRegister<RecipeType<*>> = create(ForgeRegistries.RECIPE_TYPES, MOD_ID)
+    val recipeSerializers: DeferredRegister<RecipeSerializer<*>> = create(ForgeRegistries.RECIPE_SERIALIZERS, MOD_ID)
+    val menus: DeferredRegister<MenuType<*>> = create(ForgeRegistries.MENU_TYPES, MOD_ID)
 
     val registries = listOf(items, blocks, entities, be, tabs, particles, mobEffects)
 
@@ -126,7 +134,20 @@ class CandyCraftCEForge : ICPlatForm {
     override fun <E : Entity> registerEntityType(key: String, type: Supplier<EntityType<E>>): Entry<EntityType<E>> =
         register(entities, key, type)
 
+    override fun <M : MenuType<*>> registerMenu(
+        name: String,
+        factory: Supplier<M>,
+    ): Entry<M> = register(menus, name, factory)
+
     private val attributes = hashMapOf<Entry<EntityType<out LivingEntity>>, Supplier<AttributeSupplier.Builder>>()
+    override fun <R : Recipe<*>, S : RecipeSerializer<R>> registerRecipe(
+        name: String,
+        type: RecipeType<R>,
+        serializer: Supplier<S>,
+    ): Pair<RecipeType<R>, Entry<S>> {
+        register(recipeTypes, name) { type }
+        return type to register(recipeSerializers, name, serializer)
+    }
 
     @Suppress("UNCHECKED_CAST")
     override fun <LE : LivingEntity> registerEntityAttribute(

@@ -32,10 +32,14 @@ import net.minecraft.tags.TagKey
 import net.minecraft.world.effect.MobEffect
 import net.minecraft.world.entity.*
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier
+import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.item.BucketItem
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.SpawnEggItem
+import net.minecraft.world.item.crafting.Recipe
+import net.minecraft.world.item.crafting.RecipeSerializer
+import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityType
@@ -142,6 +146,13 @@ interface ICPlatForm {
         highlightColor: Int,
         properties: Item.Properties,
     ): SpawnEggItem
+
+    fun <M : MenuType<*>> registerMenu(name: String, factory: Supplier<M>): Entry<M>
+    fun <R : Recipe<*>, S : RecipeSerializer<R>> registerRecipe(
+        name: String,
+        type: RecipeType<R>,
+        serializer: Supplier<S>,
+    ): Pair<RecipeType<R>, Entry<S>>
 }
 
 interface ICPlatformFluids {

@@ -3,6 +3,7 @@ package cn.jawbreakers.candycraftce.forge.data.providers
 import cn.jawbreakers.candycraftce.CandyCraftCE
 import cn.jawbreakers.candycraftce.block.CandyFarmlandBlock
 import cn.jawbreakers.candycraftce.block.CaramelPortalBlock
+import cn.jawbreakers.candycraftce.block.MarshmallowRopeBlock
 import cn.jawbreakers.candycraftce.block.PlacedCutableJellyBlock
 import cn.jawbreakers.candycraftce.forge.data.providers.CItemModelProvider.Companion.generated
 import cn.jawbreakers.candycraftce.registry.CBlocks
@@ -12,8 +13,10 @@ import cn.jawbreakers.candycraftce.utils.CUtils.key
 import cn.jawbreakers.candycraftce.utils.CUtils.mcLoc
 import cn.jawbreakers.candycraftce.utils.CUtils.modLoc
 import cn.jawbreakers.candycraftce.utils.registry.Entry
+import net.minecraft.core.Direction
 import net.minecraft.data.PackOutput
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.level.block.AbstractFurnaceBlock
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.GlassBlock
 import net.minecraft.world.level.block.IronBarsBlock
@@ -31,7 +34,7 @@ class CBlockStateProvider(output: PackOutput, val efHelper: ExistingFileHelper) 
             listOf(
                 pudding_block,
                 sugar_block,
-                sugar_brick,
+                sugar_bricks,
                 sugar_sand,
                 caramel_bricks,
                 marshmallow_planks,
@@ -43,7 +46,7 @@ class CBlockStateProvider(output: PackOutput, val efHelper: ExistingFileHelper) 
                 chiseled_nougat_block,
                 square_pattern_nougat_block,
                 licorice_block,
-                licorice_brick,
+                licorice_bricks,
                 strawberry_ice_cream,
                 mint_ice_cream,
                 blueberry_ice_cream,
@@ -76,6 +79,8 @@ class CBlockStateProvider(output: PackOutput, val efHelper: ExistingFileHelper) 
                 white_chocolate_leaves,
                 candied_cherry_leaves,
                 caramel_leaves,
+                sugar_factory,
+                advanced_sugar_factory,
             ).forEach { simpleBlockWithItem(it.get(), cubeAll(it.get())) }
             //side end
             listOf(candy_cane_block).forEach {
@@ -127,6 +132,7 @@ class CBlockStateProvider(output: PackOutput, val efHelper: ExistingFileHelper) 
                 sugar_essence_flower,
                 rope_raspberry,
                 mint,
+                cotton_candy_web,
                 banana_seaweed,
                 lollipop_fruit,
                 sugar_spikes, cranberry_spikes
@@ -296,6 +302,61 @@ class CBlockStateProvider(output: PackOutput, val efHelper: ExistingFileHelper) 
                 val model = models().cubeAll(it.id.path, "block/jelly_key_hole".modLoc())
                 simpleBlockWithItem(it.get(), model)
             }
+            marshmallow_rope.also {
+                val model = existModelFile(it.get())
+                val connector = existModelFile(it.get(), "_connector")
+                getMultipartBuilder(it.get())
+                    .part()
+                    .modelFile(model).rotationX(90).rotationY(90).addModel()
+                    .condition(MarshmallowRopeBlock.AXIS, Direction.Axis.X)
+                    .end()
+                    .part().modelFile(model).addModel()
+                    .condition(MarshmallowRopeBlock.AXIS, Direction.Axis.Y)
+                    .end()
+                    .part().modelFile(model).rotationX(90).addModel()
+                    .condition(MarshmallowRopeBlock.AXIS, Direction.Axis.Z)
+                    .end()
+                    .part().modelFile(connector).addModel()
+                    .condition(MarshmallowRopeBlock.UP, true)
+                    .end()
+                    .part().modelFile(connector).rotationX(180).addModel()
+                    .condition(MarshmallowRopeBlock.DOWN, true)
+                    .end()
+                    .part().modelFile(connector).rotationX(90).addModel()
+                    .condition(MarshmallowRopeBlock.NORTH, true)
+                    .end()
+                    .part().modelFile(connector).rotationX(90).rotationY(180).addModel()
+                    .condition(MarshmallowRopeBlock.SOUTH, true)
+                    .end()
+                    .part().modelFile(connector).rotationX(90).rotationY(90).addModel()
+                    .condition(MarshmallowRopeBlock.EAST, true)
+                    .end()
+                    .part().modelFile(connector).rotationX(90).rotationY(270).addModel()
+                    .condition(MarshmallowRopeBlock.WEST, true)
+                    .end()
+                itemModels().generated(it.asItemEntry())
+            }
+            listOf(
+                licorice_furnace, chocolate_furnace, white_chocolate_furnace
+            ).forEach {
+                val (top, side) = if (it == licorice_furnace) {
+                    licorice_block.getBlockTexture() to licorice_bricks.getBlockTexture()
+                } else {
+                    it.getBlockTexture("_side") to it.getBlockTexture("_top")
+                }
+                val on = models().orientable(
+                    it.id.toString() + "_on",
+                    side, it.getBlockTexture("_front_on"), top,
+                )
+                val off = models().orientable(
+                    it.id.toString(),
+                    side, it.getBlockTexture("_front_off"), top,
+                )
+                getVariantBuilder(it.get()).forAllStates { state ->
+                    (if (state.getValue(AbstractFurnaceBlock.LIT)) on else off).configuredArray()
+                }
+                simpleBlockItem(it.get(), off)
+            }
         }
     }
 
@@ -369,8 +430,8 @@ class CBlockStateProvider(output: PackOutput, val efHelper: ExistingFileHelper) 
         simpleBlock(block.get(), model)
     }
 
-    fun existModelFile(block: Block): ExistingModelFile {
-        return existModelFile(block.key.withPrefix("block/"))
+    fun existModelFile(block: Block, suffix: String = ""): ExistingModelFile {
+        return existModelFile(block.key.withPrefix("block/").withSuffix(suffix))
     }
 
     fun existModelFile(location: ResourceLocation): ExistingModelFile {

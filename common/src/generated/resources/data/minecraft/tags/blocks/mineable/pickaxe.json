@@ -9,10 +9,10 @@
     "candycraftce:sugar_stairs",
     "candycraftce:sugar_slab",
     "candycraftce:sugar_wall",
-    "candycraftce:sugar_brick",
-    "candycraftce:sugar_brick_stairs",
-    "candycraftce:sugar_brick_slab",
-    "candycraftce:sugar_brick_wall",
+    "candycraftce:sugar_bricks",
+    "candycraftce:sugar_bricks_stairs",
+    "candycraftce:sugar_bricks_slab",
+    "candycraftce:sugar_bricks_wall",
     "candycraftce:caramel_block",
     "candycraftce:caramel_stairs",
     "candycraftce:caramel_slab",
@@ -22,9 +22,9 @@
     "candycraftce:licorice_block",
     "candycraftce:licorice_stairs",
     "candycraftce:licorice_slab",
-    "candycraftce:licorice_brick",
-    "candycraftce:licorice_brick_stairs",
-    "candycraftce:licorice_brick_slab",
+    "candycraftce:licorice_bricks",
+    "candycraftce:licorice_bricks_stairs",
+    "candycraftce:licorice_bricks_slab",
     "candycraftce:nougat_block",
     "candycraftce:chiseled_nougat_block",
     "candycraftce:square_pattern_nougat_block",
@@ -63,6 +63,8 @@
     "candycraftce:white_honey_ore",
     "candycraftce:white_pez_ore",
     "candycraftce:white_jelly_ore",
-    "candycraftce:white_nougat_ore"
+    "candycraftce:white_nougat_ore",
+    "candycraftce:sugar_factory",
+    "candycraftce:advanced_sugar_factory"
   ]
 }
