@@ -35,6 +35,6 @@ class AdvancedSugarFactoryMenu private constructor(
         id,
         inv,
         SimpleContainer(2),
-        SimpleContainerData(3)
+        SimpleContainerData(4)
     )
 }

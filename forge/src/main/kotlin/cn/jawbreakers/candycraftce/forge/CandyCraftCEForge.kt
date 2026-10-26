@@ -36,6 +36,7 @@ import net.minecraftforge.data.loading.DatagenModLoader
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent
 import net.minecraftforge.event.entity.SpawnPlacementRegisterEvent
 import net.minecraftforge.event.entity.SpawnPlacementRegisterEvent.Operation
+import net.minecraftforge.fml.ModList
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
 import net.minecraftforge.fml.loading.FMLLoader
@@ -77,7 +78,9 @@ class CandyCraftCEForge : ICPlatForm {
     val recipeSerializers: DeferredRegister<RecipeSerializer<*>> = create(ForgeRegistries.RECIPE_SERIALIZERS, MOD_ID)
     val menus: DeferredRegister<MenuType<*>> = create(ForgeRegistries.MENU_TYPES, MOD_ID)
 
-    val registries = listOf(items, blocks, entities, be, tabs, particles, mobEffects)
+    val registries = listOf(
+        items, blocks, entities, be, tabs, particles, mobEffects, recipeTypes, recipeSerializers, menus
+    )
 
     //=================================
     private var lateUsage: MutableList<Runnable>? = mutableListOf()
@@ -102,6 +105,8 @@ class CandyCraftCEForge : ICPlatForm {
             .also { logRegister(register.registryName.path, it.id) }
             .asEntry()
     }
+
+    override fun isLoaded(modId: String): Boolean = ModList.get().isLoaded(modId)
 
     override fun createSpawnEggItem(
         type: Entry<EntityType<out Mob>>,

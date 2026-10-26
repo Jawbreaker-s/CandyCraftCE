@@ -69,7 +69,16 @@ class CBlockTagsProvider(
                     .add(sweet_grass_pale.get())
                     .add(sweet_grass_pink.get())
                     .add(sweet_grass_yellow.get())
-
+                tag(honey_ores)
+                    .add(honey_ore, white_honey_ore)
+                tag(jelly_ores)
+                    .add(jelly_ore, white_jelly_ore)
+                tag(nougat_ores)
+                    .add(nougat_ore, white_nougat_ore)
+                tag(licorice_ores)
+                    .add(licorice_ore, white_licorice_ore)
+                tag(pez_ores)
+                    .add(pez_ore, white_pez_ore)
                 tag(CBlockTags.candy_portal).add(CBlocks.caramel_portal.get())
 
                 tag(candy_animal_spawnable_on)

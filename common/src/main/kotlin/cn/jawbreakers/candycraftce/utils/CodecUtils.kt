@@ -1,6 +1,7 @@
 package cn.breadnicecat.candycraftce.utils
 
 import com.google.gson.JsonElement
+import com.google.gson.JsonObject
 import com.mojang.datafixers.util.Pair
 import com.mojang.serialization.Codec
 import com.mojang.serialization.DataResult
@@ -52,6 +53,11 @@ object CodecUtils {
         writeId(BuiltInRegistries.ITEM, item)
     }
 
+    fun JsonObject.merge(other: JsonObject) {
+        other.entrySet().forEach { (k, v) ->
+            add(k, v)
+        }
+    }
 }
 
 /**

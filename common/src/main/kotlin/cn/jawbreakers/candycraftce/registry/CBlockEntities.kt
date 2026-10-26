@@ -1,6 +1,7 @@
 package cn.jawbreakers.candycraftce.registry
 
 import cn.jawbreakers.candycraftce.block.blockentity.AdvancedFactoryBE
+import cn.jawbreakers.candycraftce.block.blockentity.ChocolateFurnaceBE
 import cn.jawbreakers.candycraftce.block.blockentity.LicoriceFurnaceBE
 import cn.jawbreakers.candycraftce.block.blockentity.SugarFactoryBE
 import cn.jawbreakers.candycraftce.utils.CLogUtils
@@ -27,8 +28,11 @@ object CBlockEntities {
     val advanced_sugar_factory_be = register(CBlocks.advanced_sugar_factory.name) {
         of(::AdvancedFactoryBE, CBlocks.advanced_sugar_factory.get())
     }
-    val licorice_furnace_be = register(CBlocks.licorice_block.name) {
+    val licorice_furnace_be = register(CBlocks.licorice_furnace.name) {
         of(::LicoriceFurnaceBE, CBlocks.licorice_furnace.get())
+    }
+    val chocolate_furnace_be = register(CBlocks.chocolate_furnace.name) {
+        of(::ChocolateFurnaceBE, CBlocks.chocolate_furnace.get())
     }
 
     fun <T : BlockEntity> Entry<BlockEntityType<T>>.create(pos: BlockPos, state: BlockState) = get().create(pos, state)

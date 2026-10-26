@@ -1,7 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "misc",
-  "group": "sign",
   "key": {
     "#": {
       "item": "candycraftce:dark_marshmallow_planks"

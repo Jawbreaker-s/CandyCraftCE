@@ -2,6 +2,7 @@ package cn.jawbreakers.candycraftce.registry
 
 import cn.breadnicecat.candycraftce.core.block.blocks.CandyLeavesBlock
 import cn.jawbreakers.candycraftce.block.*
+import cn.jawbreakers.candycraftce.registry.CItems.asItem
 import cn.jawbreakers.candycraftce.utils.*
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils.ifClient
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils.minable
@@ -13,6 +14,7 @@ import cn.jawbreakers.candycraftce.utils.registry.Entry
 import cn.jawbreakers.candycraftce.utils.registry.LazyEntry
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.util.valueproviders.UniformInt
+import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.ItemLike
 import net.minecraft.world.level.block.*
@@ -546,14 +548,14 @@ object CBlocks {
     }.minable(PICKAXE)
 
     val chocolate_furnace = register("chocolate_furnace") {
-        LicoriceFurnaceBlock(properties(chocolate_stone.get()))
-    }
+        ChocolateFurnaceBlock(false, properties(chocolate_stone.get()))
+    }.minable(PICKAXE)
     val white_chocolate_furnace = register("white_chocolate_furnace") {
-        LicoriceFurnaceBlock(properties(white_chocolate_stone.get()))
-    }
+        ChocolateFurnaceBlock(true, properties(white_chocolate_stone.get()))
+    }.minable(PICKAXE)
     val licorice_furnace = register("licorice_furnace") {
         LicoriceFurnaceBlock(properties(licorice_block.get()))
-    }
+    }.minable(PICKAXE, STONE)
 
     //plants
     val sweet_grass_pink = register("sweet_grass_pink") { CandyPlantBlock(plant(MapColor.COLOR_PINK)) }
@@ -779,6 +781,7 @@ object CBlocks {
         LazyEntry(id) { get().asItem().takeIf { it != Items.AIR } ?: error("Item not found for $id") }
 
     fun Entry<out Block>.defaultBlockState(): BlockState = get().defaultBlockState()
+    val Entry<out Block>.defaultInstance: ItemStack get() = asItem().defaultInstance
     fun <T : EntrySet<Block>> T.minable(
         type: ICPlatformDatagen.MinableType,
         level: ICPlatformDatagen.MinableLevel? = null,

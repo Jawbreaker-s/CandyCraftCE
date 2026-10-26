@@ -87,6 +87,8 @@ object CUtils {
 
 
     val Item.key get() = BuiltInRegistries.ITEM.getKey(this)
+    val Item.id get() = BuiltInRegistries.ITEM.getId(this)
+    fun Int.getItemById() = BuiltInRegistries.ITEM.byId(this)
     val Block.key get() = BuiltInRegistries.BLOCK.getKey(this)
 
     /**

@@ -25,7 +25,6 @@ class SugarFurnaceRecipe(
     val count: Int,
     val exp: Float,
 ) : Recipe<LicoriceFurnaceBE> {
-
     init {
         require(count > 0) { "count <= 0 in $id" }
     }

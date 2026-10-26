@@ -1,13 +1,16 @@
 package cn.jawbreakers.candycraftce.registry
 
 import cn.jawbreakers.candycraftce.client.screen.AdvancedFactoryScreen
+import cn.jawbreakers.candycraftce.client.screen.ChocolateFurnaceScreen
 import cn.jawbreakers.candycraftce.client.screen.LicoriceFurnaceScreen
 import cn.jawbreakers.candycraftce.client.screen.SugarFactoryScreen
 import cn.jawbreakers.candycraftce.gui.menu.AdvancedSugarFactoryMenu
 import cn.jawbreakers.candycraftce.gui.menu.SugarFactoryMenu
+import cn.jawbreakers.candycraftce.menu.ChocolateFurnaceMenu
 import cn.jawbreakers.candycraftce.menu.LicoriceFurnaceMenu
 import cn.jawbreakers.candycraftce.mixin.render.MenuScreensAccessor
 import cn.jawbreakers.candycraftce.registry.CBlockEntities.advanced_sugar_factory_be
+import cn.jawbreakers.candycraftce.registry.CBlockEntities.chocolate_furnace_be
 import cn.jawbreakers.candycraftce.registry.CBlockEntities.licorice_furnace_be
 import cn.jawbreakers.candycraftce.registry.CBlockEntities.sugar_factory_be
 import cn.jawbreakers.candycraftce.utils.CLogUtils
@@ -30,21 +33,15 @@ object CMenus {
     val sugar_factory_menu = register(sugar_factory_be.name, ::SugarFactoryMenu)
     val advanced_sugar_factory_menu = register(advanced_sugar_factory_be.name, ::AdvancedSugarFactoryMenu)
     val licorice_furnace_menu = register(licorice_furnace_be.name, ::LicoriceFurnaceMenu)
+    val chocolate_furnace_menu = register(chocolate_furnace_be.name, ::ChocolateFurnaceMenu)
 
-    //    @Environment(EnvType.CLIENT)
-//    public static void declareScreen() {
-//        LOGGER.info("declareScreen");
-//        MenuScreens.register(LICORICE_FURNACE_MENU.get(), LicoriceFurnaceScreen::new);
-//        MenuScreens.register(CHOCOLATE_FURNACE_MENU.get(), ChocolateFurnaceScreen::new);
-//        MenuScreens.register(SUGAR_FACTORY_MENU.get(), SugarFactoryScreen::new);
-//        MenuScreens.register(ADVANCED_SUGAR_FACTORY_MENU.get(), AdvancedFactoryScreen::new);
-//    }
     init {
         ifClient {
             whenInitialized {
                 MenuScreensAccessor.register(sugar_factory_menu.get(), ::SugarFactoryScreen)
                 MenuScreensAccessor.register(advanced_sugar_factory_menu.get(), ::AdvancedFactoryScreen)
                 MenuScreensAccessor.register(licorice_furnace_menu.get(), ::LicoriceFurnaceScreen)
+                MenuScreensAccessor.register(chocolate_furnace_menu.get(), ::ChocolateFurnaceScreen)
             }
         }
     }

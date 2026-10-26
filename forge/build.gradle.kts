@@ -42,9 +42,10 @@ neoForge {
             systemProperty("forge.enabledGameTestNamespaces", modId)
             systemProperty("mixin.debug.export", "true")
             //forge cannot debug with such option with jbr
-//            if (jetOption) {
+            if (jetOption) {
+                logger.warn("Jet option is enabled, but Forge cannot debug with such option with jbr")
 //                jvmArgument("-XX:+AllowEnhancedClassRedefinition")
-//            }
+            }
             ideName = "Forge ${name.capitalized()} (${project.path})" // Unify the run config names with fabric
         }
         register("client") {

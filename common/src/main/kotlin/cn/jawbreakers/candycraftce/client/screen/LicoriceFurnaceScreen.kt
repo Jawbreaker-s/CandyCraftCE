@@ -21,17 +21,17 @@ import net.minecraft.world.entity.player.Inventory
  *
  *
  */
-open class LicoriceFurnaceScreen(
-    menu: LicoriceFurnaceMenu,
+open class LicoriceFurnaceScreen<L : LicoriceFurnaceMenu>(
+    menu: L,
     inventory: Inventory,
     component: Component,
-) : AbstractContainerScreen<LicoriceFurnaceMenu>(menu, inventory, component) {
+) : AbstractContainerScreen<L>(menu, inventory, component) {
     companion object {
         val LICORICE: ResourceLocation = "gui_licorice_furnace".modLoc().guiTex()
     }
 
     open val guiStyle: ResourceLocation = LICORICE
-    open val textColor = 0xd7d7d7//cho 0x704338
+    open val textColor = 0xd7d7d7
     override fun renderBg(guiGraphics: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {
         guiGraphics.blit(guiStyle, leftPos, topPos, 0, 0, 176, 166)
         //燃料条

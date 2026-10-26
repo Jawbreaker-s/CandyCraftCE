@@ -60,7 +60,7 @@ class SugarFactoryRecipe(
         return NonNullList.create<Ingredient>().apply { add(ingredient) }
     }
 
-    override fun getResultItem(registryAccess: RegistryAccess): ItemStack {
+    override fun getResultItem(registryAccess: RegistryAccess?): ItemStack {
         val stack = result.defaultInstance
         stack.count = count
         return stack
@@ -88,7 +88,6 @@ class SugarFactoryRecipe(
             json.add("result", JsonObject().apply {
                 addProperty("item", recipe.result.key.toString())
                 if (recipe.count != 1) addProperty("count", recipe.count)
-
             })
             json.add("ingredient", recipe.ingredient.toJson())
             if (recipe.advanced) json.addProperty("advanced", true)

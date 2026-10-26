@@ -3,13 +3,13 @@ package cn.jawbreakers.candycraftce.gui.menu
 import cn.jawbreakers.candycraftce.block.blockentity.SugarFactoryBE
 import cn.jawbreakers.candycraftce.menu.slot.SimpleResultSlot
 import cn.jawbreakers.candycraftce.registry.CMenus.sugar_factory_menu
+import cn.jawbreakers.candycraftce.utils.CUtils.getItemById
 import net.minecraft.world.Container
 import net.minecraft.world.SimpleContainer
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.*
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.Items
 
 
 /**
@@ -47,7 +47,7 @@ open class SugarFactoryMenu protected constructor(
         }
         addSlot(Slot(container, SugarFactoryBE.INPUT_SLOT, 7, 7))
         addSlot(SimpleResultSlot(container, SugarFactoryBE.OUTPUT_SLOT, 151, 7).apply {
-            fakeItem = { Items.DIAMOND }
+            fakeItem = { data[SugarFactoryBE.OUTPUT_ITEM_DATA_SLOT].getItemById() }
         })
         addDataSlots(data)
     }
@@ -59,7 +59,7 @@ open class SugarFactoryMenu protected constructor(
         data: ContainerData,
     ) : this(sugar_factory_menu.get(), id, inventory, container, data)
 
-    constructor(id: Int, inv: Inventory) : this(id, inv, SimpleContainer(2), SimpleContainerData(3))
+    constructor(id: Int, inv: Inventory) : this(id, inv, SimpleContainer(2), SimpleContainerData(4))
 
     override fun quickMoveStack(player: Player, index: Int): ItemStack {
         if (index in INV_START..INV_END) {

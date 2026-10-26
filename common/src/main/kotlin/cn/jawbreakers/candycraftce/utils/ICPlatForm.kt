@@ -54,6 +54,10 @@ import java.util.function.Consumer
 import java.util.function.Supplier
 
 object CPlatformUtils : ICPlatForm by CandyCraftCE.platform {
+    inline fun <R> ifLoaded(modId: String, action: ICPlatForm. () -> R): R? {
+        return if (isLoaded(modId)) action() else null
+    }
+
     @ServerSafe
     inline fun <R> ifClient(action: ICPlatFormClients. () -> R): R? {
         return if (isClient) clients?.let(action) else null
@@ -114,7 +118,7 @@ interface ICPlatForm {
     //当所有对象注册完毕后
     //相当于一个lazy对象在启动后立刻被访问
     fun <T> whenInitialized(action: () -> T): Accessor<T>
-
+    fun isLoaded(modId: String): Boolean
     fun <E : Item> registerItem(name: String, factory: Supplier<E>): Entry<E>
     fun <E : Block> registerBlock(name: String, factory: Supplier<E>): Entry<E>
     fun <E : BlockEntity> registerBlockEntity(

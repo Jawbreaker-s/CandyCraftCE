@@ -19,11 +19,11 @@ import net.minecraft.world.phys.Vec3
  * Created in 2024/1/30 23:03
  * Project: candycraftce
  * 
- * @author [Bread_NiceCat](https://github.com/Bread-Nicecat)
+ * Author [Bread_NiceCat](https://github.com/Bread-Nicecat)
  * 
  * 
  */
-class LicoriceFurnaceBlock(properties: Properties) : AbstractFurnaceBlock(properties) {
+open class LicoriceFurnaceBlock(properties: Properties) : AbstractFurnaceBlock(properties) {
 
     override fun openContainer(level: Level, pos: BlockPos, player: Player) {
         val blockEntity = level.getBlockEntity(pos)
@@ -51,9 +51,8 @@ class LicoriceFurnaceBlock(properties: Properties) : AbstractFurnaceBlock(proper
         super.onRemove(state, level, pos, newState, movedByPiston)
     }
 
-    override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity? {
-        return CBlockEntities.licorice_furnace_be.create(pos, state)
-    }
+    override fun newBlockEntity(pos: BlockPos, state: BlockState) =
+        CBlockEntities.licorice_furnace_be.create(pos, state)
 
     override fun <T : BlockEntity?> getTicker(
         level: Level,

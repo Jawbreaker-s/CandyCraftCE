@@ -1,11 +1,11 @@
 package cn.jawbreakers.candycraftce.forge.data.providers
 
-import cn.jawbreakers.candycraftce.registry.CBlockTags
-import cn.jawbreakers.candycraftce.registry.CBlocks
+import cn.breadnicecat.candycraftce.data.recipes.SugarFurnaceRecipeBuilder
+import cn.jawbreakers.candycraftce.forge.data.providers.recipes.SugarFactoryRecipeBuilder
+import cn.jawbreakers.candycraftce.registry.*
 import cn.jawbreakers.candycraftce.registry.CBlocks.BlockFamily
-import cn.jawbreakers.candycraftce.registry.CItemTags
-import cn.jawbreakers.candycraftce.registry.CItems
 import cn.jawbreakers.candycraftce.registry.CItems.asItem
+import cn.jawbreakers.candycraftce.utils.CLogUtils.clog
 import cn.jawbreakers.candycraftce.utils.CUtils.key
 import com.mojang.datafixers.util.Either
 import net.minecraft.data.PackOutput
@@ -86,15 +86,6 @@ class CRecipeProvider(output: PackOutput) : RecipeProvider(output) {
                     nougat_block.madeWith {
                         cube(BUILDING_BLOCKS, 1, 3, nougat_powder.setUnlockBy())
                             .save()
-                    }
-                    glassTypes.flatten().forEach { (glass, pane) ->
-                        pane.madeWith {
-                            shaped(DECORATIONS, 16)
-                                .pattern("###")
-                                .pattern("###")
-                                .define('#', glass.setUnlockBy())
-                                .save()
-                        }
                     }
                     sugar_spikes.madeWith {
                         shaped(COMBAT, 8)
@@ -253,6 +244,114 @@ class CRecipeProvider(output: PackOutput) : RecipeProvider(output) {
                                 .save()
                         }
                     }
+                    custard_pudding_block.madeWith {
+                        sugarSmelting(
+                            pudding_block.ingredient(),
+                            0.7f
+                        ).save()
+                    }
+                    licorice.madeWith {
+                        sugarSmelting(CBlockTags.licorice_ores.ingredient(), 1f).save()
+                    }
+                    pez.madeWith {
+                        sugarSmelting(CBlockTags.pez_ores.ingredient(), 1f).save()
+                    }
+                    trampojelly.madeWith {
+                        sugarSmelting(CBlockTags.jelly_ores.ingredient(), 1f).save()
+                    }
+                    red_trampojelly.madeWith {
+                        sugarSmelting(trampojelly.ingredient(), 0.7f).save()
+                    }
+                    jelly_shock_absorber.madeWith {
+                        sugarSmelting(red_trampojelly.ingredient(), 0.7f).save()
+                    }
+                    purple_trampojelly.madeWith {
+                        sugarFactory(red_trampojelly.ingredient()).save()
+                    }
+                    yellow_trampojelly.madeWith {
+                        sugarFactory(red_trampojelly.ingredient()).save()
+                    }
+                    caramel_block.madeWith {
+                        sugarSmelting(sugar_sand.ingredient(), 0.5f).save()
+                        sugarSmelting(sugar_block.ingredient(), 0.5f).save()
+                    }
+                    chocolate_stone.madeWith {
+                        sugarSmelting(chocolate_cobblestone.ingredient(), 0.5f).save()
+                    }
+                    white_chocolate_stone.madeWith {
+                        sugarSmelting(white_chocolate_cobblestone.ingredient(), 0.5f).save()
+                    }
+                    honey_lamp.madeWith {
+                        sugarSmelting(honeycomb_block.ingredient(), 0.7f).save()
+                    }
+                    hot_gummy.madeWith {
+                        sugarSmelting(gummy.ingredient(), 0.7f).save()
+                    }
+                    cranberry_fish_cooked.madeWith {
+                        sugarSmelting(cranberry_fish.ingredient(), 1f).save()
+                    }
+                    glassTypes.flatten().forEach { (glass, pane) ->
+                        pane.madeWith {
+                            shaped(DECORATIONS, 16)
+                                .pattern("###")
+                                .pattern("###")
+                                .define('#', glass.setUnlockBy())
+                                .save()
+                        }
+                    }
+                    glassTypes.forEach { type ->
+                        val glasses = type.map { it.first }
+                        for (i in glasses.indices) {
+                            val g1 = glasses[i]
+                            val g2 = glasses[(i + 1) % glasses.size]
+                            g2.madeWith {
+                                sugarFactory(g1.ingredient()).save()
+                            }
+                        }
+                    }
+                    caramel_glass.madeWith {
+                        sugarSmelting(caramel_block.ingredient(), 0.7f).save()
+                    }
+                    dark_caramel_glass.madeWith {
+                        shaped(DECORATIONS, 8)
+                            .pattern("###")
+                            .pattern("#*#")
+                            .pattern("###")
+                            .define('#', caramel_glass.setUnlockBy())
+                            .define('*', licorice.get())
+                            .save()
+                    }
+                    honey_glass.madeWith {
+                        shaped(DECORATIONS, 8)
+                            .pattern("###")
+                            .pattern("#*#")
+                            .pattern("###")
+                            .define('#', caramel_glass.setUnlockBy())
+                            .define('*', honeycomb.get())
+                            .save()
+                    }
+                    marshmallow_stick.madeWith {
+                        shaped(MISC, 4)
+                            .pattern("#")
+                            .pattern("#")
+                            .define('#', CBlockTags.marshmallow_planks.setUnlockBy())
+                            .save()
+                        sugarFactory(Items.STICK.ingredient())
+                            .save()
+                    }
+                    honey_shard.madeWith {
+                        sugarFactory(fraise_tagada_flower.ingredient())
+                            .save()
+                    }
+                    nougat_head.madeWith {
+                        sugarFactory(nougat_block.ingredient(), true)
+                            .save()
+                    }
+                    resultOf({ Items.GOLD_NUGGET }) {
+                        sugarFactory(sugar_essence_flower.ingredient(), true, 2)
+                            .save()
+                    }
+
                 }
             }
 
@@ -303,7 +402,6 @@ class CRecipeProvider(output: PackOutput) : RecipeProvider(output) {
         family.sign?.madeWith {
             shaped(DECORATIONS, 3)
                 .pattern("###").pattern("###").pattern(" X ")
-                .group("sign")
                 .define('#', material.setUnlockBy())
                 .define('X', stick)
                 .save()
@@ -404,12 +502,17 @@ class CRecipeProvider(output: PackOutput) : RecipeProvider(output) {
 
         //用来记忆上次该路径的postfix
         private val memory: HashMap<ResourceLocation, Int> = HashMap()
+
+        private val results = mutableSetOf<Item>()
         private var lastScope: HelperScope? = null
         fun Supplier<out ItemLike>.madeWith(scope: HelperScope.(ItemLike) -> Unit) = resultOf(this, scope)
         fun <I : ItemLike> resultOf(result: Supplier<I>, scope: HelperScope.(I) -> Unit) {
             val get = result.get()
             val result = get.asItem()
-            require((lastScope?.context === null), { "Last Builder may not be saved yet" })
+            require((lastScope?.context === null)) { "Last Builder may not be saved yet" }
+            if (!results.add(result)) {
+                clog.warn("Redundant result scope is being created for key: ${result.key}")
+            }
             scope(HelperScope(result.key, result).also { lastScope = it }, get)
         }
 
@@ -448,13 +551,16 @@ class CRecipeProvider(output: PackOutput) : RecipeProvider(output) {
             fun <I : ItemLike> I.setUnlockBy() = raw().setUnlockBy()
 
             fun TagKey<Item>.setUnlockBy() = raw().setUnlockBy()
+            fun ItemBlockTagkey.setUnlockBy() = item.setUnlockBy()
 
 
-            fun RawIngredient.setUnlockBy(): Ingredient = run {
+            fun RawIngredient.setUnlockBy(): Ingredient = apply {
                 require(unlockBy === null) { "Multi unlockBy not supported" }
                 unlockBy = this
-                map(Ingredient::of, Ingredient::of)
-            }
+            }.build()
+
+            fun RawIngredient.build(): Ingredient = map(Ingredient::of, Ingredient::of)
+
 
             fun RecipeBuilder.save() {
                 unlockBy?.ifLeft {
@@ -495,10 +601,25 @@ class CRecipeProvider(output: PackOutput) : RecipeProvider(output) {
                 ingredient: ItemLike,
                 xp: Float = 0f,
                 time: Int = 200,
-            ): SimpleCookingRecipeBuilder =
-                SimpleCookingRecipeBuilder.smelting(Ingredient.of(ingredient), category, result, xp, time)
-                    .setContext()
+            ): SimpleCookingRecipeBuilder = SimpleCookingRecipeBuilder.smelting(
+                Ingredient.of(ingredient), category, result, xp, time
+            ).setContext()
 
+            fun sugarFactory(
+                ingredient: Ingredient,
+                advanced: Boolean = false,
+                count: Int = 1,
+            ): SugarFactoryRecipeBuilder = SugarFactoryRecipeBuilder.direct(
+                result, ingredient, count, advanced
+            ).setContext()
+
+            fun sugarSmelting(
+                ingredient: Ingredient,
+                exp: Float = 0f,
+                count: Int = 1,
+            ): SugarFurnaceRecipeBuilder = SugarFurnaceRecipeBuilder.direct(
+                result, ingredient, exp, count
+            ).setContext()
         }
     }
 }
@@ -508,3 +629,11 @@ fun <I : ItemLike> Supplier<I>.raw() = get().raw()
 fun <I : ItemLike> I.raw(): RawIngredient = run { Either.left(this) }
 
 fun TagKey<Item>.raw(): RawIngredient = run { Either.right(this) }
+
+fun <I : ItemLike> Supplier<I>.ingredient() = get().ingredient()
+
+fun <I : ItemLike> I.ingredient(): Ingredient = Ingredient.of(this)
+
+fun ItemBlockTagkey.ingredient() = item.ingredient()
+fun TagKey<Item>.ingredient(): Ingredient = Ingredient.of(this)
+

@@ -26,6 +26,13 @@ object CBlockTags {
 
     val sweet_grass = withItem("sweet_grass")
 
+    //ore
+    val honey_ores = withItem("honey_ores")
+    val licorice_ores = withItem("licorice_ores")
+    val pez_ores = withItem("pez_ores")
+    val jelly_ores = withItem("jelly_ores")
+    val nougat_ores = withItem("nougat_ores")
+
     //portal
     val candy_portal = bind("caramel_portal")
     val can_light_portal = bind("can_light_portal")

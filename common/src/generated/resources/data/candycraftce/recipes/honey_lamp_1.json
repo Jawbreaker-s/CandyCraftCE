@@ -1,0 +1,10 @@
+{
+  "type": "candycraftce:sugar_furnace",
+  "exp": 0.7,
+  "ingredient": {
+    "item": "candycraftce:honeycomb_block"
+  },
+  "result": {
+    "item": "candycraftce:honey_lamp"
+  }
+}

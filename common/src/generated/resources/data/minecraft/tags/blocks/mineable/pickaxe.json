@@ -65,6 +65,9 @@
     "candycraftce:white_jelly_ore",
     "candycraftce:white_nougat_ore",
     "candycraftce:sugar_factory",
-    "candycraftce:advanced_sugar_factory"
+    "candycraftce:advanced_sugar_factory",
+    "candycraftce:chocolate_furnace",
+    "candycraftce:white_chocolate_furnace",
+    "candycraftce:licorice_furnace"
   ]
 }

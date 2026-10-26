@@ -1,8 +1,13 @@
-// 1.20.1	2026-10-24T21:10:12.8501503	Tags for minecraft:item mod id candycraftce
+// 1.20.1	2026-10-25T14:19:08.9968841	Tags for minecraft:item mod id candycraftce
 cbc971945ba3d94dece441e90eddb228c2c2a160 data/candycraftce/tags/items/candy_leaves.json
 2511ae3eaa76dbdf1916d92dc2b19381b3c1543b data/candycraftce/tags/items/chocolate_block.json
+9cd2bc0c8c38f90acf54abd35a20c52d48d1c53b data/candycraftce/tags/items/honey_ores.json
 86767b85a8fff61ad5e8b22ac21eb8a491db227d data/candycraftce/tags/items/ice_cream.json
+091eba4d56420f63b15cde911e53093abbe19826 data/candycraftce/tags/items/jelly_ores.json
+8eefc6c4da778bc3d3eacc28ea0c745261d1a6a2 data/candycraftce/tags/items/licorice_ores.json
 58a0307c49b5516c68a7d41c9b871136645b12a5 data/candycraftce/tags/items/marshmallow_logs.json
 627b2634040eefab245dcdef45a6417c3e7ea202 data/candycraftce/tags/items/marshmallow_planks.json
+511f1b726a205f85bdf6e2e334f5d3ae1853aff7 data/candycraftce/tags/items/nougat_ores.json
+be6f9612730e4a2fba1fd5e3cce83b44a9e240a2 data/candycraftce/tags/items/pez_ores.json
 4addd169af210bd410efb3afea63a201a318e2f1 data/candycraftce/tags/items/sugary.json
 d43a0669c974d511ad530c8d020d2ad1da145903 data/candycraftce/tags/items/sweet_grass.json

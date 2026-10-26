@@ -1,0 +1,10 @@
+{
+  "type": "candycraftce:sugar_furnace",
+  "exp": 0.7,
+  "ingredient": {
+    "item": "candycraftce:trampojelly"
+  },
+  "result": {
+    "item": "candycraftce:red_trampojelly"
+  }
+}

@@ -65,6 +65,8 @@ class CandyCraftCEFabric : ModInitializer, ICPlatForm {
         return accessor
     }
 
+    override fun isLoaded(modId: String): Boolean = FabricLoader.getInstance().isModLoaded(modId)
+
     //=================================
     internal inline fun <E> register(
         registerTag: String,

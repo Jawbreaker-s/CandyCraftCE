@@ -6,6 +6,7 @@ import cn.jawbreakers.candycraftce.recipe.recipes.SugarFactoryRecipe
 import cn.jawbreakers.candycraftce.registry.CBlockEntities
 import cn.jawbreakers.candycraftce.registry.CItemTags
 import cn.jawbreakers.candycraftce.registry.CRecipeTypes
+import cn.jawbreakers.candycraftce.utils.CUtils.id
 import cn.jawbreakers.candycraftce.utils.CUtils.modLoc
 import cn.jawbreakers.candycraftce.utils.ItemStackList
 import cn.jawbreakers.candycraftce.utils.TickUnit.SEC2TICK
@@ -21,6 +22,7 @@ import net.minecraft.world.WorldlyContainer
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
+import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.crafting.Ingredient
@@ -48,18 +50,20 @@ open class SugarFactoryBE protected constructor(
     companion object {
         const val OUTPUT_SLOT: Int = 1
         const val INPUT_SLOT: Int = 0
+
         const val TICKED_DATA_SLOT: Int = 0
         const val TICKED_TOTAL_DATA_SLOT: Int = 1
         const val RECIPE_TYPE_DATA_SLOT: Int = 2
-        const val NULL_TYPE: Int = 0
+        const val OUTPUT_ITEM_DATA_SLOT: Int = 3
 
+        const val NULL_TYPE: Int = 0
         val SLOT_FOR_OTHER: IntArray = intArrayOf(INPUT_SLOT)
         val SLOT_FOR_DOWN: IntArray = intArrayOf(OUTPUT_SLOT)
 
         const val COMMON_TYPE: Int = 1
 
         val sugaryRecipe: SugarFactoryRecipe = SugarFactoryRecipe(
-            "__internal_sugary_recipe".modLoc(),
+            "__sugary_recipe".modLoc(),
             Ingredient.of(CItemTags.sugary),
             Items.SUGAR,
             1,
@@ -74,13 +78,15 @@ open class SugarFactoryBE protected constructor(
     private var tickedTotal = 0
     private var recipeType: Int = NULL_TYPE
     private var recipeUsed: SugarFactoryRecipe? = null
-
+    private var lastSugaryInput: Item = Items.AIR//防止替换后recipeUsed仍然是sugary，test之后配方不变
+    private var outputItem: Int = 0
     private val quickCheck = createCheck(CRecipeTypes.sugar_factory_type.type)
 
     protected var data: CDataAccessors = CDataAccessors(
         lambda({ ticked }, { v -> ticked = v }),
         lambda({ tickedTotal }, { v -> tickedTotal = v }),
-        lambda({ recipeType }, { v -> recipeType = v })
+        lambda({ recipeType }, { v -> recipeType = v }),
+        lambda({ outputItem }, { v -> outputItem = v })
     )
 
     constructor(blockPos: BlockPos, blockState: BlockState) : this(
@@ -102,20 +108,32 @@ open class SugarFactoryBE protected constructor(
 
     private fun tickBaseLegality(): Boolean {
         val level = level!!
-        if (items.isEmpty(INPUT_SLOT)) return false
         val recipeUsedPrev: SugarFactoryRecipe? = recipeUsed
-        //检查配方是否匹配
-        if (recipeUsed == null || !recipeUsed!!.matches(this, level)) {
-            val recipe = quickCheck.getRecipeFor(this, level).orElse(null)
-            recipeUsed = recipe ?: if (sugaryRecipe.matches(this, level)) sugaryRecipe else return false
+        if (!items.isEmpty(INPUT_SLOT)) {
+            //检查配方是否匹配
+            if (recipeUsed == null
+                || (recipeUsed === sugaryRecipe && lastSugaryInput != items[INPUT_SLOT].item)
+                || !recipeUsed!!.matches(this, level)
+            ) {
+                val recipe = quickCheck.getRecipeFor(this, level).orElse(null)
+                recipeUsed = recipe ?: if (sugaryRecipe.matches(this, level)) sugaryRecipe else return false
+            }
+        } else {
+            recipeUsed = null
         }
         if (recipeUsed !== recipeUsedPrev) {
             //如果配方改变了
             tickedTotal = getTickTimeTotal(recipeUsed)
             recipeType = getRecipeType(recipeUsed)
             ticked = 0
+            outputItem = (recipeUsed?.result ?: Items.AIR).id
         }
-        return items.simulateInsert(OUTPUT_SLOT, recipeUsed!!.getResultItem(level.registryAccess())).isEmpty
+        return recipeUsed?.let {
+            items.simulateInsert(
+                OUTPUT_SLOT,
+                it.getResultItem(level.registryAccess())
+            ).isEmpty
+        } ?: false
     }
 
     private fun tickProgress(legal: Boolean) {

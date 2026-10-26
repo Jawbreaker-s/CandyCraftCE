@@ -1,11 +1,13 @@
 package cn.jawbreakers.candycraftce
 
 import cn.jawbreakers.candycraftce.client.PuddingColor
+import cn.jawbreakers.candycraftce.integration.jei.CJeiPlugin
 import cn.jawbreakers.candycraftce.registry.*
 import cn.jawbreakers.candycraftce.registry.worldgen.CLevels
 import cn.jawbreakers.candycraftce.utils.CLogUtils
 import cn.jawbreakers.candycraftce.utils.CLogUtils.mainLog
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils.ifClient
+import cn.jawbreakers.candycraftce.utils.CPlatformUtils.ifLoaded
 import cn.jawbreakers.candycraftce.utils.ICPlatForm
 import cn.jawbreakers.candycraftce.utils.registry.Accessor
 import cn.jawbreakers.candycraftce.utils.registry.LateInitAccessor
@@ -45,11 +47,15 @@ object CandyCraftCE {
             CEntityTypes
             CMenus
             CMobEffects
+            CSugarFuels
             CParticleTypes
             CRecipeTypes
             CLevels
             ifClient {
                 PuddingColor.initColor()
+            }
+            ifLoaded("jei") {
+                CJeiPlugin()
             }
             this.postWorks!!.also {
                 it.forEach(Runnable::run)
