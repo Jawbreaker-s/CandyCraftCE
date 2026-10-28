@@ -207,16 +207,16 @@ public final class CCBlocks {
 	public static final RegistryObject<Block> MARSHMALLOW_CHEST_DARK = register("marshmallow_chest_dark", () -> new MarshmallowChestBlock(MarshmallowChestBlock.Theme.DARK, wood(MapColor.COLOR_BROWN).strength(2.5F).noOcclusion()));
 	public static final RegistryObject<Block> MARSHMALLOW_CHEST_LIGHT = register("marshmallow_chest_light", () -> new MarshmallowChestBlock(MarshmallowChestBlock.Theme.LIGHT, wood(MapColor.TERRACOTTA_WHITE).strength(2.5F).noOcclusion()));
 	//	public static final RegistryObject<Block> HONEY_ORE = register("honey_ore", () -> new Block(stone().strength(3.0F, 5.0F).requiresCorrectToolForDrops()));
-	public static final RegistryObject<Block> HONEY_TORCH = cutout(register("honey_torch", () -> new LazyParticleTorchBlock(BlockBehaviour.Properties.copy(Blocks.TORCH).lightLevel(state -> 15), CCParticleTypes.LIQUID_CANDY_FLAME)));
-	public static final RegistryObject<Block> HONEY_WALL_TORCH = cutout(registerNoItem("honey_wall_torch", () -> new LazyParticleTorchBlock.Wall(BlockBehaviour.Properties.copy(Blocks.WALL_TORCH).lightLevel(state -> 15), CCParticleTypes.LIQUID_CANDY_FLAME)));
+//	public static final RegistryObject<Block> HONEY_TORCH = cutout(register("honey_torch", () -> new LazyParticleTorchBlock(BlockBehaviour.Properties.copy(Blocks.TORCH).lightLevel(state -> 15), CCParticleTypes.LIQUID_CANDY_FLAME)));
+//	public static final RegistryObject<Block> HONEY_WALL_TORCH = cutout(registerNoItem("honey_wall_torch", () -> new LazyParticleTorchBlock.Wall(BlockBehaviour.Properties.copy(Blocks.WALL_TORCH).lightLevel(state -> 15), CCParticleTypes.LIQUID_CANDY_FLAME)));
 	//	public static final RegistryObject<Block> HONEYCOMB_BLOCK = register("honeycomb_block", () -> new Block(stone().mapColor(MapColor.COLOR_YELLOW).strength(2.0F)));
-	public static final RegistryObject<Block> MARSHMALLOW_LANTERN = cutout(register("marshmallow_lantern", () ->
-			new LanternBlock(BlockBehaviour.Properties.copy(Blocks.LANTERN).mapColor(MapColor.COLOR_PINK).lightLevel(state -> 15))));
+//	public static final RegistryObject<Block> MARSHMALLOW_LANTERN = cutout(register("marshmallow_lantern", () ->
+//			new LanternBlock(BlockBehaviour.Properties.copy(Blocks.LANTERN).mapColor(MapColor.COLOR_PINK).lightLevel(state -> 15))));
 	//	public static final RegistryObject<Block> HONEY_LAMP = register("honey_lamp", () ->
 //			new Block(metal(MapColor.COLOR_YELLOW).strength(1.0F).sound(SoundType.GLASS).lightLevel(state -> 15)));
 
-	public static final RegistryObject<Block> HONEY_LANTERN = cutout(register("honey_lantern", () ->
-			new LanternBlock(BlockBehaviour.Properties.copy(Blocks.LANTERN).mapColor(MapColor.COLOR_YELLOW).lightLevel(state -> 15))));
+	//	public static final RegistryObject<Block> HONEY_LANTERN = cutout(register("honey_lantern", () ->
+//			new LanternBlock(BlockBehaviour.Properties.copy(Blocks.LANTERN).mapColor(MapColor.COLOR_YELLOW).lightLevel(state -> 15))));
 	public static final RegistryObject<Block> CARAMEL_LAMP = cutout(register("caramel_lamp", () ->
 			new LanternBlock(BlockBehaviour.Properties.copy(Blocks.LANTERN).mapColor(MapColor.COLOR_ORANGE).lightLevel(state -> 15))));
 	//	public static final RegistryObject<Block> MILK_CAULDRON = registerNoItem("milk_cauldron", () ->

@@ -347,6 +347,14 @@ class CRecipeProvider(output: PackOutput) : RecipeProvider(output) {
                         sugarFactory(nougat_block.ingredient(), true)
                             .save()
                     }
+                    honey_torch.madeWith {
+                        shaped(DECORATIONS, 4)
+                            .pattern("*")
+                            .pattern("/")
+                            .define('*', honey_shard.setUnlockBy())
+                            .define('/', marshmallow_stick.get())
+                            .save()
+                    }
                     resultOf({ Items.GOLD_NUGGET }) {
                         sugarFactory(sugar_essence_flower.ingredient(), true, 2)
                             .save()
@@ -626,9 +634,9 @@ class CRecipeProvider(output: PackOutput) : RecipeProvider(output) {
 
 fun <I : ItemLike> Supplier<I>.raw() = get().raw()
 
-fun <I : ItemLike> I.raw(): RawIngredient = run { Either.left(this) }
+fun <I : ItemLike> I.raw(): RawIngredient = Either.left(this)
 
-fun TagKey<Item>.raw(): RawIngredient = run { Either.right(this) }
+fun TagKey<Item>.raw(): RawIngredient = Either.right(this)
 
 fun <I : ItemLike> Supplier<I>.ingredient() = get().ingredient()
 

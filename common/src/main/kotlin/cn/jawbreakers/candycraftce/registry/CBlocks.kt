@@ -458,6 +458,21 @@ object CBlocks {
         "honey_lamp",
         iron(MapColor.COLOR_YELLOW).strength(1.0F).sound(SoundType.GLASS).lightLevel { 15 }
     ).minable(PICKAXE)
+    val honey_lantern = register("honey_lantern") {
+        LanternBlock(properties(Blocks.LANTERN).mapColor(MapColor.COLOR_YELLOW))
+    }.cutout().minable(PICKAXE)
+    val marshmallow_lantern = register("marshmallow_lantern") {
+        LanternBlock(properties(Blocks.LANTERN).mapColor(MapColor.COLOR_PINK))
+    }.cutout().minable(PICKAXE)
+    val honey_torch = register("honey_torch") {
+        LazyParticleTorchBlock(properties(Blocks.TORCH), CParticleTypes.liquid_candy_flame)
+    }.cutout().noSimpleItem()
+    val honey_wall_torch = register("honey_wall_torch") {
+        LazyParticleTorchBlock.Wall(
+            properties(Blocks.WALL_TORCH).dropsLike(honey_torch.get()),
+            CParticleTypes.liquid_candy_flame
+        )
+    }.cutout().noSimpleItem()
     val honeycomb_block = register("honeycomb_block", stone(MapColor.COLOR_YELLOW))
         .minable(PICKAXE)
     val pez_block = register("pez_block", iron(MapColor.COLOR_RED).strength(5.0F, 10.0F))

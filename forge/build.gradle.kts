@@ -6,7 +6,7 @@ plugins {
 }
 
 val modId: String by project
-val jetOption = rootProject.ext["jetOption"] as Boolean
+var jetOption = rootProject.ext["jetOption"] as Boolean
 
 sourceSets {
     main {
@@ -44,6 +44,7 @@ neoForge {
             //forge cannot debug with such option with jbr
             if (jetOption) {
                 logger.warn("Jet option is enabled, but Forge cannot debug with such option with jbr")
+                jetOption = false
 //                jvmArgument("-XX:+AllowEnhancedClassRedefinition")
             }
             ideName = "Forge ${name.capitalized()} (${project.path})" // Unify the run config names with fabric

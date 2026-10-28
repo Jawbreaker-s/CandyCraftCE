@@ -309,6 +309,9 @@ class CBlockLoots : BlockLootSubProvider(setOf(), FeatureFlags.REGISTRY.allFlags
                     fraise_tagada_flower,
                     chewing_gum_puddle,
                     marshmallow_slice,
+                    marshmallow_lantern,
+                    honey_lantern,
+                    honey_torch
                 ).forEach {
                     when (it) {
                         is Entry<*> -> dropSelf(it.get() as Block)

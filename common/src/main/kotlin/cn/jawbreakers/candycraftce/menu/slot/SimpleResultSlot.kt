@@ -1,5 +1,7 @@
 package cn.jawbreakers.candycraftce.menu.slot
 
+import cn.jawbreakers.candycraftce.utils.UsedByMixin
+import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.world.Container
 import net.minecraft.world.inventory.Slot
@@ -19,12 +21,22 @@ open class SimpleResultSlot(pContainer: Container, pSlot: Int, pX: Int, pY: Int)
         return false
     }
 
+    @UsedByMixin
     fun renderExtra(guiGraphics: GuiGraphics) {
-        if (isActive && item.isEmpty) {
-            fakeItem?.also {
+        if (item.isEmpty) {
+            fakeItem?.invoke()?.also {
                 guiGraphics.setColor(1f, 1f, 1f, 0.5f)
-                guiGraphics.renderFakeItem(it().defaultInstance, x, y)
+                guiGraphics.renderFakeItem(it.defaultInstance, x, y)
                 guiGraphics.setColor(1f, 1f, 1f, 1f)
+            }
+        }
+    }
+
+    @UsedByMixin
+    fun renderExtraTooltip(guiGraphics: GuiGraphics, x: Int, y: Int) {
+        if (item.isEmpty) {
+            fakeItem?.invoke()?.also {
+                guiGraphics.renderTooltip(Minecraft.getInstance().font, it.defaultInstance, x, y)
             }
         }
     }

@@ -17,6 +17,7 @@ import cn.jawbreakers.candycraftce.utils.CUtils.instance
 import cn.jawbreakers.candycraftce.utils.EntrySet
 import cn.jawbreakers.candycraftce.utils.TickUnit.tick
 import cn.jawbreakers.candycraftce.utils.registry.Entry
+import net.minecraft.core.Direction
 import net.minecraft.world.effect.MobEffectInstance
 import net.minecraft.world.effect.MobEffects
 import net.minecraft.world.entity.EntityType
@@ -169,6 +170,14 @@ object CItems {
     }
 
     val marshmallow_flower = register("marshmallow_flower")
+    val honey_torch = register("honey_torch") {
+        StandingAndWallBlockItem(
+            CBlocks.honey_torch.get(),
+            CBlocks.honey_wall_torch.get(),
+            Properties(),
+            Direction.DOWN
+        )
+    }
 
     init {
         contextTab = blocks
@@ -181,11 +190,16 @@ object CItems {
             addAll(signs.values)
         }
         CBlocks.withItem().forEach {
+            //pre
+            if (it == CBlocks.honeycomb_block) {
+                blocks.addItem { honey_torch.defaultInstance }
+            }
             when (it) {
                 in signs -> registerBlock(it) { _ -> SignItem(Properties().stacksTo(16), it.get(), signs[it]!!.get()) }
                 in skips -> {}
                 else -> registerBlock(it)
             }
+            //post
             if (it == CBlocks.marshmallow_slice_flower) {
                 blocks.addItem { marshmallow_flower.defaultInstance }
             }

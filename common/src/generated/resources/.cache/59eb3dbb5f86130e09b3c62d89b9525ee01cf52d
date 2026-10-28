@@ -1,4 +1,4 @@
-// 1.20.1	2026-10-24T21:10:12.8451504	Loot Tables
+// 1.20.1	2026-10-28T12:55:27.5745769	Loot Tables
 fd1224084cdb6c713835c4bb1bf94743586c2f9f data/candycraftce/loot_tables/blocks/acid_mint_flower.json
 5dddbcf79cb2d1095fb25b83c2602e5de4429839 data/candycraftce/loot_tables/blocks/advanced_sugar_factory.json
 0defef80112f5170698ba2092ade441ad10a75b4 data/candycraftce/loot_tables/blocks/banana_block.json
@@ -83,10 +83,12 @@ c5a9b673af3c2336084610792975839ada78401f data/candycraftce/loot_tables/blocks/ho
 05b56e662c9a4343d466940b9216d751e72dfb93 data/candycraftce/loot_tables/blocks/honey_glass_diamond.json
 1b39c6c5f48b9c155e6266ab1387b870627d39f0 data/candycraftce/loot_tables/blocks/honey_glass_round.json
 38e0270fc317a924d1d4e3f0f9244d99aacef4af data/candycraftce/loot_tables/blocks/honey_lamp.json
+30a318a7c706fe622638da162ca0625133452a26 data/candycraftce/loot_tables/blocks/honey_lantern.json
 2fe4191a2831178b4886b62b8cf9531c9866377a data/candycraftce/loot_tables/blocks/honey_ore.json
 711c723decb9b67785600020924bb67877d50c78 data/candycraftce/loot_tables/blocks/honey_pane.json
 21eb637989fdd09a59a8e744277f03daacd895b4 data/candycraftce/loot_tables/blocks/honey_pane_diamond.json
 7269a5c5a4e48575d1cf1c3f3ca9febc5ac3c4cc data/candycraftce/loot_tables/blocks/honey_pane_round.json
+033e518d512a5c16744b54a80299330b78cae436 data/candycraftce/loot_tables/blocks/honey_torch.json
 69686cefc391796f10babd99993a03fca43ba23a data/candycraftce/loot_tables/blocks/ice_cream.json
 b742691a8ea956db35708a77515f35444da4bbd8 data/candycraftce/loot_tables/blocks/ice_cream_slab.json
 821f3bb3492794b5ce01fff17f60a4780f3e28ea data/candycraftce/loot_tables/blocks/ice_cream_stairs.json
@@ -116,6 +118,7 @@ b23f0560c9013dba5490d11f938c45ff29e9d2bd data/candycraftce/loot_tables/blocks/li
 45e29dc418be55250f2fa7cd19452c64fb5e7778 data/candycraftce/loot_tables/blocks/marshmallow_fence.json
 c4e77d6e4024dccd53e98676b42d3bf21b92980d data/candycraftce/loot_tables/blocks/marshmallow_fence_gate.json
 a1b542a9175c2bf1eb12cd7fb5ada177f2d0a7a6 data/candycraftce/loot_tables/blocks/marshmallow_ladder.json
+642896ab8a6234a62d5f2ec63ebdf905bf062f69 data/candycraftce/loot_tables/blocks/marshmallow_lantern.json
 fb0546feb2b094293481a1101003dd0f7d36218d data/candycraftce/loot_tables/blocks/marshmallow_log.json
 ee4d017b50e410a6d66fcc13e3cfcd7255d09418 data/candycraftce/loot_tables/blocks/marshmallow_planks.json
 a070c94e38b46f2c032ef9e7fe868c82d10c4caf data/candycraftce/loot_tables/blocks/marshmallow_rope.json

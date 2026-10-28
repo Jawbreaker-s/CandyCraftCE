@@ -16,10 +16,7 @@ import cn.jawbreakers.candycraftce.utils.registry.Entry
 import net.minecraft.core.Direction
 import net.minecraft.data.PackOutput
 import net.minecraft.resources.ResourceLocation
-import net.minecraft.world.level.block.AbstractFurnaceBlock
-import net.minecraft.world.level.block.Block
-import net.minecraft.world.level.block.GlassBlock
-import net.minecraft.world.level.block.IronBarsBlock
+import net.minecraft.world.level.block.*
 import net.minecraftforge.client.model.generators.BlockModelBuilder
 import net.minecraftforge.client.model.generators.BlockStateProvider
 import net.minecraftforge.client.model.generators.ConfiguredModel
@@ -213,6 +210,29 @@ class CBlockStateProvider(output: PackOutput, val efHelper: ExistingFileHelper) 
                     else -> family(f)
                 }
 
+            }
+            listOf(honey_lantern, marshmallow_lantern).forEach {
+                val model = models()
+                    .withExistingParent(it.id.toString(), "block/template_lantern")
+                    .texture("lantern", it.getBlockTexture())
+                val hanging = models()
+                    .withExistingParent(it.id.toString() + "_hanging", "block/template_hanging_lantern")
+                    .texture("lantern", it.getBlockTexture())
+                getVariantBuilder(it.get())
+                    .forAllStates { s ->
+                        (if (s.getValue(LanternBlock.HANGING)) hanging else model).configuredArray()
+                    }
+                itemModels().generated(it.asItemEntry())
+            }
+            (honey_torch to honey_wall_torch).also { (torch, wall) ->
+                val tex = torch.getBlockTexture()
+                val modelTorch = models().withExistingParent(torch.id.toString(), "block/torch")
+                    .texture("torch", tex)
+                val modelWall = models().withExistingParent(wall.id.toString(), "block/template_torch_wall")
+                    .texture("torch", tex)
+                simpleBlock(torch.get(), modelTorch)
+                horizontalBlock(wall.get(), modelWall, 90)
+                itemModels().generated(torch.asItemEntry(), tex)
             }
 
             //log

@@ -76,11 +76,5 @@ open class LicoriceFurnaceScreen<L : LicoriceFurnaceMenu>(
                 y
             )
         }
-        if (tickedTotal != 0 && x >= leftPos + 80 && x <= leftPos + 102 && y >= topPos + 35 && y <= topPos + 51) guiGraphics.renderTooltip(
-            font,
-            Component.literal(((1000f * ticked / tickedTotal).toInt() / 10f).toString() + "%"),
-            x,
-            y
-        )
     }
 }
