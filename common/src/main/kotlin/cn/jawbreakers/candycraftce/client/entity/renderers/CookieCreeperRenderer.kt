@@ -1,8 +1,8 @@
 package cn.jawbreakers.candycraftce.client.entity.renderers
 
 import cn.jawbreakers.candycraftce.entity.CookieCreeper
-import cn.jawbreakers.candycraftce.registry.CEntityTypes
 import cn.jawbreakers.candycraftce.utils.CUtils.entityTex
+import cn.jawbreakers.candycraftce.utils.CUtils.modLoc
 import net.minecraft.client.renderer.entity.CreeperRenderer
 import net.minecraft.client.renderer.entity.EntityRendererProvider
 import net.minecraft.resources.ResourceLocation
@@ -11,7 +11,7 @@ import net.minecraft.world.entity.monster.Creeper
 
 class CookieCreeperRenderer(context: EntityRendererProvider.Context) : CreeperRenderer(context) {
     companion object {
-        private val texture = CEntityTypes.cookie_creeper.id.entityTex()
+        private val texture = "cookie_creeper".modLoc().entityTex()
     }
 
     override fun getTextureLocation(entity: Creeper): ResourceLocation = texture

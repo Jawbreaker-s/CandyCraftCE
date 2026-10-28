@@ -5,7 +5,6 @@ import cn.jawbreakers.candycraftce.client.hud.CandyBossBarHud
 import cn.jawbreakers.candycraftce.fluid.CFluidPresets
 import cn.jawbreakers.candycraftce.fluid.CFluidReferences
 import cn.jawbreakers.candycraftce.registry.CBlocks.asItemEntry
-import cn.jawbreakers.candycraftce.utils.CPlatformUtils.translate
 import cn.jawbreakers.candycraftce.utils.CUtils.modLoc
 import cn.jawbreakers.candycraftce.utils.ICPlatformDatagen.MinableLevel
 import cn.jawbreakers.candycraftce.utils.ICPlatformDatagen.MinableType
@@ -101,12 +100,9 @@ object CPlatformUtils : ICPlatForm by CandyCraftCE.platform {
 
 }
 
-interface ICPlatForm {
-    companion object {
-        val SPAWN_EGG_DESC: String = Util.makeDescriptionId("item", "spawn_egg".modLoc())
-            .translate("%s Spawn Egg", "%s刷怪蛋")
-    }
+val SPAWN_EGG_DESC: String = Util.makeDescriptionId("item", "spawn_egg".modLoc())
 
+interface ICPlatForm {
     val isDev: Boolean
     val isClient: Boolean
     val fluids: ICPlatformFluids

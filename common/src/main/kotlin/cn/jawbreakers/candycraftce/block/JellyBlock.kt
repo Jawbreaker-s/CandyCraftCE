@@ -6,12 +6,13 @@ import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
+import net.minecraft.world.level.block.HalfTransparentBlock
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.VoxelShape
 import kotlin.math.abs
 
-class JellyBlock(val type: JellyType, properties: Properties) : SameBlockCullBlock(properties) {
+class JellyBlock(val type: JellyType, properties: Properties) : HalfTransparentBlock(properties) {
     private val shape: VoxelShape = box(0.0, 0.0, 0.0, 16.0, 15.92, 16.0)
 
 
@@ -81,7 +82,7 @@ enum class JellyType(
     NONE(0.0, isFull = true),
     PURPLE(2.1, resetFall = true, stuckIn = true),
     BLUE(-1.0, resetFall = true, isFull = true),
-    YELLOW(1.0),
+    YELLOW(1.0, isDisturbing = true),
     GREEN(2.0),
     RED(4.0)
 }

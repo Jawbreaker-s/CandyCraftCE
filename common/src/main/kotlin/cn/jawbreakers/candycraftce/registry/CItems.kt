@@ -191,7 +191,7 @@ object CItems {
         }
         CBlocks.withItem().forEach {
             //pre
-            if (it == CBlocks.honeycomb_block) {
+            if (it == CBlocks.mint_family.door) {
                 blocks.addItem { honey_torch.defaultInstance }
             }
             when (it) {

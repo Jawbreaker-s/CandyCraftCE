@@ -116,12 +116,12 @@ public final class CCEntityTypes {
 //					.build(CandyCraft.MODID + ":candy_creeper")
 //	);
 
-	public static final RegistryObject<EntityType<CottonCandySpiderEntity>> COTTON_CANDY_SPIDER = ENTITY_TYPES.register("cotton_candy_spider", () ->
-			EntityType.Builder.of(CottonCandySpiderEntity::new, MobCategory.MONSTER)
-					.sized(1.4F, 0.9F)
-					.clientTrackingRange(8)
-					.build(CandyCraft.MODID + ":cotton_candy_spider")
-	);
+//	public static final RegistryObject<EntityType<CottonCandySpiderEntity>> COTTON_CANDY_SPIDER = ENTITY_TYPES.register("cotton_candy_spider", () ->
+//			EntityType.Builder.of(CottonCandySpiderEntity::new, MobCategory.MONSTER)
+//					.sized(1.4F, 0.9F)
+//					.clientTrackingRange(8)
+//					.build(CandyCraft.MODID + ":cotton_candy_spider")
+//	);
 
 	public static final RegistryObject<EntityType<CandyWolfEntity>> CANDY_WOLF = ENTITY_TYPES.register("candy_wolf", () ->
 			EntityType.Builder.of(CandyWolfEntity::new, MobCategory.CREATURE)
@@ -130,24 +130,24 @@ public final class CCEntityTypes {
 					.build(CandyCraft.MODID + ":candy_wolf")
 	);
 
-	public static final RegistryObject<EntityType<GummyBunnyEntity>> GUMMY_BUNNY = ENTITY_TYPES.register("gummy_bunny", () ->
-			EntityType.Builder.of(GummyBunnyEntity::new, MobCategory.CREATURE)
-					.sized(0.5F, 0.4F)
-					.clientTrackingRange(10)
-					.build(CandyCraft.MODID + ":gummy_bunny")
-	);
+	//	public static final RegistryObject<EntityType<GummyBunnyEntity>> GUMMY_BUNNY = ENTITY_TYPES.register("gummy_bunny", () ->
+//			EntityType.Builder.of(GummyBunnyEntity::new, MobCategory.CREATURE)
+//					.sized(0.5F, 0.4F)
+//					.clientTrackingRange(10)
+//					.build(CandyCraft.MODID + ":gummy_bunny")
+//	);
 	//	public static final RegistryObject<EntityType<CottonCandySheepEntity>> COTTON_CANDY_SHEEP = ENTITY_TYPES.register("cotton_candy_sheep", () ->
 //			EntityType.Builder.of(CottonCandySheepEntity::new, MobCategory.CREATURE)
 //					.sized(0.9F, 1.3F)
 //					.clientTrackingRange(10)
 //					.build(CandyCraft.MODID + ":cotton_candy_sheep")
 //	);
-	public static final RegistryObject<EntityType<EasterChickenEntity>> EASTER_CHICKEN = ENTITY_TYPES.register("easter_chicken", () ->
-			EntityType.Builder.of(EasterChickenEntity::new, MobCategory.CREATURE)
-					.sized(0.4F, 0.7F)
-					.clientTrackingRange(10)
-					.build(CandyCraft.MODID + ":easter_chicken")
-	);
+//	public static final RegistryObject<EntityType<EasterChickenEntity>> EASTER_CHICKEN = ENTITY_TYPES.register("easter_chicken", () ->
+//			EntityType.Builder.of(EasterChickenEntity::new, MobCategory.CREATURE)
+//					.sized(0.4F, 0.7F)
+//					.clientTrackingRange(10)
+//					.build(CandyCraft.MODID + ":easter_chicken")
+//	);
 	public static final RegistryObject<EntityType<GummyMouseEntity>> GUMMY_MOUSE = ENTITY_TYPES.register("gummy_mouse", () ->
 			EntityType.Builder.of(GummyMouseEntity::new, MobCategory.CREATURE)
 					.sized(0.35F, 0.2F)

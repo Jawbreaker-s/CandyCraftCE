@@ -9,11 +9,11 @@ import net.minecraft.resources.ResourceLocation
 
 
 class HoneyArrowRenderer(context: EntityRendererProvider.Context) : ArrowRenderer<HoneyArrow>(context) {
-    override fun getTextureLocation(entity: HoneyArrow): ResourceLocation {
-        return texture
-    }
-
     companion object {
         private val texture = CEntityTypes.honey_arrow.id.entityTex()
+    }
+
+    override fun getTextureLocation(entity: HoneyArrow): ResourceLocation {
+        return texture
     }
 }

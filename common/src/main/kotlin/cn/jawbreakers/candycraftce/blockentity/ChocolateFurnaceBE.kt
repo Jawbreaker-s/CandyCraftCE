@@ -1,4 +1,4 @@
-package cn.jawbreakers.candycraftce.block.blockentity
+package cn.jawbreakers.candycraftce.blockentity
 
 import cn.jawbreakers.candycraftce.menu.ChocolateFurnaceMenu
 import cn.jawbreakers.candycraftce.registry.CBlockEntities

@@ -1,4 +1,4 @@
-package cn.jawbreakers.candycraftce.block.blockentity
+package cn.jawbreakers.candycraftce.blockentity
 
 import cn.jawbreakers.candycraftce.gui.menu.AdvancedSugarFactoryMenu
 import cn.jawbreakers.candycraftce.recipe.recipes.SugarFactoryRecipe

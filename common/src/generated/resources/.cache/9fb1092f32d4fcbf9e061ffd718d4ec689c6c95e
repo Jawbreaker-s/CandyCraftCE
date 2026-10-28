@@ -1,4 +1,4 @@
-// 1.20.1	2026-10-26T12:57:53.0663687	Recipes
+// 1.20.1	2026-10-28T21:56:34.8205462	Recipes
 4b269a2f785c890aa03cce557dec66edeef944bf data/candycraftce/advancements/recipes/building_blocks/banana_block_1.json
 444e79a5e0dd996f624ba2496e9d75677268c95f data/candycraftce/advancements/recipes/building_blocks/banana_ice_cream_slab_1.json
 6fb3d498ef0579b0ea7f3b518bb71435c4752ff0 data/candycraftce/advancements/recipes/building_blocks/banana_ice_cream_stairs_1.json
@@ -124,6 +124,7 @@ b4827581c48d9e43cbbed644bb12b28fe510d82b data/candycraftce/advancements/recipes/
 27dee0c1a260e12c4ecbbd74165829868c2365a5 data/candycraftce/advancements/recipes/decorations/honey_pane_1.json
 04f705578ca0811cad29e733fd55498e4abc93cd data/candycraftce/advancements/recipes/decorations/honey_pane_diamond_1.json
 c902f1ce10b5aa48156cfb4bdbf491938a84e593 data/candycraftce/advancements/recipes/decorations/honey_pane_round_1.json
+da409616752e878f6bb4782200e81a32593f588a data/candycraftce/advancements/recipes/decorations/honey_torch_1.json
 ee2b0b283061224657db410451fc87171c30d4b3 data/candycraftce/advancements/recipes/decorations/light_marshmallow_fence_1.json
 f7e160ce5344fc74cf39ecd0a4788b05e204601c data/candycraftce/advancements/recipes/decorations/light_marshmallow_sign_1.json
 3de12598b087dcd28c35c388ef1382b66b077a7f data/candycraftce/advancements/recipes/decorations/marshmallow_fence_1.json
@@ -238,6 +239,7 @@ ab8d4ff85f04efca08c1d89b7def56b10de8932d data/candycraftce/recipes/honey_helmet_
 7cda4955d45575650210caaa6dc31276c8cee651 data/candycraftce/recipes/honey_shard_1.json
 41be7ccbdb136f74b89f1ccff7fb77ff9a620d2c data/candycraftce/recipes/honey_shovel_1.json
 b0de8c7333365ea0ea64ab0eff403a35c30d3a15 data/candycraftce/recipes/honey_sword_1.json
+529f911a6ea92d6e1fa3f28caf0a591ba32354c4 data/candycraftce/recipes/honey_torch_1.json
 9ada02fd5f999051e0cbac7e2800464cd2daa485 data/candycraftce/recipes/hot_gummy_1.json
 6b9030de4c64d5c5150d67b961b2c5baa3fc937c data/candycraftce/recipes/ice_cream_slab_1.json
 17b66ac1bf43fee9540533e6e780871e1cf07d7c data/candycraftce/recipes/ice_cream_stairs_1.json

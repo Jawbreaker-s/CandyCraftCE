@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.WallTorchBlock
 import net.minecraft.world.level.block.state.BlockState
 import java.util.function.Supplier
 
-class LazyParticleTorchBlock(properties: Properties, private val particleSupplier: Supplier<out ParticleOptions?>) :
+class LazyParticleTorchBlock(properties: Properties, private val particleSupplier: Supplier<out ParticleOptions>) :
     TorchBlock(properties, ParticleTypes.FLAME) {
     override fun animateTick(state: BlockState, level: Level, pos: BlockPos, random: RandomSource) {
         val x = pos.x + 0.5

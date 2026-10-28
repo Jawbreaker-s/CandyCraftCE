@@ -8,12 +8,9 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.Items
 import net.minecraft.world.level.block.LiquidBlock
 import net.minecraft.world.level.material.FlowingFluid
+import net.minecraft.world.level.material.FluidState
 import net.minecraft.world.level.material.MapColor
 
-// should use tag version
-//fun FluidState.`is`(ref: CFluidReferences): Boolean {
-//    return this.type == ref.source.get() || this.type == ref.flowing.get()
-//}
 
 data class CFluidReferences(
     val presets: CFluidPresets,
@@ -21,6 +18,12 @@ data class CFluidReferences(
     val flowing: Entry<out FlowingFluid>,
     val block: Entry<out LiquidBlock>,
 ) : EntrySet<FlowingFluid>(setOf(source, flowing)) {
+    companion object {
+        fun FluidState.`is`(ref: CFluidReferences): Boolean {
+            return this.type == ref.source.get() || this.type == ref.flowing.get()
+        }
+    }
+
     fun getBucket(): Item = presets.bucket?.invoke()?.get() ?: Items.AIR
 
     init {

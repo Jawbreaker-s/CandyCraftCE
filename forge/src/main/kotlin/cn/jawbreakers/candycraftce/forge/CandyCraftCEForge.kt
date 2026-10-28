@@ -24,6 +24,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier
 import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.Item
+import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.Recipe
 import net.minecraft.world.item.crafting.RecipeSerializer
 import net.minecraft.world.item.crafting.RecipeType
@@ -114,9 +115,9 @@ class CandyCraftCEForge : ICPlatForm {
         highlightColor: Int,
         properties: Item.Properties,
     ) = object : ForgeSpawnEggItem(type, backgroundColor, highlightColor, properties) {
-        val desc: Component by lazy { Component.translatable(ICPlatForm.SPAWN_EGG_DESC, type.get().description) }
+        val desc: Component by lazy { Component.translatable(SPAWN_EGG_DESC, type.get().description) }
         override fun getDescription(): Component = desc
-
+        override fun getName(stack: ItemStack) = desc
     }
 
     override fun <I : Item> registerItem(name: String, factory: Supplier<I>): Entry<I> =

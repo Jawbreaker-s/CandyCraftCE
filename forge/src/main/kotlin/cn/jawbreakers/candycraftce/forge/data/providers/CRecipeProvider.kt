@@ -36,6 +36,10 @@ class CRecipeProvider(output: PackOutput) : RecipeProvider(output) {
                         cube(BUILDING_BLOCKS, 1, 2, Items.SUGAR.setUnlockBy())
                             .save()
                     }
+                    sugar_block.madeWith {
+                        sugarFactory(sugar_sand.ingredient())
+                            .save()
+                    }
                     listOf(
                         marshmallow_planks to listOf(marshmallow_log, stripped_marshmallow_log),
                         light_marshmallow_planks to listOf(light_marshmallow_log, stripped_light_marshmallow_log),
@@ -563,7 +567,7 @@ class CRecipeProvider(output: PackOutput) : RecipeProvider(output) {
 
 
             fun RawIngredient.setUnlockBy(): Ingredient = apply {
-                require(unlockBy === null) { "Multi unlockBy not supported" }
+                require(unlockBy === null) { "Multi-unlockBy not supported yet" }
                 unlockBy = this
             }.build()
 

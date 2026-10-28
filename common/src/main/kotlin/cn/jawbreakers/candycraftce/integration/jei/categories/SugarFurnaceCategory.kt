@@ -6,7 +6,9 @@ import cn.jawbreakers.candycraftce.integration.jei.CJeiRecipes
 import cn.jawbreakers.candycraftce.recipe.recipes.SugarFurnaceRecipe
 import cn.jawbreakers.candycraftce.registry.CBlocks
 import cn.jawbreakers.candycraftce.registry.CBlocks.defaultInstance
+import cn.jawbreakers.candycraftce.registry.CSugarFuels
 import cn.jawbreakers.candycraftce.utils.TickUnit.SEC2TICK
+import cn.jawbreakers.candycraftce.utils.TickUnit.TICK2SEC
 import mezz.jei.api.constants.VanillaTypes
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder
 import mezz.jei.api.gui.drawable.IDrawable
@@ -58,8 +60,15 @@ class SugarFurnaceCategory(helper: IGuiHelper) : IRecipeCategory<SugarFurnaceRec
     override fun getIcon() = icon
 
     override fun setRecipe(builder: IRecipeLayoutBuilder, recipe: SugarFurnaceRecipe, focuses: IFocusGroup) {
-        builder.addSlot(RecipeIngredientRole.INPUT, 55 + 1, 17).addIngredients(recipe.ingredient)
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 115 + 1, 35).addItemStack(recipe.result.defaultInstance)
+        builder.addSlot(RecipeIngredientRole.INPUT, 56, 17).addIngredients(recipe.ingredient)
+        builder.addSlot(RecipeIngredientRole.RENDER_ONLY, 56, 53)
+            .addItemStacks(CSugarFuels.listFuels().map { it.key.defaultInstance }.toList())
+            .addTooltipCallback { ingredients, tooltip ->
+                ingredients.displayedItemStack.ifPresent { fuel ->
+                    tooltip.add(Component.literal((CSugarFuels.getBurnDuration(fuel) * TICK2SEC).toString() + "s"))
+                }
+            }
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 116, 35).addItemStack(recipe.result.defaultInstance)
     }
 
     override fun draw(

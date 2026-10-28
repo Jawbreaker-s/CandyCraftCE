@@ -1,6 +1,6 @@
 package cn.jawbreakers.candycraftce.gui.menu
 
-import cn.jawbreakers.candycraftce.block.blockentity.SugarFactoryBE
+import cn.jawbreakers.candycraftce.blockentity.SugarFactoryBE
 import cn.jawbreakers.candycraftce.menu.slot.SimpleResultSlot
 import cn.jawbreakers.candycraftce.registry.CMenus.sugar_factory_menu
 import cn.jawbreakers.candycraftce.utils.CUtils.getItemById

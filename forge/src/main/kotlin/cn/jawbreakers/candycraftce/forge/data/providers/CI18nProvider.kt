@@ -6,6 +6,7 @@ import cn.jawbreakers.candycraftce.entity.CandyBossType.*
 import cn.jawbreakers.candycraftce.item.EmblemItem
 import cn.jawbreakers.candycraftce.registry.*
 import cn.jawbreakers.candycraftce.utils.ILanguageProvider
+import cn.jawbreakers.candycraftce.utils.SPAWN_EGG_DESC
 import cn.jawbreakers.candycraftce.utils.registry.Entry
 import net.minecraft.data.CachedOutput
 import net.minecraft.data.DataProvider
@@ -30,6 +31,8 @@ class CI18nProvider(output: PackOutput) : DataProvider, ILanguageProvider {
 
     private fun addTranslations() {
         add("mod.$MOD_ID", "CandyCraft Community Edition", "糖果世界社区版")
+        add(SPAWN_EGG_DESC, "%s Spawn Egg", "%s刷怪蛋")
+
         CTabs.apply {
             addTab(blocks, "CandyCraftCE: Blocks", "糖果世界:方块")
             addTab(toolsArmors, "CandyCraftCE: Tools and Armors", "糖果世界:工具和盔甲")
@@ -368,6 +371,7 @@ class CI18nProvider(output: PackOutput) : DataProvider, ILanguageProvider {
             addEntity(gummy_bunny, "Gummy Bunny", "果冻兔")
             addEntity(cranfish, "Cranfish", "蔓越莓鱼")
             addEntity(cookie_creeper, "Cookie Creeper", "饼干苦力怕")
+            addEntity(cotton_candy_spider, "Cotton Candy Spider", "棉花糖蜘蛛")
             addEntity(caramel_bee, "Caramel Bee", "焦糖蜂")
             addEntity(jelly_queen, "Jelly Queen", "果冻皇后")
             addEntity(lemon_jelly, "Lemon Jelly", "柠檬果冻")

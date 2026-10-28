@@ -2,8 +2,8 @@ package cn.jawbreakers.candycraftce.client.entity.renderers
 
 import cn.jawbreakers.candycraftce.client.entity.models.CranfishModel
 import cn.jawbreakers.candycraftce.entity.Cranfish
-import cn.jawbreakers.candycraftce.registry.CEntityTypes
 import cn.jawbreakers.candycraftce.utils.CUtils.entityTex
+import cn.jawbreakers.candycraftce.utils.CUtils.modLoc
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
 import net.minecraft.client.renderer.entity.EntityRendererProvider
@@ -17,7 +17,7 @@ class CranfishRenderer(context: EntityRendererProvider.Context) :
         0.18f
     ) {
     companion object {
-        private val texture = CEntityTypes.cranfish.id.entityTex()
+        private val texture = "cranfish".modLoc().entityTex()
     }
 
     protected override fun setupRotations(

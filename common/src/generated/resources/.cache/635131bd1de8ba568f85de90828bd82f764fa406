@@ -1,4 +1,4 @@
-// 1.20.1	2026-10-28T12:55:27.5735841	Tags for minecraft:block mod id candycraftce
+// 1.20.1	2026-10-28T21:56:34.8170118	Tags for minecraft:block mod id candycraftce
 16cf551a654629af4afa9b39f84d8efe1a755864 data/candycraftce/tags/blocks/candy_animal_spawnable_on.json
 02382e15a9f7e25129cbee2ce449ef98b95f5079 data/candycraftce/tags/blocks/candy_leaves.json
 995ce92b7c885df1b1053501bc4dc8e265cb4fa7 data/candycraftce/tags/blocks/candy_portal_frame.json
@@ -25,7 +25,7 @@ e239bb19a4c06de63f1b5f4ce5bafed1857bfc57 data/minecraft/tags/blocks/leaves.json
 d86902757e0f08ca392972d59c12da7849134b1a data/minecraft/tags/blocks/logs.json
 48d6a7920492c87e0695c0ef96ec05e849a263a9 data/minecraft/tags/blocks/mineable/axe.json
 0ced9689fba917eb37500e16fce0ad012e08451f data/minecraft/tags/blocks/mineable/hoe.json
-93035e1f79d1918cca9084c6bf56f58af016eb6d data/minecraft/tags/blocks/mineable/pickaxe.json
+de18478bfe0e8d87c89cbae962e1a057bc3756e9 data/minecraft/tags/blocks/mineable/pickaxe.json
 2052137c8b44e685bfc59c8ed59690590bd35134 data/minecraft/tags/blocks/mineable/shovel.json
 be6f9612730e4a2fba1fd5e3cce83b44a9e240a2 data/minecraft/tags/blocks/needs_diamond_tool.json
 45168ae1787fa92f800ee20de314ddcb5154836c data/minecraft/tags/blocks/needs_iron_tool.json

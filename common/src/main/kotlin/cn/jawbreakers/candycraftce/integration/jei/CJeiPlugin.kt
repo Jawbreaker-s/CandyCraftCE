@@ -1,7 +1,7 @@
 package cn.jawbreakers.candycraftce.integration.jei
 
 import cn.jawbreakers.candycraftce.CandyCraftCE.onPostWork
-import cn.jawbreakers.candycraftce.block.blockentity.SugarFactoryBE
+import cn.jawbreakers.candycraftce.blockentity.SugarFactoryBE
 import cn.jawbreakers.candycraftce.client.screen.LicoriceFurnaceScreen
 import cn.jawbreakers.candycraftce.client.screen.SugarFactoryScreen
 import cn.jawbreakers.candycraftce.integration.jei.CJeiRecipes.sugar_factory_jei
@@ -112,7 +112,7 @@ class CJeiPlugin : IModPlugin {
         )
         registration.addRecipeClickArea(
             LicoriceFurnaceScreen::class.java,
-            80, 35, 14, 22,
+            80, 35, 22, 16,
             sugar_furnace_jei
         )
     }

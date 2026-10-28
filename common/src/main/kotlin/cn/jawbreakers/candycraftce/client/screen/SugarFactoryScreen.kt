@@ -1,9 +1,9 @@
 package cn.jawbreakers.candycraftce.client.screen
 
-import cn.jawbreakers.candycraftce.block.blockentity.SugarFactoryBE.Companion.COMMON_TYPE
-import cn.jawbreakers.candycraftce.block.blockentity.SugarFactoryBE.Companion.RECIPE_TYPE_DATA_SLOT
-import cn.jawbreakers.candycraftce.block.blockentity.SugarFactoryBE.Companion.TICKED_DATA_SLOT
-import cn.jawbreakers.candycraftce.block.blockentity.SugarFactoryBE.Companion.TICKED_TOTAL_DATA_SLOT
+import cn.jawbreakers.candycraftce.blockentity.SugarFactoryBE.Companion.COMMON_TYPE
+import cn.jawbreakers.candycraftce.blockentity.SugarFactoryBE.Companion.RECIPE_TYPE_DATA_SLOT
+import cn.jawbreakers.candycraftce.blockentity.SugarFactoryBE.Companion.TICKED_DATA_SLOT
+import cn.jawbreakers.candycraftce.blockentity.SugarFactoryBE.Companion.TICKED_TOTAL_DATA_SLOT
 import cn.jawbreakers.candycraftce.gui.menu.SugarFactoryMenu
 import cn.jawbreakers.candycraftce.utils.CUtils.guiTex
 import cn.jawbreakers.candycraftce.utils.CUtils.modLoc

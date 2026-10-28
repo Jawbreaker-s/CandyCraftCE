@@ -1,4 +1,4 @@
-package cn.jawbreakers.candycraftce.block.blockentity;
+package cn.jawbreakers.candycraftce.blockentity;
 
 import com.valentin4311.candycraftmod.block.LicoriceFurnaceBlock;
 import com.valentin4311.candycraftmod.menu.LicoriceFurnaceMenu;

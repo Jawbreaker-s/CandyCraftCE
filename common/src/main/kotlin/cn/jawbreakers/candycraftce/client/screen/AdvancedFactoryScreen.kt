@@ -1,6 +1,6 @@
 package cn.jawbreakers.candycraftce.client.screen
 
-import cn.jawbreakers.candycraftce.block.blockentity.AdvancedFactoryBE.Companion.ADVANCED_TYPE
+import cn.jawbreakers.candycraftce.blockentity.AdvancedFactoryBE.Companion.ADVANCED_TYPE
 import cn.jawbreakers.candycraftce.gui.menu.SugarFactoryMenu
 import cn.jawbreakers.candycraftce.utils.CUtils.guiTex
 import cn.jawbreakers.candycraftce.utils.CUtils.modLoc

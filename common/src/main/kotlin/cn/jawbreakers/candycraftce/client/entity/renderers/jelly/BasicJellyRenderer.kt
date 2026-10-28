@@ -17,7 +17,6 @@ abstract class BasicJellyRenderer<T : BasicJelly>(context: EntityRendererProvide
     MobRenderer<T, SlimeModel<T>>(context, SlimeModel<T>(context.bakeLayer(ModelLayers.SLIME)), 0.25f) {
     companion object {
         val texture_sleeping = "jelly/sleeping".modLoc().entityTex()
-
     }
 
     init {

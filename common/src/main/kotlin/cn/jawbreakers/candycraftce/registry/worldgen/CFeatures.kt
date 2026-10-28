@@ -223,7 +223,7 @@ object CFeatures {
         )
         register(
             placed_tree_enchanted, configured_tree_enchanted,
-            listOf(count(11), in_square, motion_no_leaves, on_candy_soil, biome)
+            listOf(count(12), in_square, motion_no_leaves, on_candy_soil, biome)
         )
         register(
             placed_tree_white_chocolate_forest, configured_tree_white_chocolate,

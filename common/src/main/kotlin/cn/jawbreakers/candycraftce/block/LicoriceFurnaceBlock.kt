@@ -1,6 +1,6 @@
 package cn.jawbreakers.candycraftce.block
 
-import cn.jawbreakers.candycraftce.block.blockentity.LicoriceFurnaceBE
+import cn.jawbreakers.candycraftce.blockentity.LicoriceFurnaceBE
 import cn.jawbreakers.candycraftce.registry.CBlockEntities
 import cn.jawbreakers.candycraftce.registry.CBlockEntities.create
 import cn.jawbreakers.candycraftce.utils.CLevelUtils.ifServer

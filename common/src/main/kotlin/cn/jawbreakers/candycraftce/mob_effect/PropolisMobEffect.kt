@@ -16,6 +16,6 @@ class PropolisMobEffect : MobEffect(MobEffectCategory.HARMFUL, 0xE7B83D) {
     }
 
     init {
-        addAttributeModifier(Attributes.MOVEMENT_SPEED, UUID, -0.30, AttributeModifier.Operation.MULTIPLY_TOTAL)
+        addAttributeModifier(Attributes.MOVEMENT_SPEED, UUID, -0.3, AttributeModifier.Operation.MULTIPLY_TOTAL)
     }
 }

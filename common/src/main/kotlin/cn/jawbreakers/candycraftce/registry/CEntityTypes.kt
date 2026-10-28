@@ -36,6 +36,8 @@ import net.minecraft.world.entity.animal.WaterAnimal
 import net.minecraft.world.entity.animal.WaterAnimal.checkSurfaceWaterAnimalSpawnRules
 import net.minecraft.world.entity.monster.Creeper
 import net.minecraft.world.entity.monster.Monster
+import net.minecraft.world.entity.monster.Slime
+import net.minecraft.world.entity.monster.Spider
 import net.minecraft.world.level.BlockAndTintGetter
 import net.minecraft.world.level.ServerLevelAccessor
 import net.minecraft.world.level.levelgen.Heightmap
@@ -51,6 +53,7 @@ object CEntityTypes {
         CLogUtils.sign()
     }
 
+    // will register in CItems sooner
     internal val eggs = mutableMapOf<Entry<EntityType<out Mob>>, IntIntPair>()
 
     val honey_arrow = register("honey_arrow") {
@@ -113,6 +116,7 @@ object CEntityTypes {
             .sized(0.9f, 1.3f)
             .clientTrackingRange(10)
     }
+        .egg(0xF1C3C3, 0xFFC000)
         .attributes(WaffleSheep::createAttributes)
         .renderer(::WaffleSheepRenderer)
         .placement(::checkCandyAnimalSpawnRules)
@@ -122,6 +126,7 @@ object CEntityTypes {
             .sized(0.5F, 0.4F)
             .clientTrackingRange(10)
     }
+        .egg(0xF1C3C3, 0xEEFF33)
         .attributes(GummyBunny::createAttributes)
         .renderer(::GummyBunnyRenderer) {
             registerLayer(GummyBunnyModel.LAYER, GummyBunnyModel<*>::createBodyLayer)
@@ -135,6 +140,7 @@ object CEntityTypes {
             .sized(0.95F, 0.95F)
             .clientTrackingRange(8)
     }
+        .egg(0xF1C3C3, 0x3A01DF)
         .attributes(Cranfish::createAttributes)
         .renderer(::CranfishRenderer) {
             registerLayer(CranfishModel.LAYER, CranfishModel<*>::createBodyLayer)
@@ -147,9 +153,21 @@ object CEntityTypes {
             .sized(0.6F, 1.7F)
             .clientTrackingRange(8)
     }
+        .egg(0xF1C3C3, 0x777777)
         .attributes(Creeper::createAttributes)
         .renderer(::CookieCreeperRenderer)
         .placement(::checkCandyMonsterSpawnRules)
+
+    val cotton_candy_spider = register("cotton_candy_spider") {
+        of(::CottonCandySpider, MobCategory.MONSTER)
+            .sized(1.4F, 0.9F)
+            .clientTrackingRange(8)
+    }
+        .egg(0xF1C3C3, 0xA00000)
+        .attributes(Spider::createAttributes)
+        .renderer(::CottonCandySpiderRenderer)
+        .placement(::checkCandyMonsterSpawnRules)
+
 
     val caramel_bee = register("caramel_bee") {
         of(::CaramelBee, MobCategory.MONSTER)
@@ -157,6 +175,7 @@ object CEntityTypes {
             .clientTrackingRange(8)
             .updateInterval(1)
     }
+        .egg(0xF1C3C3, 0xFE7F01)
         .attributes(CaramelBee::createAttributes)
         .renderer(::CaramelBeeRenderer) {
             registerLayer(CaramelBeeModel.LAYER, CaramelBeeModel<*>::createBodyLayer)
@@ -166,15 +185,16 @@ object CEntityTypes {
     //================JELLIES================
     val lemon_jelly = registerJelly("lemon_jelly", ::LemonJelly)
         .renderer(::LemonJellyRenderer)
-
+        .egg(0x555555, 0xFFFF00)
     val raspberry_jelly = registerJelly("raspberry_jelly", ::RaspberryJelly)
         .renderer(::RaspberryJellyRenderer)
-
+        .egg(0x555555, 0xFF0000)
     val mint_jelly = registerJelly("mint_jelly", ::MintJelly)
         .renderer(::MintJellyRenderer)
-
+        .egg(0x555555, 0x00FFFF)
     val jelly_queen = registerJelly("jelly_queen", ::JellyQueen, isBoss = true)
         .renderer(::JellyQueenRenderer)
+        .egg(0xFF7373, 0xCF00EF)
 
     //=================================
     private fun <E : Entity> register(name: String, type: Supplier<EntityType.Builder<E>>) =
@@ -200,14 +220,16 @@ object CEntityTypes {
             of(factory, MobCategory.MONSTER)
                 .sized(EntityType.SLIME.width, EntityType.SLIME.height)
                 .clientTrackingRange(8)
-        }
-            .apply {
-                if (isBoss) {
-                    attributes(BossJelly::createBossJellyAttribute)
-                } else {
-                    attributes(BasicJelly::createJellyAttribute)
-                }
+        }.apply {
+            if (isBoss) {
+                attributes(BossJelly::createBossJellyAttribute)
+            } else {
+                attributes(BasicJelly::createJellyAttribute)
             }
+        }.placement { type, level, spawnType, pos, random ->
+            @Suppress("UNCHECKED_CAST")
+            Slime.checkSlimeSpawnRules(type as EntityType<Slime>, level, spawnType, pos, random)
+        }
 
 
     @Suppress("UNCHECKED_CAST")
@@ -230,20 +252,14 @@ object CEntityTypes {
         fun registerLayer(key: ModelLayerLocation, factory: Supplier<LayerDefinition>)
     }
 
-    //	registerSpawnEgg("waffle_sheep_spawn_egg", CCEntityTypes.WAFFLE_SHEEP, 0xF1C3C3, 0xFFC000);
-    //	registerSpawnEgg("candy_creeper_spawn_egg", CCEntityTypes.CANDY_CREEPER, 0xF1C3C3, 0x777777);
-    //	registerSpawnEgg("cotton_candy_spider_spawn_egg", CCEntityTypes.COTTON_CANDY_SPIDER, 0xF1C3C3, 0xA00000);
     //	registerSpawnEgg("suguard_spawn_egg", CCEntityTypes.SUGUARD, 0xF1C3C3, 0x8E0082);
     //	registerSpawnEgg("mage_suguard_spawn_egg", CCEntityTypes.MAGE_SUGUARD, 0xF1C3C3, 0xEB3D00);
     //	registerSpawnEgg("candy_wolf_spawn_egg", CCEntityTypes.CANDY_WOLF, 0xF1C3C3, 0xDDDDDD);
-    //	registerSpawnEgg("gummy_bunny_spawn_egg", CCEntityTypes.GUMMY_BUNNY, 0xF1C3C3, 0xEEFF33);
     //	registerSpawnEgg("cotton_candy_sheep_spawn_egg", CCEntityTypes.COTTON_CANDY_SHEEP, 0xFF33FF, 0xFFCCFF);
     //	registerSpawnEgg("easter_chicken_spawn_egg", CCEntityTypes.EASTER_CHICKEN, 0x996611, 0x774411);
     //	registerSpawnEgg("gummy_mouse_spawn_egg", CCEntityTypes.GUMMY_MOUSE, 0x00FF00, 0x33BB33);
     //	registerSpawnEgg("gummy_bear_spawn_egg", CCEntityTypes.GUMMY_BEAR, 0x00FF00, 0x33BB33);
-    //	registerSpawnEgg("caramel_bee_spawn_egg", CCEntityTypes.CARAMEL_BEE, 0xF1C3C3, 0xFE7F01);
     //	registerSpawnEgg("gingerbread_man_spawn_egg", CCEntityTypes.GINGERBREAD_MAN, 0xF1C3C3, 0x61380B);
-    //	registerSpawnEgg("candy_fish_spawn_egg", CCEntityTypes.CANDY_FISH, 0xF1C3C3, 0x3A01DF);
     //	registerSpawnEgg("pingouin_spawn_egg", CCEntityTypes.PINGOUIN, 0xF1C3C3, 0xFFFFFF);
     //	registerSpawnEgg("beetle_spawn_egg", CCEntityTypes.BEETLE, 0xF1C3C3, 0x250066);
     //	registerSpawnEgg("nessie_spawn_egg", CCEntityTypes.NESSIE, 0xF1C3C3, 0xA9E2F3);
@@ -251,12 +267,9 @@ object CEntityTypes {
     //	registerSpawnEgg("king_beetle_spawn_egg", CCEntityTypes.KING_BEETLE, 0x8DC444, 0xA500B3);
     //	registerSpawnEgg("mermaid_spawn_egg", CCEntityTypes.MERMAID, 0x555555, 0x7D82B0);
     //	registerSpawnEgg("nougat_golem_spawn_egg", CCEntityTypes.NOUGAT_GOLEM, 0xD8C18C, 0x805B38);
-    //	registerSpawnEgg("yellow_jelly_spawn_egg", CCEntityTypes.YELLOW_JELLY, 0x555555, 0xFFFF00);
-    //	registerSpawnEgg("red_jelly_spawn_egg", CCEntityTypes.RED_JELLY, 0x555555, 0xFF0000);
-    //	registerSpawnEgg("tornado_jelly_spawn_egg", CCEntityTypes.TORNADO_JELLY, 0x555555, 0x00FFFF);
+
     //	registerSpawnEgg("pez_jelly_spawn_egg", CCEntityTypes.PEZ_JELLY, 0x9166FF, 0xFFFFFF);
     //	registerSpawnEgg("king_slime_spawn_egg", CCEntityTypes.KING_SLIME, 0xB23838, 0xE37D11);
-    //	registerSpawnEgg("jelly_queen_spawn_egg", CCEntityTypes.JELLY_QUEEN, 0xFF7373, 0xCF00EF);
     //	registerSpawnEgg("boss_suguard_spawn_egg", CCEntityTypes.BOSS_SUGUARD, 0xFF7373, 0xDFDFDF);
     //	registerSpawnEgg("boss_beetle_spawn_egg", CCEntityTypes.BOSS_BEETLE, 0xFF7373, 0x1C1C1C);
 

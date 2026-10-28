@@ -1,9 +1,9 @@
 package cn.jawbreakers.candycraftce.registry
 
-import cn.jawbreakers.candycraftce.block.blockentity.AdvancedFactoryBE
-import cn.jawbreakers.candycraftce.block.blockentity.ChocolateFurnaceBE
-import cn.jawbreakers.candycraftce.block.blockentity.LicoriceFurnaceBE
-import cn.jawbreakers.candycraftce.block.blockentity.SugarFactoryBE
+import cn.jawbreakers.candycraftce.blockentity.AdvancedFactoryBE
+import cn.jawbreakers.candycraftce.blockentity.ChocolateFurnaceBE
+import cn.jawbreakers.candycraftce.blockentity.LicoriceFurnaceBE
+import cn.jawbreakers.candycraftce.blockentity.SugarFactoryBE
 import cn.jawbreakers.candycraftce.utils.CLogUtils
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils
 import cn.jawbreakers.candycraftce.utils.CUtils.modLoc

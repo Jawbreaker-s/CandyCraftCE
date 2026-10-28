@@ -1,8 +1,9 @@
 package cn.jawbreakers.candycraftce.client.screen
 
-import cn.jawbreakers.candycraftce.block.blockentity.LicoriceFurnaceBE
-import cn.jawbreakers.candycraftce.block.blockentity.LicoriceFurnaceBE.Companion.TICKED_DATA
-import cn.jawbreakers.candycraftce.block.blockentity.LicoriceFurnaceBE.Companion.TICKED_TOTAL_DATA
+import cn.jawbreakers.candycraftce.blockentity.LicoriceFurnaceBE.Companion.LIT_TIME_DATA
+import cn.jawbreakers.candycraftce.blockentity.LicoriceFurnaceBE.Companion.LIT_TIME_TOTAL_DATA
+import cn.jawbreakers.candycraftce.blockentity.LicoriceFurnaceBE.Companion.TICKED_DATA
+import cn.jawbreakers.candycraftce.blockentity.LicoriceFurnaceBE.Companion.TICKED_TOTAL_DATA
 import cn.jawbreakers.candycraftce.menu.LicoriceFurnaceMenu
 import cn.jawbreakers.candycraftce.utils.CUtils.guiTex
 import cn.jawbreakers.candycraftce.utils.CUtils.modLoc
@@ -35,8 +36,8 @@ open class LicoriceFurnaceScreen<L : LicoriceFurnaceMenu>(
     override fun renderBg(guiGraphics: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {
         guiGraphics.blit(guiStyle, leftPos, topPos, 0, 0, 176, 166)
         //燃料条
-        val litTime: Int = menu.containerData.get(LicoriceFurnaceBE.LIT_TIME_DATA)
-        val litTimeTotal: Int = menu.containerData.get(LicoriceFurnaceBE.LIT_TIME_TOTAL_DATA)
+        val litTime: Int = menu.containerData.get(LIT_TIME_DATA)
+        val litTimeTotal: Int = menu.containerData.get(LIT_TIME_TOTAL_DATA)
         if (litTime > 0) {
             val p = if (litTime > litTimeTotal) 14 else (14f * litTime / litTimeTotal).toInt() //渲染高度
             //反向渲染
@@ -63,9 +64,9 @@ open class LicoriceFurnaceScreen<L : LicoriceFurnaceMenu>(
     }
 
     override fun renderTooltip(guiGraphics: GuiGraphics, x: Int, y: Int) {
-        val litTime: Int = menu.containerData.get(LicoriceFurnaceBE.LIT_TIME_DATA)
-        val ticked: Int = menu.containerData.get(TICKED_DATA)
-        val tickedTotal: Int = menu.containerData.get(TICKED_TOTAL_DATA)
+        val litTime: Int = menu.containerData.get(LIT_TIME_DATA)
+//        val ticked: Int = menu.containerData.get(TICKED_DATA)
+//        val tickedTotal: Int = menu.containerData.get(TICKED_TOTAL_DATA)
         super.renderTooltip(guiGraphics, x, y)
         if (x >= leftPos + 57 && x <= leftPos + 71 && y >= topPos + 37 && y <= topPos + 51) {
             guiGraphics.renderTooltip(

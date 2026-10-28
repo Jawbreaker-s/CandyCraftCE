@@ -81,7 +81,7 @@ fun createEnchantTree(): TreeConfiguration {
         DarkOakTrunkPlacer(10, 2, 1),
         simple(CBlocks.enchant_candy_leaves.get()),
         EnchantFoliagePlacer(),
-        TwoLayersFeatureSize(4, 2, 7, OptionalInt.empty())
+        TwoLayersFeatureSize(4, 2, 6, OptionalInt.empty())
     )
         .candy()
         .build()

@@ -1,6 +1,6 @@
 package cn.jawbreakers.candycraftce.block
 
-import cn.jawbreakers.candycraftce.block.blockentity.SugarFactoryBE
+import cn.jawbreakers.candycraftce.blockentity.SugarFactoryBE
 import cn.jawbreakers.candycraftce.registry.CBlockEntities
 import cn.jawbreakers.candycraftce.utils.CLevelUtils.ifServer
 import net.minecraft.core.BlockPos

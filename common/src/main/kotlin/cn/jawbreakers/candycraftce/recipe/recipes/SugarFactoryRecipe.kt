@@ -3,8 +3,8 @@ package cn.jawbreakers.candycraftce.recipe.recipes
 import cn.breadnicecat.candycraftce.utils.CodecUtils.getIdAsItem
 import cn.breadnicecat.candycraftce.utils.CodecUtils.readItemId
 import cn.breadnicecat.candycraftce.utils.CodecUtils.writeItemId
-import cn.jawbreakers.candycraftce.block.blockentity.AdvancedFactoryBE
-import cn.jawbreakers.candycraftce.block.blockentity.SugarFactoryBE
+import cn.jawbreakers.candycraftce.blockentity.AdvancedFactoryBE
+import cn.jawbreakers.candycraftce.blockentity.SugarFactoryBE
 import cn.jawbreakers.candycraftce.recipe.RecipeSerializable
 import cn.jawbreakers.candycraftce.registry.CRecipeTypes
 import cn.jawbreakers.candycraftce.utils.CUtils.key
@@ -23,7 +23,7 @@ import net.minecraft.world.level.Level
  * Created in 2024/2/4
  * Project: candycraftce
  * 
- * @author [Bread_NiceCat](https://github.com/Bread-NiceCat)
+ * Author [Bread_NiceCat](https://github.com/Bread-NiceCat)
  * 
  * Kotlinize in 2026/10/23
  */

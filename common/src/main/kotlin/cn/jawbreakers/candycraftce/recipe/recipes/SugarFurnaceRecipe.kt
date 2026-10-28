@@ -3,7 +3,7 @@ package cn.jawbreakers.candycraftce.recipe.recipes
 import cn.breadnicecat.candycraftce.utils.CodecUtils.getIdAsItem
 import cn.breadnicecat.candycraftce.utils.CodecUtils.readItemId
 import cn.breadnicecat.candycraftce.utils.CodecUtils.writeItemId
-import cn.jawbreakers.candycraftce.block.blockentity.LicoriceFurnaceBE
+import cn.jawbreakers.candycraftce.blockentity.LicoriceFurnaceBE
 import cn.jawbreakers.candycraftce.recipe.RecipeSerializable
 import cn.jawbreakers.candycraftce.registry.CRecipeTypes.sugar_furnace_type
 import cn.jawbreakers.candycraftce.utils.CUtils.key

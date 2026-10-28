@@ -1,6 +1,6 @@
 package cn.jawbreakers.candycraftce.menu
 
-import cn.jawbreakers.candycraftce.block.blockentity.LicoriceFurnaceBE
+import cn.jawbreakers.candycraftce.blockentity.LicoriceFurnaceBE
 import cn.jawbreakers.candycraftce.menu.slot.SimpleResultSlot
 import cn.jawbreakers.candycraftce.menu.slot.SugarFuelSlot
 import cn.jawbreakers.candycraftce.registry.CMenus

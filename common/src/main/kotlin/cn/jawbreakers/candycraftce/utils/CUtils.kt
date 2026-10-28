@@ -183,8 +183,13 @@ object CUtils {
         return hash.toInt()
     }
 
-    fun <T, V : Any> T.applyIfNotNull(value: V?, action: T.(V) -> Unit): T {
+    inline fun <T, V : Any> T.applyIfNotNull(value: V?, action: T.(V) -> Unit): T {
         if (value != null) action(value)
+        return this
+    }
+
+    inline fun <T> T.applyIf(condition: Boolean, action: T.() -> Unit): T {
+        if (condition) action()
         return this
     }
 }

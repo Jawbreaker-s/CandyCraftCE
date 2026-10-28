@@ -452,12 +452,6 @@ object CBlocks {
         setType = BlockSetType.OAK,
         mapColor = MapColor.COLOR_LIGHT_GREEN,
     ).minable(HOE)
-    val raspberry_block = register("raspberry_block", hay(MapColor.COLOR_RED))
-        .minable(HOE)
-    val honey_lamp = register(
-        "honey_lamp",
-        iron(MapColor.COLOR_YELLOW).strength(1.0F).sound(SoundType.GLASS).lightLevel { 15 }
-    ).minable(PICKAXE)
     val honey_lantern = register("honey_lantern") {
         LanternBlock(properties(Blocks.LANTERN).mapColor(MapColor.COLOR_YELLOW))
     }.cutout().minable(PICKAXE)
@@ -473,6 +467,12 @@ object CBlocks {
             CParticleTypes.liquid_candy_flame
         )
     }.cutout().noSimpleItem()
+    val raspberry_block = register("raspberry_block", hay(MapColor.COLOR_RED))
+        .minable(HOE)
+    val honey_lamp = register(
+        "honey_lamp",
+        iron(MapColor.COLOR_YELLOW).strength(1.0F).sound(SoundType.GLASS).lightLevel { 15 }
+    ).minable(PICKAXE)
     val honeycomb_block = register("honeycomb_block", stone(MapColor.COLOR_YELLOW))
         .minable(PICKAXE)
     val pez_block = register("pez_block", iron(MapColor.COLOR_RED).strength(5.0F, 10.0F))

@@ -40,12 +40,13 @@ class EnchantFoliagePlacer : FoliagePlacer(ConstantInt.of(6), ConstantInt.of(0))
     ) {
         val crown = attachment.pos()
         val f = config.foliageProvider
-        f.placeSquareLayer(reader, setter, crown.below(3), 4, random, true)
-        f.placeSquareLayer(reader, setter, crown.below(2), 5, random, true)
-        f.placeSquareLayer(reader, setter, crown.below(), 6, random, true)
-        f.placeSquareLayer(reader, setter, crown, 6, random, true)
-        f.placeSquareLayer(reader, setter, crown.above(), 5, random, true)
-        f.placeSquareLayer(reader, setter, crown.above(2), 3, random, true)
+        val max = 6
+        f.placeSquareLayer(reader, setter, crown.below(3), max - 2, random, true)
+        f.placeSquareLayer(reader, setter, crown.below(2), max - 1, random, true)
+        f.placeSquareLayer(reader, setter, crown.below(), max, random, true)
+        f.placeSquareLayer(reader, setter, crown, max, random, true)
+        f.placeSquareLayer(reader, setter, crown.above(), max - 1, random, true)
+        f.placeSquareLayer(reader, setter, crown.above(2), max - 2, random, true)
     }
 
     private fun BlockStateProvider.placeSquareLayer(

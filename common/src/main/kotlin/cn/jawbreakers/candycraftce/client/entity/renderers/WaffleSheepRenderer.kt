@@ -14,18 +14,20 @@ import net.minecraft.client.renderer.entity.MobRenderer
 import net.minecraft.client.renderer.entity.layers.RenderLayer
 import net.minecraft.resources.ResourceLocation
 
-open class WaffleSheepRenderer(base: ResourceLocation, context: EntityRendererProvider.Context) :
+class WaffleSheepRenderer(context: EntityRendererProvider.Context) :
     MobRenderer<WaffleSheep, SheepModel<WaffleSheep>>(
         context,
         SheepModel(context.bakeLayer(ModelLayers.SHEEP)),
         0.7f
     ) {
-    constructor(context: EntityRendererProvider.Context) : this("sheep/waffle".modLoc(), context)
+    companion object {
+        val base = "sheep/waffle".modLoc()
+        private val texture = base.entityTex()
+        private val hurtTexture = base.entityTex("_hurt")
+        private val furTexture = base.entityTex("_fur")
+    }
 
-    protected val texture = base.entityTex()
-    protected val hurtTexture = base.entityTex("_hurt")
-    protected val furTexture = base.entityTex("_fur")
-    open fun hasFur(sheep: WaffleSheep): Boolean = true
+    fun hasFur(sheep: WaffleSheep): Boolean = true
 
     init {
         addLayer(FurLayer(context))
