@@ -5,8 +5,9 @@ import cn.jawbreakers.candycraftce.registry.CEntityTypes
 import cn.jawbreakers.candycraftce.registry.CItems
 import cn.jawbreakers.candycraftce.registry.CItems.defaultInstance
 import cn.jawbreakers.candycraftce.registry.CMobEffects
+import cn.jawbreakers.candycraftce.utils.CUtils.SEC2TICK
+import cn.jawbreakers.candycraftce.utils.CUtils.TICK2SEC
 import cn.jawbreakers.candycraftce.utils.CUtils.instance
-import cn.jawbreakers.candycraftce.utils.TickUnit.second
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.LivingEntity
@@ -18,8 +19,8 @@ import kotlin.math.max
 class HoneyArrow : AbstractArrow {
     companion object {
         private const val CROSSBOW_DAMAGE_MULTIPLIER = 1.75
-        private val BOSS_SUGUARD_GROUND_DESPAWN_TICKS = 10.second
-        private val HONEY_GLUE_DURATION_TICKS = 5.second
+        private const val BOSS_SUGUARD_GROUND_DESPAWN_TICKS = 10 * TICK2SEC
+        private const val HONEY_GLUE_DURATION_TICKS = 5 * SEC2TICK
 
         const val TAG_HONEY_GLUE = "HoneyGlue"
         const val TAG_BOSS_SUGUARD_PROJECTILE = "BossSuguardProjectile"

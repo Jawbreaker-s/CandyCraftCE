@@ -3,7 +3,7 @@ package cn.jawbreakers.candycraftce.blockentity
 import cn.jawbreakers.candycraftce.gui.menu.AdvancedSugarFactoryMenu
 import cn.jawbreakers.candycraftce.recipe.recipes.SugarFactoryRecipe
 import cn.jawbreakers.candycraftce.registry.CBlockEntities
-import cn.jawbreakers.candycraftce.utils.TickUnit.SEC2TICK
+import cn.jawbreakers.candycraftce.utils.CUtils.SEC2TICK
 import net.minecraft.core.BlockPos
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player

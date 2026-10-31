@@ -1,7 +1,7 @@
 package cn.jawbreakers.candycraftce.client.render
 
 import cn.jawbreakers.candycraftce.CandyCraftCE.MOD_ID
-import cn.jawbreakers.candycraftce.mixin.render.RenderTypeAccessor
+import cn.jawbreakers.candycraftce.mixin.accessors.RenderTypeAccessor
 import cn.jawbreakers.candycraftce.utils.CUtils.modLoc
 import cn.jawbreakers.candycraftce.utils.ClientOnly
 import com.mojang.blaze3d.systems.RenderSystem
@@ -21,7 +21,7 @@ class PropolisGlintRenderType private constructor() : RenderStateShard.Texturing
 ) {
     companion object {
         private val PROPOLIS_GLINT_TEXTURE = "textures/misc/propolis_glint.png".modLoc()
-        private const val DEFAULT_SIZE_PERCENT = 115;
+        private const val DEFAULT_SIZE_PERCENT = 115
         val PROPOLIS_GLINT_TEXTURING = PropolisGlintRenderType()
         val PROPOLIS_ENTITY_GLINT: RenderType.CompositeRenderType = RenderTypeAccessor.callCreate(
             "$MOD_ID:propolis_entity_glint",

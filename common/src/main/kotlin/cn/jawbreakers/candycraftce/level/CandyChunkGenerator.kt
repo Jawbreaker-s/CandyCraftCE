@@ -4,7 +4,7 @@ package cn.jawbreakers.candycraftce.level
 
 import cn.jawbreakers.candycraftce.CandyCraftCE.MOD_NAME
 import cn.jawbreakers.candycraftce.level.noise.LegacyPerlinOctaveNoise
-import cn.jawbreakers.candycraftce.mixin.level.NoiseRouterDataAccessor
+import cn.jawbreakers.candycraftce.mixin.accessors.NoiseRouterDataAccessor
 import cn.jawbreakers.candycraftce.registry.CBlocks
 import cn.jawbreakers.candycraftce.registry.CBlocks.defaultBlockState
 import cn.jawbreakers.candycraftce.registry.CFluidTags

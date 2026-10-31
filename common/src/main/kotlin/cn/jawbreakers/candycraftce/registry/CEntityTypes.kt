@@ -2,10 +2,7 @@ package cn.jawbreakers.candycraftce.registry
 
 import cn.jawbreakers.candycraftce.CandyCraftCE.MOD_ID
 import cn.jawbreakers.candycraftce.CandyCraftCE.onPostWork
-import cn.jawbreakers.candycraftce.client.entity.models.CaramelBeeModel
-import cn.jawbreakers.candycraftce.client.entity.models.CranfishModel
-import cn.jawbreakers.candycraftce.client.entity.models.GummyBunnyModel
-import cn.jawbreakers.candycraftce.client.entity.models.GummyBunnyOuterModel
+import cn.jawbreakers.candycraftce.client.entity.models.*
 import cn.jawbreakers.candycraftce.client.entity.renderers.*
 import cn.jawbreakers.candycraftce.client.entity.renderers.jelly.JellyQueenRenderer
 import cn.jawbreakers.candycraftce.client.entity.renderers.jelly.LemonJellyRenderer
@@ -29,11 +26,13 @@ import net.minecraft.core.BlockPos
 import net.minecraft.util.RandomSource
 import net.minecraft.world.entity.*
 import net.minecraft.world.entity.EntityType.Builder.of
+import net.minecraft.world.entity.SpawnPlacements.Type.IN_WATER
 import net.minecraft.world.entity.SpawnPlacements.Type.ON_GROUND
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier
 import net.minecraft.world.entity.animal.Pig
 import net.minecraft.world.entity.animal.WaterAnimal
 import net.minecraft.world.entity.animal.WaterAnimal.checkSurfaceWaterAnimalSpawnRules
+import net.minecraft.world.entity.animal.Wolf
 import net.minecraft.world.entity.monster.Creeper
 import net.minecraft.world.entity.monster.Monster
 import net.minecraft.world.entity.monster.Slime
@@ -65,7 +64,7 @@ object CEntityTypes {
         .renderer(::HoneyArrowRenderer)
 
     val dynamite = register("dynamite") {
-        of(::DynamiteEntity, MobCategory.MISC)
+        of(::Dynamite, MobCategory.MISC)
             .sized(0.25F, 0.25F)
             .clientTrackingRange(4)
             .updateInterval(10)
@@ -73,7 +72,7 @@ object CEntityTypes {
         .renderer(::ThrownItemRenderer)
 
     val glue_dynamite = register("glue_dynamite") {
-        of(::GlueDynamiteEntity, MobCategory.MISC)
+        of(::GlueDynamite, MobCategory.MISC)
             .sized(0.25F, 0.25F)
             .clientTrackingRange(4)
             .updateInterval(10)
@@ -101,8 +100,9 @@ object CEntityTypes {
 //            .clientTrackingRange(8)
 //            .updateInterval(2)
 //    }
+
     val candy_pig = register("candy_pig") {
-        of(::CandyPigEntity, MobCategory.CREATURE)
+        of(::CandyPig, MobCategory.CREATURE)
             .sized(0.9F, 0.9F)
             .clientTrackingRange(10)
     }
@@ -134,6 +134,28 @@ object CEntityTypes {
         }
         .placement(::checkCandyAnimalSpawnRules)
 
+    val pingouin = register("pingouin") {
+        of(::Pingouin, MobCategory.CREATURE)
+            .sized(0.6F, 1.0F)
+            .clientTrackingRange(10)
+    }
+        .egg(0xF1C3C3, 0xFFFFFF)
+        .attributes(Pingouin::createAttributes)
+        .renderer(::PingouinRenderer) {
+            registerLayer(PingouinModel.LAYER, PingouinModel<*>::createBodyLayer)
+        }
+        .placement(::checkCandyAnimalSpawnRules)
+
+    val caramel_wolf = register("caramel_wolf") {
+        of(::CaramelWolf, MobCategory.CREATURE)
+            .sized(0.6F, 0.85F)
+            .clientTrackingRange(10)
+    }
+        .egg(0xF1C3C3, 0xDDDDDD)
+        .attributes(Wolf::createAttributes)
+        .renderer(::CaramelWolfRenderer)
+        .placement(::checkCandyAnimalSpawnRules)
+
     //===============WATER_AMBIENT===============
     val cranfish = register("cranfish") {
         of(::Cranfish, MobCategory.WATER_AMBIENT)
@@ -145,7 +167,7 @@ object CEntityTypes {
         .renderer(::CranfishRenderer) {
             registerLayer(CranfishModel.LAYER, CranfishModel<*>::createBodyLayer)
         }
-        .placement(::checkCandyWaterAnimalSpawnRules)
+        .placement(IN_WATER, MOTION_BLOCKING_NO_LEAVES, ::checkCandyWaterAnimalSpawnRules)
 
     //===============MONSTERS===============
     val cookie_creeper = register("cookie_creeper") {
@@ -181,6 +203,24 @@ object CEntityTypes {
             registerLayer(CaramelBeeModel.LAYER, CaramelBeeModel<*>::createBodyLayer)
         }
         .placement(SpawnPlacements.Type.NO_RESTRICTIONS, MOTION_BLOCKING_NO_LEAVES, CaramelBee::checkSpawnRules)
+
+    //    val beetle_boss = register("boss_beetle") {
+//        of(::BasicCandySpiderEntity, MobCategory.MONSTER)
+//            .sized(2.0F, 1.6F)
+//            .clientTrackingRange(8)
+//            .fireImmune()
+//
+//    }
+    val gingerbread_man = register("gingerbread_man") {
+        of(::GingerbreadMan, MobCategory.CREATURE)
+            .sized(0.3f, 0.9f)
+            .clientTrackingRange(10)
+    }
+        .egg(0xF1C3C3, 0x61380B)
+        .attributes(GingerbreadMan::createAttributes)
+        .renderer(::GingerbreadManRenderer) {
+            registerLayer(GingerbreadManModel.MAIN, GingerbreadManModel::createBodyLayer)
+        }
 
     //================JELLIES================
     val lemon_jelly = registerJelly("lemon_jelly", ::LemonJelly)
@@ -233,10 +273,10 @@ object CEntityTypes {
 
 
     @Suppress("UNCHECKED_CAST")
-    @ServerSafe
+    @ServerSafe //必须inline才能server-safe
     private inline fun <T : Entity, ST : T> Entry<EntityType<ST>>.renderer(
         crossinline provider: (EntityRendererProvider.Context) -> EntityRenderer<T>,
-        crossinline layers: LayerRegister.() -> Unit = {},//这里的lambda可以安全使用该文件的Entry对象
+        crossinline layers: (LayerRegister.() -> Unit) = {},//这里的lambda可以安全使用该文件的Entry对象
     ) =
         apply {
             ifClient {
@@ -248,19 +288,13 @@ object CEntityTypes {
         }
 
     @ClientOnly
+    @FunctionalInterface
     fun interface LayerRegister {
         fun registerLayer(key: ModelLayerLocation, factory: Supplier<LayerDefinition>)
     }
 
     //	registerSpawnEgg("suguard_spawn_egg", CCEntityTypes.SUGUARD, 0xF1C3C3, 0x8E0082);
     //	registerSpawnEgg("mage_suguard_spawn_egg", CCEntityTypes.MAGE_SUGUARD, 0xF1C3C3, 0xEB3D00);
-    //	registerSpawnEgg("candy_wolf_spawn_egg", CCEntityTypes.CANDY_WOLF, 0xF1C3C3, 0xDDDDDD);
-    //	registerSpawnEgg("cotton_candy_sheep_spawn_egg", CCEntityTypes.COTTON_CANDY_SHEEP, 0xFF33FF, 0xFFCCFF);
-    //	registerSpawnEgg("easter_chicken_spawn_egg", CCEntityTypes.EASTER_CHICKEN, 0x996611, 0x774411);
-    //	registerSpawnEgg("gummy_mouse_spawn_egg", CCEntityTypes.GUMMY_MOUSE, 0x00FF00, 0x33BB33);
-    //	registerSpawnEgg("gummy_bear_spawn_egg", CCEntityTypes.GUMMY_BEAR, 0x00FF00, 0x33BB33);
-    //	registerSpawnEgg("gingerbread_man_spawn_egg", CCEntityTypes.GINGERBREAD_MAN, 0xF1C3C3, 0x61380B);
-    //	registerSpawnEgg("pingouin_spawn_egg", CCEntityTypes.PINGOUIN, 0xF1C3C3, 0xFFFFFF);
     //	registerSpawnEgg("beetle_spawn_egg", CCEntityTypes.BEETLE, 0xF1C3C3, 0x250066);
     //	registerSpawnEgg("nessie_spawn_egg", CCEntityTypes.NESSIE, 0xF1C3C3, 0xA9E2F3);
     //	registerSpawnEgg("dragon_spawn_egg", CCEntityTypes.DRAGON, 0x8DC444, 0xA4EDFF);
@@ -273,25 +307,12 @@ object CEntityTypes {
     //	registerSpawnEgg("boss_suguard_spawn_egg", CCEntityTypes.BOSS_SUGUARD, 0xFF7373, 0xDFDFDF);
     //	registerSpawnEgg("boss_beetle_spawn_egg", CCEntityTypes.BOSS_BEETLE, 0xFF7373, 0x1C1C1C);
 
-    //
-//            event.register(CANDY_PIG.get(), ON_GROUND, MOTION_BLOCKING_NO_LEAVES, CCForgeEvents::canSpawnOnCandySurface, SpawnPlacementRegisterEvent.Operation.REPLACE);
-//            event.register(CANDY_WOLF.get(), ON_GROUND, MOTION_BLOCKING_NO_LEAVES, CCForgeEvents::canSpawnOnCandySurface, SpawnPlacementRegisterEvent.Operation.REPLACE);
-//            // Gummy terrain is 15.92/16 blocks tall, so vanilla ON_GROUND rejects it
-//            // before our candy-surface predicate can run.
-//            event.register(GUMMY_BUNNY.get(), NO_RESTRICTIONS, MOTION_BLOCKING_NO_LEAVES, CCForgeEvents::canSpawnOnCandySurface, SpawnPlacementRegisterEvent.Operation.REPLACE);
-//            event.register(COTTON_CANDY_SHEEP.get(), ON_GROUND, MOTION_BLOCKING_NO_LEAVES,CottonCandySheep::canSpawn, SpawnPlacementRegisterEvent.Operation.REPLACE);
-//            event.register(EASTER_CHICKEN.get(), ON_GROUND, MOTION_BLOCKING_NO_LEAVES,EasterChickenEntity::canSpawn, SpawnPlacementRegisterEvent.Operation.REPLACE);
-//            event.register(GUMMY_MOUSE.get(), NO_RESTRICTIONS, MOTION_BLOCKING_NO_LEAVES,GummyMouseEntity::canSpawn, SpawnPlacementRegisterEvent.Operation.REPLACE);
-//            event.register(GUMMY_BEAR.get(), NO_RESTRICTIONS, MOTION_BLOCKING_NO_LEAVES,GummyBearEntity::canSpawn, SpawnPlacementRegisterEvent.Operation.REPLACE);
-//            event.register(PINGOUIN.get(), ON_GROUND, MOTION_BLOCKING_NO_LEAVES, CCForgeEvents::canSpawnOnCandySurface, SpawnPlacementRegisterEvent.Operation.REPLACE);
+    //            event.register(CANDY_WOLF.get(), ON_GROUND, MOTION_BLOCKING_NO_LEAVES, CCForgeEvents::canSpawnOnCandySurface, SpawnPlacementRegisterEvent.Operation.REPLACE);
 //            event.register(SUGUARD.get(), ON_GROUND, MOTION_BLOCKING_NO_LEAVES, CCForgeEvents::canSpawnOnCandySurface, SpawnPlacementRegisterEvent.Operation.REPLACE);
 //            event.register(MAGE_SUGUARD.get(), ON_GROUND, MOTION_BLOCKING_NO_LEAVES, CCForgeEvents::canHostileCandyMobSpawn, SpawnPlacementRegisterEvent.Operation.REPLACE);
-//            event.register(COTTON_CANDY_SPIDER.get(), ON_GROUND, MOTION_BLOCKING_NO_LEAVES, CCForgeEvents::canSpawnOnCandySurface, SpawnPlacementRegisterEvent.Operation.REPLACE);
-//            event.register(JELLY_QUEEN.get(), ON_GROUND, MOTION_BLOCKING_NO_LEAVES, CCForgeEvents::canSpawnOnCandySurface, SpawnPlacementRegisterEvent.Operation.REPLACE);
 //            event.register(NOUGAT_GOLEM.get(), ON_GROUND, MOTION_BLOCKING_NO_LEAVES, CCForgeEvents::canSpawnOnCandySurface, SpawnPlacementRegisterEvent.Operation.REPLACE);
-//            event.register(BEETLE.get(), ON_GROUND, MOTION_BLOCKING_NO_LEAVES, CCForgeEvents::canSpawnOnCandySurface, SpawnPlacementRegisterEvent.Operation.REPLACE);
-//            event.register(CARAMEL_BEE.get(), NO_RESTRICTIONS, MOTION_BLOCKING_NO_LEAVES, CCForgeEvents::canCaramelBeeSpawn, SpawnPlacementRegisterEvent.Operation.REPLACE);
-//            event.register(CANDY_FISH.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, Cranfish::canSpawn, SpawnPlacementRegisterEvent.Operation.REPLACE);
+//            event.register(
+//            .get(), ON_GROUND, MOTION_BLOCKING_NO_LEAVES, CCForgeEvents::canSpawnOnCandySurface, SpawnPlacementRegisterEvent.Operation.REPLACE);
 //            event.register(NESSIE.get(), IN_WATER, MOTION_BLOCKING_NO_LEAVES, CCForgeEvents::canNessieSpawn, SpawnPlacementRegisterEvent.Operation.REPLACE);
     private fun <T : Mob> Entry<EntityType<T>>.placement(
         spawnType: SpawnPlacements.Type,

@@ -1,9 +1,9 @@
 package cn.jawbreakers.candycraftce.entity
 
+import cn.jawbreakers.candycraftce.misc.CandyTargeting
 import cn.jawbreakers.candycraftce.registry.CMobEffects
+import cn.jawbreakers.candycraftce.utils.CUtils.SEC2TICK
 import cn.jawbreakers.candycraftce.utils.CUtils.instance
-import cn.jawbreakers.candycraftce.utils.CandyTargeting
-import cn.jawbreakers.candycraftce.utils.TickUnit.second
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.Difficulty
 import net.minecraft.world.DifficultyInstance
@@ -29,7 +29,7 @@ class CottonCandySpider(type: EntityType<out CottonCandySpider>, level: Level) :
         if (super.doHurtTarget(target)) {
             if (target is LivingEntity) {
                 val seconds = if (level().difficulty == Difficulty.HARD) 15 else 7
-                target.addEffect(CMobEffects.cloying.get().instance(seconds.second), this)
+                target.addEffect(CMobEffects.cloying.get().instance(seconds * SEC2TICK), this)
             }
             return true
         }

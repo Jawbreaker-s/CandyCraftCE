@@ -1,7 +1,7 @@
 package cn.jawbreakers.candycraftce.item
 
-import cn.jawbreakers.candycraftce.entity.DynamiteEntity
-import cn.jawbreakers.candycraftce.entity.GlueDynamiteEntity
+import cn.jawbreakers.candycraftce.entity.Dynamite
+import cn.jawbreakers.candycraftce.entity.GlueDynamite
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.sounds.SoundEvents
 import net.minecraft.sounds.SoundSource
@@ -77,8 +77,8 @@ class DynamiteItem(properties: Properties, private val glue: Boolean) : Item(pro
 
         if (!level.isClientSide) {
             val dynamite = when {
-                glue -> GlueDynamiteEntity(level, entity)
-                else -> DynamiteEntity(level, entity)
+                glue -> GlueDynamite(level, entity)
+                else -> Dynamite(level, entity)
             }
             dynamite.item = stack.copyWithCount(1)
             dynamite.fuse = HAND_EXPLOSION_TICKS - usedTicks

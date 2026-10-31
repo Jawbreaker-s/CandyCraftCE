@@ -1,7 +1,7 @@
 package cn.jawbreakers.candycraftce.block
 
 import cn.jawbreakers.candycraftce.registry.CMobEffects
-import cn.jawbreakers.candycraftce.utils.TickUnit.second
+import cn.jawbreakers.candycraftce.utils.CUtils.SEC2TICK
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.world.effect.MobEffectInstance
@@ -43,7 +43,7 @@ class SpikesBlock(properties: Properties, private val damage: Int, private val w
         if (!level.isClientSide && entity is LivingEntity) {
             entity.hurt(level.damageSources().generic(), damage / 2.0f)
             if (withCloying) {
-                entity.addEffect(MobEffectInstance(CMobEffects.cloying.get(), 5.second))
+                entity.addEffect(MobEffectInstance(CMobEffects.cloying.get(), 5 * SEC2TICK))
             }
         }
     }

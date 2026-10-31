@@ -368,6 +368,7 @@ class CRecipeProvider(output: PackOutput) : RecipeProvider(output) {
             }
 
         }
+        helper.end()
     }
 
     private fun Helper.family(
@@ -521,11 +522,19 @@ class CRecipeProvider(output: PackOutput) : RecipeProvider(output) {
         fun <I : ItemLike> resultOf(result: Supplier<I>, scope: HelperScope.(I) -> Unit) {
             val get = result.get()
             val result = get.asItem()
-            require((lastScope?.context === null)) { "Last Builder may not be saved yet" }
+            checkPrev()
             if (!results.add(result)) {
                 clog.warn("Redundant result scope is being created for key: ${result.key}")
             }
             scope(HelperScope(result.key, result).also { lastScope = it }, get)
+        }
+
+        private fun checkPrev() {
+            require((lastScope?.context === null)) { "Last Builder may not be saved yet" }
+        }
+
+        fun end() {
+            checkPrev()
         }
 
         inner class HelperScope internal constructor(

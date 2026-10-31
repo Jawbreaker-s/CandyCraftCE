@@ -5,9 +5,9 @@ import cn.jawbreakers.candycraftce.blockentity.LicoriceFurnaceBE.Companion.LIT_T
 import cn.jawbreakers.candycraftce.blockentity.LicoriceFurnaceBE.Companion.TICKED_DATA
 import cn.jawbreakers.candycraftce.blockentity.LicoriceFurnaceBE.Companion.TICKED_TOTAL_DATA
 import cn.jawbreakers.candycraftce.menu.LicoriceFurnaceMenu
+import cn.jawbreakers.candycraftce.utils.CUtils.TICK2SEC
 import cn.jawbreakers.candycraftce.utils.CUtils.guiTex
 import cn.jawbreakers.candycraftce.utils.CUtils.modLoc
-import cn.jawbreakers.candycraftce.utils.TickUnit.TICK2SEC
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.network.chat.Component

@@ -7,8 +7,8 @@ import cn.jawbreakers.candycraftce.recipe.recipes.SugarFurnaceRecipe
 import cn.jawbreakers.candycraftce.registry.CBlockEntities
 import cn.jawbreakers.candycraftce.registry.CRecipeTypes
 import cn.jawbreakers.candycraftce.registry.CSugarFuels
+import cn.jawbreakers.candycraftce.utils.CUtils.SEC2TICK
 import cn.jawbreakers.candycraftce.utils.ItemStackList
-import cn.jawbreakers.candycraftce.utils.TickUnit.SEC2TICK
 import cn.jawbreakers.candycraftce.utils.registry.MutableAccessor.Companion.lambda
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction

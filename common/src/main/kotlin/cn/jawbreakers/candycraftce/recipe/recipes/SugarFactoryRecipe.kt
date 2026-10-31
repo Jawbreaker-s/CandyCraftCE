@@ -5,7 +5,7 @@ import cn.breadnicecat.candycraftce.utils.CodecUtils.readItemId
 import cn.breadnicecat.candycraftce.utils.CodecUtils.writeItemId
 import cn.jawbreakers.candycraftce.blockentity.AdvancedFactoryBE
 import cn.jawbreakers.candycraftce.blockentity.SugarFactoryBE
-import cn.jawbreakers.candycraftce.recipe.RecipeSerializable
+import cn.jawbreakers.candycraftce.recipe.RecipeXSerializer
 import cn.jawbreakers.candycraftce.registry.CRecipeTypes
 import cn.jawbreakers.candycraftce.utils.CUtils.key
 import com.google.gson.JsonObject
@@ -72,7 +72,7 @@ class SugarFactoryRecipe(
 
     override fun getType() = CRecipeTypes.sugar_factory_type.type
 
-    class Serializer : RecipeSerializable<SugarFactoryRecipe> {
+    class Serializer : RecipeXSerializer<SugarFactoryRecipe> {
         override fun fromJson(recipeId: ResourceLocation, json: JsonObject): SugarFactoryRecipe {
             val result = json.get("result").getAsJsonObject()
             return SugarFactoryRecipe(

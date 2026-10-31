@@ -1,7 +1,7 @@
 package cn.jawbreakers.candycraftce.entity
 
-import cn.jawbreakers.candycraftce.mixin.entity.EatBlockGoalAccessor
-import cn.jawbreakers.candycraftce.mixin.entity.SheepAccessor
+import cn.jawbreakers.candycraftce.mixin.accessors.EatBlockGoalAccessor
+import cn.jawbreakers.candycraftce.mixin.accessors.SheepAccessor
 import cn.jawbreakers.candycraftce.registry.CBlockTags
 import cn.jawbreakers.candycraftce.registry.CBlocks
 import cn.jawbreakers.candycraftce.registry.CBlocks.defaultBlockState

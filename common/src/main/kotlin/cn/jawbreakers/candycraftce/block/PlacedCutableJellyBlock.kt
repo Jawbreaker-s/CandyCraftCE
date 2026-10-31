@@ -19,7 +19,6 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.IntegerProperty
 import net.minecraft.world.level.gameevent.GameEvent
-import net.minecraft.world.level.storage.loot.LootParams
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
@@ -89,18 +88,6 @@ class PlacedCutableJellyBlock(
             }
         }
         return InteractionResult.sidedSuccess(level.isClientSide)
-    }
-
-    @Deprecated("Deprecated in Java")
-    @Suppress("DEPRECATION")
-    override fun getDrops(state: BlockState, params: LootParams.Builder): List<ItemStack?> {
-        //TODO may use loottable
-        val cuts = state.getValue(CUTS)
-        if (cuts == 0) {
-            return super.getDrops(state, params)
-        } else {
-            return mutableListOf(ItemStack(sliceItem.get(), 4 - cuts))
-        }
     }
 
 }

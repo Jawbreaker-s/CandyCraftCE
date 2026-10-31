@@ -1,6 +1,6 @@
 package cn.jawbreakers.candycraftce.entity;
 
-import cn.jawbreakers.candycraftce.utils.CandyTargeting;
+import cn.jawbreakers.candycraftce.misc.CandyTargeting;
 import com.valentin4311.candycraftmod.CandyCraft;
 import com.valentin4311.candycraftmod.block.DungeonTeleporterBlock.DungeonKind;
 import com.valentin4311.candycraftmod.item.SugarPillItem;

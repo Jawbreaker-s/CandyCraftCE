@@ -4,7 +4,7 @@ import cn.breadnicecat.candycraftce.utils.CodecUtils.getIdAsItem
 import cn.breadnicecat.candycraftce.utils.CodecUtils.readItemId
 import cn.breadnicecat.candycraftce.utils.CodecUtils.writeItemId
 import cn.jawbreakers.candycraftce.blockentity.LicoriceFurnaceBE
-import cn.jawbreakers.candycraftce.recipe.RecipeSerializable
+import cn.jawbreakers.candycraftce.recipe.RecipeXSerializer
 import cn.jawbreakers.candycraftce.registry.CRecipeTypes.sugar_furnace_type
 import cn.jawbreakers.candycraftce.utils.CUtils.key
 import com.google.gson.JsonObject
@@ -55,7 +55,7 @@ class SugarFurnaceRecipe(
 
     override fun canCraftInDimensions(width: Int, height: Int): Boolean = true
 
-    class Serializer : RecipeSerializable<SugarFurnaceRecipe> {
+    class Serializer : RecipeXSerializer<SugarFurnaceRecipe> {
         override fun toJson(json: JsonObject, recipe: SugarFurnaceRecipe) {
             json.add("result", JsonObject().apply {
                 addProperty("item", recipe.result.key.toString())

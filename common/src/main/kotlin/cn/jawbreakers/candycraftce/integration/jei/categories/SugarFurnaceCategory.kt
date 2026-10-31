@@ -2,13 +2,13 @@ package cn.jawbreakers.candycraftce.integration.jei.categories
 
 import cn.jawbreakers.candycraftce.client.screen.ChocolateFurnaceScreen.Companion.CHOCOLATE
 import cn.jawbreakers.candycraftce.integration.jei.CJeiPlugin.Companion.jeiTex
-import cn.jawbreakers.candycraftce.integration.jei.CJeiRecipes
+import cn.jawbreakers.candycraftce.integration.jei.CJeiPlugin.Companion.sugar_furnace_jei
 import cn.jawbreakers.candycraftce.recipe.recipes.SugarFurnaceRecipe
 import cn.jawbreakers.candycraftce.registry.CBlocks
 import cn.jawbreakers.candycraftce.registry.CBlocks.defaultInstance
 import cn.jawbreakers.candycraftce.registry.CSugarFuels
-import cn.jawbreakers.candycraftce.utils.TickUnit.SEC2TICK
-import cn.jawbreakers.candycraftce.utils.TickUnit.TICK2SEC
+import cn.jawbreakers.candycraftce.utils.CUtils.SEC2TICK
+import cn.jawbreakers.candycraftce.utils.CUtils.TICK2SEC
 import mezz.jei.api.constants.VanillaTypes
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder
 import mezz.jei.api.gui.drawable.IDrawable
@@ -54,7 +54,7 @@ class SugarFurnaceCategory(helper: IGuiHelper) : IRecipeCategory<SugarFurnaceRec
             false
         )
 
-    override fun getRecipeType() = CJeiRecipes.sugar_furnace_jei
+    override fun getRecipeType() = sugar_furnace_jei
     override fun getTitle(): Component = TITLE
     override fun getBackground(): IDrawable = bg
     override fun getIcon() = icon

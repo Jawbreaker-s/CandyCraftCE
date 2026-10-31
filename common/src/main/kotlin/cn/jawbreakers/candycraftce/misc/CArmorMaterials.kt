@@ -1,5 +1,6 @@
 package cn.jawbreakers.candycraftce.misc
 
+import cn.jawbreakers.candycraftce.registry.CBlocks
 import cn.jawbreakers.candycraftce.registry.CItems
 import cn.jawbreakers.candycraftce.utils.CUtils.modLoc
 import net.minecraft.sounds.SoundEvent
@@ -62,11 +63,7 @@ enum class CArmorMaterials(
         durability(11, 0, 0, 0),
         defense(2, 0, 0, 0),
         15,
-        {
-            Ingredient.of()
-            //todo
-//             Ingredient.of(CItems.JELLY_ORE.get())
-        }),
+        { Ingredient.of(CBlocks.jelly_shock_absorber.get()) }),
     JELLY_CROWN(
         "jelly_crown",
         durability(0, 0, 0, 11),

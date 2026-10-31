@@ -43,56 +43,56 @@ class CI18nProvider(output: PackOutput) : DataProvider, ILanguageProvider {
             addItem(glue_dynamite, "Chewing Gum Dynamite", "口香糖炸药")
             addItem(chewing_gum_emblem, "Chewing Gum Emblem", "口香糖徽章")
             add(
-                chewing_gum_emblem.get().tooltipKey,
+                chewing_gum_emblem.get().tooltip,
                 "Lets you walk normally on chewing gum.",
                 "让你能在口香糖上正常行走。"
             )
             addItem(cranberry_emblem, "Cranberry Emblem", "蔓越莓徽章")
             add(
-                cranberry_emblem.get().tooltipKey,
+                cranberry_emblem.get().tooltip,
                 "The dawn heals you.",
                 "黎明会治愈你。"
             )
             addItem(gingerbread_emblem, "Gingerbread Emblem", "姜饼徽章")
             add(
-                gingerbread_emblem.get().tooltipKey,
+                gingerbread_emblem.get().tooltip,
                 "Gingerbread villagers and candy cane pigs are no longer afraid.",
                 "姜饼村民和拐杖糖猪不再害怕你。"
             )
             addItem(honey_emblem, "Honey Emblem", "蜜蜡徽章")
             add(
-                honey_emblem.get().tooltipKey,
+                honey_emblem.get().tooltip,
                 "Lets you hear voices from underground villages.",
                 "让你能偶尔听见地下结构的声音。"
             )
             addItem(jelly_emblem, "Jelly Emblem", "果冻徽章")
             add(
-                jelly_emblem.get().tooltipKey,
+                jelly_emblem.get().tooltip,
                 "Reduces fall damage by 30%.",
                 "减少 30% 摔落伤害。"
             )
             addItem(sky_emblem, "Sky Emblem", "天空徽章")
             add(
-                sky_emblem.get().tooltipKey,
+                sky_emblem.get().tooltip,
                 "Protects you from falling out of sky dungeons.",
                 "防止你在天空地牢掉出世界。"
             )
             addItem(suguard_emblem, "Suguard Emblem", "糖卫徽章")
             add(
-                suguard_emblem.get().tooltipKey,
+                suguard_emblem.get().tooltip,
                 "Reduces arrow damage by 20%.",
                 "减少 20% 箭矢伤害。"
             )
             addItem(nessie_emblem, "Nessie Emblem", "尼斯徽章")
             add(
-                nessie_emblem.get().tooltipKey,
+                nessie_emblem.get().tooltip,
                 "Water slowly heals you.",
                 "在水中时你会被缓慢的治疗。"
             )
             add(
-                EmblemItem.emblemTooltip,
+                EmblemItem.ultimateEmblemTooltip,
                 "Collect different emblems to awaken CandyCraft's endgame.",
-                "收集不同的徽章来唤醒糖果工艺的后期内容。"
+                "收集不同的徽章来前往糖果世界的尽头。"
             )
             //todo RecordItem
             addItem(record_1, "Jelly queen's secret record", "果冻女王的秘密唱片")
@@ -373,10 +373,13 @@ class CI18nProvider(output: PackOutput) : DataProvider, ILanguageProvider {
             addEntity(cookie_creeper, "Cookie Creeper", "饼干苦力怕")
             addEntity(cotton_candy_spider, "Cotton Candy Spider", "棉花糖蜘蛛")
             addEntity(caramel_bee, "Caramel Bee", "焦糖蜂")
+            addEntity(caramel_wolf, "Caramel Wolf", "焦糖狼")
             addEntity(jelly_queen, "Jelly Queen", "果冻皇后")
+            addEntity(gingerbread_man, "Gingerbread Man", "姜饼人")
             addEntity(lemon_jelly, "Lemon Jelly", "柠檬果冻")
             addEntity(raspberry_jelly, "Raspberry Jelly", "树莓果冻")
             addEntity(mint_jelly, "Mint Jelly", "薄荷果冻")
+            addEntity(pingouin, "Ice Cream Pingouin", "冰淇淋企鹅")
         }
         CMobEffects.apply {
             addMobEffects(cloying, "Cloying", "腻滞")

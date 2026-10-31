@@ -8,7 +8,7 @@ import cn.jawbreakers.candycraftce.gui.menu.AdvancedSugarFactoryMenu
 import cn.jawbreakers.candycraftce.gui.menu.SugarFactoryMenu
 import cn.jawbreakers.candycraftce.menu.ChocolateFurnaceMenu
 import cn.jawbreakers.candycraftce.menu.LicoriceFurnaceMenu
-import cn.jawbreakers.candycraftce.mixin.render.MenuScreensAccessor
+import cn.jawbreakers.candycraftce.mixin.accessors.MenuScreensAccessor
 import cn.jawbreakers.candycraftce.registry.CBlockEntities.advanced_sugar_factory_be
 import cn.jawbreakers.candycraftce.registry.CBlockEntities.chocolate_furnace_be
 import cn.jawbreakers.candycraftce.registry.CBlockEntities.licorice_furnace_be

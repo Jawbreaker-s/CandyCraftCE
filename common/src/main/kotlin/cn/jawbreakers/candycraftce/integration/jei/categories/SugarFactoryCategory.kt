@@ -3,12 +3,11 @@ package cn.jawbreakers.candycraftce.integration.jei.categories
 import cn.jawbreakers.candycraftce.client.screen.AdvancedFactoryScreen.Companion.ADVANCED_STYLE
 import cn.jawbreakers.candycraftce.client.screen.SugarFactoryScreen.Companion.COMMON_STYLE
 import cn.jawbreakers.candycraftce.integration.jei.CJeiPlugin.Companion.jeiTex
-import cn.jawbreakers.candycraftce.integration.jei.CJeiRecipes
-import cn.jawbreakers.candycraftce.integration.jei.utils.ScaledDrawable
+import cn.jawbreakers.candycraftce.integration.jei.CJeiPlugin.Companion.sugar_factory_jei
 import cn.jawbreakers.candycraftce.recipe.recipes.SugarFactoryRecipe
 import cn.jawbreakers.candycraftce.registry.CBlocks.defaultInstance
 import cn.jawbreakers.candycraftce.registry.CBlocks.sugar_factory
-import cn.jawbreakers.candycraftce.utils.TickUnit.SEC2TICK
+import cn.jawbreakers.candycraftce.utils.CUtils.SEC2TICK
 import mezz.jei.api.constants.VanillaTypes
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder
 import mezz.jei.api.gui.drawable.IDrawable
@@ -54,13 +53,6 @@ open class SugarFactoryCategory(guiHelper: IGuiHelper) : IRecipeCategory<SugarFa
             false
         )
 
-    //    protected val sugaryProgress: IDrawableAnimated =
-//        guiHelper.createAnimatedDrawable(
-//            guiHelper.createDrawable(COMMON_STYLE, 0, 126, 120, 12),
-//            ticksPerCycle,
-//            IDrawableAnimated.StartDirection.LEFT,
-//            false
-//        )
     protected val bg: IDrawableStatic =
         guiHelper.createBlankDrawable(180, 32)
     protected val commonIcon: IDrawable =
@@ -68,10 +60,8 @@ open class SugarFactoryCategory(guiHelper: IGuiHelper) : IRecipeCategory<SugarFa
 
     //    protected val advancedIcon: IDrawable =
 //        guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, advanced_sugar_factory.defaultInstance)
-    protected val sugaryIcon: IDrawable =
-        ScaledDrawable(guiHelper.createDrawable(jeiTex, 0, 141, 32, 32), 2)
 
-    override fun getRecipeType() = CJeiRecipes.sugar_factory_jei
+    override fun getRecipeType() = sugar_factory_jei
     override fun getBackground() = bg
     override fun getTitle() = TITLE
     override fun getIcon() = commonIcon

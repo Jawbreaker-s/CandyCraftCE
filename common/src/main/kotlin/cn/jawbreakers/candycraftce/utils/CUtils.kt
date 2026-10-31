@@ -2,7 +2,6 @@ package cn.jawbreakers.candycraftce.utils
 
 import cn.jawbreakers.candycraftce.CandyCraftCE.MOD_ID
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils.ifDev
-import cn.jawbreakers.candycraftce.utils.TickUnit.tick
 import cn.jawbreakers.candycraftce.utils.registry.MutableAccessor
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.core.BlockPos
@@ -27,9 +26,11 @@ import net.minecraft.world.level.GameRules
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.phys.Vec3
+import java.util.*
 
 object CUtils {
-
+    const val SEC2TICK = 20
+    const val TICK2SEC = 1f / 20f
     fun never(vararg any: Any): Boolean = false
     fun always(vararg any: Any): Boolean = true
     fun <E> RandomSource.choice(k: List<E>): E {
@@ -52,7 +53,7 @@ object CUtils {
             caller = enclosing
         } else {
             ifDev {
-                CLogUtils.debugLog.info("`defineId` auto-detected `$caller`")
+                CLogUtils.debugLog.info("`CUtils.defineId` detected entityId: `$caller`")
             }
         }
 
@@ -96,7 +97,7 @@ object CUtils {
      * @param ambient 是否显示粒子
      * */
     fun MobEffect.instance(
-        duration: Ticks = 0.tick,
+        duration: Int = 0,//tick
         amplifier: Int = 0,
         ambient: Boolean = false,
         visible: Boolean = true,
@@ -188,8 +189,10 @@ object CUtils {
         return this
     }
 
-    inline fun <T> T.applyIf(condition: Boolean, action: T.() -> Unit): T {
-        if (condition) action()
-        return this
+    inline fun <reified T : Enum<T>, V> buildEnumMap(init: (value: T) -> V): EnumMap<T, V> {
+        val klass = T::class.java
+        val map = EnumMap<T, V>(klass)
+        klass.enumConstants.forEach { map[it] = init(it) }
+        return map
     }
 }

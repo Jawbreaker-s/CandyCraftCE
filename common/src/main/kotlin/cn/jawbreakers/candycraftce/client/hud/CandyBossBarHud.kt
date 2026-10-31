@@ -4,7 +4,7 @@ import cn.jawbreakers.candycraftce.client.hud.CandyBossBarHud.Companion.BAR_HEIG
 import cn.jawbreakers.candycraftce.client.hud.CandyBossBarHud.Companion.BAR_WIDTH
 import cn.jawbreakers.candycraftce.client.hud.CandyBossBarHud.Companion.BOSS_BAR_TEXTURE
 import cn.jawbreakers.candycraftce.entity.ICandyBoss
-import cn.jawbreakers.candycraftce.mixin.level.LevelMixinAccessor
+import cn.jawbreakers.candycraftce.mixin.accessors.LevelMixinAccessor
 import cn.jawbreakers.candycraftce.mixin_stub.ICandyBossTarget
 import cn.jawbreakers.candycraftce.utils.CUtils.guiTex
 import cn.jawbreakers.candycraftce.utils.CUtils.modLoc

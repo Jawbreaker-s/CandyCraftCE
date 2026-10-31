@@ -1,4 +1,4 @@
-// 1.20.1	2026-10-28T21:56:34.8295167	Item Models: candycraftce
+// 1.20.1	2026-11-01T01:01:50.3650161	Item Models: candycraftce
 b69597e7c0247f206126a171c16f29a35d95fc6a assets/candycraftce/models/item/beetle_dungeon_key.json
 60b8ce2c2fdcb069d6f5914177b36d6016006a2b assets/candycraftce/models/item/candied_cherry.json
 1db7252b22afc34130202c06fec63a7e983ff1a9 assets/candycraftce/models/item/candied_cherry_leaf.json
@@ -11,6 +11,7 @@ e59acd2f96b003b3dcb12864396e11b29c215d8e assets/candycraftce/models/item/caramel
 12fe8a758b7601c383f68e0fecb20230e459e820 assets/candycraftce/models/item/caramel_jelly_slice.json
 284df123828d010158079309b84b7e8508331838 assets/candycraftce/models/item/caramel_king_jelly_ball.json
 b09f6bf8f81d4e406d1f436a1e10b677d085be35 assets/candycraftce/models/item/caramel_leaf.json
+63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/candycraftce/models/item/caramel_wolf_spawn_egg.json
 5ceba7de0c9bc08b64adaf4eb0007c8e202acf1f assets/candycraftce/models/item/chewing_gum.json
 976bb1a372aeaae3b743edfc11c69c63eadf5f03 assets/candycraftce/models/item/chewing_gum_emblem.json
 f05a32a6c8e3d22f43377a15b2240a878fd3bc56 assets/candycraftce/models/item/chocolate_brick.json
@@ -28,6 +29,7 @@ f905627a7cbf716238285b59ddd8a03522b7d128 assets/candycraftce/models/item/dragibu
 f81b8eac1573375445dcac9103e1b922ea661c00 assets/candycraftce/models/item/dragibus_stick.json
 ce279e54f7a6138bf2dbb05fa85133be5ba17890 assets/candycraftce/models/item/fork.json
 34d6f675c08ef63d75aa2d3bf06f83bfc22f7bcd assets/candycraftce/models/item/gingerbread_emblem.json
+63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/candycraftce/models/item/gingerbread_man_spawn_egg.json
 b7222751392e54c4fbd6ecc8b67bcdf534331d12 assets/candycraftce/models/item/grenadine_bucket.json
 7b2c2355299cd75fffed364ebd458beb30593d7c assets/candycraftce/models/item/gummy.json
 94cd334c3bd5bc2bd44fb1025690e055f73149ff assets/candycraftce/models/item/gummy_ball.json
@@ -98,6 +100,7 @@ ee5a7ec0bc5378b3e7361911aa5eaee7a9f599f8 assets/candycraftce/models/item/pez_jel
 121193de0377a92f30ba613e200a376b05305bb4 assets/candycraftce/models/item/pez_pickaxe.json
 485efb568f7838e28d8c93fdd33bb750216ff833 assets/candycraftce/models/item/pez_shovel.json
 b2dfe62aec0fb50c520c48b98f221f0b35aeceb3 assets/candycraftce/models/item/pez_sword.json
+63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/candycraftce/models/item/pingouin_spawn_egg.json
 532e16fe64f15fdf0ce47564b2e6b5c56e3b4da3 assets/candycraftce/models/item/raspberry_jelly.json
 5c91544cb73c2c9725fc3a3fc8ff233c823ea7a1 assets/candycraftce/models/item/raspberry_jelly_ball.json
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/candycraftce/models/item/raspberry_jelly_spawn_egg.json

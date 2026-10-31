@@ -1,8 +1,7 @@
 package cn.jawbreakers.candycraftce.block
 
+import cn.jawbreakers.candycraftce.utils.CUtils.SEC2TICK
 import cn.jawbreakers.candycraftce.utils.CUtils.instance
-import cn.jawbreakers.candycraftce.utils.TickUnit.second
-
 import net.minecraft.core.BlockPos
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.util.RandomSource
@@ -25,7 +24,7 @@ class AcidMintFlowerBlock(properties: Properties) : CandyPlantBlock(properties) 
     @Deprecated("Deprecated in Java")
     override fun entityInside(state: BlockState, level: Level, pos: BlockPos, entity: Entity) {
         if (!level.isClientSide && entity is LivingEntity) {
-            entity.addEffect(MobEffects.POISON.instance(1.second, 1))
+            entity.addEffect(MobEffects.POISON.instance(1 * SEC2TICK, 1))
         }
     }
 }

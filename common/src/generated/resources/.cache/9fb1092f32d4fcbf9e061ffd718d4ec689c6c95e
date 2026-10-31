@@ -1,4 +1,4 @@
-// 1.20.1	2026-10-28T21:56:34.8205462	Recipes
+// 1.20.1	2026-10-29T06:31:02.7395115	Recipes
 4b269a2f785c890aa03cce557dec66edeef944bf data/candycraftce/advancements/recipes/building_blocks/banana_block_1.json
 444e79a5e0dd996f624ba2496e9d75677268c95f data/candycraftce/advancements/recipes/building_blocks/banana_ice_cream_slab_1.json
 6fb3d498ef0579b0ea7f3b518bb71435c4752ff0 data/candycraftce/advancements/recipes/building_blocks/banana_ice_cream_stairs_1.json
@@ -317,6 +317,7 @@ de54638c30b2bfd786834de47ffecfff69bf2f20 data/candycraftce/recipes/royal_rations
 b8efbf6646e0f00cfe3622bf66be76c29e0e0c87 data/candycraftce/recipes/strawberry_ice_cream_slab_1.json
 a1bdd153a6cba9efad09d7cdc0054f6851e62f85 data/candycraftce/recipes/strawberry_ice_cream_stairs_1.json
 eec87368cde183f91e283ce23f69f1a30b8de9dd data/candycraftce/recipes/strawberry_jelly_1.json
+51ee4f8fda485df0bde3b7c2f2ab77d5bc46da97 data/candycraftce/recipes/sugar_block_1.json
 0ac6229dadbd9241ac7674389aa1622f379a471a data/candycraftce/recipes/sugar_bricks_slab_1.json
 d643770017cab5e0b0795ac0330cc66cbbe5687d data/candycraftce/recipes/sugar_bricks_stairs_1.json
 92e2812e06193ceec1e69eb9b00003b2e99fb452 data/candycraftce/recipes/sugar_bricks_wall_1.json

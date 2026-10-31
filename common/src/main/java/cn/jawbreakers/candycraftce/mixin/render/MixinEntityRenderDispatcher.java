@@ -3,6 +3,7 @@ package cn.jawbreakers.candycraftce.mixin.render;
 import cn.jawbreakers.candycraftce.client.entity.layers.CandyProjectileStuckLayer;
 import cn.jawbreakers.candycraftce.client.entity.layers.PropolisEntityOverlayLayer;
 import cn.jawbreakers.candycraftce.client.entity.layers.PropolisSlimeGlintLayer;
+import cn.jawbreakers.candycraftce.mixin.accessors.LivingEntityRendererAccessor;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;

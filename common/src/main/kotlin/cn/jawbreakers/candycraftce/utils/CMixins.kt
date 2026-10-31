@@ -1,7 +1,7 @@
 package cn.jawbreakers.candycraftce.utils
 
-import cn.jawbreakers.candycraftce.mixin.item.AxeItemAccessor
-import cn.jawbreakers.candycraftce.mixin.item.ItemPropertiesAccessor
+import cn.jawbreakers.candycraftce.mixin.accessors.AxeItemAccessor
+import cn.jawbreakers.candycraftce.mixin.accessors.ItemPropertiesAccessor
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils.whenInitialized
 import cn.jawbreakers.candycraftce.utils.CUtils.mcLoc
 import cn.jawbreakers.candycraftce.utils.registry.Entry

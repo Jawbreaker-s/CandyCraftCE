@@ -1,7 +1,7 @@
 package cn.jawbreakers.candycraftce.entity.jelly
 
+import cn.jawbreakers.candycraftce.misc.CandyTargeting
 import cn.jawbreakers.candycraftce.utils.CUtils.always
-import cn.jawbreakers.candycraftce.utils.CandyTargeting
 import net.minecraft.core.particles.ParticleOptions
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.DifficultyInstance
@@ -49,7 +49,7 @@ abstract class BasicJelly(entityType: EntityType<out BasicJelly>, level: Level) 
     open fun isRemoveDirectly(reason: RemovalReason): Boolean = true
 
     open fun removeDirectly(reason: RemovalReason) {
-        brain.clearMemories();
+        brain.clearMemories()
         setRemoved(reason)
     }
 

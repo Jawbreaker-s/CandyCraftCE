@@ -1,6 +1,6 @@
 package cn.jawbreakers.candycraftce.entity
 
-import cn.jawbreakers.candycraftce.mixin.entity.CreeperAccessor
+import cn.jawbreakers.candycraftce.mixin.accessors.CreeperAccessor
 import cn.jawbreakers.candycraftce.registry.CItems
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.server.level.ServerLevel

@@ -1,11 +1,12 @@
 package cn.jawbreakers.candycraftce.entity
 
+import cn.jawbreakers.candycraftce.misc.CandyTargeting
 import cn.jawbreakers.candycraftce.registry.CMobEffects
+import cn.jawbreakers.candycraftce.utils.CLevelUtils.ifServer
+import cn.jawbreakers.candycraftce.utils.CUtils.SEC2TICK
 import cn.jawbreakers.candycraftce.utils.CUtils.defineId
 import cn.jawbreakers.candycraftce.utils.CUtils.instance
 import cn.jawbreakers.candycraftce.utils.CUtils.synched
-import cn.jawbreakers.candycraftce.utils.CandyTargeting
-import cn.jawbreakers.candycraftce.utils.TickUnit.second
 import net.minecraft.core.BlockPos
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.syncher.EntityDataSerializers
@@ -31,11 +32,12 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.Vec3
 import java.util.*
 import kotlin.math.max
+import kotlin.math.pow
 
 class CaramelBee(type: EntityType<out CaramelBee?>, level: Level) : Monster(type, level) {
     companion object {
-        private val honey_glue_duration_ticks = 5.second
-        private val natural_anger_duration_ticks = 30.second
+        private const val HONEY_GLUE_DURATION = 5 * SEC2TICK
+        private const val MAX_ANGER_DURATION = 30 * SEC2TICK
         private const val SUGUARD_WITNESS_RANGE = 16.0
 
         private val ANGRY = defineId(EntityDataSerializers.BOOLEAN)
@@ -116,15 +118,14 @@ class CaramelBee(type: EntityType<out CaramelBee?>, level: Level) : Monster(type
             return
         }
         angerTarget = player.getUUID()
-        angerTicks = natural_anger_duration_ticks
+        angerTicks = MAX_ANGER_DURATION
         this.isAngry = true
         target = player
     }
 
     override fun aiStep() {
         isNoGravity = true
-
-        if (!level().isClientSide) {
+        level().ifServer {
             tickAnger()
             if (target != null && !CandyTargeting.canAttackEntity(target!!, this)) target = null
             tickFlight()
@@ -158,38 +159,42 @@ class CaramelBee(type: EntityType<out CaramelBee?>, level: Level) : Monster(type
         }
 
         if (player != null && canAttackPlayer(player)) {
-            val reach = (bbWidth * 2.0f * bbWidth * 2.0f + player.bbWidth).toDouble()
-            if (distanceToSqr(player.x, player.boundingBox.minY, player.z) <= reach && attackTick <= 0) {
+            val reachSqr = (bbWidth * 2.0 * bbWidth * 2.0 + player.bbWidth).pow(2.0)
+            if (distanceToSqr(player.x, player.y + 1.1, player.z) <= reachSqr && attackTick <= 0) {
                 attackTick = 20
                 doHurtTarget(player)
             }
         }
-
-        if (flightTarget == null
-            || !level().isEmptyBlock(flightTarget!!)
-            || flightTarget!!.y < level().minBuildHeight
-            || random.nextInt(100) == 0
-            || flightTarget!!.closerToCenterThan(position(), 2.0)
-        ) {
-            val pos = blockPosition()
-            val dx = random.nextInt(14) - random.nextInt(14)
-            val dz = random.nextInt(14) - random.nextInt(14)
-//            val minY = level().getHeight(Heightmap.Types.MOTION_BLOCKING, pos.x + dx, pos.z + dz)
-            val dy = random.nextInt(6) - 2
-            flightTarget = pos.offset(dx, dy, dz)
-        }
-
-        var dx = flightTarget!!.x + 0.5 - x
-        var dy = flightTarget!!.y + 0.1 - y
-        var dz = flightTarget!!.z + 0.5 - z
+        var dx: Double
+        var dy: Double
+        var dz: Double
         if (this.isAngry && player != null) {
+            this.flightTarget = player.blockPosition()
             dx = player.x - x
             dy = player.y + 1.1 - y
             dz = player.z - z
-            flightTarget = player.blockPosition()
+        } else {
+            var flightTarget = flightTarget
+            if (flightTarget == null
+                || !level().isEmptyBlock(flightTarget)
+                || flightTarget.y < level().minBuildHeight
+                || random.nextInt(100) == 0
+                || flightTarget.closerToCenterThan(position(), 2.0)
+            ) {
+                val pos = blockPosition()
+                val randX = random.nextInt(27) - 13
+                val randY = random.nextInt(27) - 13
+                val randz = random.nextInt(6) - 2
+                pos.offset(randX, randz, randY).also {
+                    this.flightTarget = it
+                    flightTarget = it
+                }
+            }
+            dx = flightTarget!!.x + 0.5 - x
+            dy = flightTarget.y + 0.1 - y
+            dz = flightTarget.z + 0.5 - z
         }
 
-        val movement = deltaMovement
         val toTarget = Vec3(dx, dy, dz)
         if (toTarget.lengthSqr() > 1.0E-4) {
             val direction = toTarget.normalize()
@@ -200,9 +205,9 @@ class CaramelBee(type: EntityType<out CaramelBee?>, level: Level) : Monster(type
                 direction.z * speed
             )
             val blend = if (this.isAngry && player != null) 0.12 else 0.08
-            deltaMovement = movement.lerp(desired, blend)
+            deltaMovement = deltaMovement.lerp(desired, blend)
         } else {
-            deltaMovement = movement.scale(0.92)
+            deltaMovement = deltaMovement.scale(0.92)
         }
 
         val targetYaw = (Mth.atan2(deltaMovement.z, deltaMovement.x) * 180.0 / Math.PI).toFloat() - 90.0f
@@ -253,7 +258,7 @@ class CaramelBee(type: EntityType<out CaramelBee?>, level: Level) : Monster(type
         val damage = if (level().difficulty == Difficulty.HARD) 3.0f else 2.0f
         val success = target.hurt(damageSources().mobAttack(this), damage)
         if (success && target is LivingEntity && random.nextBoolean()) {
-            target.addEffect(CMobEffects.propolis.get().instance(honey_glue_duration_ticks), this)
+            target.addEffect(CMobEffects.propolis.get().instance(HONEY_GLUE_DURATION), this)
         }
         return success
     }

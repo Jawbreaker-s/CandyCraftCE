@@ -29,7 +29,7 @@
       "type": "minecraft:two_layers_feature_size",
       "limit": 4,
       "lower_size": 2,
-      "upper_size": 7
+      "upper_size": 6
     },
     "trunk_placer": {
       "type": "minecraft:dark_oak_trunk_placer",

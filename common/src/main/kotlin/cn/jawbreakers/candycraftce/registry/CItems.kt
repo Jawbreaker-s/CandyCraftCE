@@ -15,7 +15,6 @@ import cn.jawbreakers.candycraftce.utils.CPlatformUtils
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils.ifClient
 import cn.jawbreakers.candycraftce.utils.CUtils.instance
 import cn.jawbreakers.candycraftce.utils.EntrySet
-import cn.jawbreakers.candycraftce.utils.TickUnit.tick
 import cn.jawbreakers.candycraftce.utils.registry.Entry
 import net.minecraft.core.Direction
 import net.minecraft.world.effect.MobEffectInstance
@@ -43,14 +42,14 @@ object CItems {
     val dynamite = register("dynamite") { DynamiteItem(Properties(), false) }
     val glue_dynamite = register("glue_dynamite") { DynamiteItem(Properties(), true) }
 
-    val cranberry_emblem = registerEmblem("cranberry_emblem")
-    val gingerbread_emblem = registerEmblem("gingerbread_emblem")
-    val honey_emblem = registerEmblem("honey_emblem")
-    val sky_emblem = registerEmblem("sky_emblem")
-    val nessie_emblem = registerEmblem("nessie_emblem")
-    val chewing_gum_emblem = registerEmblem("chewing_gum_emblem")
-    val jelly_emblem = registerEmblem("jelly_emblem")
-    val suguard_emblem = registerEmblem("suguard_emblem")
+    val cranberry_emblem = registerEmblem("cranberry_emblem", 0)
+    val gingerbread_emblem = registerEmblem("gingerbread_emblem", 1)
+    val honey_emblem = registerEmblem("honey_emblem", 2)
+    val sky_emblem = registerEmblem("sky_emblem", 3)
+    val nessie_emblem = registerEmblem("nessie_emblem", 4)
+    val chewing_gum_emblem = registerEmblem("chewing_gum_emblem", 5)
+    val jelly_emblem = registerEmblem("jelly_emblem", 6)
+    val suguard_emblem = registerEmblem("suguard_emblem", 7)
 
     //todo SoundEvent需要测试
     val record_1 = register("record_1") //,CCSoundEvents.RECORD_CD_1, 6330);
@@ -75,21 +74,21 @@ object CItems {
 
     val waffle = registerFood("waffle", 10, 0.6F)
     val cotton_candy = registerFood("cotton_candy", 4, 0.5F)
-    val lollipop = register("lollipop") { LollipopItem(Properties().food(1, 0.6F)) }
+    val lollipop = registerFood("lollipop", 1, 0.6f)
     val cranberry_fish = register(
         "cranberry_fish",
-        Properties().food(2, 0.6F, true, MobEffects.WATER_BREATHING.instance(30.tick) to 0.9F)
+        Properties().food(2, 0.6F, true, MobEffects.WATER_BREATHING.instance(30) to 0.9F)
     )
     val cranberry_fish_cooked = register(
         "cranberry_fish_cooked",
-        Properties().food(6, 0.6F, true, MobEffects.WATER_BREATHING.instance(60.tick) to 0.9F)
+        Properties().food(6, 0.6F, true, MobEffects.WATER_BREATHING.instance(60) to 0.9F)
     )
 
-    val gummy = register("gummy", Properties().food(4, 0.6F, true, MobEffects.CONFUSION.instance(30.tick) to 0.9f))
+    val gummy = register("gummy", Properties().food(4, 0.6F, true, MobEffects.CONFUSION.instance(30) to 0.9f))
 
     val hot_gummy = register(
         "hot_gummy",
-        Properties().food(7, 0.6f, true, MobEffects.JUMP.instance(60.tick, 1) to 0.9f)
+        Properties().food(7, 0.6f, true, MobEffects.JUMP.instance(60, 1) to 0.9f)
     )
     val gummy_ball = register("gummy_ball") { GummyBallItem(Properties().stacksTo(16)) }
     val lemon_jelly_ball = register("lemon_jelly_ball")
@@ -129,7 +128,7 @@ object CItems {
     val chocolate_coin = registerFood("chocolate_coin", 2, 0.6F)
     val pez = register(
         "pez",
-        Properties().food(10, 0.6f, true, MobEffects.DAMAGE_RESISTANCE.instance(60.tick) to 0.9f)
+        Properties().food(10, 0.6f, true, MobEffects.DAMAGE_RESISTANCE.instance(60) to 0.9f)
     )
     val licorice = registerFood("licorice", 6, 0.6F)
     val honey_shard = register("honey_shard")
@@ -342,7 +341,7 @@ object CItems {
         return item
     }
 
-    private fun registerEmblem(name: String) = register(name) { EmblemItem(Properties().stacksTo(1)) }
+    private fun registerEmblem(name: String, ord: Int) = register(name) { EmblemItem(Properties().stacksTo(1), ord) }
 //    private fun registerRecords(name: String, analog: Int, sound: SoundEvent, time: Int) =
 //        register(name) { RecordItem(analog, sound, Properties().stacksTo(1).rarity(Rarity.RARE), time) }
 

@@ -4,13 +4,12 @@ import cn.jawbreakers.candycraftce.CandyCraftCE.onPostWork
 import cn.jawbreakers.candycraftce.blockentity.SugarFactoryBE
 import cn.jawbreakers.candycraftce.client.screen.LicoriceFurnaceScreen
 import cn.jawbreakers.candycraftce.client.screen.SugarFactoryScreen
-import cn.jawbreakers.candycraftce.integration.jei.CJeiRecipes.sugar_factory_jei
-import cn.jawbreakers.candycraftce.integration.jei.CJeiRecipes.sugar_factory_sugar_jei
-import cn.jawbreakers.candycraftce.integration.jei.CJeiRecipes.sugar_furnace_jei
+
 import cn.jawbreakers.candycraftce.integration.jei.categories.SugarFactoryCategory
 import cn.jawbreakers.candycraftce.integration.jei.categories.SugarFactorySugarCategory
 import cn.jawbreakers.candycraftce.integration.jei.categories.SugarFurnaceCategory
 import cn.jawbreakers.candycraftce.recipe.recipes.SugarFactoryRecipe
+import cn.jawbreakers.candycraftce.recipe.recipes.SugarFurnaceRecipe
 import cn.jawbreakers.candycraftce.registry.CBlocks.advanced_sugar_factory
 import cn.jawbreakers.candycraftce.registry.CBlocks.chocolate_furnace
 import cn.jawbreakers.candycraftce.registry.CBlocks.licorice_furnace
@@ -25,6 +24,7 @@ import cn.jawbreakers.candycraftce.utils.CUtils.key
 import cn.jawbreakers.candycraftce.utils.CUtils.modLoc
 import mezz.jei.api.IModPlugin
 import mezz.jei.api.JeiPlugin
+import mezz.jei.api.recipe.RecipeType
 import mezz.jei.api.registration.IGuiHandlerRegistration
 import mezz.jei.api.registration.IRecipeCatalystRegistration
 import mezz.jei.api.registration.IRecipeCategoryRegistration
@@ -45,6 +45,10 @@ class CJeiPlugin : IModPlugin {
     companion object {
         val uid = "jei-plugin".modLoc()
         val jeiTex = "jei".modLoc().guiTex()
+
+        val sugar_factory_jei = RecipeType("sugar_factory".modLoc(), SugarFactoryRecipe::class.java)
+        val sugar_factory_sugar_jei = RecipeType("sugar_factory_sugar".modLoc(), SugarFactoryRecipe::class.java)
+        val sugar_furnace_jei = RecipeType("sugar_furnace".modLoc(), SugarFurnaceRecipe::class.java)
 
         init {
             onPostWork {
@@ -108,7 +112,7 @@ class CJeiPlugin : IModPlugin {
         registration.addRecipeClickArea(
             SugarFactoryScreen::class.java,
             27, 9, 120, 12,
-            sugar_factory_jei
+            sugar_factory_jei, sugar_factory_sugar_jei
         )
         registration.addRecipeClickArea(
             LicoriceFurnaceScreen::class.java,

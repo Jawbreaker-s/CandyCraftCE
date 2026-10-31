@@ -49,7 +49,7 @@ class JellyQueen(type: EntityType<out JellyQueen>, level: Level) : BossJelly(typ
         entityData.define(STATE, STATE_NORMAL)
     }
 
-    var state: Int by synched(STATE).strict { it.coerceIn(STATE_SLEEPING..STATE_FRENZIED) }
+    var state: Int by synched(STATE).sanitize { it.coerceIn(STATE_SLEEPING..STATE_FRENZIED) }
         private set
 
     override fun onServerAwakeTick() {

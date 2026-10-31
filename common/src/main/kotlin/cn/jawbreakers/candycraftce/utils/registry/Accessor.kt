@@ -10,7 +10,7 @@ interface Accessor<T> : Supplier<T>, ReadOnlyProperty<Any?, T> {
     companion object {
         fun <T> of(value: T): Accessor<T> = AccessorImpl(value)
         fun <T> lambda(getter: () -> T) = object : Accessor<T> {
-            override val value: T = getter()
+            override val value: T get() = getter()
         }
     }
 
@@ -20,6 +20,11 @@ interface Accessor<T> : Supplier<T>, ReadOnlyProperty<Any?, T> {
     fun <R> xmap(mapping: (T) -> R): Accessor<R> {
         return lambda { mapping(value) }
     }
+
+    /**
+     * 清洗数据
+     * */
+    fun sanitize(sanitizer: (raw: T) -> T) = xmap(sanitizer)
 }
 
 interface MutableAccessor<T> : Accessor<T>, Consumer<T>, ReadWriteProperty<Any?, T> {
@@ -38,9 +43,19 @@ interface MutableAccessor<T> : Accessor<T>, Consumer<T>, ReadWriteProperty<Any?,
         this.value = value
     }
 
-    fun strict(condition: (T) -> T) = xmap(condition, condition)
+    /**
+     * 清洗数据
+     * */
+    override fun sanitize(sanitizer: (raw: T) -> T) = xmap(sanitizer, sanitizer)
     fun <R> xmap(mapping: (T) -> R, remapping: (R) -> T): MutableAccessor<R> {
         return lambda({ mapping(value) }, { set(remapping(it)) })
+    }
+
+    /**
+     * 去重写，以减小重复的dirty花销
+     * */
+    fun deduplicated(): MutableAccessor<T> {
+        return lambda({ value }, { if (it != value) value = it })
     }
 
     @Deprecated("Use set(value) instead", replaceWith = ReplaceWith("set(value)"))
