@@ -92,7 +92,8 @@ open class WaffleSheep(type: EntityType<out WaffleSheep?>, level: Level) : Sheep
         }
 
         override fun tick() {
-            val accessor = (this as EatBlockGoalAccessor)
+            @Suppress("CAST_NEVER_SUCCEEDS")
+            val accessor = this as EatBlockGoalAccessor
             val mob = this@WaffleSheep
             val level = mob.level()
 

@@ -1,6 +1,7 @@
 package cn.jawbreakers.candycraftce.block
 
 import cn.jawbreakers.candycraftce.misc.EmblemHelper
+import cn.jawbreakers.candycraftce.registry.CItems
 import net.minecraft.core.BlockPos
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.player.Player
@@ -34,7 +35,7 @@ class ChewingGumBlock(properties: Properties) : Block(properties) {
         if (isChewingGumNative(entity)) {
             return
         }
-        if (entity is Player && EmblemHelper.isChewingGumImmune(entity)) {
+        if (entity is Player && EmblemHelper.hasEmblem(entity, CItems.chewing_gum_emblem)) {
             return
         }
         val movement = entity.deltaMovement

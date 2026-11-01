@@ -1,4 +1,4 @@
-// 1.20.1	2026-11-01T01:01:50.3650161	Item Models: candycraftce
+// 1.20.1	2026-11-01T23:01:34.2305763	Item Models: candycraftce
 b69597e7c0247f206126a171c16f29a35d95fc6a assets/candycraftce/models/item/beetle_dungeon_key.json
 60b8ce2c2fdcb069d6f5914177b36d6016006a2b assets/candycraftce/models/item/candied_cherry.json
 1db7252b22afc34130202c06fec63a7e983ff1a9 assets/candycraftce/models/item/candied_cherry_leaf.json
@@ -33,6 +33,8 @@ ce279e54f7a6138bf2dbb05fa85133be5ba17890 assets/candycraftce/models/item/fork.js
 b7222751392e54c4fbd6ecc8b67bcdf534331d12 assets/candycraftce/models/item/grenadine_bucket.json
 7b2c2355299cd75fffed364ebd458beb30593d7c assets/candycraftce/models/item/gummy.json
 94cd334c3bd5bc2bd44fb1025690e055f73149ff assets/candycraftce/models/item/gummy_ball.json
+f68ff6e2c65c6fe4bbe8a735e565def0b1cd3dfe assets/candycraftce/models/item/gummy_ball_gum.json
+045ed1d8e8dd4199794ac0b6d536c6b3efaefa2b assets/candycraftce/models/item/gummy_ball_hot_gum.json
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/candycraftce/models/item/gummy_bunny_spawn_egg.json
 22aca8f17c76fbae8b29dddc4c9aec8ee13ae521 assets/candycraftce/models/item/honeycomb.json
 4e65a39825ada7f4e5e0ae495468308520d4fb7a assets/candycraftce/models/item/honey_arrow.json

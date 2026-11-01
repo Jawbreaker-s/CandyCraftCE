@@ -3,8 +3,10 @@ package cn.jawbreakers.candycraftce.forge.data.providers
 import cn.jawbreakers.candycraftce.CandyCraftCE.MOD_ID
 import cn.jawbreakers.candycraftce.entity.CandyBossType
 import cn.jawbreakers.candycraftce.entity.CandyBossType.*
+import cn.jawbreakers.candycraftce.forge.mixin.data.LanguageProviderAccessor
 import cn.jawbreakers.candycraftce.item.EmblemItem
 import cn.jawbreakers.candycraftce.registry.*
+import cn.jawbreakers.candycraftce.utils.CLogUtils.clog
 import cn.jawbreakers.candycraftce.utils.ILanguageProvider
 import cn.jawbreakers.candycraftce.utils.SPAWN_EGG_DESC
 import cn.jawbreakers.candycraftce.utils.registry.Entry
@@ -150,6 +152,8 @@ class CI18nProvider(output: PackOutput) : DataProvider, ILanguageProvider {
             addItem(fork, "Fork", "叉子")
             addItem(licorice_short_sword, "Licorice Short Sword", "盐甘草糖短剑")
             addItem(gummy_ball, "Gummy Ball", "软糖球")
+            addItem(gummy_ball_gum, "Gummy Gum Ball", "胶质软糖球")
+            addItem(gummy_ball_hot_gum, "Hot Gummy Gum Ball", "热胶质软糖球")
             addItem(lemon_jelly_ball, "Lemon Jelly Ball", "柠檬果冻球")
             addItem(raspberry_jelly_ball, "Raspberry Jelly Ball", "树莓果冻球")
             addItem(mint_jelly_ball, "Mint Jelly Ball", "薄荷果冻球")
@@ -363,9 +367,12 @@ class CI18nProvider(output: PackOutput) : DataProvider, ILanguageProvider {
         }
 
         CEntityTypes.apply {
-            addEntity(honey_arrow, "Honey Arrow", "蜜蜡箭")
-            addEntity(dynamite, "Nougat Dynamite", "牛轧糖炸药")
-            addEntity(glue_dynamite, "Chewing Gum Dynamite", "口香糖炸药")
+            copy(honey_arrow, CItems.honey_arrow)
+            copy(dynamite, CItems.dynamite)
+            copy(glue_dynamite, CItems.glue_dynamite)
+            copy(gummy_ball, CItems.gummy_ball)
+            copy(gummy_ball_gum, CItems.gummy_ball_gum)
+            copy(gummy_ball_hot_gum, CItems.gummy_ball_hot_gum)
             addEntity(candy_pig, "Candy Cane Pig", "拐杖糖猪")
             addEntity(waffle_sheep, "Waffle Sheep", "华夫饼羊")
             addEntity(gummy_bunny, "Gummy Bunny", "果冻兔")
@@ -404,6 +411,13 @@ class CI18nProvider(output: PackOutput) : DataProvider, ILanguageProvider {
     fun addBossType(type: CandyBossType, en: String, zh: String) {
         add(type.description, en, zh)
     }
+
+    fun copy(key: String, source: String) {
+        subs.forEach { provider -> provider.copy(key, source) }
+    }
+
+    fun copy(key: Entry<out EntityType<*>>, source: Entry<out Item>) =
+        copy(key.get().descriptionId, source.get().descriptionId)
 
     fun addEntity(key: Entry<out EntityType<*>>, en: String, zh: String) {
         zhCN.add(key.get(), zh)
@@ -473,11 +487,23 @@ class CI18nProvider(output: PackOutput) : DataProvider, ILanguageProvider {
 
     class SubLanguageProvider(output: PackOutput, locate: String) : LanguageProvider(output, MOD_ID, locate) {
         private val entries = mutableListOf<Consumer<LanguageProvider>>()
+        private val copies = mutableMapOf<String, String>()
         override fun addTranslations() {
             entries.forEach { it.accept(this) }
+            copies.forEach { (key, source) ->
+                @Suppress("CAST_NEVER_SUCCEEDS")
+                val value = (this as LanguageProviderAccessor).data[source]
+                    ?: error("translate of `$source` in $locale not found")
+                add(key, value)
+                clog.info("copy `$key`=`$source`->`$value` in $locale")
+            }
         }
 
         fun add(consumer: LanguageProvider.() -> Unit) = entries.add(consumer)
+
+        fun copy(key: String, source: String) {
+            require(copies.put(key, source) == null) { "duplicate copy: key=$key, new_source=$source," }
+        }
     }
 
     override fun run(output: CachedOutput): CompletableFuture<*> {

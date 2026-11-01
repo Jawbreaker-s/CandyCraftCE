@@ -9,6 +9,10 @@ import cn.jawbreakers.candycraftce.client.entity.renderers.jelly.LemonJellyRende
 import cn.jawbreakers.candycraftce.client.entity.renderers.jelly.MintJellyRenderer
 import cn.jawbreakers.candycraftce.client.entity.renderers.jelly.RaspberryJellyRenderer
 import cn.jawbreakers.candycraftce.entity.*
+import cn.jawbreakers.candycraftce.entity.gummy.AbstractGummyBall
+import cn.jawbreakers.candycraftce.entity.gummy.BasicGummyBall
+import cn.jawbreakers.candycraftce.entity.gummy.BeetleGummyBall
+import cn.jawbreakers.candycraftce.entity.gummy.FireGummyBall
 import cn.jawbreakers.candycraftce.entity.jelly.*
 import cn.jawbreakers.candycraftce.utils.CLogUtils
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils
@@ -79,13 +83,9 @@ object CEntityTypes {
     }
         .renderer(::ThrownItemRenderer)
 
-    //
-//    val gummy_ball = register("gummy_ball") {
-//        of(::GummyBallEntity, MobCategory.MISC)
-//            .sized(0.25F, 0.25F)
-//            .clientTrackingRange(8)
-//            .updateInterval(10)
-//    }
+    val gummy_ball = registerGummyBall("gummy_ball", ::BasicGummyBall)
+    val gummy_ball_gum = registerGummyBall("gummy_ball_gum", ::BeetleGummyBall)
+    val gummy_ball_hot_gum = registerGummyBall("gummy_ball_hot_gum", ::FireGummyBall)
 //
 //    val thrown_fork = register("thrown_fork") {
 //        of(::ThrownForkEntity, MobCategory.MISC)
@@ -271,6 +271,15 @@ object CEntityTypes {
             Slime.checkSlimeSpawnRules(type as EntityType<Slime>, level, spawnType, pos, random)
         }
 
+    private fun <T : AbstractGummyBall> registerGummyBall(
+        name: String, factory: EntityType.EntityFactory<T>,
+    ) = register(name) {
+        of(factory, MobCategory.MISC)
+            .sized(0.25F, 0.25F)
+            .clientTrackingRange(8)
+            .updateInterval(10)
+    }
+        .renderer(::ThrownItemRenderer)
 
     @Suppress("UNCHECKED_CAST")
     @ServerSafe //必须inline才能server-safe

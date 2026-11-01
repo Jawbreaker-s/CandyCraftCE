@@ -21,6 +21,7 @@ import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.VoxelShape
+import kotlin.math.min
 
 class ChewingGumPuddleBlock(properties: Properties) : Block(properties) {
     companion object {
@@ -56,15 +57,11 @@ class ChewingGumPuddleBlock(properties: Properties) : Block(properties) {
 
     @Deprecated("Deprecated in Java")
     override fun entityInside(state: BlockState, level: Level, pos: BlockPos, entity: Entity) {
-        //TODO
-        if (ChewingGumBlock.isChewingGumNative(entity)) {
-            return
-        }
-        if (entity is Player && EmblemHelper.isChewingGumImmune(entity)) {
-            return
-        }
+        if (ChewingGumBlock.isChewingGumNative(entity)) return
+        if (entity is Player && EmblemHelper.hasEmblem(entity, CItems.chewing_gum_emblem)) return
         val movement = entity.deltaMovement
-        entity.setDeltaMovement(movement.x * 0.2, 0.0, movement.z * 0.2)
+        //min(movement.y, movement.y * 0.2)下坠时不修改，跳跃时x0.2
+        entity.setDeltaMovement(movement.x * 0.2, min(movement.y, movement.y * 0.2), movement.z * 0.2)
     }
 
     override fun animateTick(state: BlockState, level: Level, pos: BlockPos, random: RandomSource) {

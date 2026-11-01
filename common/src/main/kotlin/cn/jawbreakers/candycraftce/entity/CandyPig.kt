@@ -7,7 +7,6 @@ import cn.jawbreakers.candycraftce.registry.CItems.dragibus
 import cn.jawbreakers.candycraftce.registry.CItems.dragibus_stick
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.nbt.CompoundTag
-import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.util.Mth
 import net.minecraft.world.damagesource.DamageSource
@@ -21,7 +20,6 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.Ingredient
 import net.minecraft.world.level.Level
-import net.minecraft.world.level.storage.loot.BuiltInLootTables
 import net.minecraft.world.phys.Vec3
 import java.util.*
 
@@ -41,7 +39,9 @@ class CandyPig(type: EntityType<out CandyPig>, level: Level) : Pig(type, level) 
             )
         )
         goalSelector.addGoal(4, FollowParentGoal(this, 1.1))
-        goalSelector.addGoal(5, BadgeAvoidGoal(this))
+        goalSelector.addGoal(5, AvoidEntityGoal(this, Player::class.java, 6.0f, 1.0, 1.25) {
+            EmblemHelper.hasEmblem(it as Player, CItems.gingerbread_emblem)
+        })
         goalSelector.addGoal(6, WaterAvoidingRandomStrollGoal(this, 1.0))
         goalSelector.addGoal(7, LookAtPlayerGoal(this, Player::class.java, 6.0f))
         goalSelector.addGoal(8, RandomLookAroundGoal(this))
@@ -118,12 +118,8 @@ class CandyPig(type: EntityType<out CandyPig>, level: Level) : Pig(type, level) 
         }
     }
 
-    override fun getDefaultLootTable(): ResourceLocation {
-        return BuiltInLootTables.EMPTY
-    }
-
     private fun shouldAvoidPlayer(player: Player): Boolean {
-        return !player.isSpectator && EmblemHelper.hasEmblem(player, CItems.gingerbread_emblem.get())
+        return !player.isSpectator && EmblemHelper.hasEmblem(player, CItems.gingerbread_emblem)
     }
 
     private fun hasDragibusStick(player: Player): Boolean {
@@ -138,9 +134,8 @@ class CandyPig(type: EntityType<out CandyPig>, level: Level) : Pig(type, level) 
         pig, speedModifier, items, false
     ) {
         override fun canUse(): Boolean {
-            if (!super.canUse()) {
-                return false
-            }
+            if (!super.canUse()) return false
+
             if (pig.shouldAvoidPlayer(player!!)) {
                 player = null
                 return false

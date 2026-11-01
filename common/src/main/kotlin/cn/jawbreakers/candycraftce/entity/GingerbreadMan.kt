@@ -1,6 +1,7 @@
 package cn.jawbreakers.candycraftce.entity
 
 import cn.jawbreakers.candycraftce.misc.EmblemHelper
+import cn.jawbreakers.candycraftce.registry.CItems
 import cn.jawbreakers.candycraftce.utils.CUtils.defineId
 import cn.jawbreakers.candycraftce.utils.CUtils.synched
 import net.minecraft.nbt.CompoundTag
@@ -39,7 +40,7 @@ class GingerbreadMan(type: EntityType<out GingerbreadMan>, level: Level) : Pathf
         this.goalSelector.addGoal(
             1,
             AvoidEntityGoal(this, Player::class.java, 8f, 1.0, 1.5) {
-                it is Player && EmblemHelper.shouldGingerbreadManAvoid(it)
+                EmblemHelper.hasEmblem(it as Player, CItems.gingerbread_emblem)
             }
         )
         this.goalSelector.addGoal(3, WaterAvoidingRandomStrollGoal(this, 0.8))

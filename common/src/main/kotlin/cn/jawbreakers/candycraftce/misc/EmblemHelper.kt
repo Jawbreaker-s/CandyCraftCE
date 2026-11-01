@@ -4,6 +4,7 @@ import cn.jawbreakers.candycraftce.item.EmblemItem
 import cn.jawbreakers.candycraftce.mixin_stub.IEmblemDataHolder
 import cn.jawbreakers.candycraftce.utils.CUtils.use
 import net.minecraft.world.entity.player.Player
+import java.util.function.Supplier
 
 /**
  * Created in 2026/9/20 13:04
@@ -12,19 +13,8 @@ import net.minecraft.world.entity.player.Player
  */
 object EmblemHelper {
 
-    fun isChewingGumImmune(entity: Player): Boolean {
-        return entity.isSpectator
-    }
-
-    fun shouldCandyMobAvoid(entity: Player): Boolean {
-        return !entity.isSpectator
-    }
-
-    fun shouldGingerbreadManAvoid(entity: Player): Boolean {
-        return !entity.isSpectator
-    }
-
     const val IN_INVENTORY_TAG = "InInventory"
+    fun hasEmblem(player: Player, item: Supplier<out EmblemItem>): Boolean = hasEmblem(player, item.get())
     fun hasEmblem(player: Player, item: EmblemItem): Boolean {
         val data = (player as IEmblemDataHolder).candycraftce_emblemData
         val flag = data.getLong(IN_INVENTORY_TAG)

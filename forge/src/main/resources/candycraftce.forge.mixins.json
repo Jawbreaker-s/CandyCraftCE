@@ -4,7 +4,7 @@
   "package": "cn.jawbreakers.candycraftce.forge.mixin",
   "compatibilityLevel": "JAVA_17",
   "refmap": "${mod_id}.refmap.json",
-  "mixins": [],
+  "mixins": ["data.LanguageProviderAccessor"],
   "client": ["Keep"],
   "server": [],
   "injectors": {

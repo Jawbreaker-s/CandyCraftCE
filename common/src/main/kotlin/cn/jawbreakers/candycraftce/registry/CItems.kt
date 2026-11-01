@@ -1,6 +1,9 @@
 package cn.jawbreakers.candycraftce.registry
 
 import cn.breadnicecat.candycraftce.core.item.items.debugger.MarshmallowDebuggerItem
+import cn.jawbreakers.candycraftce.entity.gummy.BasicGummyBall
+import cn.jawbreakers.candycraftce.entity.gummy.BeetleGummyBall
+import cn.jawbreakers.candycraftce.entity.gummy.FireGummyBall
 import cn.jawbreakers.candycraftce.fluid.CFluidReferences
 import cn.jawbreakers.candycraftce.item.*
 import cn.jawbreakers.candycraftce.misc.CArmorMaterials
@@ -90,7 +93,16 @@ object CItems {
         "hot_gummy",
         Properties().food(7, 0.6f, true, MobEffects.JUMP.instance(60, 1) to 0.9f)
     )
-    val gummy_ball = register("gummy_ball") { GummyBallItem(Properties().stacksTo(16)) }
+    val gummy_ball = register("gummy_ball") {
+        GummyBallItem(Properties().stacksTo(16), ::BasicGummyBall)
+    }
+    val gummy_ball_gum = register("gummy_ball_gum") {
+        GummyBallItem(Properties().stacksTo(16), ::BeetleGummyBall)
+    }
+    val gummy_ball_hot_gum = register("gummy_ball_hot_gum") {
+        GummyBallItem(Properties().stacksTo(16), ::FireGummyBall)
+    }
+
     val lemon_jelly_ball = register("lemon_jelly_ball")
     val raspberry_jelly_ball = register("raspberry_jelly_ball")
     val mint_jelly_ball = register("mint_jelly_ball")
