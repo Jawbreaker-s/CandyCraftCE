@@ -9,7 +9,6 @@ import cn.jawbreakers.candycraftce.registry.CBlocks
 import cn.jawbreakers.candycraftce.registry.CBlocks.defaultBlockState
 import cn.jawbreakers.candycraftce.registry.CFluidTags
 import cn.jawbreakers.candycraftce.registry.worldgen.CBiomes.caramel_forest
-import cn.jawbreakers.candycraftce.registry.worldgen.CBiomes.chocolate_forest
 import cn.jawbreakers.candycraftce.registry.worldgen.CBiomes.enchanted_forest
 import cn.jawbreakers.candycraftce.registry.worldgen.CBiomes.ice_cream_plains
 import cn.jawbreakers.candycraftce.registry.worldgen.CBiomes.ice_cream_sky_mountains
@@ -501,7 +500,7 @@ class CandyChunkGenerator(
     }
 
     @OptIn(ExperimentalStdlibApi::class)
-    override fun addDebugScreenInfo(info: MutableList<String?>, randomState: RandomState, pos: BlockPos) {
+    override fun addDebugScreenInfo(info: MutableList<String>, randomState: RandomState, pos: BlockPos) {
         info.add("$MOD_NAME Chunk Generator v1.0: WS=${worldSeed(randomState).nextLong().toHexString()}")
         info.add("Candy Biome Shape: " + biomeShape(pos.x, pos.z, randomState))
     }
@@ -927,7 +926,6 @@ class CandyChunkGenerator(
     private val biomeShapes: Map<ResourceKey<Biome>, BiomeShape> = mapOf(
         pudding_plains to BiomeShape(0.05f, 0.1f),
         sugar_forest to BiomeShape(0.1f, 0.15f),
-        chocolate_forest to BiomeShape(0.1f, 0.15f),
         white_chocolate_forest to BiomeShape(0.1f, 0.3f),
         sugar_river to BiomeShape(-0.5f, 0.0f),
         sugar_oceans to BiomeShape(-1.0f, 0.1f),

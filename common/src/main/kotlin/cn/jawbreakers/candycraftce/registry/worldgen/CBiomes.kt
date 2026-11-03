@@ -27,7 +27,6 @@ object CBiomes {
 
     //
     val caramel_forest = bind("caramel_forest")
-    val chocolate_forest = bind("chocolate_forest")
     val ice_cream_plains = bind("ice_cream_plains")
     val ice_cream_sky_mountains = bind("ice_cream_sky_mountains")
     val white_chocolate_forest = bind("white_chocolate_forest")
@@ -39,7 +38,7 @@ object CBiomes {
     val sugar_river = bind("sugar_river")
 
     val allCandyBiomes = listOf(
-        caramel_forest, ice_cream_plains, ice_cream_sky_mountains, chocolate_forest,
+        caramel_forest, ice_cream_plains, ice_cream_sky_mountains,
         white_chocolate_forest, enchanted_forest, sugar_forest, pudding_hill, pudding_plains, sugar_oceans, sugar_river
     )
 
@@ -279,25 +278,6 @@ object CBiomes {
                     step(lookup, VEGETAL_DECORATION) {
                         +placed_candy_grass
                         +placed_tree_enchanted
-                    }
-                }
-            )
-            //wip
-            //chocolate_forest
-            registerBiome(
-                chocolate_forest, 0.8f, 0.3f,
-                {
-                    creatureGenerationProbability(0.1f)
-                },
-                {
-                    skyColor(15784376)
-                    fogColor(15784376)
-                    waterColor(13473279)
-                    waterFogColor(13473279)
-                },
-                {
-                    step(lookup, VEGETAL_DECORATION) {
-                        +placed_candy_grass
                     }
                 }
             )

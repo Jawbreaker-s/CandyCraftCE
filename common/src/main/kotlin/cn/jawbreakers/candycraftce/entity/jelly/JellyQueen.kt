@@ -61,8 +61,8 @@ class JellyQueen(type: EntityType<out JellyQueen>, level: Level) : BossJelly(typ
             else -> STATE_FRENZIED
         }
         if (state != STATE_SLEEPING && newState > state) {
-            //苏醒的faint在#awaken中定义
-            setFaint()
+            //苏醒的faint值在awaken中定义
+            setFainting()
         }
         state = newState
         super.onServerAwakeTick()
@@ -119,6 +119,6 @@ class JellyQueen(type: EntityType<out JellyQueen>, level: Level) : BossJelly(typ
     }
 
 
-    override val bossType: CandyBossType = CandyBossType.Boss
+    override val bossType: CandyBossType = CandyBossType.MiniBoss
 
 }

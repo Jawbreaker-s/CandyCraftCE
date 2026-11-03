@@ -2,7 +2,6 @@ package cn.jawbreakers.candycraftce.level
 
 import cn.jawbreakers.candycraftce.registry.CBiomeTags
 import cn.jawbreakers.candycraftce.registry.worldgen.CBiomes
-import cn.jawbreakers.candycraftce.registry.worldgen.CBiomes.chocolate_forest
 import cn.jawbreakers.candycraftce.registry.worldgen.CBiomes.sugar_river
 import cn.jawbreakers.candycraftce.utils.CLogUtils.clog
 import com.google.common.cache.Cache
@@ -100,18 +99,11 @@ class CandyBiomeSource(
             listOf(
                 Biomes.FLOWER_FOREST,
                 Biomes.FOREST,
+                Biomes.BIRCH_FOREST,
+                Biomes.OLD_GROWTH_BIRCH_FOREST,
             ),
             CBiomes.sugar_forest
         )
-        transfer(
-            listOf(
-                Biomes.BIRCH_FOREST,
-                Biomes.DARK_FOREST,
-                Biomes.OLD_GROWTH_BIRCH_FOREST
-            ),
-            chocolate_forest
-        )
-
         // 丛林
         transfer(
             listOf(
@@ -125,6 +117,7 @@ class CandyBiomeSource(
         // 沙漠
         transfer(
             listOf(
+                Biomes.DARK_FOREST,
                 Biomes.DESERT
             ),
             CBiomes.caramel_forest

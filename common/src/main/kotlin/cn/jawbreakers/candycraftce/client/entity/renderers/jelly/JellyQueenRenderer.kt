@@ -3,6 +3,7 @@ package cn.jawbreakers.candycraftce.client.entity.renderers.jelly
 import cn.jawbreakers.candycraftce.entity.jelly.JellyQueen
 import cn.jawbreakers.candycraftce.utils.CUtils.entityTex
 import cn.jawbreakers.candycraftce.utils.CUtils.modLoc
+import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.renderer.entity.EntityRendererProvider
 import net.minecraft.resources.ResourceLocation
 
@@ -24,5 +25,15 @@ class JellyQueenRenderer(context: EntityRendererProvider.Context) : BasicJellyRe
             JellyQueen.STATE_FRENZIED -> texture_frenzied
             else -> texture_normal
         }
+    }
+
+    override fun scale(
+        entity: JellyQueen,
+        poseStack: PoseStack,
+        partialTickTime: Float,
+    ) {
+//        val hscale = max(entity.health / entity.maxHealth, 0.2f)
+//        poseStack.scale(hscale, hscale, hscale)
+        super.scale(entity, poseStack, partialTickTime)
     }
 }

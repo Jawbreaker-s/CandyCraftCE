@@ -5,17 +5,16 @@
   "refmap": "${mod_id}.refmap.json",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "emblem.PlayerMixin", "accessors.CreeperAccessor", "accessors.EatBlockGoalAccessor",
-    "entity.EntityMixin", "entity.PlayerMixin", "accessors.SheepAccessor", "accessors.AxeItemAccessor",
-    "item.MixinItem",
-    "accessors.LevelMixinAccessor", "level.MixinBiome", "level.MixinChunkMap", "level.MixinTrunkPlacer",
-    "accessors.NoiseRouterDataAccessor", "portal.MixinEntity", "portal.MixinLevel"
+    "accessors.AxeItemAccessor", "accessors.CreeperAccessor", "accessors.EatBlockGoalAccessor",
+    "accessors.LevelMixinAccessor", "accessors.NoiseRouterDataAccessor", "accessors.SheepAccessor",
+    "emblem.PlayerMixin", "entity.EntityMixin", "entity.PlayerMixin", "item.MixinItem", "level.MixinBiome",
+    "level.MixinChunkMap", "level.MixinTrunkPlacer", "portal.MixinEntity", "portal.MixinLevel"
   ],
   "client": [
-    "accessors.ItemPropertiesAccessor", "loading_screen.MixinMinecraft", "loading_screen.MixinScreen",
-    "render.DimensionSpecialEffectsInjector", "accessors.LivingEntityRendererAccessor", "accessors.MenuScreensAccessor",
-    "render.MixinAbstractContainerScreen", "render.MixinEntityRenderDispatcher", "render.MixinLevelRenderer",
-    "accessors.RenderTypeAccessor"
+    "accessors.ItemPropertiesAccessor", "accessors.LivingEntityRendererAccessor", "accessors.MenuScreensAccessor",
+    "accessors.RenderTypeAccessor", "color.DebugHudMixin", "color.LevelRendererMixin", "loading_screen.MixinMinecraft",
+    "loading_screen.MixinScreen", "render.DimensionSpecialEffectsInjector", "render.MixinAbstractContainerScreen",
+    "render.MixinEntityRenderDispatcher", "render.MixinLevelRenderer"
   ],
   "server": [],
   "injectors": {

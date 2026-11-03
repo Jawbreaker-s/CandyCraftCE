@@ -34,7 +34,7 @@ abstract class BasicJelly(entityType: EntityType<out BasicJelly>, level: Level) 
         this.targetSelector.addGoal(1, NearestAttackableTargetGoal(this, Player::class.java, false, ::mayAttack))
     }
 
-    fun mayAttack(entity: Entity) = CandyTargeting.canAttackEntity(entity, this)
+    open fun mayAttack(entity: Entity) = CandyTargeting.canAttackEntity(entity, this)
     final override fun remove(reason: RemovalReason) {
         if (isRemoveDirectly(reason)) {
             removeDirectly(reason)

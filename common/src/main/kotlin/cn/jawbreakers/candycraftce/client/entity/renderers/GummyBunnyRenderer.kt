@@ -7,7 +7,7 @@ import cn.jawbreakers.candycraftce.utils.CLevelUtils.component2
 import cn.jawbreakers.candycraftce.utils.CLevelUtils.component3
 import cn.jawbreakers.candycraftce.utils.CUtils.entityTex
 import cn.jawbreakers.candycraftce.utils.CUtils.modLoc
-import cn.jawbreakers.candycraftce.utils.LinearGradient.Companion.vecColorNormal
+import cn.jawbreakers.candycraftce.utils.LinearGradient.Companion.normalize
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
@@ -63,7 +63,7 @@ class GummyBunnyRenderer(context: EntityRendererProvider.Context) :
             model.prepareMobModel(bunny, limbSwing, limbSwingAmount, partialTick)
             model.setupAnim(bunny, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch)
             val consumer = buffer.getBuffer(RenderType.entityTranslucent(body))
-            val (red, green, blue) = bunny.color.vecColorNormal
+            val (red, green, blue) = bunny.color.normalize()
             model.renderToBuffer(
                 poseStack,
                 consumer,

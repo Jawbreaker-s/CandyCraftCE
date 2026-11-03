@@ -35,11 +35,11 @@ abstract class BasicJellyRenderer<T : BasicJelly>(context: EntityRendererProvide
         super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight)
     }
 
-    override fun scale(livingEntity: T, poseStack: PoseStack, partialTickTime: Float) {
+    override fun scale(entity: T, poseStack: PoseStack, partialTickTime: Float) {
         poseStack.scale(0.999f, 0.999f, 0.999f)
         poseStack.translate(0.0f, 0.001f, 0.0f)
-        val f1 = livingEntity.size.toFloat()
-        val f2 = Mth.lerp(partialTickTime, livingEntity.oSquish, livingEntity.squish) / (f1 * 0.5f + 1.0f)
+        val f1 = entity.size.toFloat()
+        val f2 = Mth.lerp(partialTickTime, entity.oSquish, entity.squish) / (f1 * 0.5f + 1.0f)
         val f3 = 1.0f / (f2 + 1.0f)
         poseStack.scale(f3 * f1, 1.0f / f3 * f1, f3 * f1)
     }

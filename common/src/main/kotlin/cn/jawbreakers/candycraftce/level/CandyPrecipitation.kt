@@ -9,9 +9,6 @@ import net.minecraft.world.level.biome.Biome
 import kotlin.jvm.optionals.getOrNull
 
 object CandyPrecipitation {
-    val milk_rain_biomes = listOf(
-        CBiomes.chocolate_forest
-    )
     val snow_biomes = listOf(
         CBiomes.ice_cream_plains,
         CBiomes.ice_cream_sky_mountains,
@@ -23,7 +20,6 @@ object CandyPrecipitation {
 
     fun getPrecipitation(biome: ResourceKey<Biome>?): Biome.Precipitation {
         return when (biome) {
-            in milk_rain_biomes -> Biome.Precipitation.RAIN
             in snow_biomes -> Biome.Precipitation.SNOW
             else -> Biome.Precipitation.NONE
         }

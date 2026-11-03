@@ -10,7 +10,7 @@ import cn.jawbreakers.candycraftce.utils.CUtils.guiTex
 import cn.jawbreakers.candycraftce.utils.CUtils.modLoc
 import cn.jawbreakers.candycraftce.utils.CUtils.use
 import cn.jawbreakers.candycraftce.utils.ClientOnly
-import cn.jawbreakers.candycraftce.utils.LinearGradient.Companion.vecColorNormal
+import cn.jawbreakers.candycraftce.utils.LinearGradient.Companion.normalize
 import com.mojang.blaze3d.systems.RenderSystem
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
@@ -175,7 +175,7 @@ interface IBossBar {
 }
 
 class ColorBar(rgb: Int) : IBossBar {
-    val normal = rgb.vecColorNormal
+    val normal = rgb.normalize()
     override fun drawBar(graphics: GuiGraphics, y: Int, progress: Float) {
         if (progress !in 0f..1f) return
 

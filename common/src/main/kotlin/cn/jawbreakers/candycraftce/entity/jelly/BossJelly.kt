@@ -1,6 +1,8 @@
 package cn.jawbreakers.candycraftce.entity.jelly
 
 import cn.jawbreakers.candycraftce.entity.ICandyBoss
+import cn.jawbreakers.candycraftce.entity.ICandyBoss.Companion.BOSS_FOLLOW_RANGE
+import cn.jawbreakers.candycraftce.entity.ai.BossSleepingGoal
 import cn.jawbreakers.candycraftce.mixin_stub.ICandyBossTarget
 import cn.jawbreakers.candycraftce.utils.CLevelUtils.ifServer
 import cn.jawbreakers.candycraftce.utils.CUtils.always
@@ -12,15 +14,11 @@ import net.minecraft.world.damagesource.DamageTypes
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.LivingEntity
-import net.minecraft.world.entity.ai.attributes.AttributeModifier
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier
-import net.minecraft.world.entity.ai.attributes.Attributes
 import net.minecraft.world.entity.ai.attributes.Attributes.FOLLOW_RANGE
 import net.minecraft.world.entity.monster.Monster
 import net.minecraft.world.entity.player.Player
-import net.minecraft.world.entity.projectile.Projectile
 import net.minecraft.world.level.Level
-import kotlin.math.min
 
 
 /**
@@ -31,91 +29,42 @@ abstract class BossJelly(type: EntityType<out BossJelly>, level: Level) : BasicJ
     companion object {
         fun createBossJellyAttribute(): AttributeSupplier.Builder {
             return Monster.createMonsterAttributes()
-                .add(FOLLOW_RANGE, ICandyBoss.BOSS_FOLLOW_RANGE)
+                .add(FOLLOW_RANGE, BOSS_FOLLOW_RANGE)
         }
 
         val BOSS_AWAKE = defineId(EntityDataSerializers.BOOLEAN)
         val BOSS_FAINT_TICKS = defineId(EntityDataSerializers.INT)
-        private val FROZEN_MODIFIER: AttributeModifier = AttributeModifier(
-            "Sleeping Modifier",
-            0.0,
-            AttributeModifier.Operation.MULTIPLY_TOTAL
-        )
-        const val MAX_FAINT_TICKS = 1 * 20
-        const val HALF_FAINT_TICKS = MAX_FAINT_TICKS / 2
-        const val MAX_LOST_TARGET_TICKS = 5 * 20
     }
 
-    private var lostTargetTicks = 0
-    var awake: Boolean by synched(BOSS_AWAKE)
-    var faint: Int by synched(BOSS_FAINT_TICKS)
+    override fun self() = this
+    override var lostTargetTicks = 0
+    override var awake: Boolean by synched(BOSS_AWAKE)
+    override var faint: Int by synched(BOSS_FAINT_TICKS)
+
     override fun defineSynchedData() {
         super.defineSynchedData()
         entityData.define(BOSS_AWAKE, false)
         entityData.define(BOSS_FAINT_TICKS, 0)
     }
 
-    private var dormantYRot: Float? = null
-    private var dormantYHeadRot: Float? = null
-
     override fun registerGoals() {
         super.registerGoals()
         goalSelector.removeAllGoals(::always)
-        goalSelector.addGoal(1, BossAttackGoal())
-        goalSelector.addGoal(2, BossKeepJumpingGoal())
+        goalSelector.addGoal(-1, BossSleepingGoal(this))
+        goalSelector.addGoal(1, SlimeAttackGoal(this))
+        goalSelector.addGoal(2, BossAttackJumpingGoal())
     }
+
+    override fun mayAttack(entity: Entity): Boolean {
+        return super<BasicJelly>.mayAttack(entity)
+    }
+
 
     override fun customServerAiStep() {
-        super.customServerAiStep()
-        if (faint > 0) faint--
-        if (awake) onServerAwakeTick() else onServerSleepingTick()
-
-        val speed = getAttribute(Attributes.MOVEMENT_SPEED)
-        if (!awake) {
-            if (dormantYRot == null) dormantYRot = yRot else yRot = dormantYRot!!
-            if (dormantYHeadRot == null) dormantYHeadRot = yHeadRot else yHeadRot = dormantYHeadRot!!
-            target = null
-            navigation.stop()
-            jumping = false
-            speed?.apply {
-                if (!hasModifier(FROZEN_MODIFIER)) {
-                    addTransientModifier(FROZEN_MODIFIER)
-                }
-            }
-            stopMovement(true)
-        } else {
-            dormantYRot = null
-            dormantYHeadRot = null
-            speed?.apply {
-                removeModifier(FROZEN_MODIFIER)
-            }
-        }
+        bossServerAiStep()
     }
 
-
-    override fun isBarActive(): Boolean = isAlive
-    override fun getHealthBarProgress(): Float {
-        return health / maxHealth
-    }
-
-    open fun onServerAwakeTick() {
-        //防止跳的太高导致脱战
-        if (target.let { it == null || !mayAttack(it) }) {
-            lostTargetTicks++
-            val remainLostTicks = MAX_LOST_TARGET_TICKS - lostTargetTicks  //d越来越小
-            //最后一段时间，让Boss逐渐进入昏迷状态
-            if (remainLostTicks <= HALF_FAINT_TICKS) {
-                faint = HALF_FAINT_TICKS - remainLostTicks
-            }
-            if (lostTargetTicks >= MAX_LOST_TARGET_TICKS) {
-                awake = false
-            }
-        } else {
-            lostTargetTicks = 0
-        }
-    }
-
-    open fun onServerSleepingTick() {
+    override fun onServerSleepingTick() {
         //每秒恢复5点生命
         if (!level().isClientSide && tickCount % 20 == 0) {
             heal(5f)
@@ -140,15 +89,10 @@ abstract class BossJelly(type: EntityType<out BossJelly>, level: Level) : BasicJ
     }
 
 
-    open fun awaken(entity: Entity?) {
+    override fun awaken(entity: Entity?) {
+        //直接弹射起飞
         setDeltaMovement(deltaMovement.x, 2.0, deltaMovement.z)
-        val t = if (entity is Projectile) entity.owner else entity
-        if (t is LivingEntity && mayAttack(t)) {
-            target = t
-        }
-        lostTargetTicks = 0
-        awake = true
-        faint = HALF_FAINT_TICKS //0.5f
+        super.awaken(entity)
     }
 
     override fun jumpFromGround() {
@@ -162,7 +106,7 @@ abstract class BossJelly(type: EntityType<out BossJelly>, level: Level) : BasicJ
     override fun hurt(source: DamageSource, amount: Float): Boolean {
         if (source.`is`(DamageTypes.FALL)) return false
         if (amount > 1 && random.nextInt(10) == 0) {
-            setFaint()//受伤有10%概率让Boss进入昏迷状态
+            setFainting()//受伤有10%概率让Boss进入昏迷状态
         }
         val entity = source.entity
         level().ifServer {
@@ -183,27 +127,6 @@ abstract class BossJelly(type: EntityType<out BossJelly>, level: Level) : BasicJ
         return super.hurt(source, amount)
     }
 
-    /**
-     * @param clampY 是否限制坠落
-     * */
-    private fun stopMovement(clampY: Boolean) {
-        val movement = deltaMovement
-        val y = if (clampY) min(0.0, movement.y) else movement.y
-        if (movement.x != 0.0 || movement.z != 0.0 || movement.y != y) {
-            setDeltaMovement(0.0, y, 0.0)
-        }
-    }
-
-    fun setFaint(flag: Boolean = true) {
-        faint = if (flag) MAX_FAINT_TICKS else 0
-    }
-
-    override fun getFaintProgress(): Float {
-        return if (awake) faint.toFloat() / MAX_FAINT_TICKS else 0.5f
-    }
-
-    //是否激活状态
-    fun isActive() = faint == 0 && awake
     override fun isPushable(): Boolean = false
 
     override fun isDealsDamage(): Boolean = isActive()
@@ -216,23 +139,10 @@ abstract class BossJelly(type: EntityType<out BossJelly>, level: Level) : BasicJ
 
     //远离玩家也不消失
     override fun removeWhenFarAway(distanceToClosestPlayer: Double) = false
-    inner class BossAttackGoal : SlimeAttackGoal(this) {
+
+    inner class BossAttackJumpingGoal : SlimeKeepOnJumpingGoal(this) {
         override fun canUse(): Boolean {
-            return isActive() && super.canUse()
-        }
-
-        override fun canContinueToUse(): Boolean {
-            return isActive() && super.canContinueToUse()
-        }
-    }
-
-    inner class BossKeepJumpingGoal : SlimeKeepOnJumpingGoal(this) {
-        override fun canUse(): Boolean {
-            return isActive() && target != null && super.canUse()
-        }
-
-        override fun canContinueToUse(): Boolean {
-            return isActive() && target != null && super.canContinueToUse()
+            return target != null && super.canUse()
         }
     }
 

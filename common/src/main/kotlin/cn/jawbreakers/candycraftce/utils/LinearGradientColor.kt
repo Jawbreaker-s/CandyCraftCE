@@ -29,13 +29,9 @@ class LinearGradient(vararg colors: LinearGradientColor) {
                 Color(Integer.decode(this))
             }
 
-        val Color.normal get() = Vector3f(red / 255.0f, green / 255.0f, blue / 255.0f)
-        val Int.vecColorNormal: Vector3f
-            get() = Vector3f(
-                red / 255.0f,
-                green / 255.0f,
-                blue / 255.0f
-            )
+        fun Color.normalize() = Vector3f(red / 255.0f, green / 255.0f, blue / 255.0f)
+        fun Int.normalize(): Vector3f = Vector3f(red / 255.0f, green / 255.0f, blue / 255.0f)
+        fun Int.normalizeVec3(): Vec3 = Vec3.fromRGB24(this)
 
         val Int.alpha get() = FastColor.ARGB32.alpha(this)
         val Int.red get() = FastColor.ARGB32.red(this)

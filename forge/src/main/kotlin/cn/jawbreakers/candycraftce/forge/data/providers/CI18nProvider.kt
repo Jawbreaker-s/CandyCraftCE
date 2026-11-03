@@ -390,11 +390,11 @@ class CI18nProvider(output: PackOutput) : DataProvider, ILanguageProvider {
         }
         CMobEffects.apply {
             addMobEffects(cloying, "Cloying", "腻滞")
-            addMobEffects(propolis, "Propolis", "蜂胶禁锢")
+            addMobEffects(propolis, "Propolis", "蜂胶")
         }
-        addBossType(Sentry, "Sentry", "守卫")
-        addBossType(MiniBoss, "MiniBoss", "精英")
-        addBossType(Boss, "Boss", "首领")
+        addBossType(Sentry, "Sentry", "Sentry")
+        addBossType(MiniBoss, "MiniBoss", "MiniBoss")
+        addBossType(Boss, "Boss", "Boss")
     }
 
     override fun add(key: String, en: String, zh: String) {

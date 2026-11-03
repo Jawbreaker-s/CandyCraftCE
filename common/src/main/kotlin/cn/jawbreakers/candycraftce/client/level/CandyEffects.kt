@@ -5,7 +5,8 @@ import cn.jawbreakers.candycraftce.mixin_stub.ISpecialEffectsAddition
 import cn.jawbreakers.candycraftce.utils.CUtils.use
 import cn.jawbreakers.candycraftce.utils.ClientOnly
 import cn.jawbreakers.candycraftce.utils.LinearGradient
-import cn.jawbreakers.candycraftce.utils.LinearGradient.Companion.normal
+import cn.jawbreakers.candycraftce.utils.LinearGradient.Companion.normalize
+import cn.jawbreakers.candycraftce.utils.LinearGradient.Companion.normalizeVec3
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.DefaultVertexFormat
 import com.mojang.blaze3d.vertex.PoseStack
@@ -28,7 +29,7 @@ object CandyEffects : DimensionSpecialEffects(128.0f, true, SkyType.NORMAL, fals
     ISpecialEffectsAddition {
 
     private val fogColor = Color(0xEEAABB)
-    private val fogNormal = fogColor.normal
+    private val fogNormal = fogColor.normalize()
 
     /** 群系未提供 sky_color / 区块未加载时的兜底昼空色 */
     private val skyColor = Color(0xFDD8D7)
@@ -146,9 +147,7 @@ object CandyEffects : DimensionSpecialEffects(128.0f, true, SkyType.NORMAL, fals
 
             setupFog.run()
             val skyColorVec = level.profiler.use("candycraftce_getBlendedColor") {
-                val color = Vec3.fromRGB24(
-                    PuddingColor.getBlendedPuddingColor(level, pos, PuddingColor.blendRadius / 2)
-                )
+                val color = PuddingColor.getBlendedPuddingColor(level, pos).normalizeVec3()
                 val biomeSky = color// level.getSkyColor(camera.position, partialTick)
                 val dayWeight = Mth.clamp((dayFactor - 0.35f) * 2.0f, 0.0f, 1.0f)
                 skyTint.getColor(dayFactor).normal.lerp(biomeSky, dayWeight.toDouble())
