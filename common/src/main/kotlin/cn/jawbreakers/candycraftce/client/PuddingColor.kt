@@ -124,22 +124,6 @@ object PuddingColor {
         return result
     }
 
-    fun invalidateAll() {
-        clog.info("Invalidating Pudding Color Cache")
-        if (visRadius != null) {
-            cachedBlended.invalidateAll()
-            cacheEnchant.invalidateAll()
-        }
-        val visR = Minecraft.getInstance().options.renderDistance().get() * 16
-        if (visRadius != visR) {
-            visRadius = visR
-            val sq = visR * visR
-            cachedBlended = CacheBuilder.newBuilder().maximumSize(sq * 4L).build()
-            cacheEnchant = CacheBuilder.newBuilder().maximumSize(sq * 2L).build()
-        }
-        resetDebugCount()
-    }
-
     private fun computeColor(
         reader: BlockAndTintGetter,
         pos: BlockPos,
@@ -206,6 +190,22 @@ object PuddingColor {
         return Minecraft.getInstance().level?.getBiome(pos)
     }
 
+    fun invalidateAll() {
+        clog.info("Invalidating Pudding Color Cache")
+        if (visRadius != null) {
+            cachedBlended.invalidateAll()
+            cacheEnchant.invalidateAll()
+        }
+        val visR = Minecraft.getInstance().options.renderDistance().get() * 16
+        if (visRadius != visR) {
+            visRadius = visR
+            val vsq = visR * visR
+            cachedBlended = CacheBuilder.newBuilder().maximumSize(vsq * 4L).build()
+            cacheEnchant = CacheBuilder.newBuilder().maximumSize(vsq * 2L).build()
+        }
+        resetDebugCount()
+    }
+
     //debugs
     @Volatile
     internal var computeTimeNano = 0L
@@ -228,12 +228,15 @@ object PuddingColor {
         computeCount = 0
         totalCount = 0
         prevCalcTime = 0L
-        prevBlocksTotal = 0
+        prevTotal = 0
+        prevCompute = 0
     }
 
     var prevCalcTime = 0L
-    var prevBlocksTotal = 0
-    var lastOneSecBlocks = 0
+    var prevTotal = 0
+    var prevCompute = 0
+    var totalOneSec = 0
+    var computeOneSec = 0
     fun addDebugScreenInfo(info: MutableList<String>) {
         fun Duration.formatAuto(): String {
             val units = listOf(
@@ -256,14 +259,19 @@ object PuddingColor {
         val hitPct = if (totalCount == 0) 0 else 100 * hitCount / totalCount
         val now = System.currentTimeMillis()
         if (now - prevCalcTime > 1000) {
-            lastOneSecBlocks = totalCount - prevBlocksTotal
-            prevBlocksTotal = totalCount
+            totalOneSec = totalCount - prevTotal
+            computeOneSec = computeCount - prevCompute
+            prevTotal = totalCount
+            prevCompute = computeCount
+            prevCalcTime = now
         }
+        val hitOneSec = totalOneSec - computeOneSec
+        val vsq = visRadius?.let { it * it } ?: 0
         info.add("§a[PuddingColor-v1 Dashboard]")
-        info.add("T:$totalCount, TAvg:$totalAvg, T1s:$lastOneSecBlocks")
-        info.add("C:$computeCount($computePct%), CAvg:$computeAvg($computeTimePct%)")
-        info.add("H:$hitCount($hitPct%), HAvg:$hitAvg($hitTimePct%)")
-        info.add("CBZ:${cachedBlended.size()}, CEZ:${cacheEnchant.size()}")
+        info.add("T:$totalCount, TAvg:$totalAvg, T1s:$totalOneSec")
+        info.add("C:$computeCount($computePct%), CAvg:$computeAvg($computeTimePct%), C1s:$computeOneSec")
+        info.add("H:$hitCount($hitPct%), HAvg:$hitAvg($hitTimePct%), H1s:$hitOneSec")
+        info.add("CBZ:${cachedBlended.size()}/${vsq * 4}, CEZ:${cacheEnchant.size()}/${vsq * 2}")
         info.add("[Press F3+A to reset]")
     }
 }
