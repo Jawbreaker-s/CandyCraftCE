@@ -15,6 +15,7 @@ import net.minecraft.world.entity.projectile.ThrowableItemProjectile
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.EntityHitResult
 import net.minecraft.world.phys.HitResult
+import net.minecraft.world.phys.Vec3
 
 abstract class AbstractGummyBall : ThrowableItemProjectile {
 
@@ -26,7 +27,7 @@ abstract class AbstractGummyBall : ThrowableItemProjectile {
             : super(type, x, y, z, level)
 
     abstract val baseDamage: Float
-    open val normalVelocity: Float = 1.5f
+    open var normalVelocity: Float = 1.5f
     open val maxAge = 5 * SEC2TICK
 
     override fun tick() {
@@ -52,8 +53,10 @@ abstract class AbstractGummyBall : ThrowableItemProjectile {
 
     override fun onHitEntity(result: EntityHitResult) {
         super.onHitEntity(result)
+        val owner = owner
         val entity = result.entity
         entity.hurt(damageSources().thrown(this, owner), baseDamage)
+        if (owner is LivingEntity) owner.setLastHurtMob(entity)
         applyHitEntityEffect(result, entity)
     }
 
@@ -62,6 +65,14 @@ abstract class AbstractGummyBall : ThrowableItemProjectile {
         discard()
     }
 
+    fun shootBy(entity: LivingEntity, inaccuracy: Float = normalVelocity) {
+        shootFromRotation(entity, entity.xRot, entity.yRot, 0.0f, inaccuracy, 1.0f)
+    }
+
+    fun shootAt(targetPos: Vec3, velocity: Float = normalVelocity) {
+        val diff = targetPos.subtract(position())
+        shoot(diff.x, diff.y, diff.z, velocity, 1.0f)
+    }
 
     /**
      * 附加效果。
@@ -89,11 +100,11 @@ abstract class AbstractGummyBall : ThrowableItemProjectile {
 
     override fun addAdditionalSaveData(compound: CompoundTag) {
         super.addAdditionalSaveData(compound)
-        tickCount = compound.getInt("Age")
+        compound.putInt("Age", tickCount)
     }
 
     override fun readAdditionalSaveData(compound: CompoundTag) {
         super.readAdditionalSaveData(compound)
-        compound.putInt("Age", tickCount)
+        tickCount = compound.getInt("Age")
     }
 }

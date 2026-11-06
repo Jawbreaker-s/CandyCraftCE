@@ -21,9 +21,6 @@ class FireGummyBall : AbstractGummyBall {
     constructor(x: Double, y: Double, z: Double, level: Level) : super(gummy_ball_hot_gum.get(), x, y, z, level)
 
     override val baseDamage: Float = 2.0f
-
-    override fun getGravity(): Float = 5.0E-4F
-
     override fun applyHitEntityEffect(result: EntityHitResult, entity: Entity) {
         entity.remainingFireTicks = 6 * SEC2TICK
     }

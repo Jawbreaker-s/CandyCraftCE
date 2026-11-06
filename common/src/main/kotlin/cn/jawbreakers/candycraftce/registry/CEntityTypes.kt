@@ -84,7 +84,9 @@ object CEntityTypes {
         .renderer(::ThrownItemRenderer)
 
     val gummy_ball = registerGummyBall("gummy_ball", ::BasicGummyBall)
-    val gummy_ball_gum = registerGummyBall("gummy_ball_gum", ::BeetleGummyBall)
+    val gummy_ball_gum = registerGummyBall("gummy_ball_gum", ::BeetleGummyBall) {
+        sized(0.45f, 0.45f)
+    }
     val gummy_ball_hot_gum = registerGummyBall("gummy_ball_hot_gum", ::FireGummyBall)
 //
 //    val thrown_fork = register("thrown_fork") {
@@ -204,13 +206,17 @@ object CEntityTypes {
         }
         .placement(SpawnPlacements.Type.NO_RESTRICTIONS, MOTION_BLOCKING_NO_LEAVES, CaramelBee::checkSpawnRules)
 
-    //    val beetle_boss = register("boss_beetle") {
-//        of(::BasicCandySpiderEntity, MobCategory.MONSTER)
-//            .sized(2.0F, 1.6F)
-//            .clientTrackingRange(8)
-//            .fireImmune()
-//
-//    }
+    val licorice_beetle = register("licorice_beetle") {
+        of(::LicoriceBeetle, MobCategory.MONSTER)
+            .sized(2.0F, 1.6F)
+            .clientTrackingRange(8)
+            .fireImmune()
+    }.egg(0xFF7373, 0x1C1C1C)
+        .attributes(LicoriceBeetle::createAttributes)
+        .renderer(::LicoriceBeetleRenderer) {
+            registerLayer(BeetleModel.LAYER, BeetleModel<*>::createBodyLayer)
+        }
+
     val gingerbread_man = register("gingerbread_man") {
         of(::GingerbreadMan, MobCategory.CREATURE)
             .sized(0.3f, 0.9f)
@@ -272,12 +278,13 @@ object CEntityTypes {
         }
 
     private fun <T : AbstractGummyBall> registerGummyBall(
-        name: String, factory: EntityType.EntityFactory<T>,
+        name: String, factory: EntityType.EntityFactory<T>, modifier: (EntityType.Builder<T>.() -> Unit) = {},
     ) = register(name) {
         of(factory, MobCategory.MISC)
             .sized(0.25F, 0.25F)
             .clientTrackingRange(8)
             .updateInterval(10)
+            .apply(modifier)
     }
         .renderer(::ThrownItemRenderer)
 
@@ -314,7 +321,6 @@ object CEntityTypes {
     //	registerSpawnEgg("pez_jelly_spawn_egg", CCEntityTypes.PEZ_JELLY, 0x9166FF, 0xFFFFFF);
     //	registerSpawnEgg("king_slime_spawn_egg", CCEntityTypes.KING_SLIME, 0xB23838, 0xE37D11);
     //	registerSpawnEgg("boss_suguard_spawn_egg", CCEntityTypes.BOSS_SUGUARD, 0xFF7373, 0xDFDFDF);
-    //	registerSpawnEgg("boss_beetle_spawn_egg", CCEntityTypes.BOSS_BEETLE, 0xFF7373, 0x1C1C1C);
 
     //            event.register(CANDY_WOLF.get(), ON_GROUND, MOTION_BLOCKING_NO_LEAVES, CCForgeEvents::canSpawnOnCandySurface, SpawnPlacementRegisterEvent.Operation.REPLACE);
 //            event.register(SUGUARD.get(), ON_GROUND, MOTION_BLOCKING_NO_LEAVES, CCForgeEvents::canSpawnOnCandySurface, SpawnPlacementRegisterEvent.Operation.REPLACE);

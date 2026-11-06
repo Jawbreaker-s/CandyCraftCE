@@ -1,4 +1,4 @@
-// 1.20.1	2026-11-01T23:01:34.2305763	Item Models: candycraftce
+// 1.20.1	2026-11-07T00:35:12.9749359	Item Models: candycraftce
 b69597e7c0247f206126a171c16f29a35d95fc6a assets/candycraftce/models/item/beetle_dungeon_key.json
 60b8ce2c2fdcb069d6f5914177b36d6016006a2b assets/candycraftce/models/item/candied_cherry.json
 1db7252b22afc34130202c06fec63a7e983ff1a9 assets/candycraftce/models/item/candied_cherry_leaf.json
@@ -64,6 +64,7 @@ d92a185b7dc1f0b0ba28f5e3c28078801bda274d assets/candycraftce/models/item/lemon_j
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/candycraftce/models/item/lemon_jelly_spawn_egg.json
 d35ed402323bf26f865e7ffcdcaaf2344beb0be8 assets/candycraftce/models/item/licorice.json
 0fc1640538b2fc28479bd3a33da5d006ac81dd56 assets/candycraftce/models/item/licorice_axe.json
+63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/candycraftce/models/item/licorice_beetle_spawn_egg.json
 445336b5e5c3141c66f1e1c0c0f05c83d74902e2 assets/candycraftce/models/item/licorice_boots.json
 ffc8884874d0d740e18fa8a6cf633feb6f4b7a35 assets/candycraftce/models/item/licorice_chestplate.json
 b6821ff9655fe5090aa321ddfe3b9e140b5eaa74 assets/candycraftce/models/item/licorice_helmet.json

@@ -380,6 +380,7 @@ class CI18nProvider(output: PackOutput) : DataProvider, ILanguageProvider {
             addEntity(cookie_creeper, "Cookie Creeper", "饼干苦力怕")
             addEntity(cotton_candy_spider, "Cotton Candy Spider", "棉花糖蜘蛛")
             addEntity(caramel_bee, "Caramel Bee", "焦糖蜂")
+            addEntity(licorice_beetle, "Licorice Beetle", "盐甘草甲虫")
             addEntity(caramel_wolf, "Caramel Wolf", "焦糖狼")
             addEntity(jelly_queen, "Jelly Queen", "果冻皇后")
             addEntity(gingerbread_man, "Gingerbread Man", "姜饼人")

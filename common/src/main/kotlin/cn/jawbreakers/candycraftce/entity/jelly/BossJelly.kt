@@ -2,12 +2,12 @@ package cn.jawbreakers.candycraftce.entity.jelly
 
 import cn.jawbreakers.candycraftce.entity.ICandyBoss
 import cn.jawbreakers.candycraftce.entity.ICandyBoss.Companion.BOSS_FOLLOW_RANGE
-import cn.jawbreakers.candycraftce.entity.ai.BossSleepingGoal
-import cn.jawbreakers.candycraftce.mixin_stub.ICandyBossTarget
+import cn.jawbreakers.candycraftce.entity.ai.OnlyActiveLookControl
 import cn.jawbreakers.candycraftce.utils.CLevelUtils.ifServer
 import cn.jawbreakers.candycraftce.utils.CUtils.always
 import cn.jawbreakers.candycraftce.utils.CUtils.defineId
 import cn.jawbreakers.candycraftce.utils.CUtils.synched
+import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.syncher.EntityDataSerializers
 import net.minecraft.world.damagesource.DamageSource
 import net.minecraft.world.damagesource.DamageTypes
@@ -41,6 +41,10 @@ abstract class BossJelly(type: EntityType<out BossJelly>, level: Level) : BasicJ
     override var awake: Boolean by synched(BOSS_AWAKE)
     override var faint: Int by synched(BOSS_FAINT_TICKS)
 
+    init {
+        lookControl = OnlyActiveLookControl(this)
+    }
+
     override fun defineSynchedData() {
         super.defineSynchedData()
         entityData.define(BOSS_AWAKE, false)
@@ -50,7 +54,7 @@ abstract class BossJelly(type: EntityType<out BossJelly>, level: Level) : BasicJ
     override fun registerGoals() {
         super.registerGoals()
         goalSelector.removeAllGoals(::always)
-        goalSelector.addGoal(-1, BossSleepingGoal(this))
+        registerBossGoals(goalSelector)
         goalSelector.addGoal(1, SlimeAttackGoal(this))
         goalSelector.addGoal(2, BossAttackJumpingGoal())
     }
@@ -66,7 +70,7 @@ abstract class BossJelly(type: EntityType<out BossJelly>, level: Level) : BasicJ
 
     override fun onServerSleepingTick() {
         //每秒恢复5点生命
-        if (!level().isClientSide && tickCount % 20 == 0) {
+        if (tickCount % 20 == 0) {
             heal(5f)
         }
     }
@@ -76,27 +80,19 @@ abstract class BossJelly(type: EntityType<out BossJelly>, level: Level) : BasicJ
     }
 
     override fun setTarget(target: LivingEntity?) {
-        if (!level().isClientSide) {
-            val targetPrev = this.target
-            if (targetPrev is ICandyBossTarget) {
-                targetPrev.candycraftce_bossSource = null
-            }
-            if (target is ICandyBossTarget) {
-                target.candycraftce_bossSource = this.uuid
-            }
-        }
+        applyBossSource(this.target, target)
         super.setTarget(target)
     }
 
 
-    override fun awaken(entity: Entity?) {
+    override fun awaken(entity: Entity?, setTarget: Boolean) {
         //直接弹射起飞
         setDeltaMovement(deltaMovement.x, 2.0, deltaMovement.z)
-        super.awaken(entity)
+        super.awaken(entity, setTarget)
     }
 
     override fun jumpFromGround() {
-        if (isActive()) super.jumpFromGround()
+        if (isActive) super.jumpFromGround()
         postJumpFromGround()
     }
 
@@ -127,9 +123,18 @@ abstract class BossJelly(type: EntityType<out BossJelly>, level: Level) : BasicJ
         return super.hurt(source, amount)
     }
 
-    override fun isPushable(): Boolean = false
+    override fun addAdditionalSaveData(compound: CompoundTag) {
+        super.addAdditionalSaveData(compound)
+        compound.putBoolean("Awake", awake)
+    }
 
-    override fun isDealsDamage(): Boolean = isActive()
+    override fun readAdditionalSaveData(compound: CompoundTag) {
+        super.readAdditionalSaveData(compound)
+        awake = compound.getBoolean("Awake")
+    }
+
+    override fun isPushable(): Boolean = false
+    override fun isDealsDamage(): Boolean = isActive
 
     //不能溺水死
     override fun canBreatheUnderwater(): Boolean = true
@@ -145,5 +150,4 @@ abstract class BossJelly(type: EntityType<out BossJelly>, level: Level) : BasicJ
             return target != null && super.canUse()
         }
     }
-
 }

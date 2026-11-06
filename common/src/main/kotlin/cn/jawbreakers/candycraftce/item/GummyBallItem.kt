@@ -22,7 +22,7 @@ class GummyBallItem(properties: Properties, val gummy: (owner: Player, level: Le
 
         if (!level.isClientSide) {
             val gummy = gummy(player, level)
-            gummy.shootFromRotation(player, player.xRot, player.yRot, 0.0f, gummy.normalVelocity, 1.0f)
+            gummy.shootBy(player)
             level.addFreshEntity(gummy)
         }
 
