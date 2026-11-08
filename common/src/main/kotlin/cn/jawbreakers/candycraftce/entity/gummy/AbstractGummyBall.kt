@@ -67,11 +67,13 @@ abstract class AbstractGummyBall : ThrowableItemProjectile {
 
     fun shootBy(entity: LivingEntity, inaccuracy: Float = normalVelocity) {
         shootFromRotation(entity, entity.xRot, entity.yRot, 0.0f, inaccuracy, 1.0f)
+        hasImpulse = true
     }
 
     fun shootAt(targetPos: Vec3, velocity: Float = normalVelocity) {
         val diff = targetPos.subtract(position())
         shoot(diff.x, diff.y, diff.z, velocity, 1.0f)
+        hasImpulse = true
     }
 
     /**
@@ -93,7 +95,9 @@ abstract class AbstractGummyBall : ThrowableItemProjectile {
     override fun handleEntityEvent(id: Byte) {
         if (id == 3.toByte()) {
             if (level().isClientSide) {
-                repeat(8) { spawnBrokenParticles() }
+                repeat(8) {
+                    spawnBrokenParticles()
+                }
             }
         } else super.handleEntityEvent(id)
     }

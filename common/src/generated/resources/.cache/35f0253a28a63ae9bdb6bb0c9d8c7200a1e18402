@@ -1,4 +1,4 @@
-// 1.20.1	2026-11-07T00:35:12.9749359	Item Models: candycraftce
+// 1.20.1	2026-11-08T14:55:46.5078825	Item Models: candycraftce
 b69597e7c0247f206126a171c16f29a35d95fc6a assets/candycraftce/models/item/beetle_dungeon_key.json
 60b8ce2c2fdcb069d6f5914177b36d6016006a2b assets/candycraftce/models/item/candied_cherry.json
 1db7252b22afc34130202c06fec63a7e983ff1a9 assets/candycraftce/models/item/candied_cherry_leaf.json
@@ -123,6 +123,7 @@ b90856b90c8f4886979f68fd5f0a70bf532553fc assets/candycraftce/models/item/suguard
 10e67599bde0dbbc62e680c195c2776ae231c564 assets/candycraftce/models/item/suguard_dungeon_key.json
 9113e7d2f26ae7f2cd94b517c841965297207e08 assets/candycraftce/models/item/suguard_emblem.json
 fb680653dd46ff28094042115132b79e1bb92fd1 assets/candycraftce/models/item/suguard_sentry_key.json
+63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/candycraftce/models/item/suguard_spawn_egg.json
 12d1ab59997ee59e548f026c771dce3137418faa assets/candycraftce/models/item/waffle.json
 88edb9b2d00e048fca0c3aad18480c5003d5d36a assets/candycraftce/models/item/waffle_nugget.json
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/candycraftce/models/item/waffle_sheep_spawn_egg.json

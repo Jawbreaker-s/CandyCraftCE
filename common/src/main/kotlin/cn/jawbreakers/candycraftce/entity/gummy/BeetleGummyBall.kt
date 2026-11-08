@@ -45,10 +45,7 @@ class BeetleGummyBall : AbstractGummyBall {
 
     override fun applyHitEntityEffect(result: EntityHitResult, entity: Entity) {
         val motion = deltaMovement
-        val horizontal = motion.horizontalDistance()
-        if (horizontal > 1.0E-4) {
-            entity.push(motion.x * 0.6 / horizontal, 0.1, motion.z * 0.6 / horizontal)
-        }
+        entity.push(motion.x * 1.25, motion.y * 1.25, motion.z * 1.25)
     }
 
     override fun getDefaultItem() = CItems.gummy_ball_gum.get()

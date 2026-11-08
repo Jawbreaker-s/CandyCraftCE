@@ -218,13 +218,13 @@ public final class CCEntityTypes {
 	public static final RegistryObject<EntityType<BasicCandySlimeEntity>> KING_SLIME = basicSlime("king_slime", 2.4F, 2.4F);
 //	public static final RegistryObject<EntityType<BasicCandySlimeEntity>> JELLY_QUEEN = basicSlime("jelly_queen", 2.2F, 2.2F);
 	public static final RegistryObject<EntityType<BasicCandyZombieEntity>> BOSS_SUGUARD = hostileHumanoid("boss_suguard", 0.8F, 1.5F);
-	public static final RegistryObject<EntityType<BasicCandySpiderEntity>> BOSS_BEETLE = ENTITY_TYPES.register("boss_beetle", () ->
-			EntityType.Builder.of(BasicCandySpiderEntity::new, MobCategory.MONSTER)
-					.sized(2.0F, 1.6F)
-					.clientTrackingRange(8)
-					.fireImmune()
-					.build(CandyCraft.MODID + ":boss_beetle")
-	);
+//	public static final RegistryObject<EntityType<BasicCandySpiderEntity>> BOSS_BEETLE = ENTITY_TYPES.register("boss_beetle", () ->
+//			EntityType.Builder.of(BasicCandySpiderEntity::new, MobCategory.MONSTER)
+//					.sized(2.0F, 1.6F)
+//					.clientTrackingRange(8)
+//					.fireImmune()
+//					.build(CandyCraft.MODID + ":boss_beetle")
+//	);
 
 	private CCEntityTypes() {
 	}

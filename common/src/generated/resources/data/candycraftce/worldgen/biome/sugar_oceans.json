@@ -32,7 +32,14 @@
     "misc": [],
     "monster": [],
     "underground_water_creature": [],
-    "water_ambient": [],
+    "water_ambient": [
+      {
+        "type": "candycraftce:cranfish",
+        "maxCount": 6,
+        "minCount": 3,
+        "weight": 15
+      }
+    ],
     "water_creature": []
   },
   "temperature": 0.5

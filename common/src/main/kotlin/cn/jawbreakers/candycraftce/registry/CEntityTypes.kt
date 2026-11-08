@@ -28,6 +28,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider
 import net.minecraft.client.renderer.entity.ThrownItemRenderer
 import net.minecraft.core.BlockPos
 import net.minecraft.util.RandomSource
+import net.minecraft.world.Difficulty
 import net.minecraft.world.entity.*
 import net.minecraft.world.entity.EntityType.Builder.of
 import net.minecraft.world.entity.SpawnPlacements.Type.IN_WATER
@@ -205,7 +206,18 @@ object CEntityTypes {
             registerLayer(CaramelBeeModel.LAYER, CaramelBeeModel<*>::createBodyLayer)
         }
         .placement(SpawnPlacements.Type.NO_RESTRICTIONS, MOTION_BLOCKING_NO_LEAVES, CaramelBee::checkSpawnRules)
-
+    val suguard = register("suguard") {
+        of(::Suguard, MobCategory.CREATURE)
+            .sized(0.5F, 0.9F)
+            .clientTrackingRange(10)
+    }
+        .egg(0xF1C3C3, 0x8E0082)
+        .attributes(Suguard::createAttributes)
+        .renderer(::SuguardRenderer) {
+            registerLayer(SuguardModel.LAYER, SuguardModel<*>::createBodyLayer)
+        }
+        .placement(::checkCandyMonsterSpawnRules)
+    
     val licorice_beetle = register("licorice_beetle") {
         of(::LicoriceBeetle, MobCategory.MONSTER)
             .sized(2.0F, 1.6F)
@@ -309,7 +321,6 @@ object CEntityTypes {
         fun registerLayer(key: ModelLayerLocation, factory: Supplier<LayerDefinition>)
     }
 
-    //	registerSpawnEgg("suguard_spawn_egg", CCEntityTypes.SUGUARD, 0xF1C3C3, 0x8E0082);
     //	registerSpawnEgg("mage_suguard_spawn_egg", CCEntityTypes.MAGE_SUGUARD, 0xF1C3C3, 0xEB3D00);
     //	registerSpawnEgg("beetle_spawn_egg", CCEntityTypes.BEETLE, 0xF1C3C3, 0x250066);
     //	registerSpawnEgg("nessie_spawn_egg", CCEntityTypes.NESSIE, 0xF1C3C3, 0xA9E2F3);
@@ -363,6 +374,16 @@ object CEntityTypes {
         pos: BlockPos,
         random: RandomSource,
     ): Boolean = Monster.checkMonsterSpawnRules(type, level, reason, pos, random)
+
+    private fun <M : Mob> checkCandyEnemySpawnRules(
+        type: EntityType<M>,
+        level: ServerLevelAccessor,
+        reason: MobSpawnType,
+        pos: BlockPos,
+        random: RandomSource,
+    ): Boolean = level.difficulty != Difficulty.PEACEFUL
+            && Monster.isDarkEnoughToSpawn(level, pos, random)
+            && Mob.checkMobSpawnRules(type, level, reason, pos, random)
 
     private fun <M : WaterAnimal> checkCandyWaterAnimalSpawnRules(
         type: EntityType<M>,

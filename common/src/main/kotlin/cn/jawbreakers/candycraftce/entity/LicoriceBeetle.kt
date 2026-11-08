@@ -27,6 +27,7 @@ import net.minecraft.world.entity.monster.Monster
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.Level
 import net.minecraft.world.phys.Vec3
+import kotlin.math.min
 
 /**
  * Created in 2026/11/2 00:48 by [Bread_NiceCat](https://github.com/Bread-NiceCat)
@@ -63,7 +64,6 @@ class LicoriceBeetle(entityType: EntityType<out LicoriceBeetle>, level: Level) :
     init {
         lookControl = OnlyActiveLookControl(this)
         xpReward = 500
-        isInvulnerable = true
     }
 
     override fun isInvulnerableTo(source: DamageSource): Boolean {
@@ -113,9 +113,10 @@ class LicoriceBeetle(entityType: EntityType<out LicoriceBeetle>, level: Level) :
 
     override fun tick() {
         super.tick()
+        isInvulnerable = true
         level().ifClient { level ->
             if (isActive && firing) {
-                for (i in 0..16) {
+                repeat(16) { i ->
                     val x = -Mth.sin(
                         (((i * 11.25f) + tickCount) / 90.0f) * Mth.PI
                     ) * Mth.cos(tickCount * 0.05f) * 2.5f + x
@@ -214,8 +215,15 @@ class LicoriceBeetle(entityType: EntityType<out LicoriceBeetle>, level: Level) :
             val beetle = this@LicoriceBeetle
             val level = level()
             val target = target ?: run { end(); return }
-            val vec = target.position().subtract(beetle.position()).normalize()
-            val ballpos = beetle.boundingBox.center.add(vec)
+            // 以“甲虫中心 -> 玩家眼睛”这条真实的瞄准线为基准，
+            // 保证发射点偏移方向与 shootAt 的瞄准方向一致，避免近距离时弹道退化成竖直向上
+            val aim = target.eyePosition.subtract(beetle.boundingBox.center)
+            val aimDist = aim.length()
+            val vec = if (aimDist > 1.0E-3) aim.normalize() else Vec3(0.0, 1.0, 0.0)
+            // 偏移量既贴着甲虫身体往外走、又不会越过玩家(至少留 0.5 格余量)
+            val offset = (aimDist - 0.5).coerceIn(0.0, 1.0)
+            val ballpos = beetle.boundingBox.center.add(vec.scale(offset))
+
             when (mode) {
                 0 -> {
                     level.addFreshEntity(BeetleGummyBall(beetle, level()).apply {
@@ -248,7 +256,7 @@ class LicoriceBeetle(entityType: EntityType<out LicoriceBeetle>, level: Level) :
                             level.playSound(
                                 beetle,
                                 beetle.blockPosition(),
-                                SoundEvents.SNOWBALL_THROW,
+                                SoundEvents.FIRECHARGE_USE,
                                 SoundSource.HOSTILE,
                                 1.0f,
                                 1.0f
@@ -266,6 +274,7 @@ class LicoriceBeetle(entityType: EntityType<out LicoriceBeetle>, level: Level) :
                             val mx = (if (random.nextBoolean()) 1 else -1) * (3 + random.nextDouble() * 6) / 40
                             val mz = (if (random.nextBoolean()) 1 else -1) * (3 + random.nextDouble() * 6) / 40
                             setDeltaMovement(mx, 1.5, mz)
+                            hasImpulse = true
                         })
                         level.playSound(
                             beetle,

@@ -1,5 +1,6 @@
 package cn.jawbreakers.candycraftce.registry.worldgen
 
+import cn.jawbreakers.candycraftce.registry.CEntityTypes
 import cn.jawbreakers.candycraftce.utils.CLogUtils
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils.ifDatagen
 import cn.jawbreakers.candycraftce.utils.CUtils.modLoc
@@ -80,216 +81,334 @@ object CBiomes {
             )
         }
 
-        with(CFeatures) {
-            //dungeon
-            registerBiome(
-                dungeon, 0.8f, 0f,
-                effects = {
-                    skyColor(0)
-                    fogColor(16767191)
-                    waterColor(13473279)
-                    waterFogColor(13473279)
-                }
-            )
-            //caramel_forest
-            registerBiome(
-                caramel_forest, 0.5f, 0.5f,
-                {
-                    creatureGenerationProbability(0.1f)
+        with(CEntityTypes) {
+            with(CFeatures) {
+                //dungeon
+                registerBiome(
+                    dungeon, 0.8f, 0f,
+                    effects = {
+                        skyColor(0)
+                        fogColor(16767191)
+                        waterColor(13473279)
+                        waterFogColor(13473279)
+                    }
+                )
+                //caramel_forest
+                registerBiome(
+                    caramel_forest, 0.5f, 0.5f,
+                    {
+                        creatureGenerationProbability(0.1f)
+                        category(MobCategory.CREATURE) {
+                            add(caramel_wolf, 50, 4, 4)
+                            add(candy_pig, 21, 4, 6)
+                            add(gummy_bunny, 21, 4, 6)
+                        }
+                        category(MobCategory.MONSTER) {
+                            add(cotton_candy_spider, 100, 4, 4)
+                            add(cookie_creeper, 100, 8, 15)
+                            add(suguard, 160, 4, 4)
+                        }
+                        category(MobCategory.WATER_AMBIENT) {
+                            add(cranfish, 50, 4, 4)
+                        }
+                    },
+                    {
+                        skyColor(16764032)
+                        fogColor(16764032)
+                        waterColor(13473279)
+                        waterFogColor(13473279)
+                    },
+                    {
+                        step(lookup, VEGETAL_DECORATION) {
+                            +placed_tree_caramel_forest
+                            +placed_candy_grass
+                        }
+                    }
+                )
+                //ice_cream_plains
+                registerBiome(
+                    ice_cream_plains, 0.0f, 0.5f,
+                    {
+                        creatureGenerationProbability(0.1f)
+                        category(MobCategory.CREATURE) {
+                            add(pingouin, 10, 2, 4)
+                        }
+                        category(MobCategory.MONSTER) {
+                            add(cotton_candy_spider, 100, 4, 4)
+                            add(cookie_creeper, 100, 8, 15)
+                            add(suguard, 160, 4, 4)
+                        }
+                        category(MobCategory.WATER_AMBIENT) {
+                            add(cranfish, 50, 4, 4)
+                        }
+                    },
+                    {
+                        skyColor(14474460)
+                        fogColor(16767191)
+                        waterColor(16777215)
+                        waterFogColor(16777215)
+                    },
+                    {
+                        step(lookup, VEGETAL_DECORATION) {
+                            +placed_candy_grass
+                        }
+                    }
+                )
+                //ice_cream_sky_mountains
+                registerBiome(
+                    ice_cream_sky_mountains, 0.0f, 0.5f,
+                    {
+                        creatureGenerationProbability(0.1f)
+                        category(MobCategory.CREATURE) {
+                            add(pingouin, 10, 2, 4)
+                        }
+                        category(MobCategory.MONSTER) {
+                            add(cotton_candy_spider, 100, 4, 4)
+                            add(cookie_creeper, 100, 8, 15)
+                            add(suguard, 160, 4, 4)
+                        }
+                        category(MobCategory.WATER_AMBIENT) {
+                            add(cranfish, 50, 4, 4)
+                        }
+                    },
+                    {
+                        skyColor(16777215)
+                        fogColor(16777215)
+                        waterColor(16777215)
+                        waterFogColor(16777215)
+                    },
+                    {
+                        step(lookup, VEGETAL_DECORATION) {
+                            +placed_tree_white_chocolate_mountain
+                        }
+                    }
+                )
+                //white_chocolate_forest
+                registerBiome(
+                    white_chocolate_forest, 0.0f, 0.5f,
+                    {
+                        creatureGenerationProbability(0.1f)
+                        category(MobCategory.CREATURE) {
+                            add(caramel_wolf, 54, 4, 4)
+                            add(waffle_sheep, 18, 2, 3)
+                            add(candy_pig, 28, 3, 5)
+                            add(gummy_bunny, 12, 4, 6)
+                        }
+                        category(MobCategory.MONSTER) {
+                            add(cotton_candy_spider, 100, 4, 4)
+                            add(cookie_creeper, 100, 8, 15)
+                            add(suguard, 160, 4, 4)
+                        }
+                        category(MobCategory.WATER_AMBIENT) {
+                            add(cranfish, 50, 4, 4)
+                        }
+                    },
+                    {
+                        skyColor(14474460)
+                        fogColor(16767191)
+                        waterColor(13473279)
+                        waterFogColor(13473279)
+                    },
+                    {
+                        step(lookup, VEGETAL_DECORATION) {
+                            +placed_tree_white_chocolate_forest
+                            +placed_candy_grass
+                        }
+                    }
+                )
+                //pudding_hill
+                registerBiome(
+                    pudding_hill, 0.0f, 0.5f, {
+                        creatureGenerationProbability(0.1f)
+                        category(MobCategory.CREATURE) {
+                            add(waffle_sheep, 14, 2, 3)
+                            add(candy_pig, 31, 3, 5)
+                            add(gummy_bunny, 8, 4, 6)
+                        }
+                        category(MobCategory.MONSTER) {
+                            add(cotton_candy_spider, 100, 4, 4)
+                            add(cookie_creeper, 100, 8, 15)
+                            add(suguard, 104, 4, 4)
+                        }
+                        category(MobCategory.WATER_AMBIENT) {
+                            add(cranfish, 50, 4, 4)
+                        }
+                    },
+                    {
+                        skyColor(16112860)
+                        fogColor(16767191)
+                        waterColor(13473279)
+                        waterFogColor(13473279)
+                    },
+                    {
+                        step(lookup, VEGETAL_DECORATION) {
+                            +placed_candy_grass
+                            +placed_tree_candy_plains
+                        }
+                    }
+                )
+                //pudding_plains
+                registerBiome(
+                    pudding_plains, 0.0f, 0.5f, {
+                        creatureGenerationProbability(0.1f)
+                        category(MobCategory.CREATURE) {
+                            add(candy_pig, 40, 4, 6)
+                            add(gummy_bunny, 55, 4, 6)
+                            add(waffle_sheep, 8, 2, 3)
+                        }
+                        category(MobCategory.MONSTER) {
+                            add(caramel_bee, 40, 2, 3)
+                            add(cotton_candy_spider, 100, 4, 4)
+                            add(cookie_creeper, 100, 8, 15)
+                            add(suguard, 100, 4, 4)
+                        }
+                        category(MobCategory.WATER_AMBIENT) {
+                            add(cranfish, 50, 4, 4)
+                        }
+                    },
+                    {
+                        skyColor(16636119)
+                        fogColor(16767191)
+                        waterColor(13473279)
+                        waterFogColor(13473279)
+                    },
+                    {
+                        step(lookup, VEGETAL_DECORATION) {
+                            +placed_candy_grass
+                            +placed_tree_candy_plains
+                        }
+                    }
+                )
+                //sugar_forest
+                registerBiome(
+                    sugar_forest, 0.5f, 0.5f,
+                    {
+                        creatureGenerationProbability(0.1f)
+                        category(MobCategory.CREATURE) {
+                            add(candy_pig, 21, 4, 6)
+                            add(gummy_bunny, 21, 4, 6)
+                        }
+                        category(MobCategory.MONSTER) {
+                            add(cotton_candy_spider, 100, 4, 4)
+                            add(cookie_creeper, 100, 8, 15)
+                            add(suguard, 160, 4, 4)
+                        }
+                        category(MobCategory.WATER_AMBIENT) {
+                            add(cranfish, 50, 4, 4)
+                        }
+                    },
+                    {
+                        skyColor(16636119)
+                        fogColor(16767191)
+                        waterColor(13473279)
+                        waterFogColor(13473279)
+                    },
+                    {
+                        step(lookup, VEGETAL_DECORATION) {
+                            +placed_candy_grass
+                            +placed_tree_candy_forest
+                            +placed_marshmallow_waterlily_dense
+                        }
+                    }
+                )
+                //sugar_river
+                registerBiome(
+                    sugar_river, 0.5f, 0.5f,
+                    {
+                        creatureGenerationProbability(0.1f)
+                        category(MobCategory.MONSTER) {
+                            add(cotton_candy_spider, 100, 4, 4)
+                            add(cookie_creeper, 100, 8, 15)
+                            add(suguard, 160, 4, 4)
+                        }
+                        category(MobCategory.WATER_AMBIENT) {
+                            add(cranfish, 50, 4, 4)
+                        }
+                    },
+                    {
+                        skyColor(16636119)
+                        fogColor(16767191)
+                        waterColor(13473279)
+                        waterFogColor(13473279)
+                    },
+                    {
+                        step(lookup, VEGETAL_DECORATION) {
+                            +placed_candy_grass
+                            +placed_candy_seaweed
+                            +placed_marshmallow_waterlily
+                        }
+                    }
+                )
+                //sugar_oceans
+                registerBiome(
+                    sugar_oceans, 0.5f, 0.5f,
+                    {
+                        creatureGenerationProbability(0.1f)
+                        category(MobCategory.WATER_AMBIENT) {
+                            add(cranfish, 15, 3, 6)
+                        }
+//                        category(MobCategory.WATER_CREATURE) {
 
-                },
-                {
-                    skyColor(16764032)
-                    fogColor(16764032)
-                    waterColor(13473279)
-                    waterFogColor(13473279)
-                },
-                {
-                    step(lookup, VEGETAL_DECORATION) {
-                        +placed_tree_caramel_forest
-                        +placed_candy_grass
+//                      //TODO      add(nessie, 15, 3, 6)
+//                        }
+                    },
+                    {
+                        skyColor(15986175)
+                        fogColor(13473279)
+                        waterColor(13473279)
+                        waterFogColor(13473279)
+                    },
+                    {
+                        step(lookup, VEGETAL_DECORATION) {
+                            +placed_candy_grass
+                            +placed_candy_seaweed
+                            +placed_marshmallow_waterlily
+                        }
                     }
-                }
-            )
-            //ice_cream_plains
-            registerBiome(
-                ice_cream_plains, 0.0f, 0.5f,
-                {
-                    creatureGenerationProbability(0.1f)
-                },
-                {
-                    skyColor(14474460)
-                    fogColor(16767191)
-                    waterColor(16777215)
-                    waterFogColor(16777215)
-                },
-                {
-                    step(lookup, VEGETAL_DECORATION) {
-                        +placed_candy_grass
+                )
+                //enchanted_forest
+                registerBiome(
+                    enchanted_forest, 0.5f, 0.5f,
+                    {
+                        creatureGenerationProbability(0.1f)
+                        category(MobCategory.CREATURE) {
+                            add(candy_pig, 50, 4, 6)
+                            add(gummy_bunny, 60, 4, 6)
+                        }
+                        category(MobCategory.MONSTER) {
+                            add(cotton_candy_spider, 60, 4, 6)
+                            add(cotton_candy_spider, 100, 4, 4)
+                            add(cookie_creeper, 100, 8, 15)
+                            add(suguard, 100, 4, 4)
+                        }
+                        category(MobCategory.WATER_AMBIENT) {
+                            add(cranfish, 50, 4, 4)
+                        }
+                    },
+                    {
+                        skyColor(14207743)
+                        fogColor(11587794)
+                        waterColor(13473279)
+                        waterFogColor(13473279)
+                    },
+                    {
+                        step(lookup, VEGETAL_DECORATION) {
+                            +placed_candy_grass
+                            +placed_tree_enchanted
+                        }
                     }
-                }
-            )
-            //ice_cream_sky_mountains
-            registerBiome(
-                ice_cream_sky_mountains, 0.0f, 0.5f,
-                {
-                    creatureGenerationProbability(0.1f)
-                },
-                {
-                    skyColor(16777215)
-                    fogColor(16777215)
-                    waterColor(16777215)
-                    waterFogColor(16777215)
-                },
-                {
-                    step(lookup, VEGETAL_DECORATION) {
-                        +placed_tree_white_chocolate_mountain
-                    }
-                }
-            )
-            //white_chocolate_forest
-            registerBiome(
-                white_chocolate_forest, 0.0f, 0.5f,
-                {
-                    creatureGenerationProbability(0.1f)
-                },
-                {
-                    skyColor(14474460)
-                    fogColor(16767191)
-                    waterColor(13473279)
-                    waterFogColor(13473279)
-                },
-                {
-                    step(lookup, VEGETAL_DECORATION) {
-                        +placed_tree_white_chocolate_forest
-                        +placed_candy_grass
-                    }
-                }
-            )
-            //pudding_hill
-            registerBiome(
-                pudding_hill, 0.0f, 0.5f, {
-                    creatureGenerationProbability(0.1f)
-                },
-                {
-                    skyColor(16112860)
-                    fogColor(16767191)
-                    waterColor(13473279)
-                    waterFogColor(13473279)
-                },
-                {
-                    step(lookup, VEGETAL_DECORATION) {
-                        +placed_candy_grass
-                        +placed_tree_candy_plains
-                    }
-                }
-            )
-            //pudding_plains
-            registerBiome(
-                pudding_plains, 0.0f, 0.5f, {
-                    creatureGenerationProbability(0.1f)
-                },
-                {
-                    skyColor(16636119)
-                    fogColor(16767191)
-                    waterColor(13473279)
-                    waterFogColor(13473279)
-                },
-                {
-                    step(lookup, VEGETAL_DECORATION) {
-                        +placed_candy_grass
-                        +placed_tree_candy_plains
-                    }
-                }
-            )
-            //sugar_forest
-            registerBiome(
-                sugar_forest, 0.5f, 0.5f,
-                {
-                    creatureGenerationProbability(0.1f)
-                },
-                {
-                    skyColor(16636119)
-                    fogColor(16767191)
-                    waterColor(13473279)
-                    waterFogColor(13473279)
-                },
-                {
-                    step(lookup, VEGETAL_DECORATION) {
-                        +placed_candy_grass
-                        +placed_tree_candy_forest
-                        +placed_marshmallow_waterlily_dense
-                    }
-                }
-            )
-            //sugar_river
-            registerBiome(
-                sugar_river, 0.5f, 0.5f,
-                {
-                    creatureGenerationProbability(0.1f)
-                },
-                {
-                    skyColor(16636119)
-                    fogColor(16767191)
-                    waterColor(13473279)
-                    waterFogColor(13473279)
-                },
-                {
-                    step(lookup, VEGETAL_DECORATION) {
-                        +placed_candy_grass
-                        +placed_candy_seaweed
-                        +placed_marshmallow_waterlily
-                    }
-                }
-            )
-            //sugar_oceans
-            registerBiome(
-                sugar_oceans, 0.5f, 0.5f,
-                {
-                    creatureGenerationProbability(0.1f)
-                },
-                {
-                    skyColor(15986175)
-                    fogColor(13473279)
-                    waterColor(13473279)
-                    waterFogColor(13473279)
-                },
-                {
-                    step(lookup, VEGETAL_DECORATION) {
-                        +placed_candy_grass
-                        +placed_candy_seaweed
-                        +placed_marshmallow_waterlily
-                    }
-                }
-            )
-            //enchanted_forest
-            registerBiome(
-                enchanted_forest, 0.5f, 0.5f,
-                {
-                    creatureGenerationProbability(0.1f)
-                },
-                {
-                    skyColor(14207743)
-                    fogColor(11587794)
-                    waterColor(13473279)
-                    waterFogColor(13473279)
-                },
-                {
-                    step(lookup, VEGETAL_DECORATION) {
-                        +placed_candy_grass
-                        +placed_tree_enchanted
-                    }
-                }
-            )
+
+                )
+            }
         }
     }
 }
 
 private fun MobSpawnSettings.Builder.category(
     category: MobCategory,
-    action: StepScope.() -> Unit,
+    action: CategoryScope.() -> Unit,
 ) {
-
+    CategoryScope(this, category).apply(action)
 }
 
 private class CategoryScope(

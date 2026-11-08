@@ -6,6 +6,7 @@ import cn.jawbreakers.candycraftce.registry.CBlocks.custard_pudding_block
 import cn.jawbreakers.candycraftce.registry.CBlocks.defaultBlockState
 import cn.jawbreakers.candycraftce.registry.CBlocks.pudding_block
 import cn.jawbreakers.candycraftce.registry.CBlocks.pudding_farmland
+import cn.jawbreakers.candycraftce.registry.CEntityTypes
 import cn.jawbreakers.candycraftce.registry.worldgen.CStructurePieceTypes.floating_island_piece
 import cn.jawbreakers.candycraftce.registry.worldgen.CStructureTypes
 import cn.jawbreakers.candycraftce.utils.CLevelUtils.component1
@@ -50,6 +51,7 @@ class FloatingIslandStructure(settings: StructureSettings) : SinglePieceStructur
 
     class FloatingIslandPiece : ScatteredFeaturePiece {
         val seed: Long
+        var placed: Boolean = false
 
         constructor(random: RandomSource, x: Int, z: Int) : super(
             floating_island_piece.get(),
@@ -62,11 +64,13 @@ class FloatingIslandStructure(settings: StructureSettings) : SinglePieceStructur
 
         constructor(tag: CompoundTag) : super(floating_island_piece.get(), tag) {
             seed = tag.getLong("seed")
+            placed = tag.getBoolean("Placed")
         }
 
         override fun addAdditionalSaveData(context: StructurePieceSerializationContext, tag: CompoundTag) {
             super.addAdditionalSaveData(context, tag)
-            tag.putLong("seed", seed)
+            tag.putLong("Seed", seed)
+            tag.putBoolean("Placed", placed)
         }
 
 
@@ -136,12 +140,24 @@ class FloatingIslandStructure(settings: StructureSettings) : SinglePieceStructur
             when (type) {
                 0 -> {
                     decorateChewingGumIsland(level, random, top, box)
-//            LegacyStructureFeature.spawnBossBeetle(level, base.offset(16, height + 2, 16))
+                    if (!placed) {
+                        placed = true
+                        val entity = CEntityTypes.licorice_beetle.get().create(level.level) ?: return
+                        val pos = getWorldPos(16, height, 16)
+                        entity.setPos(pos.x + 0.5, pos.y.toDouble(), pos.z + 0.5)
+                        level.addFreshEntity(entity)
+                    }
                 }
 
                 1, 2, 3 -> {
                     val offset = Vec3i(14 + random.nextInt(4) - 2, height - 1, 14 + random.nextInt(4) - 2)
                     buildVillageHouse(level, random, offset, box)
+                    if (!placed) {
+                        placed = true
+                        val entity = CEntityTypes.gingerbread_man.get().create(level.level) ?: return
+                        entity.setPos(getWorldPos(offset.x + 1, offset.y + 1, offset.z + 1).center)
+                        level.addFreshEntity(entity)
+                    }
                 }
 
                 else -> decoratePigFeedIsland(level, random, top, box)
@@ -315,27 +331,8 @@ class FloatingIslandStructure(settings: StructureSettings) : SinglePieceStructur
                 placeBlock(level, air, x, y + 3, z + 4, box)
 
             }
-//            LegacyStructureFeature.spawnGingerbread(
-//                level,
-//                base.offset(2, 2, 2),
-//                if (base.getY() > 100) GingerbreadManEntity.ELDER else -1
-//            )
         }
 
-
-        private fun spawnBossBeetle(level: WorldGenLevel?, pos: BlockPos) {
-            //TODO
-//            if (level !is WorldGenRegion) {
-//                return
-//            }
-//            val entity: BasicCandySpiderEntity? = CCEntityTypes.BOSS_BEETLE.get().create(level.getLevel())
-//            if (entity == null) {
-//                return
-//            }
-//            entity.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 0.0f, 0.0f)
-//            entity.finalizeSpawn(level, level.getCurrentDifficultyAt(pos), MobSpawnType.STRUCTURE, null, null)
-//            level.addFreshEntity(entity)
-        }
 
     }
 

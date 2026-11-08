@@ -3,6 +3,7 @@ package cn.jawbreakers.candycraftce.block
 import cn.jawbreakers.candycraftce.utils.CLevelUtils
 import cn.jawbreakers.candycraftce.utils.CLevelUtils.ifServer
 import net.minecraft.core.BlockPos
+import net.minecraft.core.Direction
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.util.RandomSource
 import net.minecraft.world.InteractionHand
@@ -10,6 +11,7 @@ import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.Item
 import net.minecraft.world.level.Level
+import net.minecraft.world.level.LevelAccessor
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
@@ -57,6 +59,19 @@ class DungeonLockBlock(val key: Supplier<out Item>, properties: Properties) : Bl
     fun unlock(state: BlockState, level: ServerLevel, pos: BlockPos) {
         level.setBlock(pos, state.setValue(FADE, true), UPDATE_ALL_IMMEDIATE)
         level.scheduleTick(pos, this, 7)
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun updateShape(
+        state: BlockState,
+        direction: Direction,
+        neighborState: BlockState,
+        level: LevelAccessor,
+        pos: BlockPos,
+        neighborPos: BlockPos,
+    ): BlockState {
+        level.scheduleTick(pos, this, 1)
+        return state
     }
 
     @Deprecated("Deprecated in Java")

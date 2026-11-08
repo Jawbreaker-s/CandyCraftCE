@@ -27,11 +27,56 @@
   "spawners": {
     "ambient": [],
     "axolotls": [],
-    "creature": [],
+    "creature": [
+      {
+        "type": "candycraftce:waffle_sheep",
+        "maxCount": 3,
+        "minCount": 2,
+        "weight": 14
+      },
+      {
+        "type": "candycraftce:candy_pig",
+        "maxCount": 5,
+        "minCount": 3,
+        "weight": 31
+      },
+      {
+        "type": "candycraftce:gummy_bunny",
+        "maxCount": 6,
+        "minCount": 4,
+        "weight": 8
+      }
+    ],
     "misc": [],
-    "monster": [],
+    "monster": [
+      {
+        "type": "candycraftce:cotton_candy_spider",
+        "maxCount": 4,
+        "minCount": 4,
+        "weight": 100
+      },
+      {
+        "type": "candycraftce:cookie_creeper",
+        "maxCount": 15,
+        "minCount": 8,
+        "weight": 100
+      },
+      {
+        "type": "candycraftce:suguard",
+        "maxCount": 4,
+        "minCount": 4,
+        "weight": 104
+      }
+    ],
     "underground_water_creature": [],
-    "water_ambient": [],
+    "water_ambient": [
+      {
+        "type": "candycraftce:cranfish",
+        "maxCount": 4,
+        "minCount": 4,
+        "weight": 50
+      }
+    ],
     "water_creature": []
   },
   "temperature": 0.0

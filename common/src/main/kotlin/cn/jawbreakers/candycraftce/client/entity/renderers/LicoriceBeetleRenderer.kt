@@ -29,7 +29,7 @@ class LicoriceBeetleRenderer(context: EntityRendererProvider.Context) :
     }
 
     override fun scale(livingEntity: LicoriceBeetle, poseStack: PoseStack, partialTickTime: Float) {
-        poseStack.scale(2.0F, 2.0F, 2.0F);
-        poseStack.mulPose(Axis.YP.rotationDegrees(270.0F));
+        poseStack.scale(2.0F, 2.0F, 2.0F)
+        poseStack.mulPose(Axis.YP.rotationDegrees(270.0F))
     }
 }
