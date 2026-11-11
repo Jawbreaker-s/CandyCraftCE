@@ -83,13 +83,16 @@ abstract class DebugFunc(val id: String) {
         player: Player,
         message: String,
         condition: Boolean = true,
+        prefix: Boolean = true,
         mod: MutableComponent.() -> Unit = {},
     ) {
-        if (condition) sendMessage(player, Component.literal(message).apply(mod))
+        if (condition) sendMessage(player, Component.literal(message).apply(mod), prefix = prefix)
     }
 
-    fun DebugFunc.sendMessage(player: Player, message: Component, condition: Boolean = true) {
-        if (condition) player.sendSystemMessage(displayName.copy().append(": ").append(message))
+    fun DebugFunc.sendMessage(player: Player, message: Component, condition: Boolean = true, prefix: Boolean = true) {
+        if (condition) player.sendSystemMessage(
+            if (prefix) displayName.copy().append(": ").append(message) else message
+        )
     }
 
 }

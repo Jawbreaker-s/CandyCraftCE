@@ -1,8 +1,8 @@
 package cn.jawbreakers.candycraftce.recipe.recipes
 
-import cn.breadnicecat.candycraftce.utils.CodecUtils.getIdAsItem
-import cn.breadnicecat.candycraftce.utils.CodecUtils.readItemId
-import cn.breadnicecat.candycraftce.utils.CodecUtils.writeItemId
+import cn.breadnicecat.candycraftce.utils.CCodecUtils.getIdAsItem
+import cn.breadnicecat.candycraftce.utils.CCodecUtils.readItemId
+import cn.breadnicecat.candycraftce.utils.CCodecUtils.writeItemId
 import cn.jawbreakers.candycraftce.blockentity.AdvancedFactoryBE
 import cn.jawbreakers.candycraftce.blockentity.SugarFactoryBE
 import cn.jawbreakers.candycraftce.recipe.RecipeXSerializer

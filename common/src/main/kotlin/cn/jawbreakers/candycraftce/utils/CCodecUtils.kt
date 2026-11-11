@@ -1,5 +1,7 @@
 package cn.breadnicecat.candycraftce.utils
 
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.mojang.datafixers.util.Pair
@@ -21,7 +23,9 @@ import net.minecraft.world.item.ItemStack
  * @author <a href="https://github.com/BreadNiceCat">Bread_NiceCat</a>
  *
  */
-object CodecUtils {
+object CCodecUtils {
+    val PRETTY_GSON: Gson = GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create()
+
     fun <T> Codec<T>.encodeToNetwork(input: T, buf: FriendlyByteBuf) {
         val tag = this.encodeStart(NbtOps.INSTANCE, input).result().orElseThrow()
         buf.writeNbt(tag as CompoundTag)

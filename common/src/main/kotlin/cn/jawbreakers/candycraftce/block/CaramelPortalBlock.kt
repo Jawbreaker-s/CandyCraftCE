@@ -1,7 +1,6 @@
 package cn.jawbreakers.candycraftce.block
 
 import cn.jawbreakers.candycraftce.misc.multiblocks.caramel_portal.PortalConfig
-import cn.jawbreakers.candycraftce.misc.multiblocks.caramel_portal.VectorPortalShape
 import cn.jawbreakers.candycraftce.misc.multiblocks.caramel_portal.axis2pipe2
 import cn.jawbreakers.candycraftce.registry.CBlockTags
 import cn.jawbreakers.candycraftce.registry.CBlockTags.candy_portal
@@ -13,6 +12,7 @@ import cn.jawbreakers.candycraftce.utils.CUtils.SEC2TICK
 import cn.jawbreakers.candycraftce.utils.CUtils.instance
 import cn.jawbreakers.candycraftce.utils.CUtils.use
 import cn.jawbreakers.candycraftce.utils.UsedByMixin
+import it.unimi.dsi.fastutil.ints.IntIntPair
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.core.Direction.Axis
@@ -203,7 +203,8 @@ class CaramelPortalBlock(properties: Properties) : Block(properties) {
             2, 21, 3, 21,
             { b -> b.isAir || b.`is`(CBlockTags.can_light_portal) || b.`is`(candy_portal) },
             { b -> b.`is`(CBlockTags.candy_portal_frame) },
-            enableHorizontal = true
+            enableHorizontal = true,
+            horizontalLength = IntIntPair.of(2, 21),
         )
 
 
@@ -231,7 +232,8 @@ class CaramelPortalBlock(properties: Properties) : Block(properties) {
                 //some mod will use lava tag
                 val lava = content.`is`(Fluids.LAVA) || content.`is`(Fluids.FLOWING_LAVA)
                 if (lava) {
-                    VectorPortalShape.findPortal(level, pos, config).ifPresent {
+                    val searcher = config.searcher
+                    searcher.findPortal(level, pos).ifPresent {
                         val portal = CBlocks.caramel_portal.get().defaultBlockState()
                         it.build(level) { level, shape ->
                             shape.portals.forEach { (pos, axes) ->
@@ -242,7 +244,7 @@ class CaramelPortalBlock(properties: Properties) : Block(properties) {
                                 }
                                 level.setBlockAndUpdate(pos, applyAxes(portal, axes))
                             }
-                            true
+                            return@build true
                         }
                     }
 
