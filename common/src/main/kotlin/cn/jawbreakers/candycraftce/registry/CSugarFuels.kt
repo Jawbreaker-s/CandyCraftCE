@@ -25,10 +25,11 @@ object CSugarFuels {
     fun isFuel(stack: ItemStack): Boolean = getBurnDuration(stack) > 0
     fun listFuels() = registry.object2IntEntrySet().asSequence()
     private fun onFillRegistry(registry: Object2IntOpenHashMap<Item>) {
+        val baseSugar = 200
         registry.apply {
-            addTo(Items.SUGAR, 200)
-            addTo(CBlocks.sugar_sand.asItem(), 200 * 4)
-            addTo(CBlocks.sugar_block.asItem(), 200 * 5)
+            addTo(Items.SUGAR, baseSugar)
+            addTo(CBlocks.sugar_sand.asItem(), baseSugar * 4)
+            addTo(CBlocks.sugar_block.asItem(), baseSugar * 8)
         }
     }
 }

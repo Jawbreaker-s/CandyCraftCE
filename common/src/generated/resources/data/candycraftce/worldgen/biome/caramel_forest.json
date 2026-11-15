@@ -14,7 +14,21 @@
     [],
     [],
     [],
-    [],
+    [
+      "candycraftce:ore_honey",
+      "candycraftce:ore_honey_buried",
+      "candycraftce:ore_licorice_upper",
+      "candycraftce:ore_licorice_middle",
+      "candycraftce:ore_licorice_small",
+      "candycraftce:ore_jelly_buried",
+      "candycraftce:ore_jelly_buried_lower",
+      "candycraftce:ore_pez_small",
+      "candycraftce:ore_pez_large",
+      "candycraftce:ore_pez_buried",
+      "candycraftce:ore_sugar_sand",
+      "candycraftce:ore_pudding",
+      "candycraftce:ore_nougat"
+    ],
     [],
     [],
     [

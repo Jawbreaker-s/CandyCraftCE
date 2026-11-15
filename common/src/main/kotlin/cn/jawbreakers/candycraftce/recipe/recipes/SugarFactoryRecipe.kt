@@ -60,7 +60,7 @@ class SugarFactoryRecipe(
         return NonNullList.create<Ingredient>().apply { add(ingredient) }
     }
 
-    override fun getResultItem(registryAccess: RegistryAccess?): ItemStack {
+    override fun getResultItem(registryAccess: RegistryAccess): ItemStack {
         val stack = result.defaultInstance
         stack.count = count
         return stack
@@ -72,7 +72,7 @@ class SugarFactoryRecipe(
 
     override fun getType() = CRecipeTypes.sugar_factory_type.type
 
-    class Serializer : RecipeXSerializer<SugarFactoryRecipe> {
+    class XSerializer : RecipeXSerializer<SugarFactoryRecipe> {
         override fun fromJson(recipeId: ResourceLocation, json: JsonObject): SugarFactoryRecipe {
             val result = json.get("result").getAsJsonObject()
             return SugarFactoryRecipe(

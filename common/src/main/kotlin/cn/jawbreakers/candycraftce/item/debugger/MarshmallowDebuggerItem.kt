@@ -62,7 +62,7 @@ class MarshmallowDebuggerItem(properties: Properties) : Item(properties) {
         }
     }
 
-    private fun getOrCreateData(stack: ItemStack): CompoundTag {
+    private fun getOrCreateCurrentData(stack: ItemStack): CompoundTag {
         val nbt = stack.orCreateTag
         val key = nbt.getString("current")
         return nbt.useCompound("data") { dataSet ->
@@ -78,7 +78,7 @@ class MarshmallowDebuggerItem(properties: Properties) : Item(properties) {
         isAdvanced: TooltipFlag,
     ) {
         val func = getCurrentFunc(stack)
-        val data = getOrCreateData(stack)
+        val data = getOrCreateCurrentData(stack)
         tooltips.add(current_func_tip_pre.copy().append(func.displayName))
         tooltips.add(next_func_tip)
         func.appendTooltip(data, stack, tooltips, isAdvanced)
@@ -108,7 +108,7 @@ class MarshmallowDebuggerItem(properties: Properties) : Item(properties) {
             return InteractionResultHolder.sidedSuccess(stack, level.isClientSide)
         }
         val f = getCurrentFunc(stack)
-        val data = getOrCreateData(stack)
+        val data = getOrCreateCurrentData(stack)
 
         val result = f.use(data, level, player, stack)
 
@@ -126,7 +126,7 @@ class MarshmallowDebuggerItem(properties: Properties) : Item(properties) {
         val face = Direction.getNearest(view.x, view.y, view.z)
 
         val f = getCurrentFunc(stack)
-        val data = getOrCreateData(stack)
+        val data = getOrCreateCurrentData(stack)
 
         f.leftClickOn(data, level, pos, face, player, stack)
         return false
@@ -137,11 +137,11 @@ class MarshmallowDebuggerItem(properties: Properties) : Item(properties) {
         val level = context.level
         val stack = context.itemInHand
 
-        val view = player.getViewVector(1f)
-        val face = Direction.getNearest(view.x, view.y, view.z)
-
+//        val view = player.getViewVector(1f)
+//        val face = Direction.getNearest(view.x, view.y, view.z)
+        val face = context.clickedFace
         val f = getCurrentFunc(stack)
-        val data = getOrCreateData(stack)
+        val data = getOrCreateCurrentData(stack)
 
         val result = f.rightClickOn(data, level, context.clickedPos, face, player, stack)
 
@@ -155,7 +155,7 @@ class MarshmallowDebuggerItem(properties: Properties) : Item(properties) {
     override fun inventoryTick(stack: ItemStack, level: Level, entity: Entity, slotId: Int, isSelected: Boolean) {
         if (entity is Player) {
             val f = getCurrentFunc(stack)
-            val data = getOrCreateData(stack)
+            val data = getOrCreateCurrentData(stack)
 
             f.onInventoryTick(data, level, entity, stack, entity.handSlots.any { it == stack })
         }

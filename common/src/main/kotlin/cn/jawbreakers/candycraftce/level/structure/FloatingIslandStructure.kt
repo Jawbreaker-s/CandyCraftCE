@@ -63,7 +63,7 @@ class FloatingIslandStructure(settings: StructureSettings) : SinglePieceStructur
         }
 
         constructor(tag: CompoundTag) : super(floating_island_piece.get(), tag) {
-            seed = tag.getLong("seed")
+            seed = tag.getLong("Seed")
             placed = tag.getBoolean("Placed")
         }
 

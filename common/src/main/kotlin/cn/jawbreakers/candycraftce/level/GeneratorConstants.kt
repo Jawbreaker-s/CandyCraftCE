@@ -6,7 +6,7 @@ const val MIN_Y = -64
 const val HEIGHT = 384
 const val MAX_Y = HEIGHT + MIN_Y // 320，世界顶端的绝对 Y（不含）
 const val SEA_LEVEL = 63
-const val LAVA_LEVEL = 10
+const val LAVA_LEVEL = MIN_Y + 10
 
 /** 石头/深板岩分界线：绝对 Y 低于此值的实心石头使用 deepslate_stone。  */
 const val DEEPSLATE_BOUNDARY = 0

@@ -14,8 +14,9 @@ import net.minecraft.data.worldgen.BootstapContext
 import net.minecraft.data.worldgen.placement.PlacementUtils
 import net.minecraft.resources.ResourceKey
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.util.valueproviders.UniformInt
 import net.minecraft.world.level.levelgen.Heightmap
-import net.minecraft.world.level.levelgen.VerticalAnchor
+import net.minecraft.world.level.levelgen.VerticalAnchor.*
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature
 import net.minecraft.world.level.levelgen.feature.Feature
@@ -24,6 +25,8 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
 import net.minecraft.world.level.levelgen.feature.configurations.RandomFeatureConfiguration
 import net.minecraft.world.level.levelgen.placement.*
 import net.minecraft.world.level.levelgen.placement.BlockPredicateFilter.forPredicate
+import net.minecraft.world.level.levelgen.placement.HeightRangePlacement.triangle
+import net.minecraft.world.level.levelgen.placement.HeightRangePlacement.uniform
 import java.util.function.Supplier
 
 
@@ -44,30 +47,17 @@ object CFeatures {
     val marshmallow_waterlily = register("marshmallow_waterlily", ::MarshmallowSliceFeature)
 
 
-//    val candy_plant_house =
-//        register("candy_plant_house") { TemplateSurfaceStructureFeature(ResourceLocation("candy_plant_house")) }
-
+//    val candy_plant_house = register("candy_plant_house") { TemplateSurfaceStructureFeature(ResourceLocation("candy_plant_house")) }
 //    val ice_tower = register("ice_tower") { LegacyStructureFeature(LegacyStructureFeature.Kind.ICE_TOWER) }
-//    val ice_cream_dome =
-//        register("ice_cream_dome") { LegacyStructureFeature(LegacyStructureFeature.Kind.ICE_CREAM_DOME) }
+//    val ice_cream_dome = register("ice_cream_dome") { LegacyStructureFeature(LegacyStructureFeature.Kind.ICE_CREAM_DOME) }
 //    val water_temple = register("water_temple") { LegacyStructureFeature(LegacyStructureFeature.Kind.WATER_TEMPLE) }
-//    val geyser = register("geyser") { LegacyStructureFeature(LegacyStructureFeature.Kind.GEYSER) }
-//    val chewing_gum_totem = register("chewing_gum_totem") {
-//        LegacyStructureFeature(LegacyStructureFeature.Kind.CHEWING_GUM_TOTEM)
-//    }
-//    val floating_island =
-//        register("floating_island") { LegacyStructureFeature(LegacyStructureFeature.Kind.FLOATING_ISLAND) }
-//    val underground_village = register("underground_village") {
-//        LegacyStructureFeature(LegacyStructureFeature.Kind.UNDERGROUND_VILLAGE)
-//    }
+//    val chewing_gum_totem = register("chewing_gum_totem") { LegacyStructureFeature(LegacyStructureFeature.Kind.CHEWING_GUM_TOTEM)
 
     fun <F : Feature<*>> register(name: String, factory: Supplier<F>): Entry<F> {
         return CPlatformUtils.levels.registerFeature(name, factory)
     }
 
-
     //data
-
     init {
         ifDatagen {
             onBootstrap {
@@ -78,18 +68,22 @@ object CFeatures {
     }
 
     //===============================Configured Features===============================
-////    val cotton_candy_tree = register("cotton_candy_tree", ::CottonCandyTreeFeature)
-////    val chocolate_tree = register("sweetscape_chocolate_tree", ::SweetscapeChocolateTreeFeature)
-////    val caramel_tree = register("caramel_tree") { LegacyCandyTreeFeature(LegacyCandyTreeFeature.Kind.CARAMEL) }
-////    val caramel_forest_tree = register("caramel_forest_tree") { LegacyCandyTreeFeature(LegacyCandyTreeFeature.Kind.CARAMEL_FOREST) }
-////    val cherry_tree = register("cherry_tree") { LegacyCandyTreeFeature(LegacyCandyTreeFeature.Kind.CHERRY) }
-////    val enchanted_tree = register("enchanted_tree") { LegacyCandyTreeFeature(LegacyCandyTreeFeature.Kind.ENCHANTED) }
-////    val white_chocolate_tree = register("white_chocolate_tree") { LegacyCandyTreeFeature(LegacyCandyTreeFeature.Kind.WHITE_CHOCOLATE) }
     val configured_candy_grass = configured(candy_grass)
     val configured_candy_seaweed = configured(candy_seaweed)
     val configured_groundwater = configured(groundwater)
     val configured_marshmallow_waterlily = configured(marshmallow_waterlily)
-
+    val configured_ore_licorice = configured("ore_licorice")
+    val configured_ore_licorice_small = configured("ore_licorice_small")
+    val configured_ore_honey = configured("ore_honey")
+    val configured_ore_honey_buried = configured("ore_honey_buried")
+    val configured_ore_nougat = configured("ore_nougat")
+    val configured_ore_jelly = configured("ore_jelly")
+    val configured_ore_jelly_buried = configured("ore_jelly_buried")
+    val configured_ore_pez_small = configured("ore_pez_small")
+    val configured_ore_pez_large = configured("ore_pez_large")
+    val configured_ore_pez_buried = configured("ore_pez_buried")
+    val configured_ore_pudding = configured("ore_pudding")
+    val configured_ore_sugar_sand = configured("ore_sugar_sand")
     val configured_tree_chocolate = configured("tree_chocolate")
     val configured_tree_chocolate_fancy = configured("tree_chocolate_fancy")
     val configured_tree_caramel = configured("tree_caramel")
@@ -144,7 +138,18 @@ object CFeatures {
             checked_tree_chocolate_fancy to 0.04f,
             checked_tree_caramel to 1 / 3f
         )
-
+        ctx.register(configured_ore_licorice, createLicoriceOre().configure())
+        ctx.register(configured_ore_licorice_small, createLicoriceOreSmall().configure())
+        ctx.register(configured_ore_honey, createHoneyOre().configure())
+        ctx.register(configured_ore_honey_buried, createHoneyOreBuried().configure())
+        ctx.register(configured_ore_nougat, createNougatOre().configure())
+        ctx.register(configured_ore_jelly, createJellyOre().configure())
+        ctx.register(configured_ore_jelly_buried, createJellyOreBuried().configure())
+        ctx.register(configured_ore_pez_small, createPezOreSmall().configure())
+        ctx.register(configured_ore_pez_large, createPezOreLarge().configure())
+        ctx.register(configured_ore_pez_buried, createPezOreBuried().configure())
+        ctx.register(configured_ore_pudding, createPudding().configure())
+        ctx.register(configured_ore_sugar_sand, createSugarSand().configure())
     }
 
     //===============================Placed Features===============================
@@ -165,6 +170,21 @@ object CFeatures {
     val placed_tree_enchanted = placed(configured_tree_enchanted)
     val placed_tree_white_chocolate_forest = placed(configured_tree_white_chocolate, "_forest")
     val placed_tree_white_chocolate_mountain = placed(configured_tree_white_chocolate, "_mountain")
+
+    val placed_ore_licorice_upper = placed(configured_ore_licorice, "_upper")
+    val placed_ore_licorice_middle = placed(configured_ore_licorice, "_middle")
+    val placed_ore_licorice_small = placed(configured_ore_licorice_small)
+    val placed_ore_honey_upper = placed(configured_ore_honey)
+    val placed_ore_honey_lower = placed(configured_ore_honey_buried)
+    val placed_ore_nougat = placed(configured_ore_nougat)
+    val placed_ore_jelly_extra = placed(configured_ore_jelly, "_extra")
+    val placed_ore_jelly = placed(configured_ore_jelly_buried)
+    val placed_ore_jelly_lower = placed(configured_ore_jelly_buried, "_lower")
+    val placed_ore_pez = placed(configured_ore_pez_small)
+    val placed_ore_pez_large = placed(configured_ore_pez_large)
+    val placed_ore_pez_buried = placed(configured_ore_pez_buried)
+    val placed_ore_pudding = placed(configured_ore_pudding)
+    val placed_ore_sugar_sand = placed(configured_ore_sugar_sand)
 
     private fun placed(id: ResourceLocation): ResourceKey<PlacedFeature> =
         ResourceKey.create(Registries.PLACED_FEATURE, id)
@@ -233,15 +253,95 @@ object CFeatures {
             placed_tree_white_chocolate_mountain, configured_tree_white_chocolate,
             listOf(count(9), in_square, motion_no_leaves, on_candy_soil, biome)
         )
+        //ores
+        //iron
+        register(
+            placed_ore_licorice_upper, configured_ore_licorice,
+            commonOrePlacement(90, triangle(aboveBottom(80), top()))
+        )
+        register(
+            placed_ore_licorice_middle, configured_ore_licorice,
+            commonOrePlacement(10, uniform(absolute(-24), absolute(56)))
+        )
+        register(
+            placed_ore_licorice_small, configured_ore_licorice_small,
+            commonOrePlacement(10, uniform(bottom(), absolute(72)))
+        )
+        //coal
+        register(
+            placed_ore_honey_upper, configured_ore_honey,
+            commonOrePlacement(30, uniform(absolute(136), top()))
+        )
+        register(
+            placed_ore_honey_lower, configured_ore_honey_buried,
+            commonOrePlacement(200, triangle(absolute(0), absolute(192)))
+        )
+        //emerald
+        register(
+            placed_ore_nougat, configured_ore_nougat,
+            commonOrePlacement(100, triangle(absolute(-16), absolute(480)))
+        )
+        //gold
+        register(
+            placed_ore_jelly_extra, configured_ore_jelly,
+            commonOrePlacement(50, uniform(absolute(32), absolute(256)))
+        )
+        register(
+            placed_ore_jelly, configured_ore_jelly_buried,
+            commonOrePlacement(4, triangle(absolute(-64), absolute(32)))
+        )
+        register(
+            placed_ore_jelly_lower, configured_ore_jelly_buried,
+            orePlacement(countIn(0..1), uniform(absolute(-64), absolute(-48)))
+        )
+        //diamond
+        //PlacementUtils.register(context, ORE_DIAMOND, holder19, commonOrePlacement(7, HeightRangePlacement.triangle(VerticalAnchor.aboveBottom(-80), VerticalAnchor.aboveBottom(80))));
+        register(
+            placed_ore_pez, configured_ore_pez_small,
+            commonOrePlacement(7, triangle(aboveBottom(-80), aboveBottom(80)))
+        )
+        register(
+            placed_ore_pez_large, configured_ore_pez_large,
+            rareOrePlacement(9, triangle(aboveBottom(-80), aboveBottom(80)))
+        )
+        register(
+            placed_ore_pez_buried, configured_ore_pez_buried,
+            commonOrePlacement(4, triangle(aboveBottom(-80), aboveBottom(80)))
+        )
+        register(
+            placed_ore_pudding, configured_ore_pudding,
+            commonOrePlacement(7, triangle(absolute(0), absolute(160)))
+        )
+        register(
+            placed_ore_sugar_sand, configured_ore_sugar_sand,
+            commonOrePlacement(14, triangle(bottom(), top()))
+        )
 
     }
 
+    private fun orePlacement(
+        countPlacement: PlacementModifier,
+        heightRange: PlacementModifier,
+    ) = listOf(
+        countPlacement,
+        InSquarePlacement.spread(),
+        heightRange,
+        BiomeFilter.biome()
+    )
+
+    private fun commonOrePlacement(count: Int, heightRange: PlacementModifier) =
+        orePlacement(count(count), heightRange)
+
+    private fun rareOrePlacement(chance: Int, heightRange: PlacementModifier) =
+        orePlacement(rarity(chance), heightRange)
+
     private fun count(count: Int) = CountPlacement.of(count)
+    private fun countIn(count: IntRange) = CountPlacement.of(UniformInt.of(count.first, count.last))
     private fun rarity(chance: Int) = RarityFilter.onAverageOnceEvery(chance)
     private val in_square = InSquarePlacement.spread()
     private val biome = BiomeFilter.biome()
     private fun heightIn(range: IntRange) =
-        HeightRangePlacement.uniform(VerticalAnchor.absolute(range.first), VerticalAnchor.absolute(range.last))
+        uniform(absolute(range.first), absolute(range.last))
 
     private val on_surface = HeightmapPlacement.onHeightmap(Heightmap.Types.WORLD_SURFACE_WG)
     private val motion_no_leaves = HeightmapPlacement.onHeightmap(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES)

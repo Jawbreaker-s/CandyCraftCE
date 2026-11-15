@@ -17,9 +17,9 @@ object CRecipeTypes {
         CLogUtils.sign()
     }
 
-    val sugar_factory_type = register("sugar_factory", SugarFactoryRecipe::Serializer)
+    val sugar_factory_type = register("sugar_factory", SugarFactoryRecipe::XSerializer)
 
-    val sugar_furnace_type = register("sugar_furnace", SugarFurnaceRecipe::Serializer)
+    val sugar_furnace_type = register("sugar_furnace", SugarFurnaceRecipe::XSerializer)
 
     fun <R : Recipe<*>, S : RecipeSerializer<R>> register(
         name: String,

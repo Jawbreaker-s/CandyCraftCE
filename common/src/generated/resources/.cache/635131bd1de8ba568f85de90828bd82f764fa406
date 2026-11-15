@@ -1,4 +1,5 @@
-// 1.20.1	2026-10-28T21:56:34.8170118	Tags for minecraft:block mod id candycraftce
+// 1.20.1	2026-11-15T15:07:16.8510676	Tags for minecraft:block mod id candycraftce
+b505cd0841fdf3127fd971b97db5f5d3e0cdb458 data/candycraftce/tags/blocks/all_replaceable.json
 16cf551a654629af4afa9b39f84d8efe1a755864 data/candycraftce/tags/blocks/candy_animal_spawnable_on.json
 02382e15a9f7e25129cbee2ce449ef98b95f5079 data/candycraftce/tags/blocks/candy_leaves.json
 995ce92b7c885df1b1053501bc4dc8e265cb4fa7 data/candycraftce/tags/blocks/candy_portal_frame.json
@@ -14,9 +15,11 @@
 58a0307c49b5516c68a7d41c9b871136645b12a5 data/candycraftce/tags/blocks/marshmallow_logs.json
 627b2634040eefab245dcdef45a6417c3e7ea202 data/candycraftce/tags/blocks/marshmallow_planks.json
 511f1b726a205f85bdf6e2e334f5d3ae1853aff7 data/candycraftce/tags/blocks/nougat_ores.json
+36f230c6d1555adbb19391db27f72900b96d033a data/candycraftce/tags/blocks/ore_replaceable.json
 be6f9612730e4a2fba1fd5e3cce83b44a9e240a2 data/candycraftce/tags/blocks/pez_ores.json
 bfd5357fc50d18b8b35513ae01fa1f3735c4cb6a data/candycraftce/tags/blocks/seaweed_soil.json
 d43a0669c974d511ad530c8d020d2ad1da145903 data/candycraftce/tags/blocks/sweet_grass.json
+2ea817b1c761c7d9f04935572315b3c991f0f5d0 data/candycraftce/tags/blocks/white_ore_replaceable.json
 b9769096a68419aa474b706a1888cc4ed69de98f data/minecraft/tags/blocks/climbable.json
 f1ea29394f80fdfe6aaad1d94766b86382e2a6d3 data/minecraft/tags/blocks/doors.json
 83f95e33f0c036613527e759c32710536d33fd3e data/minecraft/tags/blocks/fences.json

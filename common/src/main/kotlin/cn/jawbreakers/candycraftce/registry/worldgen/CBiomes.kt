@@ -119,6 +119,9 @@ object CBiomes {
                         waterFogColor(13473279)
                     },
                     {
+                        addOres(lookup) {
+                            +placed_ore_nougat
+                        }
                         step(lookup, VEGETAL_DECORATION) {
                             +placed_tree_caramel_forest
                             +placed_candy_grass
@@ -149,6 +152,7 @@ object CBiomes {
                         waterFogColor(16777215)
                     },
                     {
+                        addOres(lookup)
                         step(lookup, VEGETAL_DECORATION) {
                             +placed_candy_grass
                         }
@@ -178,6 +182,7 @@ object CBiomes {
                         waterFogColor(16777215)
                     },
                     {
+                        addOres(lookup)
                         step(lookup, VEGETAL_DECORATION) {
                             +placed_tree_white_chocolate_mountain
                         }
@@ -210,6 +215,7 @@ object CBiomes {
                         waterFogColor(13473279)
                     },
                     {
+                        addOres(lookup)
                         step(lookup, VEGETAL_DECORATION) {
                             +placed_tree_white_chocolate_forest
                             +placed_candy_grass
@@ -241,6 +247,7 @@ object CBiomes {
                         waterFogColor(13473279)
                     },
                     {
+                        addOres(lookup)
                         step(lookup, VEGETAL_DECORATION) {
                             +placed_candy_grass
                             +placed_tree_candy_plains
@@ -273,6 +280,7 @@ object CBiomes {
                         waterFogColor(13473279)
                     },
                     {
+                        addOres(lookup)
                         step(lookup, VEGETAL_DECORATION) {
                             +placed_candy_grass
                             +placed_tree_candy_plains
@@ -304,6 +312,7 @@ object CBiomes {
                         waterFogColor(13473279)
                     },
                     {
+                        addOres(lookup)
                         step(lookup, VEGETAL_DECORATION) {
                             +placed_candy_grass
                             +placed_tree_candy_forest
@@ -332,6 +341,7 @@ object CBiomes {
                         waterFogColor(13473279)
                     },
                     {
+                        addOres(lookup)
                         step(lookup, VEGETAL_DECORATION) {
                             +placed_candy_grass
                             +placed_candy_seaweed
@@ -359,6 +369,7 @@ object CBiomes {
                         waterFogColor(13473279)
                     },
                     {
+                        addOres(lookup)
                         step(lookup, VEGETAL_DECORATION) {
                             +placed_candy_grass
                             +placed_candy_seaweed
@@ -392,6 +403,7 @@ object CBiomes {
                         waterFogColor(13473279)
                     },
                     {
+                        addOres(lookup)
                         step(lookup, VEGETAL_DECORATION) {
                             +placed_candy_grass
                             +placed_tree_enchanted
@@ -417,6 +429,30 @@ private class CategoryScope(
 ) {
     fun add(entity: Entry<out EntityType<*>>, weight: Int, minCount: Int, maxCount: Int) {
         builder.addSpawn(category, MobSpawnSettings.SpawnerData(entity.value, weight, minCount, maxCount))
+    }
+}
+
+
+private fun BiomeGenerationSettings.PlainBuilder.addOres(
+    lookup: HolderGetter<PlacedFeature>,
+    extra: StepScope.() -> Unit = {},
+) {
+    with(CFeatures) {
+        step(lookup, GenerationStep.Decoration.UNDERGROUND_ORES) {
+            +placed_ore_honey_upper
+            +placed_ore_honey_lower
+            +placed_ore_licorice_upper
+            +placed_ore_licorice_middle
+            +placed_ore_licorice_small
+            +placed_ore_jelly
+            +placed_ore_jelly_lower
+            +placed_ore_pez
+            +placed_ore_pez_large
+            +placed_ore_pez_buried
+            +placed_ore_sugar_sand
+            +placed_ore_pudding
+            extra()
+        }
     }
 }
 

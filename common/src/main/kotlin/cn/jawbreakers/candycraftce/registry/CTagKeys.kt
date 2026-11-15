@@ -27,6 +27,9 @@ object CBlockTags {
     val sweet_grass = withItem("sweet_grass")
 
     //ore
+    val all_replaceable = bind("all_replaceable")
+    val ore_replaceable = bind("ore_replaceable")
+    val white_ore_replaceable = bind("white_ore_replaceable")
     val honey_ores = withItem("honey_ores")
     val licorice_ores = withItem("licorice_ores")
     val pez_ores = withItem("pez_ores")

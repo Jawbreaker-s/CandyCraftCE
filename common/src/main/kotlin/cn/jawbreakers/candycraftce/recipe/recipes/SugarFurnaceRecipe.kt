@@ -55,7 +55,7 @@ class SugarFurnaceRecipe(
 
     override fun canCraftInDimensions(width: Int, height: Int): Boolean = true
 
-    class Serializer : RecipeXSerializer<SugarFurnaceRecipe> {
+    class XSerializer : RecipeXSerializer<SugarFurnaceRecipe> {
         override fun toJson(json: JsonObject, recipe: SugarFurnaceRecipe) {
             json.add("result", JsonObject().apply {
                 addProperty("item", recipe.result.key.toString())

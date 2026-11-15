@@ -37,7 +37,9 @@ class CRecipeProvider(output: PackOutput) : RecipeProvider(output) {
                             .save()
                     }
                     sugar_block.madeWith {
-                        sugarFactory(sugar_sand.ingredient())
+                        cube(BUILDING_BLOCKS, 1, 3, Items.SUGAR.setUnlockBy())
+                            .save()
+                        sugarFactory(sugar_sand.ingredient(), advanced = true)
                             .save()
                     }
                     listOf(

@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:ore",
+  "config": {
+    "discard_chance_on_air_exposure": 0.5,
+    "size": 17,
+    "targets": [
+      {
+        "state": {
+          "Name": "candycraftce:white_honey_ore"
+        },
+        "target": {
+          "predicate_type": "minecraft:tag_match",
+          "tag": "candycraftce:white_ore_replaceable"
+        }
+      },
+      {
+        "state": {
+          "Name": "candycraftce:honey_ore"
+        },
+        "target": {
+          "predicate_type": "minecraft:tag_match",
+          "tag": "candycraftce:ore_replaceable"
+        }
+      }
+    ]
+  }
+}

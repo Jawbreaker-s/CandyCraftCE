@@ -55,7 +55,7 @@ object PortalTest : DebugFunc("portal_test") {
         item: ItemStack,
     ): Boolean {
         level.ifClient {
-            val pos0 = pos.relative(clickedFace.opposite)
+            val pos0 = pos.relative(clickedFace)
             val (portal, time) = measureTimedValue {
                 CaramelPortalBlock.config.searcher.findPortal(level, pos0).getOrNull()
             }
@@ -72,6 +72,12 @@ object PortalTest : DebugFunc("portal_test") {
                 val input = GsonHelper.parse(portal.toString())
                 val pretty = CCodecUtils.PRETTY_GSON.toJson(input)
                 CLogUtils.debugLog.info("\n" + pretty)
+                val show = pretty.lineSequence().joinToString(
+                    "\n",
+                    limit = 10,
+                    truncated = "...",
+                    postfix = "\n[Click to Copy]"
+                )
                 sendMessage(
                     player,
                     NbtUtils.toPrettyComponent(JsonOps.INSTANCE.convertTo(NbtOps.INSTANCE, input))
@@ -79,7 +85,7 @@ object PortalTest : DebugFunc("portal_test") {
                             style.withHoverEvent(
                                 HoverEvent(
                                     HoverEvent.Action.SHOW_TEXT,
-                                    Component.literal("Copy json data")
+                                    Component.literal(show)
                                 )
                             ).withClickEvent(
                                 ClickEvent(
