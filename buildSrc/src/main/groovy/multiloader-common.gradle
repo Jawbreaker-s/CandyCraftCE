@@ -22,6 +22,21 @@ kotlin {
 }
 
 repositories {
+    flatDir {
+        name = "Flat Dir (${project.name})"
+        dirs(project.file("libs"))
+        println("Adding flat dir for ${project.name}: ${project.file("libs")}")
+        content {
+            includeGroup("libs")
+        }
+    }
+    maven {
+        name = "Modrinth"
+        url = uri("https://api.modrinth.com/maven")
+        content {
+            includeGroup("maven.modrinth")
+        }
+    }
     mavenCentral()
     exclusiveContent {
         forRepositories(
