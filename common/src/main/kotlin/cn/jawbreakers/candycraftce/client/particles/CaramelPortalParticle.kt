@@ -1,0 +1,40 @@
+package cn.jawbreakers.candycraftce.client.particles
+
+import cn.jawbreakers.candycraftce.utils.ClientOnly
+import net.minecraft.client.multiplayer.ClientLevel
+import net.minecraft.client.particle.ParticleProvider
+import net.minecraft.client.particle.PortalParticle
+import net.minecraft.client.particle.SpriteSet
+import net.minecraft.core.particles.SimpleParticleType
+
+/**
+ * Created in 2024/4/5 下午5:51
+ * Project: candycraftce
+ *
+ * Author [Bread_NiceCat](https://github.com/BreadNiceCat)
+ *
+ *
+ */
+@ClientOnly
+class CaramelPortalParticle private constructor(
+    level: ClientLevel,
+    x: Double, y: Double, z: Double,
+    xSpeed: Double, ySpeed: Double, zSpeed: Double,
+    sprite: SpriteSet,
+) : PortalParticle(level, x, y, z, xSpeed, ySpeed, zSpeed) {
+    init {
+        val f = random.nextFloat() * 0.6f + 0.5f
+        rCol = f * 0.9f + 0.5f
+        gCol = f * 0.3f + 0.5f
+        bCol = f
+        pickSprite(sprite)
+    }
+
+    class Provider(private val sprite: SpriteSet) : ParticleProvider<SimpleParticleType> {
+        override fun createParticle(
+            type: SimpleParticleType, level: ClientLevel,
+            x: Double, y: Double, z: Double,
+            xSpeed: Double, ySpeed: Double, zSpeed: Double,
+        ) = CaramelPortalParticle(level, x, y, z, xSpeed, ySpeed, zSpeed, sprite)
+    }
+}

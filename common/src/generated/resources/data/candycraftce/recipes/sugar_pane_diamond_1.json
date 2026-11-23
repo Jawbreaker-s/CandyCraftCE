@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "#": {
+      "item": "candycraftce:sugar_glass_diamond"
+    }
+  },
+  "pattern": [
+    "###",
+    "###"
+  ],
+  "result": {
+    "count": 16,
+    "item": "candycraftce:sugar_pane_diamond"
+  },
+  "show_notification": true
+}

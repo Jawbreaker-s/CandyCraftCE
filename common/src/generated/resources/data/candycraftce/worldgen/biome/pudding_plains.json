@@ -1,0 +1,89 @@
+{
+  "carvers": {},
+  "downfall": 0.5,
+  "effects": {
+    "fog_color": 16767191,
+    "sky_color": 16636119,
+    "water_color": 13473279,
+    "water_fog_color": 13473279
+  },
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "candycraftce:candy_grass",
+      "candycraftce:tree_candy_plains"
+    ]
+  ],
+  "has_precipitation": false,
+  "spawn_costs": {},
+  "spawners": {
+    "ambient": [],
+    "axolotls": [],
+    "creature": [
+      {
+        "type": "candycraftce:candy_pig",
+        "maxCount": 6,
+        "minCount": 4,
+        "weight": 40
+      },
+      {
+        "type": "candycraftce:gummy_bunny",
+        "maxCount": 6,
+        "minCount": 4,
+        "weight": 55
+      },
+      {
+        "type": "candycraftce:waffle_sheep",
+        "maxCount": 3,
+        "minCount": 2,
+        "weight": 8
+      }
+    ],
+    "misc": [],
+    "monster": [
+      {
+        "type": "candycraftce:caramel_bee",
+        "maxCount": 3,
+        "minCount": 2,
+        "weight": 40
+      },
+      {
+        "type": "candycraftce:cotton_candy_spider",
+        "maxCount": 4,
+        "minCount": 4,
+        "weight": 100
+      },
+      {
+        "type": "candycraftce:cookie_creeper",
+        "maxCount": 15,
+        "minCount": 8,
+        "weight": 100
+      },
+      {
+        "type": "candycraftce:suguard",
+        "maxCount": 4,
+        "minCount": 4,
+        "weight": 100
+      }
+    ],
+    "underground_water_creature": [],
+    "water_ambient": [
+      {
+        "type": "candycraftce:cranfish",
+        "maxCount": 4,
+        "minCount": 4,
+        "weight": 50
+      }
+    ],
+    "water_creature": []
+  },
+  "temperature": 0.0
+}

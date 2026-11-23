@@ -1,6 +1,0 @@
-{
-    "parent": "block/cross",
-    "textures": {
-        "cross": "candycraftmod:block/lollipop_block"
-    }
-}

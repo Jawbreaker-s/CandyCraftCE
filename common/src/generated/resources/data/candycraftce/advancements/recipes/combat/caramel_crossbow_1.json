@@ -1,0 +1,35 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_caramel_bow": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "candycraftce:caramel_bow"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "candycraftce:caramel_crossbow_1"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_caramel_bow",
+      "has_the_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "candycraftce:caramel_crossbow_1"
+    ]
+  },
+  "sends_telemetry_event": false
+}

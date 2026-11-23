@@ -1,0 +1,9 @@
+{
+  "type": "candycraftce:sugar_factory",
+  "ingredient": {
+    "item": "minecraft:stick"
+  },
+  "result": {
+    "item": "candycraftce:marshmallow_stick"
+  }
+}

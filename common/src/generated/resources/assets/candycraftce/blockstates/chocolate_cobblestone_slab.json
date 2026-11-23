@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "candycraftce:block/chocolate_cobblestone_slab"
+    },
+    "type=double": {
+      "model": "candycraftce:block/chocolate_cobblestone"
+    },
+    "type=top": {
+      "model": "candycraftce:block/chocolate_cobblestone_slab_top"
+    }
+  }
+}

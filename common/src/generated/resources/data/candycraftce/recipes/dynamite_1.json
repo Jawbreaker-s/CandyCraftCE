@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "#": {
+      "item": "candycraftce:waffle_nugget"
+    },
+    "*": {
+      "item": "candycraftce:nougat_powder"
+    }
+  },
+  "pattern": [
+    "#*#",
+    "#*#",
+    "#*#"
+  ],
+  "result": {
+    "item": "candycraftce:dynamite"
+  },
+  "show_notification": true
+}

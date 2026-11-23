@@ -1,8 +1,0 @@
-{
-    "textures":  {
-                     "bottom":  "candycraftmod:block/chocolate_cobblestone",
-                     "top":  "candycraftmod:block/chocolate_cobblestone",
-                     "side":  "candycraftmod:block/chocolate_cobblestone"
-                 },
-    "parent":  "minecraft:block/slab_top"
-}

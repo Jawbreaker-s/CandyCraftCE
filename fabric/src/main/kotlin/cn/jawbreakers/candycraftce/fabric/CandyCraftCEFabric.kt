@@ -1,0 +1,199 @@
+package cn.jawbreakers.candycraftce.fabric
+
+import cn.jawbreakers.candycraftce.CandyCraftCE
+import cn.jawbreakers.candycraftce.fabric.fluid.CFabricFluids
+import cn.jawbreakers.candycraftce.fabric.level.CFabricLevels
+import cn.jawbreakers.candycraftce.utils.*
+import cn.jawbreakers.candycraftce.utils.CLogUtils.clog
+import cn.jawbreakers.candycraftce.utils.CLogUtils.logRegister
+import cn.jawbreakers.candycraftce.utils.CUtils.modLoc
+import cn.jawbreakers.candycraftce.utils.CUtils.register
+import cn.jawbreakers.candycraftce.utils.registry.Accessor
+import cn.jawbreakers.candycraftce.utils.registry.Entry
+import cn.jawbreakers.candycraftce.utils.registry.LateInitAccessor
+import com.mojang.datafixers.types.Type
+import net.fabricmc.api.EnvType
+import net.fabricmc.api.ModInitializer
+import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup
+import net.fabricmc.fabric.api.`object`.builder.v1.entity.FabricDefaultAttributeRegistry
+import net.fabricmc.loader.api.FabricLoader
+import net.minecraft.core.particles.ParticleType
+import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.network.chat.Component
+import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.effect.MobEffect
+import net.minecraft.world.entity.*
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier
+import net.minecraft.world.inventory.MenuType
+import net.minecraft.world.item.*
+import net.minecraft.world.item.crafting.Recipe
+import net.minecraft.world.item.crafting.RecipeSerializer
+import net.minecraft.world.item.crafting.RecipeType
+import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.entity.BlockEntity
+import net.minecraft.world.level.block.entity.BlockEntityType
+import net.minecraft.world.level.levelgen.Heightmap
+import java.util.function.Consumer
+import java.util.function.Supplier
+
+class CandyCraftCEFabric : ModInitializer, ICPlatForm {
+    companion object {
+        lateinit var instance: CandyCraftCEFabric
+            private set
+    }
+
+    init {
+        instance = this
+    }
+
+    private var lateInits: MutableList<Runnable>? = mutableListOf()
+    private var lateUsage: MutableList<Runnable>? = mutableListOf()
+    override val isDev by lazy { FabricLoader.getInstance().isDevelopmentEnvironment }
+
+    override val isClient by lazy { FabricLoader.getInstance().environmentType == EnvType.CLIENT }
+    override val fluids: ICPlatformFluids get() = CFabricFluids
+    override val levels: ICPlatformLevels get() = CFabricLevels
+    override val datagen: ICPlatformDatagen? = null
+    override val clients: ICPlatFormClients? get() = if (isClient) CFabricClients else null
+
+    override fun <T> whenInitialized(action: () -> T): Accessor<T> {
+        val accessor = LateInitAccessor<T>()
+        lateUsage?.add { accessor.set(action()) } ?: run { accessor.set(action()) }
+        return accessor
+    }
+
+    override fun isLoaded(modId: String): Boolean = FabricLoader.getInstance().isModLoaded(modId)
+
+    //=================================
+    internal inline fun <E> register(
+        registerTag: String,
+        name: String,
+        crossinline factory: () -> E,
+        crossinline register: (ResourceLocation, E) -> Unit,
+    ): Entry<E> {
+        val id = name.modLoc()
+        val entry = FabricEntry<E>(id)
+        lateInits?.add {
+            logRegister(registerTag, id)
+            factory().also {
+                register(id, it)
+                entry.set(it)
+            }
+        } ?: throw IllegalStateException("Too late")
+        return entry
+    }
+
+    override fun <M : MobEffect> registerMobEffect(name: String, factory: Supplier<M>): Entry<M> =
+        register("MobEffect", name, factory::get) { id, it ->
+            BuiltInRegistries.MOB_EFFECT.register(id, it)
+        }
+
+    override fun <E : Item> registerItem(name: String, factory: Supplier<E>): Entry<E> =
+        register("Item", name, factory::get) { id, it ->
+            Items.registerItem(id, it)
+        }
+
+    override fun createSpawnEggItem(
+        type: Entry<EntityType<out Mob>>,
+        backgroundColor: Int,
+        highlightColor: Int,
+        properties: Item.Properties,
+    ) = object : SpawnEggItem(type.get(), backgroundColor, highlightColor, properties) {
+        val desc: Component by lazy { Component.translatable(SPAWN_EGG_DESC, type.get().description) }
+        override fun getDescription(): Component = desc
+        override fun getName(stack: ItemStack): Component = desc
+    }
+
+    override fun <M : MenuType<*>> registerMenu(name: String, factory: Supplier<M>): Entry<M> {
+        return register("MenuType", name, factory::get) { id, it ->
+            BuiltInRegistries.MENU.register(id, it)
+        }
+    }
+
+    override fun <R : Recipe<*>, S : RecipeSerializer<R>> registerRecipe(
+        name: String,
+        type: RecipeType<R>,
+        serializer: Supplier<S>,
+    ): Pair<RecipeType<R>, Entry<S>> {
+        register("RecipeType", name, { type }) { id, it ->
+            BuiltInRegistries.RECIPE_TYPE.register(id, it)
+        }
+        val serializer = register("RecipeSerializer", name, serializer::get) { id, it ->
+            BuiltInRegistries.RECIPE_SERIALIZER.register(id, it)
+        }
+        return type to serializer
+    }
+
+
+    override fun <E : Block> registerBlock(name: String, factory: Supplier<E>): Entry<E> =
+        register("Block", name, factory::get) { id, it ->
+            BuiltInRegistries.BLOCK.register(id, it)
+        }
+
+    @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+    override fun <E : BlockEntity> registerBlockEntity(
+        key: String,
+        builder: Supplier<BlockEntityType.Builder<E>>,
+        dsl: Type<*>?,
+    ): Entry<BlockEntityType<E>> =
+        register("BlockEntity", key, { builder.get().build(dsl) }) { id, it ->
+            BuiltInRegistries.BLOCK_ENTITY_TYPE.register(id, it)
+        }
+
+    override fun <E : Entity> registerEntityType(key: String, type: Supplier<EntityType<E>>): Entry<EntityType<E>> =
+        register("EntityType", key, type::get) { id, it ->
+            BuiltInRegistries.ENTITY_TYPE.register(id, it)
+        }
+
+    override fun <LE : LivingEntity> registerEntityAttribute(
+        entity: Entry<EntityType<LE>>,
+        builder: Supplier<AttributeSupplier.Builder>,
+    ) {
+        whenInitialized {
+            FabricDefaultAttributeRegistry.register(entity.get(), builder.get())
+        }
+    }
+
+    override fun <P : ParticleType<*>> registerParticleType(
+        name: String,
+        factory: Supplier<P>,
+    ): Entry<P> =
+        register("ParticleType", name, factory::get) { id, it ->
+            BuiltInRegistries.PARTICLE_TYPE.register(id, it)
+        }
+
+    override fun <T : Mob> setEntityPlacement(
+        entry: Entry<EntityType<T>>,
+        spawnType: SpawnPlacements.Type,
+        mapType: Heightmap.Types,
+        predicate: SpawnPlacements.SpawnPredicate<T>,
+    ) {
+        whenInitialized {
+            SpawnPlacements.register(entry.get(), spawnType, mapType, predicate)
+        }
+    }
+
+    override fun registerCreativeTab(name: String, builder: Consumer<CreativeModeTab.Builder>): Entry<CreativeModeTab> =
+        register("CreativeModeTab", name, {
+            FabricItemGroup.builder().also(builder::accept).build()
+        }) { id, it ->
+            BuiltInRegistries.CREATIVE_MODE_TAB.register(id, it)
+        }
+    //=================================
+
+    override fun onInitialize() {
+        clog.info("on Fabric Initializing...")
+        CandyCraftCE.init(this) {
+            lateInits!!.forEach { it.run() }
+            lateInits = null
+
+            clog.info("Running `whenInitialized`")
+            lateUsage!!.also {
+                it.forEach(Runnable::run)
+                lateUsage = null
+            }
+        }
+    }
+
+
+}

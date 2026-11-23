@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "M": {
+      "item": "candycraftce:mint"
+    }
+  },
+  "pattern": [
+    "MM ",
+    "MM "
+  ],
+  "result": {
+    "item": "candycraftce:mint_block"
+  },
+  "show_notification": true
+}

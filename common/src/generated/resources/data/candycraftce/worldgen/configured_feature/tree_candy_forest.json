@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:random_selector",
+  "config": {
+    "default": "candycraftce:tree_chocolate_checked",
+    "features": [
+      {
+        "chance": 0.01,
+        "feature": "candycraftce:tree_candied_cherry_checked"
+      },
+      {
+        "chance": 0.04,
+        "feature": "candycraftce:tree_chocolate_fancy_checked"
+      },
+      {
+        "chance": 0.33333334,
+        "feature": "candycraftce:tree_caramel_checked"
+      }
+    ]
+  }
+}

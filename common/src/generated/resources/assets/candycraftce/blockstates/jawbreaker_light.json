@@ -1,0 +1,21 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "candycraftce:block/jawbreaker_light"
+      },
+      {
+        "model": "candycraftce:block/jawbreaker_light",
+        "y": 90
+      },
+      {
+        "model": "candycraftce:block/jawbreaker_light",
+        "y": 180
+      },
+      {
+        "model": "candycraftce:block/jawbreaker_light",
+        "y": 270
+      }
+    ]
+  }
+}

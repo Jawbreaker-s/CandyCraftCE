@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "M": {
+      "item": "candycraftce:chewing_gum"
+    }
+  },
+  "pattern": [
+    "MM ",
+    "MM "
+  ],
+  "result": {
+    "item": "candycraftce:chewing_gum_block"
+  },
+  "show_notification": true
+}

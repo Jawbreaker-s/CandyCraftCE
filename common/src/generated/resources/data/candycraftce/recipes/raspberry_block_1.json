@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "M": {
+      "item": "candycraftce:rope_raspberry"
+    }
+  },
+  "pattern": [
+    "MM ",
+    "MM "
+  ],
+  "result": {
+    "item": "candycraftce:raspberry_block"
+  },
+  "show_notification": true
+}

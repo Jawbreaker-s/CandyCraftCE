@@ -1,8 +1,0 @@
-﻿{
-  "parent": "block/cross",
-  "textures":
-  {
-    "cross": "candycraftmod:block/cotton_candy_bush3"
-  }
-}
-

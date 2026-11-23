@@ -1,0 +1,145 @@
+package cn.jawbreakers.candycraftce.forge.data.providers.tags
+
+import cn.jawbreakers.candycraftce.CandyCraftCE.MOD_ID
+import cn.jawbreakers.candycraftce.registry.CBlockTags
+import cn.jawbreakers.candycraftce.registry.CBlocks
+import cn.jawbreakers.candycraftce.registry.ItemBlockTagkey
+import cn.jawbreakers.candycraftce.utils.registry.Entry
+import net.minecraft.core.HolderLookup
+import net.minecraft.data.CachedOutput
+import net.minecraft.data.PackOutput
+import net.minecraft.data.tags.IntrinsicHolderTagsProvider
+import net.minecraft.tags.BlockTags
+import net.minecraft.tags.TagKey
+import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.Blocks
+import net.minecraftforge.common.data.BlockTagsProvider
+import net.minecraftforge.common.data.ExistingFileHelper
+import java.util.concurrent.CompletableFuture
+import java.util.function.Supplier
+
+class CBlockTagsProvider(
+    output: PackOutput,
+    lookup: CompletableFuture<HolderLookup.Provider>,
+    efHelper: ExistingFileHelper,
+    private val tagsExtra: Map<TagKey<Block>, List<Entry<out Block>>>,
+) : BlockTagsProvider(output, lookup, MOD_ID, efHelper) {
+    override fun addTags(provider: HolderLookup.Provider) {
+        fun tag(biTag: ItemBlockTagkey) = tag(biTag.block)
+        fun <T : IntrinsicTagAppender<Block>> T.addTag(tag: ItemBlockTagkey) = addTag(tag.block)
+        CBlockTags.apply {
+            CBlocks.apply {
+                tag(CBlockTags.marshmallow_planks)
+                    .add(marshmallow_planks.get())
+                    .add(light_marshmallow_planks.get())
+                    .add(dark_marshmallow_log.get())
+
+                tag(candy_soil)
+                    .add(pudding_block.get())
+                    .add(custard_pudding_block.get())
+                    .add(pudding_farmland.get())
+
+
+                tag(seaweed_soil)
+                    .add(sugar_sand.get())
+                    .addTag(candy_soil)
+
+                tag(CBlockTags.ice_cream)
+                    .add(ice_cream.get())
+                    .add(banana_ice_cream.get())
+                    .add(blueberry_ice_cream.get())
+                    .add(chocolate_ice_cream.get())
+                    .add(mint_ice_cream.get())
+                    .add(strawberry_ice_cream.get())
+
+                tag(ice_soil)
+                    .addTag(CBlockTags.ice_cream)
+
+                tag(candy_portal_frame)
+                    .add(sugar_sand.get())
+                    .add(sugar_block.get())
+                    .add(caramel_block.get())
+
+                tag(can_light_portal)
+                    .add(Blocks.LAVA)
+                    .add(CBlocks.caramel.get())
+
+                tag(sweet_grass)
+                    .add(sweet_grass_red.get())
+                    .add(sweet_grass_pale.get())
+                    .add(sweet_grass_pink.get())
+                    .add(sweet_grass_yellow.get())
+                tag(honey_ores)
+                    .add(honey_ore, white_honey_ore)
+                tag(jelly_ores)
+                    .add(jelly_ore, white_jelly_ore)
+                tag(nougat_ores)
+                    .add(nougat_ore, white_nougat_ore)
+                tag(licorice_ores)
+                    .add(licorice_ore, white_licorice_ore)
+                tag(pez_ores)
+                    .add(pez_ore, white_pez_ore)
+                tag(CBlockTags.candy_portal).add(CBlocks.caramel_portal.get())
+
+                tag(candy_animal_spawnable_on)
+                    .add(custard_pudding_block.get())
+                    .add(pudding_block.get())
+
+
+                tag(CBlockTags.marshmallow_logs)
+                    .add(marshmallow_log.get())
+                    .add(light_marshmallow_log.get())
+                    .add(dark_marshmallow_log.get())
+                tag(CBlockTags.chocolate_block)
+                    .add(chocolate_stone.get())
+                    .add(white_chocolate_stone.get())
+
+                tag(BlockTags.LOGS)
+                    .addTag(CBlockTags.marshmallow_logs)
+
+                tag(candy_leaves)
+                    .add(chocolate_leaves.get())
+                    .add(white_chocolate_leaves.get())
+                    .add(candied_cherry_leaves.get())
+                    .add(caramel_leaves.get())
+                    .add(enchant_candy_leaves.get())
+
+                tag(BlockTags.LEAVES)
+                    .addTag(candy_leaves)
+
+                tag(BlockTags.CLIMBABLE)
+                    .add(marshmallow_rope.get())
+                    .add(marshmallow_ladder.get())
+
+                CBlocks.families.forEach { f ->
+                    f.sign?.also {
+                        tag(BlockTags.SIGNS).add(it.get())
+                        tag(BlockTags.STANDING_SIGNS).add(it.get())
+                    }
+                    f.wallSign?.also {
+                        tag(BlockTags.SIGNS).add(it.get())
+                        tag(BlockTags.WALL_SIGNS).add(it.get())
+                    }
+                    f.stairs?.also { tag(BlockTags.STAIRS).add(it.get()) }
+                    f.slab?.also { tag(BlockTags.SLABS).add(it.get()) }
+                    f.wall?.also { tag(BlockTags.WALLS).add(it.get()) }
+                    f.fence?.also { tag(BlockTags.FENCES).add(it.get()) }
+                    f.fenceGate?.also { tag(BlockTags.FENCE_GATES).add(it.get()) }
+                    f.door?.also { tag(BlockTags.DOORS).add(it.get()) }
+                    f.trapdoor?.also { tag(BlockTags.TRAPDOORS).add(it.get()) }
+                }
+                tagsExtra.forEach { (tagKey, entries) ->
+                    tag(tagKey).add(*entries.toTypedArray())
+                }
+            }
+        }
+    }
+
+    override fun run(output: CachedOutput): CompletableFuture<*> {
+        return super.run(output)
+    }
+}
+
+fun <T : Any> IntrinsicHolderTagsProvider.IntrinsicTagAppender<T>.add(vararg entry: Supplier<out T>) = apply {
+    entry.forEach { add(it.get()) }
+}

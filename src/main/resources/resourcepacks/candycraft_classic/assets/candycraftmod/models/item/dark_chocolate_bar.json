@@ -1,7 +1,0 @@
-﻿{
-    "parent": "item/generated",
-    "textures": {
-        "layer0": "candycraftmod:item/chocolate_bar_dark"
-	}
-}
-

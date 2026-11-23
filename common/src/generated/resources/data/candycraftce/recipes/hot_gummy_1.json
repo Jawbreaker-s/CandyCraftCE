@@ -1,0 +1,10 @@
+{
+  "type": "candycraftce:sugar_furnace",
+  "exp": 0.7,
+  "ingredient": {
+    "item": "candycraftce:gummy"
+  },
+  "result": {
+    "item": "candycraftce:hot_gummy"
+  }
+}

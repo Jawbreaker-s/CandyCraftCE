@@ -1,0 +1,9 @@
+{
+  "type": "candycraftce:sugar_factory",
+  "ingredient": {
+    "item": "candycraftce:sugar_glass_diamond"
+  },
+  "result": {
+    "item": "candycraftce:sugar_glass"
+  }
+}

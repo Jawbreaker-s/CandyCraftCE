@@ -34,108 +34,108 @@ import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = CandyCraft.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class CCEntityAttributes {
-    private CCEntityAttributes() {
-    }
+	private CCEntityAttributes() {
+	}
 
-    @SubscribeEvent
-    public static void register(EntityAttributeCreationEvent event) {
-        event.put(CCEntityTypes.CANDY_PIG.get(), Pig.createAttributes().build());
-        event.put(CCEntityTypes.WAFFLE_SHEEP.get(), Mob.createMobAttributes()
-            .add(Attributes.MAX_HEALTH, 10.0D)
-            .add(Attributes.MOVEMENT_SPEED, 0.23000000417232513D)
-            .build());
-        event.put(CCEntityTypes.CANDY_WOLF.get(), Wolf.createAttributes()
-            .add(Attributes.MAX_HEALTH, 10.0D)
-            .add(Attributes.ATTACK_DAMAGE, 2.0D)
-            .build());
-        event.put(CCEntityTypes.GUMMY_BUNNY.get(), GummyBunnyEntity.createAttributes().build());
-        event.put(CCEntityTypes.COTTON_CANDY_SHEEP.get(), CottonCandySheepEntity.createAttributes().build());
-        event.put(CCEntityTypes.EASTER_CHICKEN.get(), EasterChickenEntity.createAttributes().build());
-        event.put(CCEntityTypes.GUMMY_MOUSE.get(), GummyMouseEntity.createAttributes().build());
-        event.put(CCEntityTypes.GUMMY_BEAR.get(), GummyBearEntity.createAttributes().build());
-        event.put(CCEntityTypes.CANDY_FISH.get(), CandyFishEntity.createAttributes().build());
-        event.put(CCEntityTypes.PINGOUIN.get(), PingouinEntity.createAttributes().build());
-        event.put(CCEntityTypes.CANDY_CREEPER.get(), Creeper.createAttributes()
-            .add(Attributes.MAX_HEALTH, 5.0D)
-            .add(Attributes.MOVEMENT_SPEED, 0.3D)
-            .build());
-        event.put(CCEntityTypes.COTTON_CANDY_SPIDER.get(), Spider.createAttributes()
-            .add(Attributes.MAX_HEALTH, 24.0D)
-            .add(Attributes.MOVEMENT_SPEED, 0.3D)
-            .build());
-        event.put(CCEntityTypes.GINGERBREAD_MAN.get(), Villager.createAttributes()
-            .add(Attributes.MAX_HEALTH, 20.0D)
-            .add(Attributes.MOVEMENT_SPEED, 0.33D)
-            .build());
+	@SubscribeEvent
+	public static void register(EntityAttributeCreationEvent event) {
+//        event.put(CCEntityTypes.CANDY_PIG.get(), Pig.createAttributes().build());
+		event.put(CCEntityTypes.WAFFLE_SHEEP.get(), Mob.createMobAttributes()
+				.add(Attributes.MAX_HEALTH, 10.0D)
+				.add(Attributes.MOVEMENT_SPEED, 0.23000000417232513D)
+				.build());
+		event.put(CCEntityTypes.CANDY_WOLF.get(), Wolf.createAttributes()
+				.add(Attributes.MAX_HEALTH, 10.0D)
+				.add(Attributes.ATTACK_DAMAGE, 2.0D)
+				.build());
+		event.put(CCEntityTypes.GUMMY_BUNNY.get(), GummyBunnyEntity.createAttributes().build());
+		event.put(CCEntityTypes.COTTON_CANDY_SHEEP.get(), CottonCandySheepEntity.createAttributes().build());
+		event.put(CCEntityTypes.EASTER_CHICKEN.get(), EasterChickenEntity.createAttributes().build());
+		event.put(CCEntityTypes.GUMMY_MOUSE.get(), GummyMouseEntity.createAttributes().build());
+		event.put(CCEntityTypes.GUMMY_BEAR.get(), GummyBearEntity.createAttributes().build());
+		event.put(CCEntityTypes.CANDY_FISH.get(), CandyFishEntity.createAttributes().build());
+		event.put(CCEntityTypes.PINGOUIN.get(), PingouinEntity.createAttributes().build());
+		event.put(CCEntityTypes.CANDY_CREEPER.get(), Creeper.createAttributes()
+				.add(Attributes.MAX_HEALTH, 5.0D)
+				.add(Attributes.MOVEMENT_SPEED, 0.3D)
+				.build());
+		event.put(CCEntityTypes.COTTON_CANDY_SPIDER.get(), Spider.createAttributes()
+				.add(Attributes.MAX_HEALTH, 24.0D)
+				.add(Attributes.MOVEMENT_SPEED, 0.3D)
+				.build());
+		event.put(CCEntityTypes.GINGERBREAD_MAN.get(), Villager.createAttributes()
+				.add(Attributes.MAX_HEALTH, 20.0D)
+				.add(Attributes.MOVEMENT_SPEED, 0.33D)
+				.build());
 
-        AttributeSupplier suguard = BasicCandyZombieEntity.createAttributes().build();
-        event.put(CCEntityTypes.SUGUARD.get(), suguard);
+		AttributeSupplier suguard = BasicCandyZombieEntity.createAttributes().build();
+		event.put(CCEntityTypes.SUGUARD.get(), suguard);
 
-        AttributeSupplier mageSuguard = BasicCandyZombieEntity.createAttributes()
-            .add(Attributes.ATTACK_DAMAGE, 4.0D)
-            .build();
-        event.put(CCEntityTypes.MAGE_SUGUARD.get(), mageSuguard);
+		AttributeSupplier mageSuguard = BasicCandyZombieEntity.createAttributes()
+				.add(Attributes.ATTACK_DAMAGE, 4.0D)
+				.build();
+		event.put(CCEntityTypes.MAGE_SUGUARD.get(), mageSuguard);
 
-        AttributeSupplier mermaid = Monster.createMonsterAttributes()
-            .add(Attributes.MAX_HEALTH, 30.0D)
-            .add(Attributes.MOVEMENT_SPEED, 0.0D)
-            .build();
-        event.put(CCEntityTypes.MERMAID.get(), mermaid);
-        event.put(CCEntityTypes.NESSIE.get(), NessieEntity.createAttributes().build());
-        event.put(CCEntityTypes.DRAGON.get(), Monster.createMonsterAttributes()
-            .add(Attributes.MAX_HEALTH, 80.0D)
-            .add(Attributes.MOVEMENT_SPEED, 0.4D)
-            .add(Attributes.ATTACK_DAMAGE, 6.0D)
-            .build());
-        event.put(CCEntityTypes.KING_BEETLE.get(), Monster.createMonsterAttributes()
-            .add(Attributes.MAX_HEALTH, 80.0D)
-            .add(Attributes.MOVEMENT_SPEED, 0.3D)
-            .add(Attributes.ATTACK_DAMAGE, 8.0D)
-            .build());
+		AttributeSupplier mermaid = Monster.createMonsterAttributes()
+				.add(Attributes.MAX_HEALTH, 30.0D)
+				.add(Attributes.MOVEMENT_SPEED, 0.0D)
+				.build();
+		event.put(CCEntityTypes.MERMAID.get(), mermaid);
+		event.put(CCEntityTypes.NESSIE.get(), NessieEntity.createAttributes().build());
+		event.put(CCEntityTypes.DRAGON.get(), Monster.createMonsterAttributes()
+				.add(Attributes.MAX_HEALTH, 80.0D)
+				.add(Attributes.MOVEMENT_SPEED, 0.4D)
+				.add(Attributes.ATTACK_DAMAGE, 6.0D)
+				.build());
+		event.put(CCEntityTypes.KING_BEETLE.get(), Monster.createMonsterAttributes()
+				.add(Attributes.MAX_HEALTH, 80.0D)
+				.add(Attributes.MOVEMENT_SPEED, 0.3D)
+				.add(Attributes.ATTACK_DAMAGE, 8.0D)
+				.build());
 
-        AttributeSupplier slime = Mob.createMobAttributes()
-            .add(Attributes.MAX_HEALTH, 16.0D)
-            .add(Attributes.MOVEMENT_SPEED, 0.35D)
-            .add(Attributes.FOLLOW_RANGE, 16.0D)
-            .add(Attributes.ATTACK_DAMAGE, 4.0D)
-            .build();
-        putSlime(event, slime);
+		AttributeSupplier slime = Mob.createMobAttributes()
+				.add(Attributes.MAX_HEALTH, 16.0D)
+				.add(Attributes.MOVEMENT_SPEED, 0.35D)
+				.add(Attributes.FOLLOW_RANGE, 16.0D)
+				.add(Attributes.ATTACK_DAMAGE, 4.0D)
+				.build();
+		putSlime(event, slime);
 
-        event.put(CCEntityTypes.CARAMEL_BEE.get(), CaramelBeeEntity.createAttributes().build());
-        event.put(CCEntityTypes.BEETLE.get(), Monster.createMonsterAttributes()
-            .add(Attributes.MAX_HEALTH, 25.0D)
-            .add(Attributes.MOVEMENT_SPEED, 1.2D)
-            .add(Attributes.ATTACK_DAMAGE, 3.0D)
-            .build());
-        event.put(CCEntityTypes.BOSS_BEETLE.get(), Monster.createMonsterAttributes()
-            .add(Attributes.MAX_HEALTH, 300.0D)
-            .add(Attributes.MOVEMENT_SPEED, 0.35D)
-            .add(Attributes.ATTACK_DAMAGE, 10.0D)
-            .build());
-        event.put(CCEntityTypes.BOSS_SUGUARD.get(), Monster.createMonsterAttributes()
-            .add(Attributes.MAX_HEALTH, 400.0D)
-            .add(Attributes.MOVEMENT_SPEED, 0.35D)
-            .add(Attributes.ATTACK_DAMAGE, 12.0D)
-            .build());
-        event.put(CCEntityTypes.JELLY_QUEEN.get(), Mob.createMobAttributes()
-            .add(Attributes.MAX_HEALTH, 300.0D)
-            .add(Attributes.MOVEMENT_SPEED, 0.7D)
-            .add(Attributes.FOLLOW_RANGE, 32.0D)
-            .add(Attributes.ATTACK_DAMAGE, 8.0D)
-            .build());
-        event.put(CCEntityTypes.KING_SLIME.get(), Mob.createMobAttributes()
-            .add(Attributes.MAX_HEALTH, 800.0D)
-            .add(Attributes.MOVEMENT_SPEED, 0.35D)
-            .add(Attributes.FOLLOW_RANGE, 32.0D)
-            .add(Attributes.ATTACK_DAMAGE, 12.0D)
-            .build());
-        event.put(CCEntityTypes.NOUGAT_GOLEM.get(), NougatGolemEntity.createAttributes().build());
-    }
+		event.put(CCEntityTypes.CARAMEL_BEE.get(), CaramelBeeEntity.createAttributes().build());
+		event.put(CCEntityTypes.BEETLE.get(), Monster.createMonsterAttributes()
+				.add(Attributes.MAX_HEALTH, 25.0D)
+				.add(Attributes.MOVEMENT_SPEED, 1.2D)
+				.add(Attributes.ATTACK_DAMAGE, 3.0D)
+				.build());
+		event.put(CCEntityTypes.BOSS_BEETLE.get(), Monster.createMonsterAttributes()
+				.add(Attributes.MAX_HEALTH, 300.0D)
+				.add(Attributes.MOVEMENT_SPEED, 0.35D)
+				.add(Attributes.ATTACK_DAMAGE, 10.0D)
+				.build());
+		event.put(CCEntityTypes.BOSS_SUGUARD.get(), Monster.createMonsterAttributes()
+				.add(Attributes.MAX_HEALTH, 400.0D)
+				.add(Attributes.MOVEMENT_SPEED, 0.35D)
+				.add(Attributes.ATTACK_DAMAGE, 12.0D)
+				.build());
+		event.put(CCEntityTypes.JELLY_QUEEN.get(), Mob.createMobAttributes()
+				.add(Attributes.MAX_HEALTH, 300.0D)
+				.add(Attributes.MOVEMENT_SPEED, 0.7D)
+				.add(Attributes.FOLLOW_RANGE, 32.0D)
+				.add(Attributes.ATTACK_DAMAGE, 8.0D)
+				.build());
+		event.put(CCEntityTypes.KING_SLIME.get(), Mob.createMobAttributes()
+				.add(Attributes.MAX_HEALTH, 800.0D)
+				.add(Attributes.MOVEMENT_SPEED, 0.35D)
+				.add(Attributes.FOLLOW_RANGE, 32.0D)
+				.add(Attributes.ATTACK_DAMAGE, 12.0D)
+				.build());
+		event.put(CCEntityTypes.NOUGAT_GOLEM.get(), NougatGolemEntity.createAttributes().build());
+	}
 
-    private static void putSlime(EntityAttributeCreationEvent event, AttributeSupplier attributes) {
-        event.put(CCEntityTypes.YELLOW_JELLY.get(), attributes);
-        event.put(CCEntityTypes.RED_JELLY.get(), attributes);
-        event.put(CCEntityTypes.TORNADO_JELLY.get(), attributes);
-        event.put(CCEntityTypes.PEZ_JELLY.get(), attributes);
-    }
+	private static void putSlime(EntityAttributeCreationEvent event, AttributeSupplier attributes) {
+		event.put(CCEntityTypes.YELLOW_JELLY.get(), attributes);
+		event.put(CCEntityTypes.RED_JELLY.get(), attributes);
+		event.put(CCEntityTypes.TORNADO_JELLY.get(), attributes);
+		event.put(CCEntityTypes.PEZ_JELLY.get(), attributes);
+	}
 }

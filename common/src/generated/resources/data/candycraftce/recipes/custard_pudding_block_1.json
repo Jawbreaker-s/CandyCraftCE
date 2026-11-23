@@ -1,0 +1,10 @@
+{
+  "type": "candycraftce:sugar_furnace",
+  "exp": 0.7,
+  "ingredient": {
+    "item": "candycraftce:pudding_block"
+  },
+  "result": {
+    "item": "candycraftce:custard_pudding_block"
+  }
+}

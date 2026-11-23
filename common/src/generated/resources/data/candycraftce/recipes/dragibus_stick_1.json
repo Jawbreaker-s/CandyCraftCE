@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "/": {
+      "item": "minecraft:fishing_rod"
+    },
+    "D": {
+      "item": "candycraftce:dragibus"
+    }
+  },
+  "pattern": [
+    "/ ",
+    " D"
+  ],
+  "result": {
+    "item": "candycraftce:dragibus_stick"
+  },
+  "show_notification": true
+}

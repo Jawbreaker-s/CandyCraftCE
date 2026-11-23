@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "M": {
+      "item": "candycraftce:pez"
+    },
+    "S": {
+      "item": "candycraftce:marshmallow_stick"
+    }
+  },
+  "pattern": [
+    "MM",
+    "MS",
+    " S"
+  ],
+  "result": {
+    "item": "candycraftce:pez_axe"
+  },
+  "show_notification": true
+}

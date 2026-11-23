@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "#": {
+      "item": "candycraftce:caramel_glass"
+    },
+    "*": {
+      "item": "candycraftce:licorice"
+    }
+  },
+  "pattern": [
+    "###",
+    "#*#",
+    "###"
+  ],
+  "result": {
+    "count": 8,
+    "item": "candycraftce:dark_caramel_glass"
+  },
+  "show_notification": true
+}

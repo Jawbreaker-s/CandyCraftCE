@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "M": {
+      "item": "candycraftce:licorice"
+    },
+    "S": {
+      "item": "candycraftce:marshmallow_stick"
+    }
+  },
+  "pattern": [
+    "MMM",
+    " S ",
+    " S "
+  ],
+  "result": {
+    "item": "candycraftce:licorice_pickaxe"
+  },
+  "show_notification": true
+}

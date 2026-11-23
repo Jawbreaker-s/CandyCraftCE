@@ -1,0 +1,7 @@
+{
+  "parent": "candycraftce:block/placed_cutable_jelly_cut_1_template",
+  "textures": {
+    "inner": "candycraftce:block/placed_jelly/strawberry_jelly_block_inner",
+    "outer": "candycraftce:block/placed_jelly/strawberry_jelly_block"
+  }
+}

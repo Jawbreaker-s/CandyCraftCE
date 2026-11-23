@@ -1,6 +1,0 @@
-{
-    "parent": "block/crop",
-    "textures": {
-        "crop": "candycraftmod:block/lollipop_stem.0"
-    }
-}

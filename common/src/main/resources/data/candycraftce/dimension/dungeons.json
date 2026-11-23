@@ -1,0 +1,18 @@
+{
+  "type": "candycraftce:dungeons_type",
+  "generator": {
+    "type": "minecraft:flat",
+    "settings": {
+      "biome": "candycraftce:dungeon",
+      "features": false,
+      "lakes": false,
+      "layers": [
+        {
+          "block": "candycraftce:jawbreaker_block",
+          "height": 1
+        }
+      ],
+      "structure_overrides": []
+    }
+  }
+}

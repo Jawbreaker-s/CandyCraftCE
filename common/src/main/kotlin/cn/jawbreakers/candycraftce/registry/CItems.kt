@@ -1,0 +1,422 @@
+package cn.jawbreakers.candycraftce.registry
+
+import cn.breadnicecat.candycraftce.core.item.items.debugger.MarshmallowDebuggerItem
+import cn.jawbreakers.candycraftce.entity.gummy.BasicGummyBall
+import cn.jawbreakers.candycraftce.entity.gummy.BeetleGummyBall
+import cn.jawbreakers.candycraftce.entity.gummy.FireGummyBall
+import cn.jawbreakers.candycraftce.fluid.CFluidReferences
+import cn.jawbreakers.candycraftce.item.*
+import cn.jawbreakers.candycraftce.misc.CArmorMaterials
+import cn.jawbreakers.candycraftce.misc.CItemTiers
+import cn.jawbreakers.candycraftce.registry.CTabs.addItem
+import cn.jawbreakers.candycraftce.registry.CTabs.blocks
+import cn.jawbreakers.candycraftce.registry.CTabs.misc
+import cn.jawbreakers.candycraftce.registry.CTabs.toolsArmors
+import cn.jawbreakers.candycraftce.utils.CLogUtils
+import cn.jawbreakers.candycraftce.utils.CMixins.buildProperties
+import cn.jawbreakers.candycraftce.utils.CPlatformUtils
+import cn.jawbreakers.candycraftce.utils.CPlatformUtils.ifClient
+import cn.jawbreakers.candycraftce.utils.CUtils.instance
+import cn.jawbreakers.candycraftce.utils.EntrySet
+import cn.jawbreakers.candycraftce.utils.registry.Entry
+import net.minecraft.core.Direction
+import net.minecraft.world.effect.MobEffectInstance
+import net.minecraft.world.effect.MobEffects
+import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.Mob
+import net.minecraft.world.food.FoodProperties
+import net.minecraft.world.item.*
+import net.minecraft.world.item.Item.Properties
+import net.minecraft.world.level.ItemLike
+import net.minecraft.world.level.block.Block
+import java.util.function.Supplier
+
+
+object CItems {
+    init {
+        CLogUtils.sign()
+    }
+
+    private val items: MutableMap<String, Entry<out Item>> = mutableMapOf()
+
+    private var contextTab: Entry<CreativeModeTab>? = misc
+
+    val dynamite = register("dynamite") { DynamiteItem(Properties(), false) }
+    val glue_dynamite = register("glue_dynamite") { DynamiteItem(Properties(), true) }
+
+    val cranberry_emblem = registerEmblem("cranberry_emblem", 0)
+    val gingerbread_emblem = registerEmblem("gingerbread_emblem", 1)
+    val honey_emblem = registerEmblem("honey_emblem", 2)
+    val sky_emblem = registerEmblem("sky_emblem", 3)
+    val nessie_emblem = registerEmblem("nessie_emblem", 4)
+    val chewing_gum_emblem = registerEmblem("chewing_gum_emblem", 5)
+    val jelly_emblem = registerEmblem("jelly_emblem", 6)
+    val suguard_emblem = registerEmblem("suguard_emblem", 7)
+
+    //todo SoundEvent需要测试
+    val record_1 = register("record_1") //,CCSoundEvents.RECORD_CD_1, 6330);
+    val record_2 = register("record_2") //,CCSoundEvents.RECORD_CD_2, 1961);
+    val record_3 = register("record_3") //,CCSoundEvents.RECORD_CD_3, 2259);
+    val record_4 = register("record_4") //,CCSoundEvents.RECORD_CD_4, 5911);
+
+    val jelly_dungeon_key = register("jelly_dungeon_key", Properties().stacksTo(1).rarity(Rarity.EPIC))
+    val beetle_dungeon_key = register("beetle_dungeon_key", Properties().stacksTo(1).rarity(Rarity.EPIC))
+    val sky_dungeon_key = register("sky_dungeon_key", Properties().stacksTo(1).rarity(Rarity.EPIC))
+    val suguard_dungeon_key = register("suguard_dungeon_key", Properties().stacksTo(1).rarity(Rarity.EPIC))
+
+    val jelly_sentry_key = register("jelly_sentry_key", Properties().rarity(Rarity.RARE))
+    val jelly_boss_key = register("jelly_boss_key", Properties().rarity(Rarity.RARE))
+    val suguard_sentry_key = register("suguard_sentry_key", Properties().rarity(Rarity.RARE))
+    val suguard_boss_key = register("suguard_boss_key", Properties().rarity(Rarity.RARE))
+
+    val candy_cane = registerFood("candy_cane", 4, 0.6F)
+
+    val caramel_bucket = registerBucketItem("caramel_bucket", CFluids.caramel)
+    val grenadine_bucket = registerBucketItem("grenadine_bucket", CFluids.grenadine)
+
+    val waffle = registerFood("waffle", 10, 0.6F)
+    val cotton_candy = registerFood("cotton_candy", 4, 0.5F)
+    val lollipop = registerFood("lollipop", 1, 0.6f)
+    val cranberry_fish = register(
+        "cranberry_fish",
+        Properties().food(2, 0.6F, true, MobEffects.WATER_BREATHING.instance(30) to 0.9F)
+    )
+    val cranberry_fish_cooked = register(
+        "cranberry_fish_cooked",
+        Properties().food(6, 0.6F, true, MobEffects.WATER_BREATHING.instance(60) to 0.9F)
+    )
+
+    val gummy = register("gummy", Properties().food(4, 0.6F, true, MobEffects.CONFUSION.instance(30) to 0.9f))
+
+    val hot_gummy = register(
+        "hot_gummy",
+        Properties().food(7, 0.6f, true, MobEffects.JUMP.instance(60, 1) to 0.9f)
+    )
+    val gummy_ball = register("gummy_ball") {
+        GummyBallItem(Properties().stacksTo(16), ::BasicGummyBall)
+    }
+    val gummy_ball_gum = register("gummy_ball_gum") {
+        GummyBallItem(Properties().stacksTo(16), ::BeetleGummyBall)
+    }
+    val gummy_ball_hot_gum = register("gummy_ball_hot_gum") {
+        GummyBallItem(Properties().stacksTo(16), ::FireGummyBall)
+    }
+
+    val lemon_jelly_ball = register("lemon_jelly_ball")
+    val raspberry_jelly_ball = register("raspberry_jelly_ball")
+    val mint_jelly_ball = register("mint_jelly_ball")
+    val pez_jelly_ball = register("pez_jelly_ball")
+    val caramel_king_jelly_ball = register("caramel_king_jelly_ball")
+    val strawberry_queen_jelly_ball = register("strawberry_queen_jelly_ball")
+
+    val lemon_jelly = register("lemon_jelly") {
+        ItemNameBlockItem(CBlocks.lemon_jelly_block.get(), Properties().food(7, 0.4f))
+    }
+    val raspberry_jelly = register("raspberry_jelly") {
+        ItemNameBlockItem(CBlocks.raspberry_jelly_block.get(), Properties().food(7, 0.4f))
+    }
+    val mint_jelly = register("mint_jelly") {
+        ItemNameBlockItem(CBlocks.mint_jelly_block.get(), Properties().food(7, 0.4f))
+    }
+    val caramel_jelly = register("caramel_jelly") {
+        ItemNameBlockItem(CBlocks.caramel_jelly_block.get(), Properties())
+    }
+    val strawberry_jelly = register("strawberry_jelly") {
+        ItemNameBlockItem(CBlocks.strawberry_jelly_block.get(), Properties())
+    }
+    val royal_rations = register("royal_rations") {
+        ItemNameBlockItem(CBlocks.royal_rations_block.get(), Properties())
+    }
+
+    val caramel_jelly_slice = registerFood("caramel_jelly_slice", 12, 0.6F)
+    val strawberry_jelly_slice = registerFood("strawberry_jelly_slice", 12, 0.6F)
+    val royal_rations_slice = registerFood("royal_rations_slice", 20, 0.5F)
+
+    val nougat_powder = register("nougat_powder") {
+        NougatPowderItem(Properties().food(3, 0.6f, true))
+    }
+    val pez_dust = register("pez_dust")
+    val chocolate_coin = registerFood("chocolate_coin", 2, 0.6F)
+    val pez = register(
+        "pez",
+        Properties().food(10, 0.6f, true, MobEffects.DAMAGE_RESISTANCE.instance(60) to 0.9f)
+    )
+    val licorice = registerFood("licorice", 6, 0.6F)
+    val honey_shard = register("honey_shard")
+    val chewing_gum = registerFood("chewing_gum", 1, 0.1F)
+    val sugar_pill = register("sugar_pill") { SugarPillItem(Properties().food(0, 0f, true)) }
+    val marshmallow_stick = register("marshmallow_stick")
+    val waffle_nugget = registerFood("waffle_nugget", 1, 0.6F)
+    val honeycomb = register("honeycomb")
+    val cranberry_scale = register("cranberry_scale")
+    val candied_cherry = register("candied_cherry") { CandiedCherryItem(Properties().food(3, 0.6F)) }
+    val sugar_crystal = register("sugar_crystal", Properties().rarity(Rarity.RARE))
+
+    val white_chocolate_leaf = register("white_chocolate_leaf")
+    val magical_leaf = register("magical_leaf")
+    val chocolate_leaf = register("chocolate_leaf")
+    val caramel_leaf = register("caramel_leaf")
+    val candied_cherry_leaf = register("candied_cherry_leaf")
+    val caramel_chocolate_brick = register("caramel_brick")
+    val chocolate_brick = register("chocolate_brick")
+    val white_chocolate_brick = register("white_chocolate_brick")
+
+    val lollipop_stem = register("lollipop_stem") { BlockItem(CBlocks.lollipop_stem.get(), Properties()) }
+    val lollipop_seeds = register("lollipop_seeds") { ItemNameBlockItem(CBlocks.lollipop_stem.get(), Properties()) }
+    val dragibus: Entry<ItemNameBlockItem> =
+        register("dragibus") { ItemNameBlockItem(CBlocks.dragibus_crops.get(), Properties().food(1, 0.3f)) }
+
+    val spawn_eggs: Map<Entry<EntityType<out Mob>>, Entry<out SpawnEggItem>>
+
+    init {
+        spawn_eggs = CEntityTypes.eggs.mapValues { (entity, color) ->
+            registerSpawnEgg(entity, color.firstInt(), color.secondInt())
+        }
+    }
+
+    //==========Blocks===========
+    init {
+        contextTab = null
+    }
+
+    val marshmallow_flower = register("marshmallow_flower")
+    val honey_torch = register("honey_torch") {
+        StandingAndWallBlockItem(
+            CBlocks.honey_torch.get(),
+            CBlocks.honey_wall_torch.get(),
+            Properties(),
+            Direction.DOWN
+        )
+    }
+
+    init {
+        contextTab = blocks
+        val signs = CBlocks.families.stream()
+            .filter { it.sign != null }
+            .toList()
+            .associate { it.sign!! to it.wallSign!! }
+
+        val skips = buildSet {
+            addAll(signs.values)
+        }
+        CBlocks.withItem().forEach {
+            //pre
+            if (it == CBlocks.mint_family.door) {
+                blocks.addItem { honey_torch.defaultInstance }
+            }
+            when (it) {
+                in signs -> registerBlock(it) { _ -> SignItem(Properties().stacksTo(16), it.get(), signs[it]!!.get()) }
+                in skips -> {}
+                else -> registerBlock(it)
+            }
+            //post
+            if (it == CBlocks.marshmallow_slice_flower) {
+                blocks.addItem { marshmallow_flower.defaultInstance }
+            }
+        }
+    }
+
+
+    init {
+        contextTab = toolsArmors
+    }
+
+    val dragibus_stick = register("dragibus_stick") { DragibusStickItem(Properties().stacksTo(1).durability(25)) }
+    val honey_arrow = register("honey_arrow") { HoneyArrowItem(Properties()) }
+
+    //    val honey_bolt = register("honey_bolt") { HoneyBoltItem(Properties()) }
+    val caramel_bow = register("caramel_bow") { CaramelBowItem(Properties().durability(384)) }
+    val caramel_crossbow = register("caramel_crossbow") { CaramelCrossbowItem(Properties().durability(465)) }
+
+    //todo wand entity
+    val jelly_wand = register("jelly_wand")// { JellyWandItem(Properties().stacksTo(1)) }
+    val jump_wand = register("jump_wand") { JumpWandItem(Properties().stacksTo(1)) }
+
+    //TODO FUCK THE FORK!
+    val fork = register("fork") {
+        ForkItem(CItemTiers.MARSHMALLOW, 4.5f, -2.9f, Properties().durability(326))
+    }
+    val marshmallow_tools = registerToolSet("marshmallow", CItemTiers.MARSHMALLOW)
+    val licorice_short_sword = register("licorice_short_sword") {
+        SwordItem(CItemTiers.LICORICE, 2, -2.2F, Properties())
+    }
+    val licorice_tools = registerToolSet("licorice", CItemTiers.LICORICE)
+    val honey_tools = registerToolSet("honey", CItemTiers.HONEY)
+    val pez_tools = registerToolSet("pez", CItemTiers.PEZ)
+
+    val honey_armors = registerArmorSet("honey", CArmorMaterials.HONEY)
+    val licorice_armors = registerArmorSet("licorice", CArmorMaterials.LICORICE)
+    val pez_armors = registerArmorSet("pez", CArmorMaterials.PEZ)
+    val jelly_boots = register("jelly_boots") {
+        ArmorItem(CArmorMaterials.JELLY_BOOTS, ArmorItem.Type.BOOTS, Properties())
+    }
+    val jelly_crown = register("jelly_crown") {
+        ArmorItem(CArmorMaterials.JELLY_CROWN, ArmorItem.Type.HELMET, Properties().rarity(Rarity.RARE))
+    }
+    val water_mask = register("water_mask") {
+        ArmorItem(CArmorMaterials.WATER_MASK, ArmorItem.Type.HELMET, Properties())
+    }
+
+    init {
+        contextTab = null
+    }
+
+    val marshmallow_debugger = register("marshmallow_debugger") {
+        MarshmallowDebuggerItem(Properties().stacksTo(1).rarity(Rarity.EPIC))
+    }
+
+    init {
+        ifClient {
+            fun isUsing(stack: ItemStack, entity: LivingEntity?): Boolean {
+                return entity != null && entity.isUsingItem && entity.getUseItem() == stack
+            }
+
+            fun usingTicks(stack: ItemStack, entity: LivingEntity?): Int =
+                if (entity == null) 0 else stack.useDuration - entity.useItemRemainingTicks
+            caramel_bow.buildProperties {
+                "pull" by { stack, level, entity, seed ->
+                    when {
+                        !isUsing(stack, entity) -> 0.0f
+                        else -> (usingTicks(stack, entity)) / 20.0f
+                    }
+                }
+                "pulling" by { stack, level, entity, seed ->
+                    if (isUsing(stack, entity)) 1.0f else 0.0f
+                }
+            }
+            caramel_crossbow.buildProperties {
+                "pull" by { stack, level, entity, seed ->
+                    when {
+                        !isUsing(stack, entity) -> 0.0f
+                        else -> (usingTicks(stack, entity)) / 20f
+                    }
+                }
+                "pulling" by { stack, level, entity, seed ->
+                    if (isUsing(stack, entity)) 1.0f else 0.0f
+                }
+                "charged" by { stack, level, entity, seed ->
+                    if (CrossbowItem.isCharged(stack)) 1.0f else 0.0f
+                }
+            }
+            listOf(dynamite, glue_dynamite).buildProperties {
+                "stage" by { stack, level, entity, seed ->
+                    DynamiteItem.modelStage(stack, entity)
+                }
+            }
+        }
+    }
+
+    //=====================================
+
+    private fun register(name: String, properties: Properties = Properties()): Entry<Item> {
+        return register(name) { Item(properties) }
+    }
+
+    private fun registerBlock(entry: Entry<out Block>, properties: Properties = Properties()): Entry<BlockItem> {
+        return registerBlock(entry) { b -> BlockItem(b.get(), properties) }
+    }
+
+    private fun <B : Block, I : BlockItem> registerBlock(entry: Entry<B>, factory: (Entry<B>) -> I): Entry<I> {
+        return register(entry.id.path) { factory(entry) }
+    }
+
+    private fun registerSpawnEgg(
+        entity: Entry<EntityType<out Mob>>,
+        backgroundColor: Int,
+        highlightColor: Int,
+        name: String = "${entity.id.path}_spawn_egg",
+        properties: Properties = Properties(),
+    ): Entry<SpawnEggItem> {
+        return register(name) {
+            CPlatformUtils.createSpawnEggItem(entity, backgroundColor, highlightColor, properties)
+        }
+    }
+
+    private fun registerBucketItem(
+        name: String,
+        fluid: CFluidReferences,
+        properties: Properties = Properties().craftRemainder(Items.BUCKET).stacksTo(1),
+    ): Entry<BucketItem> = register(name) {
+        CPlatformUtils.fluids.createBucketItem(fluid, properties)
+    }
+
+    private fun registerFood(name: String, nutrition: Int, saturation: Float) =
+        register(name, Properties().food(nutrition, saturation))
+
+
+    private fun <I : Item> register(name: String, factory: Supplier<I>): Entry<I> {
+        val item = CPlatformUtils.registerItem(name, factory)
+        contextTab?.addItem { item.defaultInstance }
+
+        items[name] = item
+        return item
+    }
+
+    private fun registerEmblem(name: String, ord: Int) = register(name) { EmblemItem(Properties().stacksTo(1), ord) }
+//    private fun registerRecords(name: String, analog: Int, sound: SoundEvent, time: Int) =
+//        register(name) { RecordItem(analog, sound, Properties().stacksTo(1).rarity(Rarity.RARE), time) }
+
+    private fun Properties.food(
+        nutrition: Int, saturation: Float, alwaysEat: Boolean = false,
+        vararg effects: Pair<MobEffectInstance, Float>,
+    ): Properties {
+        val builder = FoodProperties.Builder()
+            .nutrition(nutrition)
+            .saturationMod(saturation)
+            .apply {
+                effects.forEach { (effect, chance) -> effect(effect, chance) }
+            }
+        if (alwaysEat) {
+            builder.alwaysEat()
+        }
+        return this.food(builder.build())
+    }
+
+    val Entry<out Item>.defaultInstance: ItemStack get() = value.defaultInstance
+    fun Entry<out ItemLike>.asItem(): Item = get().asItem()
+
+    private fun registerToolSet(name: String, tier: Tier): ToolSet {
+        return ToolSet(
+            register(name + "_sword") { SwordItem(tier, 3, -2.4F, Properties()) },
+            register(name + "_shovel") { ShovelItem(tier, 1.5F, -3.0F, Properties()) },
+            register(name + "_pickaxe") { PickaxeItem(tier, 1, -2.8F, Properties()) },
+            register(name + "_axe") { AxeItem(tier, 5.0F, -3.1F, Properties()) },
+            register(name + "_hoe") { HoeItem(tier, -2, -1.0F, Properties()) },
+        ).also {
+            toolsArmors
+        }
+    }
+
+    private fun registerArmorSet(name: String, material: ArmorMaterial): ArmorSet {
+        return ArmorSet(
+            register(name + "_helmet") { ArmorItem(material, ArmorItem.Type.HELMET, Properties()) },
+            register(name + "_chestplate") { ArmorItem(material, ArmorItem.Type.CHESTPLATE, Properties()) },
+            register(name + "_leggings") { ArmorItem(material, ArmorItem.Type.LEGGINGS, Properties()) },
+            register(name + "_boots") { ArmorItem(material, ArmorItem.Type.BOOTS, Properties()) },
+        )
+    }
+
+    data class ToolSet(
+        val sword: Entry<out SwordItem>,
+        val shovel: Entry<out ShovelItem>,
+        val pickaxe: Entry<out PickaxeItem>,
+        val axe: Entry<out AxeItem>,
+        val hoe: Entry<out HoeItem>,
+    ) : EntrySet<Item>(
+        setOf(sword, shovel, pickaxe, axe, hoe)
+    )
+
+    data class ArmorSet(
+        val helmet: Entry<out ArmorItem>,
+        val plate: Entry<out ArmorItem>,
+        val leggings: Entry<out ArmorItem>,
+        val boots: Entry<out ArmorItem>,
+    ) : EntrySet<Item>(
+        setOf(helmet, plate, leggings, boots)
+    )
+
+}
+
+
+

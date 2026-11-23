@@ -1,0 +1,9 @@
+{
+  "type": "candycraftce:sugar_factory",
+  "ingredient": {
+    "item": "candycraftce:caramel_glass"
+  },
+  "result": {
+    "item": "candycraftce:caramel_glass_round"
+  }
+}

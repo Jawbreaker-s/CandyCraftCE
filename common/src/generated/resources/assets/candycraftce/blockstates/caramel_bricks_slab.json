@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "candycraftce:block/caramel_bricks_slab"
+    },
+    "type=double": {
+      "model": "candycraftce:block/caramel_bricks"
+    },
+    "type=top": {
+      "model": "candycraftce:block/caramel_bricks_slab_top"
+    }
+  }
+}
