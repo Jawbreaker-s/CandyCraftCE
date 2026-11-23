@@ -20,21 +20,7 @@ import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadType
  * Author: [Bread_NiceCat](https://github.com/Bread-NiceCat)
  */
 object CStructureSets {
-    init {
-        CLogUtils.sign()
-        ifDatagen {
-            onBootstrap {
-                add(Registries.STRUCTURE_SET, ::bootstrap)
-            }
-        }
-    }
-
     val floating_island_set = set(floating_island_type)
-
-    private fun set(entry: Entry<out StructureType<*>>): ResourceKey<StructureSet> {
-        return ResourceKey.create(Registries.STRUCTURE_SET, entry.id)
-    }
-
     fun bootstrap(ctx: BootstapContext<StructureSet>) {
         val structures = ctx.lookup(Registries.STRUCTURE)
         ctx.register(
@@ -45,6 +31,19 @@ object CStructureSets {
             )
         )
 
+    }
+
+    private fun set(entry: Entry<out StructureType<*>>): ResourceKey<StructureSet> {
+        return ResourceKey.create(Registries.STRUCTURE_SET, entry.id)
+    }
+
+    init {
+        CLogUtils.sign()
+        ifDatagen {
+            onBootstrap {
+                add(Registries.STRUCTURE_SET, ::bootstrap)
+            }
+        }
     }
 
 }

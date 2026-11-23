@@ -23,7 +23,7 @@ object CBlockTags {
     val withItems = mutableListOf<ItemBlockTagkey>()
 
     val candy_animal_spawnable_on = bind("candy_animal_spawnable_on")
-
+    val jelly_queen_spawnable_on = bind("jelly_queen_spawnable_on")
     val sweet_grass = withItem("sweet_grass")
 
     //ore

@@ -91,7 +91,8 @@ class CBlockTagsProvider(
                 tag(candy_animal_spawnable_on)
                     .add(custard_pudding_block.get())
                     .add(pudding_block.get())
-
+                tag(jelly_queen_spawnable_on)
+                    .add(candied_cherry_leaves)
 
                 tag(CBlockTags.marshmallow_logs)
                     .add(marshmallow_log.get())

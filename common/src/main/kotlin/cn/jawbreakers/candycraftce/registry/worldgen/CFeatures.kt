@@ -3,6 +3,7 @@ package cn.jawbreakers.candycraftce.registry.worldgen
 import cn.jawbreakers.candycraftce.level.feature.*
 import cn.jawbreakers.candycraftce.level.feature.CandyUnderLakeFeature.FluidMode.Companion.WATER_OR_GRENADINE
 import cn.jawbreakers.candycraftce.registry.CBlockTags
+import cn.jawbreakers.candycraftce.registry.CBlockTags.jelly_queen_spawnable_on
 import cn.jawbreakers.candycraftce.utils.CLogUtils
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils.ifDatagen
@@ -14,7 +15,9 @@ import net.minecraft.data.worldgen.BootstapContext
 import net.minecraft.data.worldgen.placement.PlacementUtils
 import net.minecraft.resources.ResourceKey
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.tags.TagKey
 import net.minecraft.util.valueproviders.UniformInt
+import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.levelgen.Heightmap
 import net.minecraft.world.level.levelgen.VerticalAnchor.*
 import net.minecraft.world.level.levelgen.blockpredicates.BlockPredicate
@@ -45,7 +48,7 @@ object CFeatures {
     val candy_seaweed = register("candy_seaweed", ::CandySeaweedFeature)
     val groundwater = register("candy_liquid_lake") { CandyUnderLakeFeature(WATER_OR_GRENADINE) }
     val marshmallow_waterlily = register("marshmallow_waterlily", ::MarshmallowSliceFeature)
-
+    val jelly_queen = register("jelly_queen", ::JellyBossFeature)
 
 //    val candy_plant_house = register("candy_plant_house") { TemplateSurfaceStructureFeature(ResourceLocation("candy_plant_house")) }
 //    val ice_tower = register("ice_tower") { LegacyStructureFeature(LegacyStructureFeature.Kind.ICE_TOWER) }
@@ -72,6 +75,7 @@ object CFeatures {
     val configured_candy_seaweed = configured(candy_seaweed)
     val configured_groundwater = configured(groundwater)
     val configured_marshmallow_waterlily = configured(marshmallow_waterlily)
+    val configured_jelly_queen = configured(jelly_queen)
     val configured_ore_licorice = configured("ore_licorice")
     val configured_ore_licorice_small = configured("ore_licorice_small")
     val configured_ore_honey = configured("ore_honey")
@@ -120,6 +124,7 @@ object CFeatures {
         builtin(configured_candy_seaweed, candy_seaweed.get())
         builtin(configured_groundwater, groundwater.get())
         builtin(configured_marshmallow_waterlily, marshmallow_waterlily.get())
+        builtin(configured_jelly_queen, jelly_queen.get())
         ctx.register(configured_tree_chocolate, createChocolateTree().configure())
         ctx.register(configured_tree_caramel, createCaramelWild().configure())
         ctx.register(configured_tree_chocolate_fancy, createChocolateFancy().configure())
@@ -158,6 +163,7 @@ object CFeatures {
     val placed_groundwater = placed(configured_groundwater)
     val placed_marshmallow_waterlily = placed(configured_marshmallow_waterlily)
     val placed_marshmallow_waterlily_dense = placed(configured_marshmallow_waterlily, "_dense")
+    val placed_jelly_queen = placed(configured_jelly_queen)
 
     val checked_tree_chocolate = placed(configured_tree_chocolate, "_checked")
     val checked_tree_chocolate_fancy = placed(configured_tree_chocolate_fancy, "_checked")
@@ -204,6 +210,12 @@ object CFeatures {
         fun checked(key: ResourceKey<PlacedFeature>, configured: ResourceKey<ConfiguredFeature<*, *>>) =
             register(key, configured, listOf())
         register(
+            placed_jelly_queen, configured_jelly_queen,
+            listOf(
+                rarity(100), in_square, on_surface, on(jelly_queen_spawnable_on), biome
+            )
+        )
+        register(
             placed_candy_grass, configured_candy_grass,
             listOf(count(6), in_square, biome)
         )
@@ -217,7 +229,7 @@ object CFeatures {
         )
         register(
             placed_marshmallow_waterlily, configured_marshmallow_waterlily,
-            listOf(rarity(5), count(1), in_square, on_surface, biome)
+            listOf(rarity(5), in_square, on_surface, biome)
         )
         register(
             placed_marshmallow_waterlily_dense, configured_marshmallow_waterlily,
@@ -230,7 +242,7 @@ object CFeatures {
         checked(checked_tree_candied_cherry, configured_tree_candied_cherry)
         register(
             placed_tree_candy_plains, configured_tree_candy_plains,
-            listOf(rarity(10), count(1), in_square, motion_no_leaves, on_candy_soil, biome)
+            listOf(rarity(10), in_square, motion_no_leaves, on_candy_soil, biome)
         )
         register(
             placed_tree_candy_forest, configured_tree_candy_forest,
@@ -324,9 +336,9 @@ object CFeatures {
         heightRange: PlacementModifier,
     ) = listOf(
         countPlacement,
-        InSquarePlacement.spread(),
+        in_square,
         heightRange,
-        BiomeFilter.biome()
+        biome
     )
 
     private fun commonOrePlacement(count: Int, heightRange: PlacementModifier) =
@@ -338,12 +350,14 @@ object CFeatures {
     private fun count(count: Int) = CountPlacement.of(count)
     private fun countIn(count: IntRange) = CountPlacement.of(UniformInt.of(count.first, count.last))
     private fun rarity(chance: Int) = RarityFilter.onAverageOnceEvery(chance)
-    private val in_square = InSquarePlacement.spread()
-    private val biome = BiomeFilter.biome()
+    private val in_square get() = InSquarePlacement.spread()
+    private val biome get() = BiomeFilter.biome()
     private fun heightIn(range: IntRange) =
         uniform(absolute(range.first), absolute(range.last))
 
-    private val on_surface = HeightmapPlacement.onHeightmap(Heightmap.Types.WORLD_SURFACE_WG)
-    private val motion_no_leaves = HeightmapPlacement.onHeightmap(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES)
-    private val on_candy_soil = forPredicate(BlockPredicate.matchesTag(Vec3i.ZERO.below(), CBlockTags.candy_soil))
+    private val on_surface get() = HeightmapPlacement.onHeightmap(Heightmap.Types.WORLD_SURFACE_WG)
+    private val motion_no_leaves get() = HeightmapPlacement.onHeightmap(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES)
+    private val on_candy_soil get() = on(CBlockTags.candy_soil)
+    private fun on(tag: TagKey<Block>) =
+        forPredicate(BlockPredicate.matchesTag(Vec3i.ZERO.below(), tag))
 }

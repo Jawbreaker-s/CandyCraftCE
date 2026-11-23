@@ -33,7 +33,6 @@ import net.minecraft.core.BlockPos
 import net.minecraft.core.Holder
 import net.minecraft.util.RandomSource
 import net.minecraft.world.level.BlockAndTintGetter
-import net.minecraft.world.level.LevelReader
 import net.minecraft.world.level.biome.Biome
 import net.minecraft.world.level.levelgen.synth.NormalNoise
 import java.awt.Color
@@ -81,7 +80,7 @@ object PuddingColor {
         }
     }
 
-    private fun getPuddingColorRaw(biome: Holder<Biome>, pos: BlockPos): Int {
+    private fun getPuddingColorRaw(biome: Holder<Biome>, pos: BlockPos, cacheFlag: MutableAccessor<Boolean>): Int {
         return when (biome.unwrapKey().getOrNull()) {
             enchanted_forest -> getEnchantColor(pos)
             pudding_plains, sugar_forest -> 0xEEAABB
@@ -91,7 +90,10 @@ object PuddingColor {
             sugar_oceans -> 0xB35EFF
             caramel_forest -> 0xB05C28
             sugar_river -> 0xFFBBCC
-            else -> DEFAULT_PUDDING_COLOR
+            else -> {
+                cacheFlag.set(false)
+                DEFAULT_PUDDING_COLOR
+            }
         }
     }
 
@@ -102,7 +104,6 @@ object PuddingColor {
             invalidateAll()
             cacheKey = level
         }
-        //
         val startTime = System.nanoTime()
         totalCount++
         val key = pos.asLong()
@@ -111,7 +112,7 @@ object PuddingColor {
             computeCount++
             cacheUsed = false
             val flag = MutableAccessor.create(true)
-            computeColor(reader, pos, blendRadius, flag).also {
+            computeColor(pos, blendRadius, flag).also {
                 if (flag.get()) {
                     cachedBlended.put(key, it)
                 }
@@ -123,9 +124,8 @@ object PuddingColor {
         if (cacheUsed) hitTimeNano += duration else computeTimeNano += duration
         return result
     }
-
+    
     private fun computeColor(
-        reader: BlockAndTintGetter,
         pos: BlockPos,
         radius: Int,
         cacheFlag: MutableAccessor<Boolean>,
@@ -139,9 +139,9 @@ object PuddingColor {
             mu.x = pos.x + x
             for (z in -radius..radius) {
                 mu.z = pos.z + z
-                val biome = reader.getBiome(mu)
+                val biome = getBiome(mu)
                 if (biome != null) {
-                    val color = getPuddingColorRaw(biome, mu)
+                    val color = getPuddingColorRaw(biome, mu, cacheFlag)
                     r += color.red
                     g += color.green
                     b += color.blue
@@ -165,7 +165,7 @@ object PuddingColor {
         ifClient {
             registerBlockColor(custard_pudding_block) { _, level, pos, _ ->
                 if (level != null && pos != null) {
-                    val biome = level.getBiome(pos)
+                    val biome = getBiome(pos)
                     if (biome != null) {
                         return@registerBlockColor getBlendedPuddingColor(level, pos)
                     }
@@ -185,8 +185,7 @@ object PuddingColor {
     }
 
     @ClientOnly
-    private fun BlockAndTintGetter.getBiome(pos: BlockPos): Holder<Biome>? {
-        if (this is LevelReader) return getBiome(pos)
+    private fun getBiome(pos: BlockPos): Holder<Biome>? {
         return Minecraft.getInstance().level?.getBiome(pos)
     }
 
@@ -196,7 +195,9 @@ object PuddingColor {
             cachedBlended.invalidateAll()
             cacheEnchant.invalidateAll()
         }
-        val visR = Minecraft.getInstance().options.renderDistance().get() * 16
+        val options = Minecraft.getInstance().options
+        blendRadius = options.biomeBlendRadius().get()
+        val visR = options.renderDistance().get() * 16
         if (visRadius != visR) {
             visRadius = visR
             val vsq = visR * visR
@@ -267,10 +268,10 @@ object PuddingColor {
         }
         val hitOneSec = totalOneSec - computeOneSec
         val vsq = visRadius?.let { it * it } ?: 0
-        info.add("§a[PuddingColor-v1 Dashboard]")
-        info.add("T:$totalCount, TAvg:$totalAvg, T1s:$totalOneSec")
-        info.add("C:$computeCount($computePct%), CAvg:$computeAvg($computeTimePct%), C1s:$computeOneSec")
-        info.add("H:$hitCount($hitPct%), HAvg:$hitAvg($hitTimePct%), H1s:$hitOneSec")
+        info.add("§a[PuddingColor-v1]")
+        info.add("T:$totalCount, TAvg:$totalAvg, T/s:$totalOneSec")
+        info.add("C:$computeCount($computePct%), CAvg:$computeAvg($computeTimePct%), C/s:$computeOneSec")
+        info.add("H:$hitCount($hitPct%), HAvg:$hitAvg($hitTimePct%), H/s:$hitOneSec")
         info.add("CBZ:${cachedBlended.size()}/${vsq * 4}, CEZ:${cacheEnchant.size()}/${vsq * 2}")
         info.add("[Press F3+A to reset]")
     }

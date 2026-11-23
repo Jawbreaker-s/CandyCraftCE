@@ -2,6 +2,7 @@ package cn.jawbreakers.candycraftce.registry.worldgen
 
 import cn.jawbreakers.candycraftce.level.structure.FloatingIslandStructure
 import cn.jawbreakers.candycraftce.registry.CBiomeTags.has_floating_island
+import cn.jawbreakers.candycraftce.registry.worldgen.CStructureTypes.floating_island_type
 import cn.jawbreakers.candycraftce.utils.CLogUtils
 import cn.jawbreakers.candycraftce.utils.CPlatformUtils.ifDatagen
 import cn.jawbreakers.candycraftce.utils.registry.Entry
@@ -23,19 +24,7 @@ import net.minecraft.world.level.levelgen.structure.TerrainAdjustment
  * Author: [Bread_NiceCat](https://github.com/Bread-NiceCat)
  */
 object CStructures {
-    init {
-        CLogUtils.sign()
-        ifDatagen {
-            onBootstrap {
-                add(Registries.STRUCTURE, ::bootstrap)
-            }
-        }
-    }
-
-    val floating_island = structure(CStructureTypes.floating_island_type)
-    private fun structure(entry: Entry<out StructureType<*>>): ResourceKey<Structure> {
-        return ResourceKey.create(Registries.STRUCTURE, entry.id)
-    }
+    val floating_island = structure(floating_island_type)
 
     fun bootstrap(ctx: BootstapContext<Structure>) {
         val lookup = ctx.lookup(Registries.BIOME)
@@ -48,6 +37,27 @@ object CStructures {
             return Structure.StructureSettings(lookup.getOrThrow(biomes), spawns, step, terrainAdaptation)
         }
 
-        ctx.register(floating_island, FloatingIslandStructure(structure(has_floating_island)))
+        ctx.register(
+            floating_island,
+            FloatingIslandStructure(
+                structure(
+                    has_floating_island,
+                    step = GenerationStep.Decoration.TOP_LAYER_MODIFICATION
+                )
+            )
+        )
+    }
+
+    private fun structure(entry: Entry<out StructureType<*>>): ResourceKey<Structure> {
+        return ResourceKey.create(Registries.STRUCTURE, entry.id)
+    }
+
+    init {
+        CLogUtils.sign()
+        ifDatagen {
+            onBootstrap {
+                add(Registries.STRUCTURE, ::bootstrap)
+            }
+        }
     }
 }

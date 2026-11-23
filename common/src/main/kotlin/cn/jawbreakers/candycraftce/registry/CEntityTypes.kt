@@ -43,6 +43,7 @@ import net.minecraft.world.entity.monster.Monster
 import net.minecraft.world.entity.monster.Slime
 import net.minecraft.world.entity.monster.Spider
 import net.minecraft.world.level.BlockAndTintGetter
+import net.minecraft.world.level.Level
 import net.minecraft.world.level.ServerLevelAccessor
 import net.minecraft.world.level.levelgen.Heightmap
 import net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING_NO_LEAVES
@@ -217,7 +218,7 @@ object CEntityTypes {
             registerLayer(SuguardModel.LAYER, SuguardModel<*>::createBodyLayer)
         }
         .placement(::checkCandyMonsterSpawnRules)
-    
+
     val licorice_beetle = register("licorice_beetle") {
         of(::LicoriceBeetle, MobCategory.MONSTER)
             .sized(2.0F, 1.6F)
@@ -257,6 +258,8 @@ object CEntityTypes {
     //=================================
     private fun <E : Entity> register(name: String, type: Supplier<EntityType.Builder<E>>) =
         CPlatformUtils.registerEntityType(name) { type.get().build("$MOD_ID:$name") }
+
+    fun <T : Entity> Entry<EntityType<T>>.create(level: Level) = get().create(level)
 
     @Suppress("UNCHECKED_CAST")
     private fun <T : Mob> Entry<EntityType<T>>.egg(backgroundColor: Int, highlightColor: Int) =

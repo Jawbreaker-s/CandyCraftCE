@@ -1,4 +1,4 @@
-// 1.20.1	2026-11-15T15:07:16.8510676	Tags for minecraft:block mod id candycraftce
+// 1.20.1	2026-11-24T00:15:46.7708913	Tags for minecraft:block mod id candycraftce
 b505cd0841fdf3127fd971b97db5f5d3e0cdb458 data/candycraftce/tags/blocks/all_replaceable.json
 16cf551a654629af4afa9b39f84d8efe1a755864 data/candycraftce/tags/blocks/candy_animal_spawnable_on.json
 02382e15a9f7e25129cbee2ce449ef98b95f5079 data/candycraftce/tags/blocks/candy_leaves.json
@@ -11,6 +11,7 @@ b505cd0841fdf3127fd971b97db5f5d3e0cdb458 data/candycraftce/tags/blocks/all_repla
 86767b85a8fff61ad5e8b22ac21eb8a491db227d data/candycraftce/tags/blocks/ice_cream.json
 6e9bb7335eaaab8450568b4ffcede1ce78854e1c data/candycraftce/tags/blocks/ice_soil.json
 091eba4d56420f63b15cde911e53093abbe19826 data/candycraftce/tags/blocks/jelly_ores.json
+24e2ee530d255820c387def54c2e3161daadc350 data/candycraftce/tags/blocks/jelly_queen_spawnable_on.json
 8eefc6c4da778bc3d3eacc28ea0c745261d1a6a2 data/candycraftce/tags/blocks/licorice_ores.json
 58a0307c49b5516c68a7d41c9b871136645b12a5 data/candycraftce/tags/blocks/marshmallow_logs.json
 627b2634040eefab245dcdef45a6417c3e7ea202 data/candycraftce/tags/blocks/marshmallow_planks.json

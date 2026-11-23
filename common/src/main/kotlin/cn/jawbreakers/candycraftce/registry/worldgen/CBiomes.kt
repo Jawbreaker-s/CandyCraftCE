@@ -16,6 +16,7 @@ import net.minecraft.world.level.biome.BiomeGenerationSettings
 import net.minecraft.world.level.biome.BiomeSpecialEffects
 import net.minecraft.world.level.biome.MobSpawnSettings
 import net.minecraft.world.level.levelgen.GenerationStep
+import net.minecraft.world.level.levelgen.GenerationStep.Decoration.TOP_LAYER_MODIFICATION
 import net.minecraft.world.level.levelgen.GenerationStep.Decoration.VEGETAL_DECORATION
 import net.minecraft.world.level.levelgen.placement.PlacedFeature
 
@@ -317,6 +318,9 @@ object CBiomes {
                             +placed_candy_grass
                             +placed_tree_candy_forest
                             +placed_marshmallow_waterlily_dense
+                        }
+                        step(lookup, TOP_LAYER_MODIFICATION) {
+                            +placed_jelly_queen
                         }
                     }
                 )
