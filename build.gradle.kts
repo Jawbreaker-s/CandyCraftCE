@@ -22,8 +22,9 @@ allprojects {
             }
         }
         flatDir {
-            name = "Flat Dir(${project.name})"
+            name = "Flat Dir (${project.name})"
             dirs(project.file("libs"))
+            println("Adding flat dir for ${project.name}")
             content {
                 includeGroup("libs")
             }
