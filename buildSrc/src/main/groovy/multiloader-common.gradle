@@ -58,6 +58,9 @@ repositories {
     maven {
         name = "kotlinforforge"
         url = uri("https://thedarkcolour.github.io/KotlinForForge/")
+        content {
+            includeGroup("thedarkcolour")
+        }
     }
 }
 
